@@ -29,5 +29,5 @@ con todo lo que hemos visto. ¿Os la envío? ¿O mejor una llamada de
 
 Un saludo,
 [FIRMA]
-PixelSalud - webs que llenan agendas de clínicas
-pixelsalud.es
+PixelSalud - estudio web para clínicas
+jpimasreiser11-gif.github.io/pixelsalud

@@ -8,6 +8,7 @@
     "preview": "astro preview",
     "scripts:syntax": "node scripts/check-inline-script-syntax.mjs",
     "links:check": "node scripts/check-links.mjs",
+    "launch:check": "node scripts/check-launch-readiness.mjs",
     "readiness": "npm run build && npm run scripts:syntax && npm run links:check"
   },
   "dependencies": {

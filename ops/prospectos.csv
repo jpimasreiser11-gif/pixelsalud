@@ -1,20 +1,20 @@
 nombre,especialidad,ciudad,canal,contacto,hallazgo_auditoria,servicio_a_ofrecer,estado,siguiente_accion
-Clinica FIOS,fisioterapia,Albacete,email,info@clinicafiosalbacete.com,"Plantilla anticuada (Flatsome), sin cita online, sin blog; tel +34 689 267 405",Cita online 99 + Rediseno 349,borrador_listo,esperar aprobacion de envio
-Centro Odontologico M Carmen Perez,dental,Badajoz,email,mcperez@centrodeortodoncia.es,"Web en Adobe Business Catalyst (plataforma cerrada en 2021), imagenes rotas, no responsive, sin cita online",Rediseno 349 urgente,borrador_listo,esperar aprobacion de envio
-Centro Dental Badajoz,dental,Badajoz,email,apcentrodentalbadajoz@gmail.com,"Web correcta pero sin reserva online; email de contacto en gmail; sin blog; abren 8:00-22:00",Cita online 99 + email profesional,borrador_listo,esperar aprobacion de envio
+Clinica FIOS,fisioterapia,Albacete,email,info@clinicafiosalbacete.com,"Plantilla anticuada (Flatsome), sin cita online, sin blog; tel +34 689 267 405",Cita online 99 + Rediseno 349,borrador_listo,bloqueado LSSI: solo con consentimiento o base juridica documentada
+Centro Odontologico M Carmen Perez,dental,Badajoz,email,mcperez@centrodeortodoncia.es,"Web en Adobe Business Catalyst (plataforma cerrada en 2021), imagenes rotas, no responsive, sin cita online",Rediseno 349 urgente,borrador_listo,bloqueado LSSI: solo con consentimiento o base juridica documentada
+Centro Dental Badajoz,dental,Badajoz,email,apcentrodentalbadajoz@gmail.com,"Web correcta pero sin reserva online; email de contacto en gmail; sin blog; abren 8:00-22:00",Cita online 99 + email profesional,borrador_listo,bloqueado LSSI: solo con consentimiento o base juridica documentada
 Clinica Dental Doctores Paz,dental,Badajoz,email,clinicadentaldoctorespaz@gmail.com,"[VERIFICAR] email gmail segun su pagina de contacto; auditar web clinicadentalipaz.es antes de enviar",Cita online + SEO local,pendiente_auditoria,auditar web y completar borrador
 Psicologa Salamanca (psicologasalamanca.net),psicologia,Salamanca,email,[VERIFICAR email en su web],"Sitio sirve solo por HTTP: sin candado y Chrome lo marca No seguro (comprobado 18-jul-2026)",Rediseno 349 con SSL incluido,pendiente_email,sacar email de su web y completar borrador
 Gabinete M Luz Canadas,psicologia,Salamanca,email,mariluz@mariluzcanadas.es,[PENDIENTE auditoria],por definir,pendiente_auditoria,auditar web
 Centro Psicologia Grupo Miller,psicologia,Salamanca,email,mariajosesg@cop.es,[PENDIENTE auditoria],por definir,pendiente_auditoria,auditar web
 J Pablo Psicologo,psicologia,Salamanca,email,jpablocobreros@gmail.com,"[VERIFICAR] email gmail; auditar jpablopsicologo.es",Web Express o mejora + email pro,pendiente_auditoria,auditar web
-Adela Alventosa,fisioterapia,Albacete,telefono,600794100,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,llamada fria con guion
-ALBAFISIO,fisioterapia,Albacete,telefono,967666001,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,llamada fria con guion
-Arthros Fisioterapia,fisioterapia,Albacete,telefono,967046783,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,llamada fria con guion
-Centrofisio Albacete,fisioterapia,Albacete,telefono,967601110,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,llamada fria con guion
-Clinica Cuerpo Salud,fisioterapia,Albacete,telefono,967609943,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,llamada fria con guion
-Fisioalba,fisioterapia,Albacete,telefono,967512633,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,llamada fria con guion
-Fisiofutura,fisioterapia,Albacete,telefono,967500868,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,llamada fria con guion
-Ikaika Salud,fisioterapia,Albacete,telefono,614024609,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,llamada fria con guion
-Infisioterapia,fisioterapia,Albacete,telefono,967047365,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,llamada fria con guion
-Fisialia Villarrobledo,fisioterapia,Villarrobledo,telefono,967143058,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,llamada fria con guion
-Clinica SQ Fisioterapia,fisioterapia,Caudete,telefono,674000461,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,llamada fria con guion
+Adela Alventosa,fisioterapia,Albacete,telefono,600794100,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,no llamar: pendiente validacion juridica (ver llamada-fria.md)
+ALBAFISIO,fisioterapia,Albacete,telefono,967666001,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,no llamar: pendiente validacion juridica (ver llamada-fria.md)
+Arthros Fisioterapia,fisioterapia,Albacete,telefono,967046783,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,no llamar: pendiente validacion juridica (ver llamada-fria.md)
+Centrofisio Albacete,fisioterapia,Albacete,telefono,967601110,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,no llamar: pendiente validacion juridica (ver llamada-fria.md)
+Clinica Cuerpo Salud,fisioterapia,Albacete,telefono,967609943,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,no llamar: pendiente validacion juridica (ver llamada-fria.md)
+Fisioalba,fisioterapia,Albacete,telefono,967512633,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,no llamar: pendiente validacion juridica (ver llamada-fria.md)
+Fisiofutura,fisioterapia,Albacete,telefono,967500868,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,no llamar: pendiente validacion juridica (ver llamada-fria.md)
+Ikaika Salud,fisioterapia,Albacete,telefono,614024609,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,no llamar: pendiente validacion juridica (ver llamada-fria.md)
+Infisioterapia,fisioterapia,Albacete,telefono,967047365,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,no llamar: pendiente validacion juridica (ver llamada-fria.md)
+Fisialia Villarrobledo,fisioterapia,Villarrobledo,telefono,967143058,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,no llamar: pendiente validacion juridica (ver llamada-fria.md)
+Clinica SQ Fisioterapia,fisioterapia,Caudete,telefono,674000461,"Sin web propia segun directorio eFisioterapia",Web Express 149,pendiente_llamada,no llamar: pendiente validacion juridica (ver llamada-fria.md)

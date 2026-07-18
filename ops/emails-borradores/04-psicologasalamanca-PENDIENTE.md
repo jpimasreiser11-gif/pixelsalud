@@ -26,5 +26,5 @@ la valoráis con calma. ¿Os la envío?
 
 Un saludo,
 [FIRMA]
-PixelSalud - webs que llenan agendas de clínicas
-pixelsalud.es
+PixelSalud - estudio web para clínicas
+jpimasreiser11-gif.github.io/pixelsalud

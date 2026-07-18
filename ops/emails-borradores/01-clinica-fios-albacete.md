@@ -2,7 +2,7 @@
 
 Para: info@clinicafiosalbacete.com
 Estado: LISTO. No enviar sin aprobación del usuario.
-Nota: firmar con nombre real y, si ya existe, email @pixelsalud.es.
+Nota: firmar con nombre real y, cuando exista, el correo profesional de dominio propio.
 
 Asunto: ¿Cuántas citas pierde FIOS a la hora de comer?
 
@@ -28,8 +28,8 @@ dominio y posicionamiento. Con auditoría previa gratuita por
 escrito para que decidáis viendo el detalle.
 
 ¿Os encaja una llamada de 15 minutos esta semana? Decidme franja
-y os llamo. Más información: pixelsalud.es
+y os llamo. Más información: jpimasreiser11-gif.github.io/pixelsalud
 
 Un saludo,
 [FIRMA]
-PixelSalud - webs que llenan agendas de clínicas
+PixelSalud - estudio web para clínicas

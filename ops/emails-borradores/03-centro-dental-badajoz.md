@@ -28,5 +28,5 @@ profesional os lo dejamos configurado en la misma intervención.
 
 Un saludo,
 [FIRMA]
-PixelSalud - webs que llenan agendas de clínicas
-pixelsalud.es
+PixelSalud - estudio web para clínicas
+jpimasreiser11-gif.github.io/pixelsalud

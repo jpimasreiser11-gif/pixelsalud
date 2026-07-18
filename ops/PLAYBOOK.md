@@ -24,11 +24,15 @@ sin subcontratas de salida y sin métricas inventadas.
 
 ## Ritmo semanal (semana 3 del curso)
 
-Objetivo diario de lunes a viernes:
-- 25-30 emails fríos personalizados (fórmula en email-frio.md).
-- 10 llamadas a clínicas de Google Maps (guión en llamada-fria.md).
-- 30 min de interacción orgánica en Instagram (dm-instagram.md).
-- Actualizar prospectos.csv: estado, fecha, siguiente acción.
+La prospección del curso no se ejecuta literalmente. En España, el artículo
+21 de la LSSI prohíbe el email promocional no solicitado salvo excepciones
+concretas. El canal inicial será de entrada y consentimiento:
+- Publicar demos, guías y una auditoría gratuita solicitada por la clínica.
+- Buscar colaboraciones con asociaciones y proveedores complementarios.
+- Responder a solicitudes recibidas por la web o canales sociales.
+- Registrar consentimiento, fuente y siguiente acción en el CRM.
+- No enviar emails o DM fríos ni hacer llamadas en volumen sin una base
+  jurídica documentada y revisión de los sistemas de exclusión aplicables.
 
 Metas del curso como referencia, no promesa:
 - Primer cliente: entre la semana 1 y el mes 2. Constancia > suerte.
@@ -40,8 +44,8 @@ Metas del curso como referencia, no promesa:
 
 1. Prospección: lista en prospectos.csv con auditoría previa SIEMPRE
    (puntos de fuga concretos de su web o ficha de Google).
-2. Primer contacto: email o llamada. Un solo seguimiento a los 3-4
-   días si no responden. No perseguir más: siguiente prospecto.
+2. Primer contacto: responder por el mismo canal a una solicitud voluntaria.
+   Un solo seguimiento si el interesado lo autorizó.
 3. Interesado -> reunión de 15-30 min (Calendly cuando esté;
    mientras, proponer 2 franjas concretas por email).
 4. Reunión con guión reunion-cierre.md. Cerrar en llamada si se puede.
@@ -63,7 +67,7 @@ Señales de cliente tóxico (rechazar educadamente):
 
 Hecho:
 - [x] Web completa, readiness en verde, verificada en navegador.
-- [x] Kit de ventas: emails, llamada, reunión, DM.
+- [x] Kit de respuesta y reunión; la prospección fría queda bloqueada.
 - [x] CRM inicial con prospectos reales auditados.
 
 Pendiente SOLO del usuario (yo no puedo hacerlo por ti):
@@ -76,8 +80,9 @@ Pendiente SOLO del usuario (yo no puedo hacerlo por ti):
 - [ ] Datos del titular en src/config.ts para aviso legal y privacidad.
 - [ ] Cuenta Stripe para cobrar con tarjeta (vídeo 7). Mientras:
       transferencia + factura.
-- [ ] Aprobar el envío de los primeros emails (borradores listos en
-      ops/emails-borradores/).
+- [ ] Conseguir solicitudes voluntarias mediante demos, contenido y alianzas.
+      Los borradores de `ops/emails-borradores/` son investigación y no deben
+      enviarse como publicidad no solicitada.
 - [ ] Fase 2 (semana 5 del curso): Business Manager de Meta y píxel,
       solo cuando haya 2-3 clientes entregados y caja para 1000-2000
       EUR de inversión, como marca el vídeo 28.

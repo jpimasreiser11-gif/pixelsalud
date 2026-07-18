@@ -1,12 +1,17 @@
-# Email frío - fórmula y plantillas
+# Email de respuesta - no enviar en frío
+
+> BLOQUEADO: no enviar estas plantillas a direcciones que no hayan solicitado
+> información o autorizado la comunicación. Que una dirección aparezca en una
+> web pública no equivale a consentimiento para publicidad. Artículo 21 LSSI.
 
 Fórmula del vídeo 15: asunto-pregunta personalizado, introducción
 personalizada, puntos de fuga concretos, motivo del contacto, llamada
 a la acción, prueba, firma. Regla de oro: si el email vale para dos
 clínicas distintas, no está personalizado.
 
-Volumen: 25-30 al día, todos los días laborables. Registrar cada envío
-en prospectos.csv. Un único seguimiento a los 3-4 días.
+Uso permitido: adaptar la información después de una solicitud de auditoría,
+una presentación consentida o una relación previa aplicable. Registrar el
+origen del consentimiento y un único seguimiento si fue autorizado.
 
 Remitente: cuando exista hola@pixelsalud.es, usar SIEMPRE ese.
 El curso lo dice claro: un gmail genérico ni se abre.
@@ -94,6 +99,7 @@ Un saludo, [FIRMA]
 - Los datos ([NOTA], [N], [X] segundos) deben ser reales y comprobados.
 - No prometer resultados concretos de facturación ni posiciones en
   Google. Prometemos entrega, plazo y garantía, que sí controlamos.
-- Cumplir LOPD/LSSI: son emails comerciales a direcciones públicas de
-  contacto profesional, de uno en uno, con identidad real y opción
-  clara de no seguir. Nada de listas compradas ni envíos masivos.
+- No asumir que una dirección pública habilita el envío. Identidad real,
+  finalidad clara, prueba del consentimiento y opción de no seguir son
+  requisitos operativos mínimos; una revisión jurídica determina las
+  excepciones aplicables.

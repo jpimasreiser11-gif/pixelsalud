@@ -1,8 +1,14 @@
-# Llamada fría a clínicas - guión
+# Llamada comercial - bloqueada hasta validación jurídica
 
-Fuente: vídeos 12 y 15 (puerta fría con Google Maps) y semana 4.
-Meta: 10 llamadas/día. Objetivo de la llamada NO es vender:
-es conseguir una reunión de 15 min o un email del decisor.
+> No ejecutar una cadencia fría desde este documento. Antes de llamar debe
+> documentarse la base jurídica, consultar los sistemas de exclusión cuando
+> proceda, identificar al inicio la finalidad comercial y ofrecer oposición
+> inmediata. El guion se conserva solo para responder a una llamada solicitada.
+
+Fuente histórica: vídeos 12 y 15 (puerta fría con Google Maps) y semana 4.
+La cuota original de 10 llamadas diarias no forma parte del plan actual.
+Cuando una clínica solicite llamada, el objetivo es entender la necesidad y
+decidir si tiene sentido una reunión de 15 minutos.
 
 ## Antes de marcar (2 min por clínica)
 
