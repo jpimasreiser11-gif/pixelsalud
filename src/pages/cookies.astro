@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../config";
+---
+
+<Base title="Política de cookies - PixelSalud" noindex={true}>
+  <section class="mx-auto max-w-3xl px-4 py-14">
+    <h1 class="text-3xl font-bold">Política de cookies</h1>
+    <div class="mt-6 space-y-4 text-sm text-ink-600 dark:text-ink-300">
+      <p>
+        Este sitio web no utiliza cookies de seguimiento, publicidad ni
+        analítica de terceros.
+      </p>
+      <p>
+        Solo se usa el almacenamiento local del navegador para recordar tu
+        preferencia de tema claro u oscuro. Ese dato no sale de tu navegador,
+        no te identifica y puedes borrarlo cuando quieras desde la
+        configuración de tu navegador.
+      </p>
+      <p>
+        Si en el futuro incorporamos herramientas que usen cookies, por
+        ejemplo analítica o sistemas de reserva, esta página se actualizará y,
+        cuando sea exigible, se mostrará un aviso de consentimiento previo.
+      </p>
+      <p>Dudas: {SITE.email}.</p>
+    </div>
+  </section>
+</Base>

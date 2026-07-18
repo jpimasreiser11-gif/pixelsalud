@@ -1,0 +1,62 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../config";
+
+const titular = SITE.legalOwner || "[PENDIENTE: nombre del titular]";
+const nif = SITE.legalNif || "[PENDIENTE: NIF]";
+const direccion = SITE.legalAddress || "[PENDIENTE: dirección]";
+---
+
+<Base title="Aviso legal - PixelSalud" noindex={true}>
+  <section class="mx-auto max-w-3xl px-4 py-14">
+    <h1 class="text-3xl font-bold">Aviso legal</h1>
+    <div class="mt-6 space-y-4 text-sm text-ink-600 dark:text-ink-300">
+      <p>
+        En cumplimiento de la Ley 34/2002, de 11 de julio, de Servicios de la
+        Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se
+        informa de los siguientes datos identificativos del titular de
+        {SITE.url}:
+      </p>
+      <ul class="list-disc space-y-1 pl-5">
+        <li>Titular: {titular}</li>
+        <li>NIF: {nif}</li>
+        <li>Domicilio: {direccion}</li>
+        <li>Correo electrónico: {SITE.email}</li>
+      </ul>
+      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
+        Condiciones de uso
+      </h2>
+      <p>
+        El acceso a este sitio web atribuye la condición de usuario e implica
+        la aceptación de las presentes condiciones. El usuario se compromete a
+        hacer un uso adecuado de los contenidos y a no emplearlos para
+        actividades ilícitas o contrarias a la buena fe.
+      </p>
+      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
+        Propiedad intelectual
+      </h2>
+      <p>
+        Los contenidos de este sitio, incluyendo textos, diseño y código, son
+        titularidad de {SITE.name} o de sus licenciantes. Queda prohibida su
+        reproducción sin autorización expresa.
+      </p>
+      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
+        Responsabilidad
+      </h2>
+      <p>
+        {SITE.name} no se hace responsable del mal uso de los contenidos de
+        este sitio ni de los daños derivados de circunstancias ajenas a su
+        control. Los presupuestos y plazos publicados son orientativos hasta su
+        confirmación por escrito.
+      </p>
+      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
+        Legislación aplicable
+      </h2>
+      <p>
+        La relación entre {SITE.name} y el usuario se regirá por la normativa
+        española vigente, siendo competentes los juzgados y tribunales que
+        correspondan conforme a derecho.
+      </p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,210 @@
+---
+import "../styles/global.css";
+import { SITE } from "../config";
+
+interface Props {
+  title: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const { title, description = SITE.description, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+
+const nav = [
+  { href: "/servicios/", label: "Servicios" },
+  { href: "/precios/", label: "Precios" },
+  { href: "/sobre/", label: "Sobre" },
+  { href: "/contacto/", label: "Contacto" },
+];
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: SITE.name,
+  url: SITE.url,
+  description: SITE.description,
+  areaServed: "ES",
+  priceRange: "49€-349€",
+});
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="es_ES" />
+    <script type="application/ld+json" set:html={schema} />
+    <script>
+      // JS puro. Tema antes de pintar para evitar flash.
+      (function () {
+        var stored = null;
+        try {
+          stored = localStorage.getItem("theme");
+        } catch (e) {}
+        var dark =
+          stored === "dark" ||
+          (!stored &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        if (dark) document.documentElement.classList.add("dark");
+      })();
+    </script>
+  </head>
+  <body
+    class="bg-white font-sans text-ink-800 antialiased dark:bg-ink-950 dark:text-ink-100"
+  >
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-brand-600 focus:px-3 focus:py-2 focus:text-white"
+      >Saltar al contenido</a
+    >
+    <header
+      class="sticky top-0 z-40 border-b border-ink-100 bg-white/90 backdrop-blur dark:border-ink-800 dark:bg-ink-950/90"
+    >
+      <div
+        class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3"
+      >
+        <a href="/" class="flex items-center gap-2 font-bold tracking-tight">
+          <span
+            class="grid size-8 place-items-center rounded-lg bg-brand-600 text-white"
+            aria-hidden="true">+</span
+          >
+          <span class="text-lg">Pixel<span class="text-brand-600">Salud</span></span>
+        </a>
+        <nav class="hidden items-center gap-6 text-sm font-medium md:flex">
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                class="text-ink-600 transition hover:text-brand-600 dark:text-ink-300 dark:hover:text-brand-400"
+              >
+                {item.label}
+              </a>
+            ))
+          }
+          <a
+            href="/contacto/"
+            class="rounded-lg bg-brand-600 px-4 py-2 text-white transition hover:bg-brand-700"
+            >Pedir mi web</a
+          >
+        </nav>
+        <div class="flex items-center gap-2 md:hidden">
+          <button
+            id="menu-btn"
+            type="button"
+            class="rounded-lg border border-ink-200 px-3 py-2 text-sm dark:border-ink-700"
+            aria-expanded="false"
+            aria-controls="menu-movil">Menú</button
+          >
+        </div>
+      </div>
+      <nav
+        id="menu-movil"
+        class="hidden border-t border-ink-100 px-4 py-3 md:hidden dark:border-ink-800"
+      >
+        <ul class="flex flex-col gap-3 text-sm font-medium">
+          {
+            nav.map((item) => (
+              <li>
+                <a href={item.href} class="block py-1">
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </header>
+
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <footer
+      class="mt-20 border-t border-ink-100 bg-ink-50 dark:border-ink-800 dark:bg-ink-900"
+    >
+      <div
+        class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        <div>
+          <p class="font-bold">Pixel<span class="text-brand-600">Salud</span></p>
+          <p class="mt-2 text-sm text-ink-500 dark:text-ink-400">
+            {SITE.tagline}. Hecho en España.
+          </p>
+        </div>
+        <div>
+          <p class="text-sm font-semibold">Agencia</p>
+          <ul class="mt-2 space-y-2 text-sm text-ink-500 dark:text-ink-400">
+            <li><a href="/servicios/" class="hover:text-brand-600">Servicios</a></li>
+            <li><a href="/precios/" class="hover:text-brand-600">Precios</a></li>
+            <li><a href="/sobre/" class="hover:text-brand-600">Sobre nosotros</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="text-sm font-semibold">Legal</p>
+          <ul class="mt-2 space-y-2 text-sm text-ink-500 dark:text-ink-400">
+            <li><a href="/aviso-legal/" class="hover:text-brand-600">Aviso legal</a></li>
+            <li><a href="/privacidad/" class="hover:text-brand-600">Privacidad</a></li>
+            <li><a href="/cookies/" class="hover:text-brand-600">Cookies</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="text-sm font-semibold">Contacto</p>
+          <ul class="mt-2 space-y-2 text-sm text-ink-500 dark:text-ink-400">
+            <li>
+              <a href={`mailto:${SITE.email}`} class="hover:text-brand-600"
+                >{SITE.email}</a
+              >
+            </li>
+            <li><a href="/contacto/" class="hover:text-brand-600">Formulario</a></li>
+          </ul>
+          <button
+            id="theme-btn"
+            type="button"
+            class="mt-4 rounded-lg border border-ink-200 px-3 py-1.5 text-xs dark:border-ink-700"
+            >Cambiar tema</button
+          >
+        </div>
+      </div>
+      <div
+        class="border-t border-ink-100 py-4 text-center text-xs text-ink-400 dark:border-ink-800"
+      >
+        © 2026 {SITE.name}. Todos los derechos reservados.
+      </div>
+    </footer>
+
+    <script>
+      // JS puro.
+      (function () {
+        var btn = document.getElementById("menu-btn");
+        var menu = document.getElementById("menu-movil");
+        if (btn && menu) {
+          btn.addEventListener("click", function () {
+            var open = menu.classList.toggle("hidden") === false;
+            btn.setAttribute("aria-expanded", open ? "true" : "false");
+          });
+        }
+        var theme = document.getElementById("theme-btn");
+        if (theme) {
+          theme.addEventListener("click", function () {
+            var dark = document.documentElement.classList.toggle("dark");
+            try {
+              localStorage.setItem("theme", dark ? "dark" : "light");
+            } catch (e) {}
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

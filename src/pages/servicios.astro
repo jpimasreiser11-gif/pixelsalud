@@ -1,0 +1,141 @@
+---
+import Base from "../layouts/Base.astro";
+import Cta from "../components/Cta.astro";
+
+const bloques = [
+  {
+    nombre: "Web Express para clínicas",
+    precio: "149 € pago único",
+    para: "Clínicas sin web o con una web que da vergüenza enseñar.",
+    incluye: [
+      "Hasta 5 secciones: inicio, servicios, equipo, contacto y legal",
+      "Diseño adaptado a móvil y carga en menos de 2 segundos",
+      "Formulario de contacto y botón de WhatsApp",
+      "Mapa de Google y datos de contacto visibles",
+      "Textos redactados por nosotros a partir de tu información",
+      "Aviso legal, privacidad y cookies adaptados al RGPD",
+      "Entrega en 72 horas o te devolvemos el dinero",
+    ],
+  },
+  {
+    nombre: "SEO local + Google Business",
+    precio: "199 €/mes, sin permanencia",
+    para: "Clínicas que quieren aparecer cuando alguien busca su especialidad en su ciudad.",
+    incluye: [
+      "Optimización completa de tu ficha de Google Business",
+      "Palabras clave locales: «tu especialidad + tu ciudad»",
+      "1 contenido local nuevo al mes en tu web",
+      "Gestión de reseñas: sistema para pedirlas a pacientes contentos",
+      "Informe mensual en cristiano: qué se hizo y qué resultados hay",
+    ],
+  },
+  {
+    nombre: "Sistema de cita online",
+    precio: "99 € pago único",
+    para: "Consultas donde el teléfono interrumpe más de lo que ayuda.",
+    incluye: [
+      "Calendario de reservas conectado a tu web",
+      "El paciente elige servicio, día y hora disponibles",
+      "Confirmación automática por email",
+      "Configuración de horarios, descansos y vacaciones",
+      "Formación de 30 minutos para tu recepción",
+    ],
+  },
+  {
+    nombre: "Rediseño web completo",
+    precio: "349 € pago único",
+    para: "Clínicas con web antigua que no quieren perder su dominio ni su historial en Google.",
+    incluye: [
+      "Auditoría previa gratuita: te decimos qué falla y por qué",
+      "Rediseño completo conservando tu dominio",
+      "Redirecciones bien hechas para no perder posicionamiento",
+      "Migración de contenidos que merezcan la pena",
+      "Revisiones incluidas durante 14 días",
+    ],
+  },
+  {
+    nombre: "Mantenimiento y soporte",
+    precio: "49 €/mes, sin permanencia",
+    para: "Quien quiere olvidarse de la parte técnica para siempre.",
+    incluye: [
+      "Cambios de textos, fotos y horarios cuando los pidas",
+      "Copias de seguridad y seguridad al día",
+      "Vigilancia de que la web esté siempre en línea",
+      "Respuesta en menos de 24 horas laborables",
+    ],
+  },
+  {
+    nombre: "Contenido para tu blog",
+    precio: "149 €/mes",
+    para: "Clínicas que quieren atraer pacientes que aún están buscando información.",
+    incluye: [
+      "4 artículos al mes que responden búsquedas reales de pacientes",
+      "Redacción clara, revisada y sin humo",
+      "Optimización SEO de cada artículo",
+      "Publicación incluida en tu web",
+    ],
+  },
+  {
+    nombre: "Campañas de publicidad (Google y Meta)",
+    precio: "desde 299 €/mes + tu presupuesto de anuncios",
+    para: "Clínicas con la base ya hecha que quieren acelerar. Lo activamos solo cuando tu web y tu ficha están listas para convertir visitas en citas.",
+    incluye: [
+      "Configuración de campañas y seguimiento de conversiones",
+      "Anuncios orientados a tu zona y especialidad",
+      "Informe mensual de coste por contacto conseguido",
+      "Sin contratos largos: mes a mes",
+    ],
+  },
+];
+---
+
+<Base
+  title="Servicios para clínicas - PixelSalud"
+  description="Web Express en 72 horas, SEO local, cita online, rediseño, mantenimiento y contenidos. Precios cerrados para clínicas y centros de salud en España."
+>
+  <section class="mx-auto max-w-6xl px-4 pb-4 pt-14">
+    <h1 class="text-3xl font-bold sm:text-4xl">Servicios</h1>
+    <p class="mt-3 max-w-2xl text-ink-500 dark:text-ink-300">
+      Cada servicio existe por una necesidad real de una clínica. Si no
+      sabes cuál te hace falta, escríbenos: te lo decimos gratis después de
+      mirar tu situación, y si no necesitas nada, también te lo decimos.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-10">
+    <div class="space-y-8">
+      {
+        bloques.map((b) => (
+          <article class="rounded-2xl border border-ink-100 p-6 sm:p-8 dark:border-ink-800">
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 class="text-xl font-bold">{b.nombre}</h2>
+              <p class="font-semibold text-brand-600">{b.precio}</p>
+            </div>
+            <p class="mt-2 text-sm italic text-ink-500 dark:text-ink-400">
+              Para quién: {b.para}
+            </p>
+            <ul class="mt-4 grid gap-2 text-sm text-ink-600 sm:grid-cols-2 dark:text-ink-300">
+              {b.incluye.map((i) => (
+                <li class="flex gap-2">
+                  <span class="text-brand-600">✓</span>
+                  <span>{i}</span>
+                </li>
+              ))}
+            </ul>
+            <a
+              href="/contacto/"
+              class="mt-5 inline-block rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
+            >
+              Pedir este servicio
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <Cta
+    titulo="¿No tienes claro por dónde empezar?"
+    texto="Mándanos el nombre de tu clínica y tu web si la tienes. Te devolvemos un mini análisis gratuito con lo que mejoraríamos primero."
+  />
+</Base>

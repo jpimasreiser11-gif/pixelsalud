@@ -1,0 +1,137 @@
+---
+import Base from "../layouts/Base.astro";
+import Cta from "../components/Cta.astro";
+
+const packs = [
+  {
+    nombre: "Web Express",
+    precio: "149 €",
+    antes: null,
+    detalle: "pago único",
+    punchline: "La puerta de entrada. Comprueba cómo trabajamos con riesgo mínimo.",
+    incluye: [
+      "Web profesional de hasta 5 secciones",
+      "Entrega en 72 horas o es gratis",
+      "Adaptada a móvil y rápida",
+      "Formulario + botón WhatsApp",
+      "Legales RGPD incluidos",
+    ],
+    destacado: false,
+  },
+  {
+    nombre: "Pack Consulta Digital",
+    precio: "199 €",
+    antes: "248 €",
+    detalle: "pago único · ahorras 49 €",
+    punchline: "Web Express + cita online. La combinación que vacía el contestador.",
+    incluye: [
+      "Todo lo de Web Express",
+      "Sistema de cita online integrado",
+      "Confirmaciones automáticas por email",
+      "Formación para tu recepción",
+      "Mismo plazo: 72 horas",
+    ],
+    destacado: true,
+  },
+  {
+    nombre: "Pack Despegue",
+    precio: "379 €",
+    antes: "447 €",
+    detalle: "primer mes · ahorras 68 €",
+    punchline: "Web + cita online + primer mes de SEO local. Para abrir haciendo ruido.",
+    incluye: [
+      "Todo lo del Pack Consulta Digital",
+      "Ficha de Google Business optimizada",
+      "Palabras clave de tu especialidad y ciudad",
+      "Sistema para conseguir reseñas reales",
+      "Después, SEO local opcional a 199 €/mes",
+    ],
+    destacado: false,
+  },
+];
+---
+
+<Base
+  title="Precios claros para clínicas - PixelSalud"
+  description="Precios cerrados y packs con descuento real: Web Express 149 €, Pack Consulta Digital 199 €, Pack Despegue 379 €. Sin permanencia y con garantía de entrega."
+>
+  <section class="mx-auto max-w-6xl px-4 pb-4 pt-14">
+    <h1 class="text-3xl font-bold sm:text-4xl">Precios de lanzamiento</h1>
+    <p class="mt-3 max-w-2xl text-ink-500 dark:text-ink-300">
+      Acabamos de abrir y lo decimos sin rodeos: estos precios existen para
+      conseguir nuestros primeros clientes en España y sus primeras reseñas
+      reales. Subirán. Quien entre ahora, los conserva en sus servicios
+      mensuales.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-10">
+    <div class="grid gap-6 lg:grid-cols-3">
+      {
+        packs.map((p) => (
+          <article
+            class:list={[
+              "flex flex-col rounded-2xl border p-6",
+              p.destacado
+                ? "border-brand-500 shadow-lg shadow-brand-100 dark:shadow-none"
+                : "border-ink-100 dark:border-ink-800",
+            ]}
+          >
+            {p.destacado && (
+              <p class="mb-3 self-start rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white">
+                Mejor relación calidad-precio
+              </p>
+            )}
+            <h2 class="text-lg font-bold">{p.nombre}</h2>
+            <p class="mt-2">
+              {p.antes && (
+                <span class="mr-2 text-sm text-ink-400 line-through">
+                  {p.antes}
+                </span>
+              )}
+              <span class="text-3xl font-bold text-brand-600">{p.precio}</span>
+            </p>
+            <p class="text-xs text-ink-400">{p.detalle}</p>
+            <p class="mt-3 text-sm font-medium">{p.punchline}</p>
+            <ul class="mt-4 flex-1 space-y-2 text-sm text-ink-600 dark:text-ink-300">
+              {p.incluye.map((i) => (
+                <li class="flex gap-2">
+                  <span class="text-brand-600">✓</span>
+                  <span>{i}</span>
+                </li>
+              ))}
+            </ul>
+            <a
+              href="/contacto/"
+              class:list={[
+                "mt-6 rounded-xl px-4 py-3 text-center font-semibold transition",
+                p.destacado
+                  ? "bg-brand-600 text-white hover:bg-brand-700"
+                  : "border border-ink-200 hover:border-brand-400 dark:border-ink-700",
+              ]}
+            >
+              Empezar con {p.nombre}
+            </a>
+          </article>
+        ))
+      }
+    </div>
+
+    <div
+      class="mt-10 rounded-2xl border border-ink-100 p-6 text-sm text-ink-500 dark:border-ink-800 dark:text-ink-300"
+    >
+      <p class="font-semibold text-ink-700 dark:text-ink-100">Cómo se paga</p>
+      <p class="mt-2">
+        50 % al empezar y 50 % a la entrega, por transferencia o tarjeta. Los
+        servicios mensuales se cobran a principio de mes y puedes cancelarlos
+        cuando quieras: sin permanencia y sin letra pequeña. Factura con IVA
+        siempre.
+      </p>
+    </div>
+  </section>
+
+  <Cta
+    titulo="¿Dudas entre dos packs?"
+    texto="Cuéntanos tu caso y te decimos cuál tiene sentido para ti. Si el pequeño te basta, te diremos que cojas el pequeño."
+  />
+</Base>

@@ -1,0 +1,268 @@
+---
+import Base from "../layouts/Base.astro";
+import Cta from "../components/Cta.astro";
+
+const servicios = [
+  {
+    nombre: "Web Express para clínicas",
+    precio: "149 €",
+    detalle: "pago único",
+    desc: "Web profesional de hasta 5 secciones, adaptada a móvil, rápida y lista para aparecer en Google. Entregada en 72 horas.",
+    destacado: true,
+  },
+  {
+    nombre: "SEO local + Google Business",
+    precio: "199 €/mes",
+    detalle: "sin permanencia",
+    desc: "Que te encuentren los pacientes de tu zona: ficha de Google optimizada, contenido local y seguimiento mensual con informe claro.",
+    destacado: false,
+  },
+  {
+    nombre: "Sistema de cita online",
+    precio: "99 €",
+    detalle: "pago único",
+    desc: "Tus pacientes reservan solos desde la web, a cualquier hora. Menos llamadas, menos huecos vacíos en la agenda.",
+    destacado: false,
+  },
+  {
+    nombre: "Rediseño web completo",
+    precio: "349 €",
+    detalle: "pago único",
+    desc: "¿Tu web actual está anticuada o no carga bien en el móvil? La rehacemos entera sin que pierdas tu dominio ni tu posicionamiento.",
+    destacado: false,
+  },
+  {
+    nombre: "Mantenimiento y soporte",
+    precio: "49 €/mes",
+    detalle: "sin permanencia",
+    desc: "Cambios de textos y fotos, copias de seguridad, seguridad al día y soporte en menos de 24 horas laborables.",
+    destacado: false,
+  },
+  {
+    nombre: "Contenido para tu blog",
+    precio: "149 €/mes",
+    detalle: "4 artículos",
+    desc: "Artículos que responden lo que tus pacientes buscan en Google y traen visitas que acaban en citas.",
+    destacado: false,
+  },
+];
+
+const pasos = [
+  {
+    n: "1",
+    t: "Nos cuentas tu clínica",
+    d: "Formulario de 5 minutos o llamada corta. Vemos qué necesitas de verdad y te damos precio cerrado por escrito.",
+  },
+  {
+    n: "2",
+    t: "Creamos tu web en 72 horas",
+    d: "Diseño, textos y fotos colocados. Te la enseñamos funcionando en un enlace privado antes de publicar nada.",
+  },
+  {
+    n: "3",
+    t: "Revisamos hasta que digas sí",
+    d: "Correcciones incluidas durante 7 días. Publicamos cuando estés conforme, no antes.",
+  },
+];
+
+const faqs = [
+  {
+    q: "¿De verdad 149 € y en 72 horas?",
+    a: "Sí. Es nuestro servicio de entrada y queremos que compruebes cómo trabajamos con un riesgo mínimo. El plazo corre desde que tenemos tus contenidos básicos: nombre, servicios, fotos y horarios. Si no entregamos a tiempo, te devolvemos el dinero.",
+  },
+  {
+    q: "¿Qué incluye exactamente la Web Express?",
+    a: "Hasta 5 secciones: inicio, servicios, equipo, contacto con mapa y aviso legal adaptado al RGPD. Diseño adaptado a móvil, carga rápida, formulario de contacto y botón de WhatsApp. El dominio y el alojamiento van a tu nombre.",
+  },
+  {
+    q: "¿Trabajáis solo con clínicas?",
+    a: "Nos centramos en clínicas y centros de salud: dental, fisioterapia, estética, psicología y veterinaria. Especializarnos nos permite saber qué funciona para captar pacientes, aunque estudiamos otros negocios locales si encajan.",
+  },
+  {
+    q: "¿Hay permanencia en los servicios mensuales?",
+    a: "No. El SEO local y el mantenimiento se pagan mes a mes y puedes dejarlo cuando quieras. Preferimos que te quedes por resultados, no por contrato.",
+  },
+  {
+    q: "¿La web será mía?",
+    a: "Sí. Dominio, contenidos y web son tuyos desde el primer día. Si algún día dejas de trabajar con nosotros, te llevas todo.",
+  },
+];
+---
+
+<Base title="PixelSalud - Webs para clínicas en 72 horas por 149 €">
+  <section class="mx-auto max-w-6xl px-4 pb-16 pt-14 sm:pt-20">
+    <div class="max-w-3xl">
+      <p
+        class="inline-block rounded-full bg-brand-100 px-3 py-1 text-xs font-semibold text-brand-700 dark:bg-brand-900 dark:text-brand-200"
+      >
+        Para clínicas y centros de salud en España
+      </p>
+      <h1 class="mt-4 text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
+        Tu clínica con web profesional en{" "}
+        <span class="text-brand-600">72 horas</span> por 149 €
+      </h1>
+      <p class="mt-5 text-lg text-ink-500 dark:text-ink-300">
+        Entregada a tiempo o te devolvemos el dinero. Web rápida, con cita
+        online y preparada para que los pacientes de tu zona te encuentren en
+        Google.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a
+          href="/contacto/"
+          class="rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700"
+          >Quiero mi web por 149 €</a
+        >
+        <a
+          href="/precios/"
+          class="rounded-xl border border-ink-200 px-6 py-3 font-semibold transition hover:border-brand-400 dark:border-ink-700"
+          >Ver precios claros</a
+        >
+      </div>
+      <ul
+        class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-500 dark:text-ink-400"
+      >
+        <li>✓ Precio cerrado por escrito</li>
+        <li>✓ Sin permanencia</li>
+        <li>✓ La web es tuya</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="border-y border-ink-100 bg-ink-50 dark:border-ink-800 dark:bg-ink-900">
+    <div class="mx-auto max-w-6xl px-4 py-14">
+      <h2 class="text-2xl font-bold sm:text-3xl">
+        ¿Te suena alguna de estas tres?
+      </h2>
+      <div class="mt-8 grid gap-6 md:grid-cols-3">
+        <div class="rounded-2xl bg-white p-6 dark:bg-ink-950">
+          <p class="font-semibold">«No aparezco en Google»</p>
+          <p class="mt-2 text-sm text-ink-500 dark:text-ink-400">
+            Tus pacientes buscan «dentista en tu ciudad» y encuentran a tu
+            competencia. Cada búsqueda que pierdes es una primera visita que
+            gana otro.
+          </p>
+        </div>
+        <div class="rounded-2xl bg-white p-6 dark:bg-ink-950">
+          <p class="font-semibold">«Mi web está anticuada»</p>
+          <p class="mt-2 text-sm text-ink-500 dark:text-ink-400">
+            Se ve mal en el móvil, tarda en cargar y no transmite la confianza
+            que sí das en consulta. La primera impresión hoy es tu web, no tu
+            recepción.
+          </p>
+        </div>
+        <div class="rounded-2xl bg-white p-6 dark:bg-ink-950">
+          <p class="font-semibold">«El teléfono no para»</p>
+          <p class="mt-2 text-sm text-ink-500 dark:text-ink-400">
+            Media agenda se va en coger llamadas para dar citas. Con reserva
+            online, tus pacientes eligen hueco solos, incluso de noche.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-16" id="servicios">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 class="text-2xl font-bold sm:text-3xl">Servicios y precios, sin letra pequeña</h2>
+        <p class="mt-2 max-w-2xl text-ink-500 dark:text-ink-300">
+          Todo con precio cerrado. Lo que ves es lo que pagas.
+        </p>
+      </div>
+      <a href="/precios/" class="text-sm font-semibold text-brand-600 hover:underline"
+        >Ver packs con descuento →</a
+      >
+    </div>
+    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        servicios.map((s) => (
+          <article
+            class:list={[
+              "flex flex-col rounded-2xl border p-6",
+              s.destacado
+                ? "border-brand-400 bg-brand-50 dark:border-brand-600 dark:bg-brand-950"
+                : "border-ink-100 dark:border-ink-800",
+            ]}
+          >
+            {s.destacado && (
+              <p class="mb-2 inline-block self-start rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-semibold text-white">
+                El más pedido
+              </p>
+            )}
+            <h3 class="font-bold">{s.nombre}</h3>
+            <p class="mt-1">
+              <span class="text-2xl font-bold text-brand-600">{s.precio}</span>
+              <span class="text-xs text-ink-400"> · {s.detalle}</span>
+            </p>
+            <p class="mt-3 flex-1 text-sm text-ink-500 dark:text-ink-300">
+              {s.desc}
+            </p>
+            <a
+              href="/contacto/"
+              class="mt-4 text-sm font-semibold text-brand-600 hover:underline"
+            >
+              Lo quiero →
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="border-y border-ink-100 bg-ink-50 dark:border-ink-800 dark:bg-ink-900">
+    <div class="mx-auto max-w-6xl px-4 py-16">
+      <h2 class="text-2xl font-bold sm:text-3xl">Así de simple</h2>
+      <div class="mt-8 grid gap-6 md:grid-cols-3">
+        {
+          pasos.map((p) => (
+            <div class="rounded-2xl bg-white p-6 dark:bg-ink-950">
+              <span class="grid size-10 place-items-center rounded-full bg-brand-600 font-bold text-white">
+                {p.n}
+              </span>
+              <h3 class="mt-4 font-bold">{p.t}</h3>
+              <p class="mt-2 text-sm text-ink-500 dark:text-ink-400">{p.d}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <div class="grid items-start gap-10 lg:grid-cols-2">
+      <div>
+        <h2 class="text-2xl font-bold sm:text-3xl">
+          Acabamos de abrir. Y eso te beneficia.
+        </h2>
+        <p class="mt-4 text-ink-500 dark:text-ink-300">
+          No vamos a enseñarte testimonios inventados ni logos de clientes que
+          no existen. PixelSalud arranca ahora, y estos precios son de
+          lanzamiento: los primeros clientes pagan menos a cambio de darnos su
+          opinión sincera y, si quedan contentos, una reseña real.
+        </p>
+        <p class="mt-4 text-ink-500 dark:text-ink-300">
+          Lo que sí tenemos: años construyendo webs rápidas, posicionamiento en
+          Google y analítica. Y una garantía simple: si tu Web Express no está
+          en 72 horas, no la pagas.
+        </p>
+      </div>
+      <div id="faq">
+        <h2 class="text-2xl font-bold sm:text-3xl">Preguntas frecuentes</h2>
+        <div class="mt-6 space-y-3">
+          {
+            faqs.map((f) => (
+              <details class="group rounded-xl border border-ink-100 p-4 dark:border-ink-800">
+                <summary class="cursor-pointer list-none font-semibold marker:hidden">
+                  {f.q}
+                </summary>
+                <p class="mt-2 text-sm text-ink-500 dark:text-ink-300">{f.a}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Cta />
+</Base>

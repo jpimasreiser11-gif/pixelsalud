@@ -1,0 +1,151 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE, whatsappUrl } from "../config";
+
+const wa = whatsappUrl(
+  "Hola, tengo una clínica y quiero información de PixelSalud."
+);
+---
+
+<Base
+  title="Contacto - PixelSalud"
+  description="Cuéntanos qué necesita tu clínica. Respondemos el mismo día laborable con una propuesta clara o un mini análisis gratuito de tu web."
+>
+  <section class="mx-auto max-w-6xl px-4 pb-16 pt-14">
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div>
+        <h1 class="text-3xl font-bold sm:text-4xl">Hablemos de tu clínica</h1>
+        <p class="mt-3 text-ink-500 dark:text-ink-300">
+          Rellena el formulario y te respondemos el mismo día laborable.
+          Si prefieres, escríbenos directamente a{" "}
+          <a href={`mailto:${SITE.email}`} class="font-semibold text-brand-600"
+            >{SITE.email}</a
+          >.
+        </p>
+        <ul class="mt-6 space-y-3 text-sm text-ink-500 dark:text-ink-400">
+          <li>✓ Respuesta en el mismo día laborable</li>
+          <li>✓ Mini análisis gratuito de tu web si ya tienes una</li>
+          <li>✓ Presupuesto cerrado por escrito, sin compromiso</li>
+          <li>✓ Cero llamadas pesadas: contactamos una vez, decides tú</li>
+        </ul>
+        {
+          wa && (
+            <a
+              href={wa}
+              class="mt-6 inline-block rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700"
+            >
+              Escribir por WhatsApp
+            </a>
+          )
+        }
+        {
+          SITE.calendly && (
+            <a
+              href={SITE.calendly}
+              class="mt-6 ml-3 inline-block rounded-xl border border-ink-200 px-6 py-3 font-semibold transition hover:border-brand-400 dark:border-ink-700"
+            >
+              Reservar llamada de 15 min
+            </a>
+          )
+        }
+      </div>
+
+      <form
+        id="form-contacto"
+        data-email={SITE.email}
+        class="rounded-2xl border border-ink-100 p-6 sm:p-8 dark:border-ink-800"
+      >
+        <div class="grid gap-4">
+          <label class="block text-sm font-medium">
+            Tu nombre
+            <input
+              type="text"
+              name="nombre"
+              required
+              class="mt-1 w-full rounded-lg border border-ink-200 bg-transparent px-3 py-2 dark:border-ink-700"
+            />
+          </label>
+          <label class="block text-sm font-medium">
+            Nombre de la clínica
+            <input
+              type="text"
+              name="clinica"
+              required
+              class="mt-1 w-full rounded-lg border border-ink-200 bg-transparent px-3 py-2 dark:border-ink-700"
+            />
+          </label>
+          <label class="block text-sm font-medium">
+            Web actual, si tienes
+            <input
+              type="text"
+              name="web"
+              placeholder="https://"
+              class="mt-1 w-full rounded-lg border border-ink-200 bg-transparent px-3 py-2 dark:border-ink-700"
+            />
+          </label>
+          <label class="block text-sm font-medium">
+            ¿Qué necesitas?
+            <select
+              name="servicio"
+              class="mt-1 w-full rounded-lg border border-ink-200 bg-transparent px-3 py-2 dark:border-ink-700 dark:bg-ink-950"
+            >
+              <option>Web Express, 149 €</option>
+              <option>Pack Consulta Digital, 199 €</option>
+              <option>Pack Despegue, 379 €</option>
+              <option>SEO local mensual</option>
+              <option>Rediseño de mi web</option>
+              <option>No lo sé, aconsejadme</option>
+            </select>
+          </label>
+          <label class="block text-sm font-medium">
+            Cuéntanos lo que quieras
+            <textarea
+              name="mensaje"
+              rows="4"
+              class="mt-1 w-full rounded-lg border border-ink-200 bg-transparent px-3 py-2 dark:border-ink-700"
+            ></textarea>
+          </label>
+          <button
+            type="submit"
+            class="rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700"
+            >Enviar</button
+          >
+          <p class="text-xs text-ink-400">
+            Al enviar aceptas nuestra{" "}
+            <a href="/privacidad/" class="underline">política de privacidad</a
+            >. Usamos tus datos solo para responderte.
+          </p>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    // JS puro. El formulario abre el correo del visitante con todo relleno:
+    // funciona sin backend y sin cuentas de terceros.
+    (function () {
+      var form = document.getElementById("form-contacto");
+      if (!form) return;
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        var f = form;
+        function val(name) {
+          var el = f.querySelector('[name="' + name + '"]');
+          return el && el.value ? el.value : "-";
+        }
+        var destinatario = f.getAttribute("data-email") || "";
+        var asunto = "Consulta desde pixelsalud.es: " + val("clinica");
+        var cuerpo =
+          "Nombre: " + val("nombre") + "\n" +
+          "Clinica: " + val("clinica") + "\n" +
+          "Web: " + val("web") + "\n" +
+          "Servicio: " + val("servicio") + "\n\n" +
+          val("mensaje");
+        window.location.href =
+          "mailto:" + destinatario +
+          "?subject=" + encodeURIComponent(asunto) +
+          "&body=" + encodeURIComponent(cuerpo);
+      });
+    })();
+  </script>
+</Base>

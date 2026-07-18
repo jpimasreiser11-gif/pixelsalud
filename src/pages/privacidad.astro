@@ -1,0 +1,64 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../config";
+
+const titular = SITE.legalOwner || "[PENDIENTE: nombre del titular]";
+---
+
+<Base title="Política de privacidad - PixelSalud" noindex={true}>
+  <section class="mx-auto max-w-3xl px-4 py-14">
+    <h1 class="text-3xl font-bold">Política de privacidad</h1>
+    <div class="mt-6 space-y-4 text-sm text-ink-600 dark:text-ink-300">
+      <p>
+        Conforme al Reglamento (UE) 2016/679 (RGPD) y a la Ley Orgánica 3/2018
+        (LOPDGDD), se informa al usuario del tratamiento de sus datos
+        personales en este sitio web.
+      </p>
+      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
+        Responsable
+      </h2>
+      <p>{titular}, contacto: {SITE.email}.</p>
+      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
+        Datos que tratamos y finalidad
+      </h2>
+      <p>
+        Los datos que nos facilites por el formulario de contacto o por correo
+        (nombre, clínica, web, correo electrónico y el contenido de tu mensaje)
+        se usan únicamente para responder a tu consulta y preparar la
+        propuesta que nos pidas. No se usan para publicidad automatizada ni se
+        ceden a terceros.
+      </p>
+      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
+        Base jurídica
+      </h2>
+      <p>
+        Tu consentimiento al enviar el formulario y, en su caso, la ejecución
+        de medidas precontractuales a petición tuya.
+      </p>
+      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
+        Conservación
+      </h2>
+      <p>
+        Conservamos los datos el tiempo necesario para atender tu consulta y
+        las obligaciones legales aplicables. Después se eliminan.
+      </p>
+      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
+        Tus derechos
+      </h2>
+      <p>
+        Puedes ejercer tus derechos de acceso, rectificación, supresión,
+        oposición, limitación y portabilidad escribiendo a {SITE.email}.
+        También puedes reclamar ante la Agencia Española de Protección de
+        Datos (aepd.es).
+      </p>
+      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
+        Terceros
+      </h2>
+      <p>
+        Este sitio es estático y no carga rastreadores de terceros. Si en el
+        futuro se añade analítica o herramientas de reserva, esta política se
+        actualizará antes de activarlas.
+      </p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@import "@fontsource-variable/dm-sans";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "DM Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-50: #effaf6;
+  --color-brand-100: #d8f2e7;
+  --color-brand-200: #b4e4d2;
+  --color-brand-300: #83cfb7;
+  --color-brand-400: #4fb497;
+  --color-brand-500: #2c987d;
+  --color-brand-600: #1e7a65;
+  --color-brand-700: #1a6253;
+  --color-brand-800: #184e44;
+  --color-brand-900: #164039;
+  --color-brand-950: #0b2421;
+  --color-ink-50: #f6f7f9;
+  --color-ink-100: #ebedf1;
+  --color-ink-200: #d3d8e0;
+  --color-ink-300: #acb5c5;
+  --color-ink-400: #7f8ca4;
+  --color-ink-500: #5f6d8a;
+  --color-ink-600: #4b5772;
+  --color-ink-700: #3e475d;
+  --color-ink-800: #363d4f;
+  --color-ink-900: #303644;
+  --color-ink-950: #20242e;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.dark {
+  color-scheme: dark;
+}

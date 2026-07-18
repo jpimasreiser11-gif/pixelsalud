@@ -1,0 +1,53 @@
+---
+import { SITE, whatsappUrl } from "../config";
+
+interface Props {
+  titulo?: string;
+  texto?: string;
+}
+
+const {
+  titulo = "¿Hablamos 15 minutos de tu clínica?",
+  texto = "Cuéntanos qué necesitas. Te respondemos el mismo día con una propuesta clara y sin compromiso.",
+} = Astro.props;
+
+const wa = whatsappUrl(
+  "Hola, tengo una clínica y me interesa la web de PixelSalud."
+);
+---
+
+<section class="mx-auto max-w-6xl px-4 py-16">
+  <div
+    class="rounded-3xl bg-brand-700 px-6 py-12 text-center text-white sm:px-12"
+  >
+    <h2 class="text-2xl font-bold sm:text-3xl">{titulo}</h2>
+    <p class="mx-auto mt-3 max-w-2xl text-brand-100">{texto}</p>
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+      <a
+        href="/contacto/"
+        class="rounded-xl bg-white px-6 py-3 font-semibold text-brand-700 transition hover:bg-brand-50"
+        >Pedir propuesta gratis</a
+      >
+      {
+        wa && (
+          <a
+            href={wa}
+            class="rounded-xl border border-brand-300 px-6 py-3 font-semibold text-white transition hover:bg-brand-600"
+          >
+            WhatsApp directo
+          </a>
+        )
+      }
+      {
+        SITE.calendly && (
+          <a
+            href={SITE.calendly}
+            class="rounded-xl border border-brand-300 px-6 py-3 font-semibold text-white transition hover:bg-brand-600"
+          >
+            Reservar llamada
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>
