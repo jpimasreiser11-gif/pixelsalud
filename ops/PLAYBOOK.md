@@ -86,3 +86,22 @@ Pendiente SOLO del usuario (yo no puedo hacerlo por ti):
 - [ ] Fase 2 (semana 5 del curso): Business Manager de Meta y píxel,
       solo cuando haya 2-3 clientes entregados y caja para 1000-2000
       EUR de inversión, como marca el vídeo 28.
+
+## Semana 6 del curso: retención y precios (vídeos 29-30)
+
+- No subir nunca el precio del servicio gancho: es captación.
+- Subir precio solo en servicios de valor (SEO, campañas, mentoría)
+  y solo con demanda alta real. Ver vídeo 29.
+- Cliente que renueva sin resultados todavía: mantenerle el precio
+  antiguo o descuento puntual. Evita fugas y malas reseñas.
+- Retención: comunicación proactiva 2-4 veces por semana sobre SUS
+  resultados, no solo al renovar. Entrega siempre dentro de plazo:
+  la garantía es la marca.
+- Oferta de renovación: pack 3 meses con descuento para clientes
+  contentos (referencia curso: de 390/mes a ~1000 por 8 semanas).
+
+## Documentos operativos
+
+- email-frio.md y llamada-fria.md: BLOQUEADOS (LSSI / validación).
+- lanzamiento-red-personal.md: canal legal activo, listo para usar.
+- fase2-facebook.md: runbook de anuncios, bloqueado por cuentas y caja.
