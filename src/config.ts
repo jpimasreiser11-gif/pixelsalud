@@ -1,7 +1,11 @@
 // Config central de contacto y marca. Un solo sitio que tocar.
+// Base de despliegue sin barra final, para enlaces internos.
+export const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+
 export const SITE = {
   name: "PixelSalud",
-  url: "https://pixelsalud.es",
+  // TODO usuario: al comprar el dominio, cambiar por https://pixelsalud.es
+  url: "https://jpimasreiser11-gif.github.io/pixelsalud",
   tagline: "Webs que llenan agendas de clínicas",
   description:
     "Agencia web para clínicas y centros de salud en España. Web profesional en 72 horas, cita online y SEO local. Precio cerrado y garantía de entrega.",

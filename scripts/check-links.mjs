@@ -3,6 +3,8 @@ import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join, extname } from "node:path";
 
 const DIST = new URL("../dist", import.meta.url).pathname;
+// La base de despliegue no existe como carpeta en dist: se recorta.
+const BASE = "/pixelsalud";
 let errores = 0;
 const paginas = [];
 
@@ -20,7 +22,10 @@ for (const pagina of paginas) {
   const html = readFileSync(pagina, "utf8");
   const hrefs = [...html.matchAll(/href="(\/[^"#]*)/g)].map((m) => m[1]);
   for (const href of new Set(hrefs)) {
-    const limpio = href.split("?")[0];
+    let limpio = href.split("?")[0];
+    if (limpio === BASE || limpio.startsWith(BASE + "/")) {
+      limpio = limpio.slice(BASE.length) || "/";
+    }
     const candidatos = [
       join(DIST, limpio),
       join(DIST, limpio, "index.html"),

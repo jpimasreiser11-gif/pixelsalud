@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pixelsalud.es/sitemap-index.xml
+Sitemap: https://jpimasreiser11-gif.github.io/pixelsalud/sitemap-index.xml

@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { SITE } from "../config";
+import { BASE, SITE } from "../config";
 
 interface Props {
   title: string;
@@ -12,10 +12,10 @@ const { title, description = SITE.description, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, SITE.url).href;
 
 const nav = [
-  { href: "/servicios/", label: "Servicios" },
-  { href: "/precios/", label: "Precios" },
-  { href: "/sobre/", label: "Sobre" },
-  { href: "/contacto/", label: "Contacto" },
+  { href: `${BASE}/servicios/`, label: "Servicios" },
+  { href: `${BASE}/precios/`, label: "Precios" },
+  { href: `${BASE}/sobre/`, label: "Sobre" },
+  { href: `${BASE}/contacto/`, label: "Contacto" },
 ];
 
 const schema = JSON.stringify({
@@ -38,8 +38,8 @@ const schema = JSON.stringify({
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href={`${BASE}/favicon.svg`} type="image/svg+xml" />
+    <link rel="sitemap" href={`${BASE}/sitemap-index.xml`} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -75,7 +75,7 @@ const schema = JSON.stringify({
       <div
         class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3"
       >
-        <a href="/" class="flex items-center gap-2 font-bold tracking-tight">
+        <a href={`${BASE}/`} class="flex items-center gap-2 font-bold tracking-tight">
           <span
             class="grid size-8 place-items-center rounded-lg bg-brand-600 text-white"
             aria-hidden="true">+</span
@@ -94,7 +94,7 @@ const schema = JSON.stringify({
             ))
           }
           <a
-            href="/contacto/"
+            href={`${BASE}/contacto/`}
             class="rounded-lg bg-brand-600 px-4 py-2 text-white transition hover:bg-brand-700"
             >Pedir mi web</a
           >
@@ -146,17 +146,17 @@ const schema = JSON.stringify({
         <div>
           <p class="text-sm font-semibold">Agencia</p>
           <ul class="mt-2 space-y-2 text-sm text-ink-500 dark:text-ink-400">
-            <li><a href="/servicios/" class="hover:text-brand-600">Servicios</a></li>
-            <li><a href="/precios/" class="hover:text-brand-600">Precios</a></li>
-            <li><a href="/sobre/" class="hover:text-brand-600">Sobre nosotros</a></li>
+            <li><a href={`${BASE}/servicios/`} class="hover:text-brand-600">Servicios</a></li>
+            <li><a href={`${BASE}/precios/`} class="hover:text-brand-600">Precios</a></li>
+            <li><a href={`${BASE}/sobre/`} class="hover:text-brand-600">Sobre nosotros</a></li>
           </ul>
         </div>
         <div>
           <p class="text-sm font-semibold">Legal</p>
           <ul class="mt-2 space-y-2 text-sm text-ink-500 dark:text-ink-400">
-            <li><a href="/aviso-legal/" class="hover:text-brand-600">Aviso legal</a></li>
-            <li><a href="/privacidad/" class="hover:text-brand-600">Privacidad</a></li>
-            <li><a href="/cookies/" class="hover:text-brand-600">Cookies</a></li>
+            <li><a href={`${BASE}/aviso-legal/`} class="hover:text-brand-600">Aviso legal</a></li>
+            <li><a href={`${BASE}/privacidad/`} class="hover:text-brand-600">Privacidad</a></li>
+            <li><a href={`${BASE}/cookies/`} class="hover:text-brand-600">Cookies</a></li>
           </ul>
         </div>
         <div>
@@ -167,7 +167,7 @@ const schema = JSON.stringify({
                 >{SITE.email}</a
               >
             </li>
-            <li><a href="/contacto/" class="hover:text-brand-600">Formulario</a></li>
+            <li><a href={`${BASE}/contacto/`} class="hover:text-brand-600">Formulario</a></li>
           </ul>
           <button
             id="theme-btn"

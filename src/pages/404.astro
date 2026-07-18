@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import { BASE } from "../config";
 ---
 
 <Base title="Página no encontrada - PixelSalud" noindex={true}>
@@ -10,7 +11,7 @@ import Base from "../layouts/Base.astro";
       Puede que el enlace esté mal escrito o que hayamos movido el contenido.
     </p>
     <a
-      href="/"
+      href={`${BASE}/`}
       class="mt-8 inline-block rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700"
       >Volver al inicio</a
     >

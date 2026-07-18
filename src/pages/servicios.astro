@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import { BASE } from "../config";
 import Cta from "../components/Cta.astro";
 
 const bloques = [
@@ -123,7 +124,7 @@ const bloques = [
               ))}
             </ul>
             <a
-              href="/contacto/"
+              href={`${BASE}/contacto/`}
               class="mt-5 inline-block rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
             >
               Pedir este servicio

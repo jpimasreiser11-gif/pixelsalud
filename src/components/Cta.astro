@@ -1,5 +1,5 @@
 ---
-import { SITE, whatsappUrl } from "../config";
+import { BASE, SITE, whatsappUrl } from "../config";
 
 interface Props {
   titulo?: string;
@@ -24,7 +24,7 @@ const wa = whatsappUrl(
     <p class="mx-auto mt-3 max-w-2xl text-brand-100">{texto}</p>
     <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
       <a
-        href="/contacto/"
+        href={`${BASE}/contacto/`}
         class="rounded-xl bg-white px-6 py-3 font-semibold text-brand-700 transition hover:bg-brand-50"
         >Pedir propuesta gratis</a
       >

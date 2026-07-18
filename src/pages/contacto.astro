@@ -1,6 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
-import { SITE, whatsappUrl } from "../config";
+import { BASE, SITE, whatsappUrl } from "../config";
 
 const wa = whatsappUrl(
   "Hola, tengo una clínica y quiero información de PixelSalud."
@@ -112,7 +112,7 @@ const wa = whatsappUrl(
           >
           <p class="text-xs text-ink-400">
             Al enviar aceptas nuestra{" "}
-            <a href="/privacidad/" class="underline">política de privacidad</a
+            <a href={`${BASE}/privacidad/`} class="underline">política de privacidad</a
             >. Usamos tus datos solo para responderte.
           </p>
         </div>

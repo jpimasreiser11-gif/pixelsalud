@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import { BASE } from "../config";
 import Cta from "../components/Cta.astro";
 
 const servicios = [
@@ -108,12 +109,12 @@ const faqs = [
       </p>
       <div class="mt-8 flex flex-wrap gap-3">
         <a
-          href="/contacto/"
+          href={`${BASE}/contacto/`}
           class="rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700"
           >Quiero mi web por 149 €</a
         >
         <a
-          href="/precios/"
+          href={`${BASE}/precios/`}
           class="rounded-xl border border-ink-200 px-6 py-3 font-semibold transition hover:border-brand-400 dark:border-ink-700"
           >Ver precios claros</a
         >
@@ -169,7 +170,7 @@ const faqs = [
           Todo con precio cerrado. Lo que ves es lo que pagas.
         </p>
       </div>
-      <a href="/precios/" class="text-sm font-semibold text-brand-600 hover:underline"
+      <a href={`${BASE}/precios/`} class="text-sm font-semibold text-brand-600 hover:underline"
         >Ver packs con descuento →</a
       >
     </div>
@@ -198,7 +199,7 @@ const faqs = [
               {s.desc}
             </p>
             <a
-              href="/contacto/"
+              href={`${BASE}/contacto/`}
               class="mt-4 text-sm font-semibold text-brand-600 hover:underline"
             >
               Lo quiero →
