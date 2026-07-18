@@ -4,6 +4,8 @@ export const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 export const SITE = {
   name: "PixelSalud",
+  // Mantener false hasta que `npm run launch:check` pase con datos reales.
+  launchReady: false,
   // TODO usuario: al comprar el dominio, cambiar por https://pixelsalud.es
   url: "https://jpimasreiser11-gif.github.io/pixelsalud",
   tagline: "Webs claras y rápidas para clínicas",

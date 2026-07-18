@@ -18,6 +18,10 @@ const required = [
   ["whatsapp", /whatsapp:\s*"([^"]+)"/],
 ];
 
+if (!/launchReady:\s*true/.test(config)) {
+  failures.push("launchReady sigue en false");
+}
+
 for (const [name, pattern] of required) {
   const value = config.match(pattern)?.[1]?.trim();
   if (!value) failures.push(`${name} no está configurado`);
