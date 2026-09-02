@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "architecture": "continuous-forward-take",
+  "desktop": { "aspect": "16:9", "sourceHeight": 1080, "fps": 24, "durationSeconds": 8 },
+  "mobile": { "aspect": "9:16", "sourceWidth": 720, "fps": 24, "durationSeconds": 8 },
+  "brand": {
+    "name": "VARINO",
+    "palette": ["#0A0D14", "#111318", "#655CFF", "#F7F7F5", "#2997FF"]
+  },
+  "sections": [
+    {
+      "id": "friction",
+      "label": "El problema",
+      "eyebrow": "El trabajo se dispersa",
+      "title": "Tu empresa no necesita más herramientas.",
+      "body": "Necesita menos fricción entre información, decisiones y personas.",
+      "scrollVh": 150,
+      "linger": 0.22
+    },
+    {
+      "id": "understand",
+      "label": "Diagnóstico",
+      "eyebrow": "Primero entendemos",
+      "title": "El proceso antes que la automatización.",
+      "body": "Entradas, reglas, excepciones, responsables y recuperación quedan visibles.",
+      "scrollVh": 145,
+      "linger": 0.3
+    },
+    {
+      "id": "automation",
+      "label": "Automation Sprint",
+      "eyebrow": "Un proceso crítico",
+      "title": "Convertido en un sistema fiable.",
+      "body": "Automatización acotada, observable, documentada y recuperable.",
+      "scrollVh": 165,
+      "linger": 0.42,
+      "cta": { "label": "Automatizar este proceso", "href": "/servicios/automation-sprint/" }
+    },
+    {
+      "id": "growth",
+      "label": "Sistema de crecimiento",
+      "eyebrow": "Cada oportunidad",
+      "title": "Ordenada, revisada y atendida.",
+      "body": "Captura, cualificación y seguimiento conectados con aprobación humana.",
+      "scrollVh": 165,
+      "linger": 0.42,
+      "cta": { "label": "Diseñar mi sistema comercial", "href": "/servicios/sistema-crecimiento/" }
+    },
+    {
+      "id": "private-ai",
+      "label": "IA privada",
+      "eyebrow": "Conocimiento empresarial",
+      "title": "Útil sin perder el control.",
+      "body": "Fuentes, permisos, abstención y despliegue local o privado según el riesgo.",
+      "scrollVh": 170,
+      "linger": 0.46,
+      "cta": { "label": "Explorar IA privada", "href": "/servicios/ia-privada/" }
+    },
+    {
+      "id": "varino",
+      "label": "VARINO",
+      "eyebrow": "Inteligencia, puesta a trabajar",
+      "title": "Del proceso al progreso.",
+      "body": "Construcción, supervisión y mejora con responsables humanos.",
+      "scrollVh": 185,
+      "linger": 0.55,
+      "cta": { "label": "Construir mi sistema", "href": "/experiencia/" }
+    }
+  ]
+}
