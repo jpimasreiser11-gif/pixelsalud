@@ -1,19 +1,17 @@
 ---
 import Base from "../layouts/Base.astro";
 import { SITE } from "../config";
+const controls = [
+  ["Datos mínimos", "Recogemos solo los campos necesarios para el objetivo acordado y evitamos copiar conversaciones completas cuando bastan datos estructurados."],
+  ["Permisos limitados", "Cada integración recibe el acceso mínimo. Los modelos no heredan automáticamente permisos de una persona."],
+  ["Control humano", "Enviar, prometer, gastar, solicitar acceso o iniciar trabajo requiere una acción humana autenticada."],
+  ["IA local o privada", "Cuando el riesgo lo requiere evaluamos Ollama, despliegues privados y recuperación documental con fuentes y permisos."],
+  ["Errores recuperables", "Colas de excepción, reintentos limitados, idempotencia y una vía manual evitan ocultar fallos o duplicar acciones."],
+  ["Trazabilidad proporcional", "Registramos decisiones y cambios sin convertir los logs en una copia innecesaria de datos personales."],
+];
 ---
-
-<Base
-  title={`Seguridad e IA responsable — ${SITE.name}`}
-  description="Privacidad, mínimo acceso, IA local y control humano como requisitos del sistema."
->
-  <section class="mx-auto max-w-5xl px-6 py-24 sm:py-32">
-    <p class="eyebrow">Seguridad e IA responsable</p>
-    <h1 class="display-title max-w-4xl">Control antes<br /><span>que automatismo.</span></h1>
-    <p class="mt-8 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
-      Diseñamos cada solución con datos mínimos, permisos limitados, trazabilidad y
-      aprobación humana. Las verificaciones pendientes se presentan como pendientes,
-      nunca como certificaciones obtenidas.
-    </p>
-  </section>
+<Base title={`Seguridad e IA responsable — ${SITE.name}`} description="Privacidad, mínimo acceso, IA local y control humano como requisitos del sistema.">
+  <section class="mx-auto max-w-6xl px-6 py-24 sm:py-32"><p class="eyebrow">Seguridad e IA responsable</p><h1 class="display-title max-w-5xl">Control antes<br /><span>que automatismo.</span></h1><p class="mt-8 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">Estas son decisiones de diseño previstas y controles comprobables, no certificaciones obtenidas. Las auditorías y revisiones pendientes se mostrarán como pendientes.</p></section>
+  <section class="mx-auto grid max-w-6xl gap-4 px-6 pb-24 md:grid-cols-2">{controls.map(([t,d], index) => <article class="rounded-3xl border border-black/8 p-7 dark:border-white/10"><span class="text-xs font-bold text-[#655cff]">{String(index + 1).padStart(2,"0")}</span><h2 class="mt-8 text-2xl font-semibold tracking-[-0.03em]">{t}</h2><p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{d}</p></article>)}</section>
+  <section class="mx-auto max-w-6xl px-6 pb-24"><div class="rounded-[2rem] bg-[#0a0d14] p-8 text-white sm:p-12"><p class="eyebrow">Transparencia</p><h2 class="mt-4 text-4xl font-semibold tracking-[-0.04em]">Qué puede hacer la IA pública.</h2><div class="mt-8 grid gap-8 md:grid-cols-2"><div><h3 class="font-semibold text-emerald-300">Puede</h3><ul class="mt-4 space-y-3 text-sm text-[#d2d2d7]"><li>Explicar servicios y hacer preguntas guiadas</li><li>Preparar un resumen editable</li><li>Recomendar un encaje preliminar</li></ul></div><div><h3 class="font-semibold text-rose-300">No puede</h3><ul class="mt-4 space-y-3 text-sm text-[#d2d2d7]"><li>Emitir una oferta contractual</li><li>Enviar mensajes o iniciar trabajo por sí sola</li><li>Pedir contraseñas o documentos sensibles</li></ul></div></div></div></section>
 </Base>

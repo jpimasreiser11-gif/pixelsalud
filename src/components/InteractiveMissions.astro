@@ -1,0 +1,184 @@
+---
+import { MISSION_SCENARIOS } from "../lib/missions/scenarios";
+import MissionWorkflow from "./MissionWorkflow.astro";
+
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+const first = MISSION_SCENARIOS[0];
+---
+
+<section class:list={["mission-shell", compact && "mission-shell--compact"]} data-mission-root data-missions={JSON.stringify(MISSION_SCENARIOS)} aria-labelledby="mission-title">
+  <div class="mission-heading">
+    <div>
+      <p class="eyebrow">Experiencia interactiva</p>
+      <h2 id="mission-title">Decide como si el proceso fuera tuyo.</h2>
+    </div>
+    <p>Explora situaciones demostrativas o construye un caso propio. Todo sucede en este navegador; en modo demo no enviamos tus elecciones.</p>
+  </div>
+
+  <div class="mission-tabs" role="tablist" aria-label="Elegir una misión">
+    {MISSION_SCENARIOS.map((mission, index) => (
+      <button type="button" role="tab" aria-selected={index === 0 ? "true" : "false"} data-mission-select={mission.id}>
+        <span>{mission.label}</span>{mission.title}
+      </button>
+    ))}
+    <button type="button" role="tab" aria-selected="false" data-mission-select="custom">
+      <span>Tu situación</span>Construir mi caso
+    </button>
+  </div>
+
+  <div class="mission-stage" data-guided-panel>
+    <div class="mission-context">
+      <p class="mission-kicker" data-mission-label>{first.label}</p>
+      <h3 data-mission-heading>{first.title}</h3>
+      <p data-mission-situation>{first.situation}</p>
+      <p class="mission-disclaimer" data-mission-disclaimer>{first.disclaimer}</p>
+      <fieldset>
+        <legend data-mission-question>{first.question}</legend>
+        <div data-mission-options>
+          {first.options.map((option) => (
+            <button type="button" data-option={option.id}>{option.label}</button>
+          ))}
+        </div>
+      </fieldset>
+      <div class="mission-consequence" aria-live="polite" data-mission-consequence>
+        Elige una decisión para ver sus consecuencias y controles.
+      </div>
+    </div>
+
+    <div class="mission-system">
+      <MissionWorkflow title="Proceso actual" steps={first.currentFlow} tone="current" />
+      <MissionWorkflow title="Sistema propuesto" steps={first.proposedFlow} tone="proposed" />
+      <div class="mission-result">
+        <div><span>Encaje preliminar</span><strong data-mission-service>Sistema de crecimiento</strong></div>
+        <div><span>Rango indicativo</span><strong data-mission-range>{first.indicativeRange}</strong></div>
+      </div>
+      <p class="mission-note">No es un presupuesto ni el resultado de un cliente. El alcance se confirma tras revisar proceso, datos y dependencias.</p>
+    </div>
+  </div>
+
+  <form class="mission-stage mission-custom" data-custom-panel hidden>
+    <div class="mission-context">
+      <p class="mission-kicker">Constructor de caso</p>
+      <h3>Describe el punto de fricción.</h3>
+      <p>Evita nombres de personas, contraseñas, documentos confidenciales o datos sensibles de terceros.</p>
+      <div class="mission-form-grid">
+        <label>Sector<input name="sector" maxlength="80" placeholder="Ej. consultoría" /></label>
+        <label>Objetivo<input name="objective" maxlength="120" placeholder="Ej. responder antes" /></label>
+        <label>Herramientas actuales<input name="tools" maxlength="120" placeholder="Ej. correo y CRM" /></label>
+        <label>Volumen aproximado<select name="volume"><option value="low">Bajo</option><option value="medium">Medio</option><option value="high">Alto</option></select></label>
+        <label>Sensibilidad de datos<select name="sensitivity"><option value="low">Baja</option><option value="medium">Media</option><option value="high">Alta</option></select></label>
+        <label>Bloqueo principal<select name="friction"><option value="manual">Trabajo manual</option><option value="sales-followup">Seguimiento comercial</option><option value="knowledge">Conocimiento interno</option></select></label>
+      </div>
+    </div>
+    <div class="mission-system mission-custom-result" aria-live="polite">
+      <p class="eyebrow">Lectura preliminar</p>
+      <h4 data-custom-service>Automation Sprint</h4>
+      <p data-custom-rationale>Un proceso delimitado permite empezar pequeño, observar excepciones y decidir con evidencia.</p>
+      <div class="mission-result"><div><span>Rango indicativo</span><strong data-custom-range>750–1.500 €</strong></div><div><span>Estado</span><strong>Solo borrador local</strong></div></div>
+      <ul data-custom-controls><li>Revisión del alcance</li><li>Aprobación antes de acciones externas</li><li>Recuperación manual documentada</li></ul>
+      <div class="mission-actions">
+        <button type="button" class="button-secondary" data-reset-mission>Reiniciar</button>
+        <button type="button" class="button-secondary" data-export-mission>Exportar JSON</button>
+        <button type="button" class="button-primary" data-transfer-mission>Pasar al asesor</button>
+      </div>
+      <p class="mission-note" data-transfer-status>No se ha guardado ni enviado información de contacto.</p>
+    </div>
+  </form>
+</section>
+
+<script>
+  import { evaluateCustomMission } from "../lib/missions/evaluate";
+  import { MISSION_DRAFT_KEY } from "../lib/missions/state";
+
+  const serviceNames = { "automation-sprint": "Automation Sprint", "growth-system": "Sistema de crecimiento", "private-ai": "IA privada" };
+
+  document.querySelectorAll("[data-mission-root]").forEach((root) => {
+    const scenarios = JSON.parse(root.getAttribute("data-missions") || "[]");
+    const guided = root.querySelector("[data-guided-panel]");
+    const custom = root.querySelector("[data-custom-panel]");
+    let active = scenarios[0];
+
+    const save = (draft) => {
+      try { localStorage.setItem(MISSION_DRAFT_KEY, JSON.stringify({ ...draft, updatedAt: new Date().toISOString() })); } catch (_) {}
+    };
+
+    const renderScenario = (scenario) => {
+      active = scenario;
+      root.querySelector("[data-mission-label]").textContent = scenario.label;
+      root.querySelector("[data-mission-heading]").textContent = scenario.title;
+      root.querySelector("[data-mission-situation]").textContent = scenario.situation;
+      root.querySelector("[data-mission-disclaimer]").textContent = scenario.disclaimer;
+      root.querySelector("[data-mission-question]").textContent = scenario.question;
+      root.querySelector("[data-mission-service]").textContent = serviceNames[scenario.service];
+      root.querySelector("[data-mission-range]").textContent = scenario.indicativeRange;
+      root.querySelector("[data-mission-consequence]").textContent = "Elige una decisión para ver sus consecuencias y controles.";
+      const options = root.querySelector("[data-mission-options]");
+      options.innerHTML = "";
+      scenario.options.forEach((option) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.option = option.id;
+        button.textContent = option.label;
+        options.append(button);
+      });
+      const flows = root.querySelectorAll(".mission-flow ol");
+      [scenario.currentFlow, scenario.proposedFlow].forEach((steps, flowIndex) => {
+        flows[flowIndex].innerHTML = steps.map((step, index) => `<li><span aria-hidden="true">${String(index + 1).padStart(2, "0")}</span><strong>${step}</strong></li>`).join("");
+      });
+      save({ mode: "guided", scenario: scenario.id });
+    };
+
+    root.addEventListener("click", (event) => {
+      const target = event.target.closest("button");
+      if (!target) return;
+      if (target.dataset.missionSelect) {
+        root.querySelectorAll('[role="tab"]').forEach((tab) => tab.setAttribute("aria-selected", String(tab === target)));
+        const isCustom = target.dataset.missionSelect === "custom";
+        guided.hidden = isCustom;
+        custom.hidden = !isCustom;
+        if (!isCustom) renderScenario(scenarios.find((item) => item.id === target.dataset.missionSelect));
+        else save({ mode: "custom" });
+      }
+      if (target.dataset.option) {
+        const option = active.options.find((item) => item.id === target.dataset.option);
+        root.querySelectorAll("[data-option]").forEach((button) => button.setAttribute("aria-pressed", String(button === target)));
+        root.querySelector("[data-mission-consequence]").textContent = `${option.consequence} Control: ${option.control}.`;
+        save({ mode: "guided", scenario: active.id, decision: option.id });
+      }
+    });
+
+    const form = custom;
+    const readCustom = () => Object.fromEntries(new FormData(form).entries());
+    const renderCustom = () => {
+      const input = readCustom();
+      const result = evaluateCustomMission(input);
+      root.querySelector("[data-custom-service]").textContent = serviceNames[result.service];
+      root.querySelector("[data-custom-range]").textContent = result.indicativeRange;
+      root.querySelector("[data-custom-rationale]").textContent = result.rationale;
+      root.querySelector("[data-custom-controls]").innerHTML = result.humanControls.map((item) => `<li>${item}</li>`).join("");
+      save({ mode: "custom", custom: input });
+      return { input, result };
+    };
+    form.addEventListener("input", renderCustom);
+    root.querySelector("[data-reset-mission]").addEventListener("click", () => {
+      form.reset();
+      try { localStorage.removeItem(MISSION_DRAFT_KEY); } catch (_) {}
+      renderCustom();
+    });
+    root.querySelector("[data-export-mission]").addEventListener("click", () => {
+      const payload = renderCustom();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
+      link.download = "varino-caso-local.json";
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+    root.querySelector("[data-transfer-mission]").addEventListener("click", () => {
+      const payload = renderCustom();
+      try { sessionStorage.setItem("varino_advisor_import_v1", JSON.stringify(payload)); } catch (_) {}
+      root.querySelector("[data-transfer-status]").textContent = "Resumen preparado localmente para el asesor. Podrás revisarlo antes de cualquier consentimiento.";
+      document.dispatchEvent(new CustomEvent("varino:open-advisor"));
+    });
+  });
+</script>

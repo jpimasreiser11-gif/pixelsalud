@@ -1,0 +1,7 @@
+---
+import Base from "../../layouts/Base.astro";
+import ServiceDetail from "../../components/ServiceDetail.astro";
+import { SERVICES, SITE } from "../../config";
+const service = SERVICES[1];
+---
+<Base title={`${service.name} — ${SITE.name}`} description={service.summary}><ServiceDetail service={service} problem="Las oportunidades llegan por canales distintos, faltan datos para priorizarlas y el seguimiento depende de memoria o tareas aisladas." fit={["Existe un proceso comercial identificable", "El equipo define criterios de encaje", "Los mensajes externos se revisarán antes de enviarse"]} approvals={["Aprobar criterios de cualificación", "Revisar comunicaciones externas", "Decidir propietario, prioridad y cierre"]} /></Base>

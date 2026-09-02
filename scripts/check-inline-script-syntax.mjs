@@ -29,7 +29,11 @@ function revisar(file) {
     if (!cuerpo.trim()) continue;
     if (/ld\+json/.test(attrs) || /\bsrc\s*=/.test(attrs)) continue;
     try {
-      new Function(cuerpo);
+      // Astro procesa los <script> sin is:inline como módulos y admite imports.
+      // new Function no admite esa sintaxis, así que retiramos solo las
+      // declaraciones import antes de validar el cuerpo restante.
+      const parseable = cuerpo.replace(/^\s*import\s+[^;]+;\s*$/gm, "");
+      new Function(parseable);
     } catch (e) {
       console.error(`✗ ${file}: script inline no es JS puro: ${e.message}`);
       errores++;

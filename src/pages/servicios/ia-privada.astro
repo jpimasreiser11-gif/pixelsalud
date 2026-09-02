@@ -1,0 +1,7 @@
+---
+import Base from "../../layouts/Base.astro";
+import ServiceDetail from "../../components/ServiceDetail.astro";
+import { SERVICES, SITE } from "../../config";
+const service = SERVICES[2];
+---
+<Base title={`${service.name} — ${SITE.name}`} description={service.summary}><ServiceDetail service={service} problem="El conocimiento está repartido, requiere permisos o no puede enviarse sin más a un proveedor externo." fit={["Las fuentes y propietarios pueden identificarse", "Hay requisitos de acceso, privacidad o despliegue", "Se acepta que el sistema se abstenga cuando falte evidencia"]} approvals={["Autorizar fuentes y permisos", "Revisar evaluaciones y límites", "Aprobar cualquier conexión o acción externa"]} /></Base>

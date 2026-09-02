@@ -1,0 +1,55 @@
+import type { MissionScenario } from "./types";
+
+export const MISSION_SCENARIOS: MissionScenario[] = [
+  {
+    id: "cold-opportunities",
+    label: "Crecimiento",
+    title: "Una oportunidad llega. Nadie responde a tiempo.",
+    situation: "Una consultora recibe solicitudes por formularios y correo. La información llega incompleta y el seguimiento depende de una persona.",
+    disclaimer: "Escenario demostrativo; no representa a un cliente real ni resultados obtenidos.",
+    service: "growth-system",
+    indicativeRange: "1.800–4.000 €",
+    question: "¿Qué debería ocurrir primero cuando entra una nueva oportunidad?",
+    options: [
+      { id: "draft", label: "Preparar y revisar", consequence: "El sistema ordena la información y prepara un borrador, pero una persona decide si se envía.", control: "Aprobación humana antes de contactar" },
+      { id: "route", label: "Asignar al responsable", consequence: "La oportunidad se clasifica y se deriva con contexto, sin enviar mensajes automáticamente.", control: "Reglas visibles y reasignación manual" },
+    ],
+    currentFlow: ["Solicitud dispersa", "Revisión tardía", "Seguimiento manual"],
+    proposedFlow: ["Captura estructurada", "Cualificación explicable", "Revisión humana", "Registro en CRM"],
+    risks: ["Contacto indebido", "Clasificación incorrecta", "Datos innecesarios"],
+  },
+  {
+    id: "repetitive-process",
+    label: "Operaciones",
+    title: "El equipo copia la misma información cada semana.",
+    situation: "Una empresa recibe documentos, comprueba campos y actualiza varias herramientas. Las excepciones se resuelven por mensajes privados.",
+    disclaimer: "Escenario demostrativo; los pasos se adaptan después de observar el proceso real.",
+    service: "automation-sprint",
+    indicativeRange: "750–1.500 €",
+    question: "¿Cómo debe reaccionar el sistema ante un documento incompleto?",
+    options: [
+      { id: "pause", label: "Pausar y solicitar revisión", consequence: "El caso queda visible en una cola con el motivo exacto del bloqueo.", control: "Recuperación manual sin perder el registro" },
+      { id: "return", label: "Devolver al origen", consequence: "Se prepara una solicitud de corrección que una persona puede revisar antes de enviarla.", control: "Plantilla controlada y aprobación" },
+    ],
+    currentFlow: ["Recepción", "Copia manual", "Errores dispersos", "Corrección informal"],
+    proposedFlow: ["Entrada validada", "Regla observable", "Cola de excepciones", "Actualización confirmada"],
+    risks: ["Duplicados", "Campos incorrectos", "Excepción no registrada"],
+  },
+  {
+    id: "private-knowledge",
+    label: "IA privada",
+    title: "El conocimiento existe, pero encontrarlo es difícil.",
+    situation: "Un equipo consulta procedimientos internos y recibe respuestas distintas según a quién pregunte. Algunos documentos requieren permisos específicos.",
+    disclaimer: "Escenario demostrativo; no implica que toda documentación sea apta para un modelo.",
+    service: "private-ai",
+    indicativeRange: "3.500–12.000 €+",
+    question: "¿Qué debería hacer el asistente cuando no encuentra evidencia suficiente?",
+    options: [
+      { id: "abstain", label: "Decir que no lo sabe", consequence: "La respuesta se bloquea y muestra qué fuente o permiso falta.", control: "Abstención verificable y escalado humano" },
+      { id: "escalate", label: "Preparar una consulta", consequence: "El sistema resume la pregunta para que la revise la persona responsable del contenido.", control: "Sin inventar respuesta ni ampliar permisos" },
+    ],
+    currentFlow: ["Pregunta", "Búsqueda informal", "Respuesta sin fuente"],
+    proposedFlow: ["Identidad y permisos", "Recuperación de fuentes", "Respuesta citada", "Abstención o escalado"],
+    risks: ["Respuesta inventada", "Acceso excesivo", "Documento desactualizado"],
+  },
+];

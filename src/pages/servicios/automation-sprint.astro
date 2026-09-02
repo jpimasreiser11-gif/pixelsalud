@@ -1,0 +1,7 @@
+---
+import Base from "../../layouts/Base.astro";
+import ServiceDetail from "../../components/ServiceDetail.astro";
+import { SERVICES, SITE } from "../../config";
+const service = SERVICES[0];
+---
+<Base title={`${service.name} — ${SITE.name}`} description={service.summary}><ServiceDetail service={service} problem="Un proceso acotado consume tiempo, reparte información entre herramientas o depende de copiar y revisar manualmente." fit={["Existe un inicio y un resultado reconocibles", "Las excepciones pueden enumerarse", "El equipo puede probar con casos representativos"]} approvals={["Validar reglas y casos de prueba", "Resolver excepciones fuera de regla", "Aceptar la entrega y cualquier ampliación"]} /></Base>

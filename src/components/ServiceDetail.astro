@@ -1,0 +1,26 @@
+---
+import { BASE, MAINTENANCE_PLANS } from "../config";
+
+interface Props {
+  service: any;
+  problem: string;
+  fit: string[];
+  approvals: string[];
+}
+const { service, problem, fit, approvals } = Astro.props;
+---
+
+<section class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+  <p class="eyebrow">{service.tag} · {service.range}</p>
+  <h1 class="display-title max-w-5xl">{service.name}<br /><span>{service.outcome}.</span></h1>
+  <p class="mt-8 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">{service.summary}</p>
+</section>
+
+<section class="mx-auto grid max-w-6xl gap-5 px-6 pb-20 lg:grid-cols-2">
+  <article class="rounded-3xl border border-black/8 bg-[#f7f7f5] p-8 dark:border-white/10 dark:bg-[#111318]"><p class="eyebrow">El problema</p><h2 class="mt-4 text-3xl font-semibold tracking-[-0.04em]">Cuando encaja</h2><p class="mt-4 leading-7 text-[#6e6e73] dark:text-[#a1a1a6]">{problem}</p><ul class="mt-6 space-y-3 text-sm">{fit.map((item) => <li class="border-t border-black/8 pt-3 dark:border-white/10">{item}</li>)}</ul></article>
+  <article class="rounded-3xl border border-black/8 p-8 dark:border-white/10"><p class="eyebrow">Alcance</p><h2 class="mt-4 text-3xl font-semibold tracking-[-0.04em]">Qué entregamos</h2><ul class="mt-6 space-y-3 text-sm">{service.deliverables.map((item: string) => <li class="border-t border-black/8 pt-3 dark:border-white/10">{item}</li>)}</ul></article>
+  <article class="rounded-3xl border border-black/8 p-8 dark:border-white/10"><p class="eyebrow">Control humano</p><h2 class="mt-4 text-3xl font-semibold tracking-[-0.04em]">Decisiones que no delegamos</h2><ul class="mt-6 space-y-3 text-sm">{approvals.map((item) => <li class="border-t border-black/8 pt-3 dark:border-white/10">{item}</li>)}</ul></article>
+  <article class="rounded-3xl border border-black/8 bg-[#0a0d14] p-8 text-white"><p class="eyebrow">Límites</p><h2 class="mt-4 text-3xl font-semibold tracking-[-0.04em]">No incluido por defecto</h2><ul class="mt-6 space-y-3 text-sm text-[#d2d2d7]">{service.exclusions.map((item: string) => <li class="border-t border-white/10 pt-3">{item}</li>)}</ul><p class="mt-6 text-xs leading-6 text-[#86868b]">El precio es orientativo y no constituye una oferta contractual. Dependencias, impuestos y costes de terceros se detallan antes de aceptar.</p></article>
+</section>
+
+<section class="mx-auto max-w-6xl px-6 py-20"><div class="section-heading"><div><p class="eyebrow">Después de entregar</p><h2>Mantenimiento opcional.</h2></div><p>Puedes operar el sistema con documentación y transferencia o acordar un plan recurrente.</p></div><div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{MAINTENANCE_PLANS.map((plan) => <article class="rounded-2xl border border-black/8 p-5 dark:border-white/10"><h3 class="font-semibold">{plan.name}</h3><strong class="mt-2 block text-sm text-[#655cff]">{plan.monthly}</strong><p class="mt-4 text-xs leading-6 text-[#6e6e73]">{plan.includes.join(" · ")}</p></article>)}</div><a href={`${BASE}/experiencia/`} class="button-primary mt-10">Simular un caso parecido</a></section>

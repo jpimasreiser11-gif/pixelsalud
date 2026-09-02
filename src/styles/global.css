@@ -419,3 +419,85 @@ body {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+.mission-shell {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem);
+  border: 1px solid rgb(17 19 24 / 0.08);
+  border-radius: 2.5rem;
+  background:
+    radial-gradient(circle at 85% 5%, rgb(101 92 255 / 0.14), transparent 30%),
+    #f7f7f5;
+  box-shadow: 0 40px 100px rgb(17 19 24 / 0.08);
+}
+
+.dark .mission-shell {
+  border-color: rgb(255 255 255 / 0.1);
+  background:
+    radial-gradient(circle at 85% 5%, rgb(101 92 255 / 0.2), transparent 32%),
+    #0a0d14;
+  box-shadow: none;
+}
+
+.mission-heading { display: grid; gap: 1.5rem; align-items: end; }
+.mission-heading h2 { margin-top: .55rem; max-width: 44rem; font-size: clamp(2.3rem, 5vw, 4.8rem); font-weight: 650; letter-spacing: -.055em; line-height: .98; }
+.mission-heading > p { max-width: 34rem; color: #6e6e73; line-height: 1.7; }
+.dark .mission-heading > p { color: #a1a1a6; }
+
+.mission-tabs { display: grid; gap: .65rem; margin-top: 2.5rem; }
+.mission-tabs button { min-height: 5rem; border: 1px solid rgb(17 19 24 / .08); border-radius: 1.2rem; background: rgb(255 255 255 / .75); padding: 1rem; text-align: left; font-size: .9rem; font-weight: 650; transition: border-color 160ms ease, transform 160ms ease, background 160ms ease; }
+.mission-tabs button span { display: block; margin-bottom: .35rem; color: #6e6e73; font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; }
+.mission-tabs button[aria-selected="true"] { border-color: #655cff; background: white; box-shadow: inset 0 0 0 1px #655cff; transform: translateY(-2px); }
+.dark .mission-tabs button { border-color: rgb(255 255 255 / .1); background: rgb(255 255 255 / .04); }
+.dark .mission-tabs button[aria-selected="true"] { background: rgb(101 92 255 / .12); }
+
+.mission-stage { display: grid; gap: 1rem; margin-top: 1rem; }
+.mission-context, .mission-system { border: 1px solid rgb(17 19 24 / .08); border-radius: 1.75rem; background: white; padding: clamp(1.4rem, 3vw, 2.5rem); }
+.dark .mission-context, .dark .mission-system { border-color: rgb(255 255 255 / .1); background: #111318; }
+.mission-kicker { color: #655cff; font-size: .7rem; font-weight: 750; letter-spacing: .15em; text-transform: uppercase; }
+.mission-context h3 { margin-top: .75rem; max-width: 34rem; font-size: clamp(1.8rem, 3.4vw, 3rem); font-weight: 650; letter-spacing: -.045em; line-height: 1.02; }
+.mission-context > p:not(.mission-kicker):not(.mission-disclaimer) { margin-top: 1rem; max-width: 40rem; color: #6e6e73; line-height: 1.65; }
+.dark .mission-context > p:not(.mission-kicker):not(.mission-disclaimer) { color: #a1a1a6; }
+.mission-disclaimer, .mission-note { margin-top: 1rem; color: #6e6e73; font-size: .73rem; line-height: 1.55; }
+.mission-context fieldset { margin-top: 2rem; }
+.mission-context legend { max-width: 36rem; font-size: 1rem; font-weight: 650; }
+.mission-context fieldset > div { display: grid; gap: .6rem; margin-top: 1rem; }
+.mission-context fieldset button { min-height: 48px; border: 1px solid rgb(17 19 24 / .1); border-radius: 1rem; padding: .8rem 1rem; text-align: left; font-size: .86rem; font-weight: 650; }
+.mission-context fieldset button:hover, .mission-context fieldset button[aria-pressed="true"] { border-color: #655cff; background: rgb(101 92 255 / .08); }
+.dark .mission-context fieldset button { border-color: rgb(255 255 255 / .12); }
+.mission-consequence { min-height: 5.5rem; margin-top: 1rem; border-left: 3px solid #655cff; border-radius: 0 1rem 1rem 0; background: rgb(101 92 255 / .07); padding: 1rem; color: #424245; font-size: .85rem; line-height: 1.6; }
+.dark .mission-consequence { color: #d2d2d7; }
+
+.mission-flow + .mission-flow { margin-top: 1.2rem; }
+.mission-flow > p { color: #6e6e73; font-size: .68rem; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
+.mission-flow ol { display: grid; gap: .45rem; margin-top: .7rem; }
+.mission-flow li { display: flex; align-items: center; gap: .8rem; min-height: 3.2rem; border-radius: .9rem; background: #f5f5f7; padding: .7rem .85rem; font-size: .82rem; }
+.mission-flow li span { color: #6e6e73; font-size: .62rem; font-weight: 650; }
+.mission-flow--proposed li { background: rgb(101 92 255 / .09); }
+.dark .mission-flow li { background: rgb(255 255 255 / .05); }
+.dark .mission-flow--proposed li { background: rgb(101 92 255 / .16); }
+.mission-result { display: grid; gap: .7rem; margin-top: 1.4rem; }
+.mission-result > div { border-top: 1px solid rgb(17 19 24 / .08); padding-top: .8rem; }
+.dark .mission-result > div { border-color: rgb(255 255 255 / .1); }
+.mission-result span { display: block; color: #6e6e73; font-size: .67rem; }
+.mission-result strong { display: block; margin-top: .25rem; font-size: 1rem; }
+
+.mission-form-grid { display: grid; gap: 1rem; margin-top: 2rem; }
+.mission-form-grid label { color: #424245; font-size: .76rem; font-weight: 650; }
+.dark .mission-form-grid label { color: #d2d2d7; }
+.mission-form-grid input, .mission-form-grid select { width: 100%; min-height: 46px; margin-top: .35rem; border: 1px solid rgb(17 19 24 / .12); border-radius: .9rem; background: white; padding: .7rem .8rem; color: #111318; font-size: .85rem; }
+.dark .mission-form-grid input, .dark .mission-form-grid select { border-color: rgb(255 255 255 / .14); background: #0a0d14; color: white; }
+.mission-custom-result h4 { margin-top: .65rem; font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 650; letter-spacing: -.045em; }
+.mission-custom-result > p:not(.eyebrow):not(.mission-note) { margin-top: 1rem; color: #6e6e73; line-height: 1.65; }
+.mission-custom-result > ul { margin-top: 1.3rem; }
+.mission-custom-result > ul li { border-top: 1px solid rgb(17 19 24 / .08); padding: .7rem 0; font-size: .84rem; }
+.mission-actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.5rem; }
+
+@media (min-width: 760px) {
+  .mission-heading { grid-template-columns: 1.2fr .8fr; }
+  .mission-tabs { grid-template-columns: repeat(4, 1fr); }
+  .mission-stage { grid-template-columns: 1.08fr .92fr; }
+  .mission-form-grid { grid-template-columns: repeat(2, 1fr); }
+  .mission-result { grid-template-columns: repeat(2, 1fr); }
+}

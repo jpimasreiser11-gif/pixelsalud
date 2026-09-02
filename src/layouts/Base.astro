@@ -16,6 +16,7 @@ const canonical = SITE.url ? new URL(Astro.url.pathname, SITE.url).href : "";
 
 const nav = [
   { href: `${BASE}/`, label: "Inicio" },
+  { href: `${BASE}/experiencia/`, label: "Experiencia" },
   { href: `${BASE}/servicios/`, label: "Servicios" },
   { href: `${BASE}/metodo/`, label: "Método" },
   { href: `${BASE}/seguridad/`, label: "Seguridad" },
@@ -121,7 +122,7 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
             <button
               id="menu-btn"
               type="button"
-              class="rounded-lg border border-black/10 dark:border-[#424245] px-2.5 py-1 text-xs text-[#86868b]"
+              class="rounded-lg border border-black/10 dark:border-[#424245] px-2.5 py-1 text-xs text-[#6e6e73] dark:text-[#a1a1a6]"
               aria-expanded="false"
               aria-controls="menu-movil"
             >
@@ -165,7 +166,7 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
 
     <!-- Apple-style Pro Footer -->
     <footer
-      class="mt-32 border-t border-black/5 dark:border-[#424245]/30 bg-[#f5f5f7] dark:bg-[#161617] text-[#86868b] text-[11px] leading-relaxed transition-colors"
+      class="mt-32 border-t border-black/5 dark:border-[#424245]/30 bg-[#f5f5f7] dark:bg-[#161617] text-[#6e6e73] dark:text-[#a1a1a6] text-[11px] leading-relaxed transition-colors"
     >
       <div class="mx-auto max-w-6xl px-6 py-12">
         <div class="grid gap-8 sm:grid-cols-2 md:grid-cols-4 pb-8 border-b border-black/5 dark:border-[#424245]/30">
@@ -173,7 +174,7 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
             <div class="mb-3">
               <Logo showTagline={true} />
             </div>
-            <p class="text-[#86868b] mt-2">
+            <p class="text-[#6e6e73] dark:text-[#a1a1a6] mt-2">
               Automatización y productos con IA, diseñados alrededor de procesos reales.
             </p>
           </div>
@@ -198,6 +199,7 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
             <p class="font-medium text-[#1d1d1f] dark:text-[#f5f5f7] mb-3 text-xs">Empresa & Contacto</p>
             <ul class="space-y-2">
               <li><a href={`${BASE}/contacto/`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Plantear un proyecto</a></li>
+              <li><a href={`${BASE}/sobre/`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Sobre VARINO</a></li>
               {SITE.email && <li><a href={`mailto:${SITE.email}`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">{SITE.email}</a></li>}
               {!hasContactChannel && <li>Canal de contacto pendiente</li>}
               <li><a href={`${BASE}/aviso-legal/`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Información legal</a></li>

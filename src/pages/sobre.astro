@@ -1,66 +1,11 @@
 ---
 import Base from "../layouts/Base.astro";
 import Cta from "../components/Cta.astro";
+import { SITE } from "../config";
 ---
-
-<Base
-  title="Sobre PixelSalud - quiénes somos"
-  description="PixelSalud es un estudio web español especializado en clínicas y centros de salud. Transparencia total: recién abiertos, precios de lanzamiento y garantía de entrega."
->
-  <section class="mx-auto max-w-3xl px-4 pb-10 pt-14">
-    <h1 class="text-3xl font-bold sm:text-4xl">Sobre PixelSalud</h1>
-
-    <div class="prose-custom mt-6 space-y-5 text-ink-600 dark:text-ink-300">
-      <p>
-        PixelSalud es un estudio web pequeño y especializado: solo trabajamos
-        con clínicas y centros de salud en España. Dental, fisioterapia,
-        estética, psicología, veterinaria. Ese foco es deliberado: cuanto más
-        acotado el sector, mejor sabemos qué convierte una visita web en una
-        primera cita.
-      </p>
-      <p>
-        Venimos de años construyendo sitios web rápidos, midiendo tráfico con
-        analítica y posicionando contenido en Google. Montamos PixelSalud
-        porque vimos el mismo patrón una y otra vez: clínicas excelentes en lo
-        suyo, invisibles en internet o con webs que no están a su altura.
-      </p>
-      <p>
-        Somos nuevos como agencia y no lo escondemos. No verás aquí
-        testimonios inventados, contadores de clientes falsos ni sellos de
-        premios que no existen. Verás precios de lanzamiento, una garantía
-        clara y trabajo que se puede comprobar. Las reseñas llegarán cuando
-        las ganemos, con nombre y apellidos de clientes reales.
-      </p>
-      <h2 class="text-xl font-bold text-ink-800 dark:text-ink-100">
-        Cómo trabajamos
-      </h2>
-      <ul class="list-disc space-y-2 pl-5">
-        <li>
-          <strong>Precio cerrado por escrito.</strong> Antes de empezar sabes
-          exactamente qué pagas y qué recibes.
-        </li>
-        <li>
-          <strong>Plazos con garantía.</strong> Si prometemos 72 horas y no
-          cumplimos, no cobramos. Así de simple.
-        </li>
-        <li>
-          <strong>Todo tuyo.</strong> Dominio, web y contenidos quedan a tu
-          nombre desde el primer día.
-        </li>
-        <li>
-          <strong>Sin permanencia.</strong> Los servicios mensuales se quedan
-          contigo por resultados, no por contrato.
-        </li>
-        <li>
-          <strong>Honestidad técnica.</strong> Si algo no te hace falta, te lo
-          decimos aunque perdamos la venta.
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <Cta
-    titulo="Pon a prueba lo que acabas de leer"
-    texto="Pídenos el mini análisis gratuito de tu presencia online. Sin compromiso y sin persecuciones comerciales después."
-  />
+<Base title={`Sobre ${SITE.name}`} description="Qué es VARINO, cómo trabaja y qué compromisos asume al diseñar automatización e IA.">
+  <section class="mx-auto max-w-6xl px-6 py-24 sm:py-32"><p class="eyebrow">Sobre VARINO</p><h1 class="display-title max-w-5xl">Valor convertido<br /><span>en operaciones.</span></h1><p class="mt-8 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">VARINO nace para llevar la inteligencia artificial a procesos concretos: Valor, Automatización, Resultados, Inteligencia, Negocio y Operaciones. Estamos construyendo la agencia y no presentamos una trayectoria, equipo o clientes que todavía no podamos demostrar.</p></section>
+  <section class="mx-auto grid max-w-6xl gap-5 px-6 pb-24 md:grid-cols-2"><article class="rounded-3xl border border-black/8 p-8 dark:border-white/10"><p class="eyebrow">Qué hacemos</p><h2 class="mt-4 text-3xl font-semibold tracking-[-0.04em]">Sistemas alrededor del trabajo real.</h2><p class="mt-4 leading-7 text-[#6e6e73] dark:text-[#a1a1a6]">Automatizamos tareas delimitadas, conectamos seguimiento comercial y diseñamos asistentes privados. El punto de partida siempre es el proceso, no una herramienta de moda.</p></article><article class="rounded-3xl border border-black/8 bg-[#0a0d14] p-8 text-white"><p class="eyebrow">Qué no hacemos</p><h2 class="mt-4 text-3xl font-semibold tracking-[-0.04em]">Autonomía sin responsables.</h2><p class="mt-4 leading-7 text-[#a1a1a6]">No compramos bases de datos, no inventamos pruebas sociales y no dejamos que un modelo envíe, prometa, gaste o acceda a información sensible sin autorización definida.</p></article></section>
+  <section class="mx-auto max-w-6xl px-6 pb-20"><p class="eyebrow">Nuestros principios</p><div class="mt-8 grid gap-px overflow-hidden rounded-3xl border border-black/8 bg-black/8 dark:border-white/10 dark:bg-white/10 sm:grid-cols-3">{[["01","Alcance visible","Entregables, límites y dependencias antes de construir."],["02","Evidencia antes de escala","Pruebas y revisión humana antes de ampliar."],["03","Propiedad acordada","Código, datos, licencias y operación se documentan por proyecto."]].map(([n,t,d]) => <article class="bg-white p-7 dark:bg-[#111318]"><span class="text-xs text-[#655cff]">{n}</span><h2 class="mt-8 text-xl font-semibold">{t}</h2><p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{d}</p></article>)}</div></section>
+  <Cta titulo="Conoce VARINO a través de un caso." texto="La experiencia interactiva explica mejor nuestro trabajo que una lista de palabras técnicas." />
 </Base>
