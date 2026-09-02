@@ -15,6 +15,7 @@
     "cf:local": "wrangler pages dev dist --local",
     "security:headers": "node scripts/check-security-headers.mjs",
     "claims:check": "node scripts/check-claims.mjs",
+    "images:check": "node scripts/check-image-manifest.mjs",
     "readiness": "npm run build && npm run scripts:syntax && npm run links:check"
   },
   "dependencies": {
