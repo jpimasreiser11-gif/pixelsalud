@@ -1,27 +1,199 @@
-// Config central de contacto y marca. Un solo sitio que tocar.
-// Base de despliegue sin barra final, para enlaces internos.
+// Fuente única de verdad para marca, oferta y canales de contacto.
+// Los campos vacíos son deliberados: no se publican identidades o canales inventados.
 export const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 export const SITE = {
-  name: "PixelSalud",
-  // Mantener false hasta que `npm run launch:check` pase con datos reales.
+  name: "VARINO",
+  brandDisplay: "VARINO",
+  brandSuffix: "",
   launchReady: false,
-  // TODO usuario: al comprar el dominio, cambiar por https://pixelsalud.es
-  url: "https://jpimasreiser11-gif.github.io/pixelsalud",
-  tagline: "Webs claras y rápidas para clínicas",
+  domainVerified: false,
+  trademarkReviewed: false,
+  url: "",
+  tagline: "Inteligencia, puesta a trabajar.",
+  commercialMessage: "Del proceso al progreso.",
+  outcomePromise: "Menos fricción. Más capacidad.",
   description:
-    "Estudio web para clínicas y centros de salud en España. Web piloto en 72 horas, integración con reserva y una base técnica preparada para SEO local.",
-  // TODO usuario: sustituir por hola@pixelsalud.es al contratar Google Workspace.
-  email: "jpimasreiser11@gmail.com",
-  // TODO usuario: numero WhatsApp Business en formato internacional sin +, ej. "34600111222".
+    "Sistemas de automatización e inteligencia artificial para empresas, diseñados con alcance claro, privacidad y control humano.",
+  email: "",
   whatsapp: "",
-  // TODO usuario: enlace Calendly de reunion de 15-30 min (curso, video 13).
   calendly: "",
-  // TODO usuario: datos del titular para paginas legales.
   legalOwner: "",
   legalNif: "",
   legalAddress: "",
 } as const;
+
+export const SERVICES = [
+  {
+    id: "automation-sprint",
+    numero: "01",
+    name: "Automation Sprint",
+    nombre: "Automation Sprint",
+    subtitle: "Un proceso crítico, convertido en un sistema fiable.",
+    subtitulo: "Un proceso crítico, convertido en un sistema fiable.",
+    summary:
+      "Mapeamos, construimos y probamos una automatización acotada, con observabilidad, recuperación y transferencia.",
+    descripcion:
+      "Mapeamos, construimos y probamos una automatización acotada, con observabilidad, recuperación y transferencia.",
+    range: "750–1.500 €",
+    precio: "750–1.500 €",
+    outcome: "Un proceso crítico automatizado",
+    resultado: "Un proceso crítico automatizado",
+    deliverables: [
+      "Mapa del proceso",
+      "Flujo observable",
+      "Recuperación manual",
+      "Documentación y transferencia",
+    ],
+    entregables: [
+      "Mapa del proceso",
+      "Flujo observable",
+      "Recuperación manual",
+      "Documentación y transferencia",
+    ],
+    exclusions: ["Licencias de terceros", "Cambios fuera del proceso acordado"],
+    examples: ["Clasificar solicitudes", "Preparar documentos", "Actualizar el CRM"],
+    ejemplos: ["Clasificar solicitudes", "Preparar documentos", "Actualizar el CRM"],
+    tag: "Operaciones",
+  },
+  {
+    id: "growth-system",
+    numero: "02",
+    name: "Sistema de crecimiento",
+    nombre: "Sistema de crecimiento",
+    subtitle: "Captación, seguimiento y operaciones conectadas.",
+    subtitulo: "Captación, seguimiento y operaciones conectadas.",
+    summary:
+      "Conectamos la entrada de oportunidades, su cualificación y el trabajo comercial manteniendo las decisiones en manos del equipo.",
+    descripcion:
+      "Conectamos la entrada de oportunidades, su cualificación y el trabajo comercial manteniendo las decisiones en manos del equipo.",
+    range: "1.800–4.000 €",
+    precio: "1.800–4.000 €",
+    outcome: "Captación, seguimiento y operaciones conectadas",
+    resultado: "Captación, seguimiento y operaciones conectadas",
+    deliverables: [
+      "Captura estructurada",
+      "Reglas de cualificación",
+      "Borradores sujetos a aprobación",
+      "Panel de actividad",
+    ],
+    entregables: [
+      "Captura estructurada",
+      "Reglas de cualificación",
+      "Borradores sujetos a aprobación",
+      "Panel de actividad",
+    ],
+    exclusions: ["Compra de bases de datos", "Envío autónomo sin aprobación"],
+    examples: ["Cualificar leads", "Preparar propuestas", "Priorizar seguimientos"],
+    ejemplos: ["Cualificar leads", "Preparar propuestas", "Priorizar seguimientos"],
+    tag: "Crecimiento",
+  },
+  {
+    id: "private-ai",
+    numero: "03",
+    name: "IA privada",
+    nombre: "IA privada",
+    subtitle: "Conocimiento y modelos bajo control.",
+    subtitulo: "Conocimiento y modelos bajo control.",
+    summary:
+      "Diseñamos asistentes, búsqueda documental y flujos locales o privados con permisos, evaluación y trazabilidad.",
+    descripcion:
+      "Diseñamos asistentes, búsqueda documental y flujos locales o privados con permisos, evaluación y trazabilidad.",
+    range: "3.500–12.000 €+",
+    precio: "3.500–12.000 €+",
+    outcome: "Conocimiento y modelos bajo control",
+    resultado: "Conocimiento y modelos bajo control",
+    deliverables: [
+      "Arquitectura y análisis de datos",
+      "Prototipo evaluable",
+      "Controles de acceso",
+      "Evaluación y documentación",
+    ],
+    entregables: [
+      "Arquitectura y análisis de datos",
+      "Prototipo evaluable",
+      "Controles de acceso",
+      "Evaluación y documentación",
+    ],
+    exclusions: ["Hardware", "Licencias y consumo no incluidos expresamente"],
+    examples: ["Asistente interno", "Buscador documental", "Copiloto privado"],
+    ejemplos: ["Asistente interno", "Buscador documental", "Copiloto privado"],
+    tag: "IA privada",
+  },
+] as const;
+
+// Alias temporal para las páginas del prototipo. Se elimina al migrar todas las vistas.
+export const SERVICIOS = SERVICES;
+
+export const MAINTENANCE_PLANS = [
+  {
+    id: "care",
+    name: "Care",
+    monthly: "99 €/mes",
+    includes: ["Supervisión básica", "Actualizaciones menores", "Informe mensual"],
+  },
+  {
+    id: "managed",
+    name: "Managed",
+    monthly: "249 €/mes",
+    includes: ["Monitorización", "Gestión de incidencias", "Ajustes mensuales"],
+  },
+  {
+    id: "optimize",
+    name: "Optimize",
+    monthly: "549 €/mes",
+    includes: ["Todo Managed", "Mejoras continuas", "Revisión de métricas"],
+  },
+  {
+    id: "private-ai-ops",
+    name: "Private AI Ops",
+    monthly: "Desde 990 €/mes",
+    includes: ["Operación del modelo", "Evaluación", "Seguridad y capacidad"],
+  },
+] as const;
+
+// Compatibilidad temporal con la página de precios actual.
+export const PLANES_PRECIOS = [
+  {
+    id: SERVICES[0].id,
+    nombre: SERVICES[0].name,
+    precio: SERVICES[0].range,
+    periodo: "por proyecto",
+    destacado: false,
+    descripcion: SERVICES[0].summary,
+    ahorroEstimado: SERVICES[0].outcome,
+    caracteristicas: SERVICES[0].deliverables,
+  },
+  {
+    id: SERVICES[1].id,
+    nombre: SERVICES[1].name,
+    precio: SERVICES[1].range,
+    periodo: "por proyecto",
+    destacado: true,
+    descripcion: SERVICES[1].summary,
+    ahorroEstimado: SERVICES[1].outcome,
+    caracteristicas: SERVICES[1].deliverables,
+  },
+  {
+    id: SERVICES[2].id,
+    nombre: SERVICES[2].name,
+    precio: SERVICES[2].range,
+    periodo: "por proyecto",
+    destacado: false,
+    descripcion: SERVICES[2].summary,
+    ahorroEstimado: SERVICES[2].outcome,
+    caracteristicas: SERVICES[2].deliverables,
+  },
+] as const;
+
+export const VERTICALES = [
+  { nombre: "Servicios profesionales", ejemplos: "asesorías, consultoras, agencias" },
+  { nombre: "Comercio", ejemplos: "ecommerce, retail, distribución" },
+  { nombre: "Operaciones", ejemplos: "logística, administración, soporte" },
+  { nombre: "Equipos de conocimiento", ejemplos: "documentación, formación, compliance" },
+] as const;
+
+export const hasContactChannel = Boolean(SITE.email || SITE.whatsapp || SITE.calendly);
 
 export const whatsappUrl = (msg: string): string =>
   SITE.whatsapp
