@@ -1,0 +1,51 @@
+---
+import { SITE } from "../config";
+
+interface Props {
+  class?: string;
+  showTagline?: boolean;
+}
+
+const { class: className = "", showTagline = false } = Astro.props;
+---
+
+<span class={`inline-flex items-center gap-2.5 ${className}`}>
+  <svg
+    data-logo="vi-monogram"
+    class="size-9 shrink-0"
+    viewBox="0 0 64 64"
+    role="img"
+    aria-label="Monograma V punto I de VARINO"
+  >
+    <rect
+      x="5"
+      y="5"
+      width="54"
+      height="54"
+      rx="18"
+      class="fill-[#111318] dark:fill-[#f7f7f5]"
+    />
+    <path
+      d="M18 21l12 24 9-18"
+      fill="none"
+      class="stroke-[#f7f7f5] dark:stroke-[#0a0d14]"
+      stroke-width="6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <circle cx="43" cy="19" r="4" class="fill-[#655cff]" />
+  </svg>
+
+  <span class="flex flex-col leading-none">
+    <span class="text-sm font-bold tracking-[-0.045em] text-[#111318] dark:text-[#f7f7f5]">
+      {SITE.brandDisplay}
+    </span>
+    {
+      showTagline && (
+        <span class="mt-1 text-[8px] font-semibold uppercase tracking-[0.12em] text-[#6e6e73] dark:text-[#a1a1a6]">
+          Valor · Inteligencia
+        </span>
+      )
+    }
+  </span>
+</span>

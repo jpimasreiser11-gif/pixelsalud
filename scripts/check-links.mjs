@@ -4,7 +4,10 @@ import { join, extname } from "node:path";
 
 const DIST = new URL("../dist", import.meta.url).pathname;
 // La base de despliegue no existe como carpeta en dist: se recorta.
-const BASE = "/pixelsalud";
+// Se deriva de la configuración para no conservar rutas de despliegues anteriores.
+const astroConfig = readFileSync(new URL("../astro.config.mjs", import.meta.url), "utf8");
+const configuredBase = astroConfig.match(/\bbase:\s*["']([^"']+)["']/)?.[1] ?? "/";
+const BASE = configuredBase === "/" ? "" : `/${configuredBase.replace(/^\/+|\/+$/g, "")}`;
 let errores = 0;
 const paginas = [];
 
