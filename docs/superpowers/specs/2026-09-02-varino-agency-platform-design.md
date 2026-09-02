@@ -103,13 +103,39 @@ The home page sequence is:
 
 1. Clear business promise.
 2. Advisor entry and service entry.
-3. Three service paths.
-4. From conversation to reviewed solution.
-5. Privacy, security, and local-AI trust block.
-6. Indicative prices and maintenance.
-7. Final advisor call to action.
+3. Hybrid interactive missions: three guided real-life scenarios plus a custom-case builder.
+4. Three service paths.
+5. From conversation to reviewed solution.
+6. Privacy, security, and local-AI trust block.
+7. Indicative prices and maintenance.
+8. Final advisor call to action.
 
 No case study, client logo, testimonial, or performance figure appears until it is real, documented, and authorized.
+
+### Interactive missions
+
+The interactive explanation is a professional decision simulator, not a game with points, prizes, artificial urgency, or childish visual language. It helps a visitor understand what VARINO does by making a small number of realistic operational choices and showing how those choices change the proposed system.
+
+The first release contains three clearly labelled demonstration scenarios:
+
+1. **Opportunities that go cold** — capture, qualification, draft follow-up, human approval, and CRM traceability.
+2. **A repetitive internal process** — intake, validation, exception handling, human recovery, and observable automation.
+3. **Private company knowledge** — permissions, local or private retrieval, source-grounded answers, and escalation when confidence is insufficient.
+
+An advanced **Build your own case** path lets the visitor select sector, objective, current tools, volume, data sensitivity, and the step that creates the most friction. It produces an editable, local-only briefing and a preliminary service fit. It does not produce a contractual quote or claim that work has started.
+
+Each guided mission follows the same loop:
+
+1. Present a believable situation without implying a real VARINO client.
+2. Ask the visitor to choose between two or three operational decisions.
+3. Reveal consequences across time, control, privacy, failure recovery, and human workload.
+4. Compare the current process with a proposed reviewed workflow.
+5. Explain the relevant VARINO service, exclusions, human approvals, and indicative range.
+6. Allow transfer of the structured summary to the advisor only after an explicit visitor action.
+
+All numeric examples are visibly marked as editable hypothetical inputs. Outputs are estimates based on those inputs, never achieved results, guarantees, testimonials, or evidence of client performance. The experience works without external writes while the site is in demo mode, supports keyboard and reduced-motion use, and retains progress locally without storing contact data.
+
+The old SYSTRA terminal, fabricated infrastructure metrics, generic prototype photography, and fixed 75-percent ROI assumptions are removed. Visuals use lightweight system diagrams, local abstract assets with provenance, and interface states that communicate real controls.
 
 ### Deferred pages and features
 
@@ -133,6 +159,8 @@ Each deferred item requires evidence that it will improve revenue, reduce operat
 5. The visitor receives an editable summary.
 6. The system explains purpose, retention, and rights and asks for explicit submission consent.
 7. Only after confirmation does it save a lead and enqueue preparation work.
+
+If the visitor arrives from an interactive mission, the advisor imports only the structured choices the visitor explicitly transfers. The visitor can inspect, edit, or discard them before any consent request. Mission progress and advisor contact details use separate storage lifecycles.
 
 The public chat never asks for passwords, API keys, confidential documents, health data, or other unnecessary sensitive information.
 
@@ -283,4 +311,3 @@ The design is successful when:
 - Failure states preserve data safely and provide a manual recovery path.
 - Legal, security, accessibility, and operational evidence is available before publication.
 - The first service can be sold and delivered within the founder's time and budget constraints.
-

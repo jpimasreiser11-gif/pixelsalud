@@ -337,7 +337,7 @@ Expected: FAIL until the pages are migrated.
 
 **Step 2: Implement the approved home sequence**
 
-Use these sections in order: promise, dual CTA, advisor preview, three offers, method, trust/local AI, pricing/maintenance preview, final advisor CTA. Remove the current unsupported 360-degree/savings language and fabricated calculator assumptions.
+Use these sections in order: promise, dual CTA, interactive-missions preview, three offers, method, trust/local AI, pricing/maintenance preview, final advisor CTA. Remove the current unsupported 360-degree/savings language, the SYSTRA terminal, generic prototype imagery, fabricated infrastructure metrics, and fixed calculator assumptions. No numeric output may be presented as an achieved result.
 
 **Step 3: Implement service and method pages**
 
@@ -358,7 +358,49 @@ git add src/pages src/config.ts scripts/check-claims.mjs tests/unit/claims.test.
 git commit -m "feat: rebuild truthful VARINO public offer"
 ```
 
-## Task 5: Create the tangible-systems image pipeline
+## Task 5: Build the hybrid interactive missions
+
+**Files:**
+- Create: `src/lib/missions/types.ts`
+- Create: `src/lib/missions/scenarios.ts`
+- Create: `src/lib/missions/evaluate.ts`
+- Create: `src/lib/missions/state.ts`
+- Create: `src/components/InteractiveMissions.astro`
+- Create: `src/components/MissionWorkflow.astro`
+- Create: `src/pages/experiencia.astro`
+- Modify: `src/pages/index.astro`
+- Create: `tests/unit/missions.test.ts`
+- Create: `tests/e2e/missions.spec.ts`
+- Create: `tests/e2e/missions-accessibility.spec.ts`
+
+**Step 1: Write failing scenario and claims tests**
+
+Assert that the three guided scenarios exist: cold opportunities, repetitive internal process, and private company knowledge. Every scenario must declare that it is demonstrative, contain no client identity, expose its assumptions, include a human approval or recovery point, and map to an approved service. Test the custom path with representative low- and high-sensitivity choices.
+
+**Step 2: Implement deterministic domain rules**
+
+Keep scenario content, decision consequences, service mapping, and workflow nodes in framework-independent TypeScript. Outputs include `currentFlow`, `proposedFlow`, `risks`, `humanControls`, `assumptions`, `service`, and `indicativeRange`. They never include achieved savings, a guaranteed result, or a binding quote.
+
+**Step 3: Implement the premium simulator UI**
+
+Use a restrained product-demo aesthetic: scenario cards, one decision at a time, an animated but reduced-motion-safe workflow, and a side-by-side before/proposed comparison. Do not use scores, badges, confetti, fake terminals, artificial urgency, or fabricated live activity. The full journey must work with keyboard, screen reader, touch, light theme, and dark theme.
+
+**Step 4: Add the custom-case builder and local draft boundary**
+
+Collect sector, objective, current tools, approximate volume, sensitivity, and friction using choices plus optional short text. Persist only non-contact mission choices under `varino_mission_draft_v1`. Provide visible reset, export-to-JSON, and transfer-to-advisor controls. Transfer requires an explicit action and remains local in demo mode; it cannot enqueue work or call an AI model.
+
+**Step 5: Test and commit**
+
+Run: `npm run test:unit -- missions && npx playwright test missions`
+
+Expected: all guided/custom journeys PASS on desktop/mobile, no external request contains mission data, and serious/critical accessibility violations are zero.
+
+```bash
+git add src/lib/missions src/components/InteractiveMissions.astro src/components/MissionWorkflow.astro src/pages/experiencia.astro src/pages/index.astro tests/unit/missions.test.ts tests/e2e/missions*.spec.ts
+git commit -m "feat: add professional VARINO mission simulator"
+```
+
+## Task 6: Create the tangible-systems image pipeline
 
 **Files:**
 - Create: `ops/images/README.md`
@@ -406,7 +448,7 @@ Run: `node scripts/check-image-manifest.mjs && npm run build`
 
 Expected: PASS, or the task remains explicitly blocked on a licensed local model rather than substituting unknown assets.
 
-## Task 6: Build the advisor domain model with no external writes
+## Task 7: Build the advisor domain model with no external writes
 
 **Files:**
 - Create: `src/lib/advisor/types.ts`
@@ -456,7 +498,7 @@ git add src/lib/advisor tests/unit/advisor-*.test.ts
 git commit -m "feat: add deterministic VARINO advisor domain"
 ```
 
-## Task 7: Implement the accessible advisor UI and demo fallback
+## Task 8: Implement the accessible advisor UI and demo fallback
 
 **Files:**
 - Create: `src/components/VarinoAdvisor.astro`
@@ -498,7 +540,7 @@ git add src/components/VarinoAdvisor.astro src/components/AdvisorSummary.astro s
 git commit -m "feat: add consent-first VARINO advisor experience"
 ```
 
-## Task 8: Define the D1 data model and secure API contract
+## Task 9: Define the D1 data model and secure API contract
 
 **Files:**
 - Create: `wrangler.toml`
@@ -541,7 +583,7 @@ git add wrangler.toml migrations functions tests/unit/api-briefings.test.ts
 git commit -m "feat: add validated briefing API and D1 schema"
 ```
 
-## Task 9: Add anti-abuse, consent versioning, and safe submission
+## Task 10: Add anti-abuse, consent versioning, and safe submission
 
 **Files:**
 - Create: `functions/_lib/turnstile.ts`
@@ -571,7 +613,7 @@ Run: `npm run test:unit -- consent api-briefings && npx playwright test advisor`
 
 Expected: PASS, including equal separation between required submission and optional marketing choices.
 
-## Task 10: Build the authenticated local worker and n8n workflow
+## Task 11: Build the authenticated local worker and n8n workflow
 
 **Files:**
 - Create: `functions/api/jobs/claim.ts`
@@ -617,7 +659,7 @@ git add functions/api/jobs ops/worker ops/n8n tests/unit/worker.test.ts ops/LOCA
 git commit -m "feat: add outbound-only local AI preparation worker"
 ```
 
-## Task 11: Add the human approval dashboard
+## Task 12: Add the human approval dashboard
 
 **Files:**
 - Create: `src/pages/admin/index.astro`
@@ -649,7 +691,7 @@ Run: `npm run test:unit -- approval && npx playwright test admin`
 
 Expected: worker/non-admin access denied; human approval path PASS; admin routes remain noindex.
 
-## Task 12: Implement truthful legal drafts and privacy operations
+## Task 13: Implement truthful legal drafts and privacy operations
 
 **Files:**
 - Modify: `src/pages/aviso-legal.astro`
@@ -686,7 +728,7 @@ Run: `npm run test:unit -- legal && npm run launch:check`
 
 Expected: unit tests PASS; launch check remains red because real legal identity/review is intentionally absent.
 
-## Task 13: Harden CSP, headers, secrets, and dependencies
+## Task 14: Harden CSP, headers, secrets, and dependencies
 
 **Files:**
 - Modify: `astro.config.mjs`
@@ -726,7 +768,7 @@ node scripts/check-secrets.mjs
 
 Expected: zero unresolved critical/high dependency findings; header and secret checks PASS.
 
-## Task 14: Add accessibility, visual, performance, and security regression gates
+## Task 15: Add accessibility, visual, performance, and security regression gates
 
 **Files:**
 - Create: `tests/e2e/accessibility.spec.ts`
@@ -759,7 +801,7 @@ git add tests/e2e scripts/check-performance-budget.mjs security/zap-baseline.con
 git commit -m "test: add VARINO launch quality gates"
 ```
 
-## Task 15: Build the consolidated readiness command and evidence pack
+## Task 16: Build the consolidated readiness command and evidence pack
 
 **Files:**
 - Modify: `package.json`
@@ -813,7 +855,7 @@ git add package.json scripts/check-launch-readiness.mjs ops/audits/README.md ops
 git commit -m "chore: consolidate VARINO local readiness evidence"
 ```
 
-## Task 16: Final local acceptance review
+## Task 17: Final local acceptance review
 
 **Files:**
 - Create: `ops/audits/local-acceptance-2026-09-02.md`
