@@ -7,44 +7,38 @@ interface Props {
 }
 
 const {
-  titulo = "¿Hablamos 15 minutos de tu clínica?",
-  texto = "Cuéntanos qué necesitas. Te respondemos el mismo día con una propuesta clara y sin compromiso.",
+  titulo = "Hablemos del proceso que quieres mejorar.",
+  texto = "Revisamos el contexto, las herramientas, los límites y la forma de medir antes de proponer una solución.",
 } = Astro.props;
 
 const wa = whatsappUrl(
-  "Hola, tengo una clínica y me interesa la web de PixelSalud."
+  `Hola, me interesa agendar una auditoría con ${SITE.name}.`
 );
 ---
 
-<section class="mx-auto max-w-6xl px-4 py-16">
+<section class="mx-auto max-w-6xl px-6 py-20">
   <div
-    class="rounded-3xl bg-brand-700 px-6 py-12 text-center text-white sm:px-12"
+    class="rounded-3xl border border-[#424245]/40 bg-gradient-to-b from-[#161617] to-black px-8 py-16 text-center text-white sm:px-16 shadow-2xl relative overflow-hidden"
   >
-    <h2 class="text-2xl font-bold sm:text-3xl">{titulo}</h2>
-    <p class="mx-auto mt-3 max-w-2xl text-brand-100">{texto}</p>
-    <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-40 bg-[#2997ff]/15 rounded-full blur-3xl pointer-events-none"></div>
+
+    <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight relative z-10">{titulo}</h2>
+    <p class="mx-auto mt-4 max-w-2xl text-sm sm:text-base text-[#86868b] relative z-10 leading-relaxed">{texto}</p>
+
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-4 relative z-10">
       <a
         href={`${BASE}/contacto/`}
-        class="rounded-xl bg-white px-6 py-3 font-semibold text-brand-700 transition hover:bg-brand-50"
-        >Pedir propuesta gratis</a
+        class="rounded-full bg-[#0071e3] px-7 py-3 text-xs sm:text-sm font-semibold text-white transition hover:bg-[#0077ed] shadow-lg shadow-[#0071e3]/25 active:scale-95"
       >
+        Plantear un caso
+      </a>
       {
         wa && (
           <a
             href={wa}
-            class="rounded-xl border border-brand-300 px-6 py-3 font-semibold text-white transition hover:bg-brand-600"
+            class="rounded-full border border-[#424245] bg-[#1d1d1f] px-6 py-3 text-xs sm:text-sm font-medium text-[#f5f5f7] transition hover:bg-[#2c2c2e]"
           >
-            WhatsApp directo
-          </a>
-        )
-      }
-      {
-        SITE.calendly && (
-          <a
-            href={SITE.calendly}
-            class="rounded-xl border border-brand-300 px-6 py-3 font-semibold text-white transition hover:bg-brand-600"
-          >
-            Reservar llamada
+            WhatsApp Directo
           </a>
         )
       }

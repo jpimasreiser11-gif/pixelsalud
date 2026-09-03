@@ -1,64 +1,91 @@
 ---
 import Base from "../layouts/Base.astro";
 import { SITE } from "../config";
-
-const titular = SITE.legalOwner || "[PENDIENTE: nombre del titular]";
 ---
 
-<Base title="Política de privacidad - PixelSalud" noindex={true}>
-  <section class="mx-auto max-w-3xl px-4 py-14">
-    <h1 class="text-3xl font-bold">Política de privacidad</h1>
-    <div class="mt-6 space-y-4 text-sm text-ink-600 dark:text-ink-300">
-      <p>
-        Conforme al Reglamento (UE) 2016/679 (RGPD) y a la Ley Orgánica 3/2018
-        (LOPDGDD), se informa al usuario del tratamiento de sus datos
-        personales en este sitio web.
-      </p>
-      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
-        Responsable
-      </h2>
-      <p>{titular}, contacto: {SITE.email}.</p>
-      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
-        Datos que tratamos y finalidad
-      </h2>
-      <p>
-        Los datos que nos facilites por el formulario de contacto o por correo
-        (nombre, clínica, web, correo electrónico y el contenido de tu mensaje)
-        se usan únicamente para responder a tu consulta y preparar la
-        propuesta que nos pidas. No se usan para publicidad automatizada ni se
-        ceden a terceros.
-      </p>
-      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
-        Base jurídica
-      </h2>
-      <p>
-        Tu consentimiento al enviar el formulario y, en su caso, la ejecución
-        de medidas precontractuales a petición tuya.
-      </p>
-      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
-        Conservación
-      </h2>
-      <p>
-        Conservamos los datos el tiempo necesario para atender tu consulta y
-        las obligaciones legales aplicables. Después se eliminan.
-      </p>
-      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
-        Tus derechos
-      </h2>
-      <p>
-        Puedes ejercer tus derechos de acceso, rectificación, supresión,
-        oposición, limitación y portabilidad escribiendo a {SITE.email}.
-        También puedes reclamar ante la Agencia Española de Protección de
-        Datos (aepd.es).
-      </p>
-      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
-        Terceros
-      </h2>
-      <p>
-        Este sitio es estático y no carga rastreadores de terceros. Si en el
-        futuro se añade analítica o herramientas de reserva, esta política se
-        actualizará antes de activarlas.
-      </p>
+<Base
+  title={`Política de Privacidad y Protección de Datos — ${SITE.name}`}
+  description="Política de privacidad conforme al Reglamento General de Protección de Datos (RGPD UE 2016/679) y la Ley Orgánica 3/2018 (LOPDGDD)."
+  noindex={true}
+>
+  <section class="mx-auto max-w-4xl px-6 py-20">
+    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#0071e3] dark:text-[#2997ff] mb-3">
+      Protección de Datos RGPD & LOPDGDD
+    </p>
+    <h1 class="text-3xl sm:text-5xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white mb-8">
+      Política de Privacidad
+    </h1>
+
+    <p class="mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5 text-sm text-amber-800 dark:text-amber-200">
+      Borrador no publicable. Deben confirmarse el responsable, los proveedores y los tratamientos reales antes del lanzamiento.
+    </p>
+
+    <div class="space-y-8 text-xs sm:text-sm text-[#6e6e73] dark:text-[#86868b] leading-relaxed">
+
+      <!-- Responsable -->
+      <div class="p-6 rounded-2xl bg-[#fbfbfd] dark:bg-[#161617] border border-black/5 dark:border-[#424245]/30">
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-3">1. Responsable del Tratamiento</h2>
+        <ul class="space-y-1.5 list-disc pl-5">
+          <li><strong>Identidad:</strong> {SITE.legalOwner || "Pendiente de completar"}</li>
+          <li><strong>NIF:</strong> {SITE.legalNif || "Pendiente de completar"}</li>
+          <li><strong>Dirección:</strong> {SITE.legalAddress || "Pendiente de completar"}</li>
+          <li><strong>Contacto de privacidad:</strong> {SITE.email || "Pendiente de completar"}</li>
+        </ul>
+      </div>
+
+      <!-- Finalidad -->
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">2. Finalidad del Tratamiento de los Datos</h2>
+        <p>En {SITE.name} tratamos la información que nos facilitan las personas interesadas con las siguientes finalidades exclusivas:</p>
+        <ul class="mt-2 space-y-1.5 list-disc pl-5">
+          <li><strong>Gestión de consultas y solicitudes:</strong> Atender las peticiones de contacto, presupuestos y solicitudes de información recibidas por los canales que se habiliten.</li>
+          <li><strong>Ejecución de Servicios Contratados:</strong> Desarrollar, desplegar y mantener los proyectos de automatización, software e inteligencia artificial acordados con clientes.</li>
+          <li><strong>Cumplimiento de Obligaciones Legales:</strong> Facturación, contabilidad y cumplimiento fiscal exigible.</li>
+        </ul>
+      </div>
+
+      <!-- Legitimación -->
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">3. Base Jurídica y Legitimación</h2>
+        <p>La base legal para el tratamiento de tus datos es:</p>
+        <ul class="mt-2 space-y-1.5 list-disc pl-5">
+          <li><strong>Medidas precontractuales o ejecución de contrato (Art. 6.1.b RGPD):</strong> Para responder a una solicitud iniciada por la persona interesada, preparar una propuesta y prestar los servicios contratados.</li>
+          <li><strong>Cumplimiento Legal (Art. 6.1.c RGPD):</strong> Obligaciones fiscales y contables derivadas de la relación mercantil.</li>
+          <li><strong>Consentimiento (Art. 6.1.a RGPD):</strong> Solo para finalidades adicionales que realmente lo requieran, como comunicaciones comerciales, mediante una aceptación separada y revocable. Esta versión no las realiza.</li>
+        </ul>
+      </div>
+
+      <!-- Conservación -->
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">4. Plazo de Conservación de los Datos</h2>
+        <p>Las consultas se conservarán solo durante el tiempo necesario para responder y gestionar la relación precontractual. Si existe una relación contractual, la documentación se conservará durante los plazos aplicables a cada obligación y posible responsabilidad. Los libros, correspondencia, documentación y justificantes del negocio tienen, con carácter general, un plazo mercantil de seis años desde el último asiento, sin perjuicio de plazos tributarios o especiales distintos.</p>
+      </div>
+
+      <!-- Destinatarios -->
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">5. Comunicación de Datos a Terceros</h2>
+        <p>Los destinatarios y proveedores deberán enumerarse aquí cuando se hayan decidido los servicios reales de formularios, analítica, alojamiento e inteligencia artificial. No debe publicarse este apartado hasta completar esa revisión.</p>
+      </div>
+
+      <!-- Derechos -->
+      <div class="p-6 rounded-2xl bg-[#fbfbfd] dark:bg-[#161617] border border-black/5 dark:border-[#424245]/30">
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">6. Ejercicio de Derechos (ARSULIPO)</h2>
+        <p>Cualquier persona tiene derecho a obtener confirmación sobre si en {SITE.name} estamos tratando datos personales que les conciernen. Los interesados tienen derecho a:</p>
+        <ul class="mt-2 space-y-1 list-disc pl-5">
+          <li>Acceder a sus datos personales.</li>
+          <li>Solicitar la rectificación de los datos inexactos.</li>
+          <li>Solicitar su supresión cuando los datos ya no sean necesarios.</li>
+          <li>Solicitar la limitación u oposición a su tratamiento.</li>
+          <li>Solicitar la portabilidad de sus datos.</li>
+        </ul>
+        <p class="mt-3">El canal para ejercer estos derechos se publicará aquí antes de que la web empiece a recoger datos. Podrá solicitarse información adicional únicamente cuando sea necesaria para verificar la identidad de quien ejerce el derecho. Asimismo, puede presentar una reclamación ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" class="text-[#0071e3] underline">www.aepd.es</a>).</p>
+      </div>
+
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">7. Funcionamiento de esta versión</h2>
+        <p>La guía pública calcula la orientación dentro del navegador y no conserva la conversación. El formulario sin canal configurado únicamente copia un briefing al portapapeles del visitante. No se usan analítica, publicidad ni rastreadores de terceros. La preferencia de tema se guarda localmente en el navegador.</p>
+      </div>
+
     </div>
   </section>
 </Base>

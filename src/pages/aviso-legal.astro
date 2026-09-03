@@ -1,62 +1,65 @@
 ---
 import Base from "../layouts/Base.astro";
 import { SITE } from "../config";
-
-const titular = SITE.legalOwner || "[PENDIENTE: nombre del titular]";
-const nif = SITE.legalNif || "[PENDIENTE: NIF]";
-const direccion = SITE.legalAddress || "[PENDIENTE: dirección]";
 ---
 
-<Base title="Aviso legal - PixelSalud" noindex={true}>
-  <section class="mx-auto max-w-3xl px-4 py-14">
-    <h1 class="text-3xl font-bold">Aviso legal</h1>
-    <div class="mt-6 space-y-4 text-sm text-ink-600 dark:text-ink-300">
-      <p>
-        En cumplimiento de la Ley 34/2002, de 11 de julio, de Servicios de la
-        Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se
-        informa de los siguientes datos identificativos del titular de
-        {SITE.url}:
-      </p>
-      <ul class="list-disc space-y-1 pl-5">
-        <li>Titular: {titular}</li>
-        <li>NIF: {nif}</li>
-        <li>Domicilio: {direccion}</li>
-        <li>Correo electrónico: {SITE.email}</li>
-      </ul>
-      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
-        Condiciones de uso
-      </h2>
-      <p>
-        El acceso a este sitio web atribuye la condición de usuario e implica
-        la aceptación de las presentes condiciones. El usuario se compromete a
-        hacer un uso adecuado de los contenidos y a no emplearlos para
-        actividades ilícitas o contrarias a la buena fe.
-      </p>
-      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
-        Propiedad intelectual
-      </h2>
-      <p>
-        Los contenidos de este sitio, incluyendo textos, diseño y código, son
-        titularidad de {SITE.name} o de sus licenciantes. Queda prohibida su
-        reproducción sin autorización expresa.
-      </p>
-      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
-        Responsabilidad
-      </h2>
-      <p>
-        {SITE.name} no se hace responsable del mal uso de los contenidos de
-        este sitio ni de los daños derivados de circunstancias ajenas a su
-        control. Los presupuestos y plazos publicados son orientativos hasta su
-        confirmación por escrito.
-      </p>
-      <h2 class="pt-2 text-lg font-bold text-ink-800 dark:text-ink-100">
-        Legislación aplicable
-      </h2>
-      <p>
-        La relación entre {SITE.name} y el usuario se regirá por la normativa
-        española vigente, siendo competentes los juzgados y tribunales que
-        correspondan conforme a derecho.
-      </p>
+<Base
+  title={`Aviso Legal — ${SITE.name}`}
+  description={`Borrador de información legal y condiciones generales de uso de ${SITE.name}; pendiente de completar y revisar antes del lanzamiento.`}
+  noindex={true}
+>
+  <section class="mx-auto max-w-4xl px-6 py-20">
+    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#0071e3] dark:text-[#2997ff] mb-3">
+      Cumplimiento Normativo LSSI-CE
+    </p>
+    <h1 class="text-3xl sm:text-5xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white mb-8">
+      Aviso Legal
+    </h1>
+
+    <p class="mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5 text-sm text-amber-800 dark:text-amber-200">
+      Borrador no publicable. El titular debe completar y revisar los datos legales antes del lanzamiento.
+    </p>
+
+    <div class="space-y-8 text-xs sm:text-sm text-[#6e6e73] dark:text-[#86868b] leading-relaxed">
+
+      <!-- 1. Datos Identificativos -->
+      <div class="p-6 rounded-2xl bg-[#fbfbfd] dark:bg-[#161617] border border-black/5 dark:border-[#424245]/30">
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-3">1. Datos Identificativos del Titular</h2>
+        <p>En cumplimiento de lo dispuesto en el artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa a los usuarios de los datos identificativos del titular de este sitio web:</p>
+        <ul class="mt-3 space-y-1.5 list-disc pl-5">
+          <li><strong>Denominación o nombre:</strong> {SITE.legalOwner || "Pendiente de completar"}</li>
+          <li><strong>NIF:</strong> {SITE.legalNif || "Pendiente de completar"}</li>
+          <li><strong>Domicilio:</strong> {SITE.legalAddress || "Pendiente de completar"}</li>
+          <li><strong>Correo electrónico:</strong> {SITE.email || "Pendiente de completar"}</li>
+          <li><strong>Actividad:</strong> Servicios de ingeniería de software, arquitectura de sistemas y soluciones de inteligencia artificial para empresas.</li>
+        </ul>
+      </div>
+
+      <!-- 2. Objeto y Ámbito de Aplicación -->
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">2. Objeto y Condiciones Generales de Uso</h2>
+        <p>El acceso y navegación por este sitio web atribuye la condición de Usuario, implicando la aceptación plena y sin reservas de todas las disposiciones incluidas en este Aviso Legal. El usuario se compromete a hacer un uso adecuado de los contenidos y servicios de conformidad con la ley, la buena fe, el orden público y los usos del tráfico mercantil.</p>
+      </div>
+
+      <!-- 3. Propiedad Intelectual e Industrial -->
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">3. Propiedad Intelectual e Industrial</h2>
+        <p>Todos los contenidos del sitio web (textos, códigos fuente, diseños gráficos, interfaces, logotipos, marcas comerciales, esquemas de arquitectura de software y material multimedia) son titularidad de {SITE.legalOwner} o de terceros que han autorizado debidamente su uso, encontrándose protegidos por la legislación española e internacional sobre propiedad intelectual e industrial.</p>
+        <p class="mt-2">Queda expresamente prohibida la reproducción, distribución, comunicación pública y transformación, total o parcial, de los contenidos sin la previa autorización expresa y por escrito de {SITE.name}.</p>
+      </div>
+
+      <!-- 4. Exclusión de Responsabilidad -->
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">4. Exclusión de Garantías y Responsabilidad</h2>
+        <p>{SITE.legalOwner} no se hace responsable de los daños o perjuicios de cualquier naturaleza derivados de errores u omisiones en los contenidos, falta de disponibilidad del portal o la transmisión de virus o programas lesivos en los contenidos, a pesar de haber adoptado todas las medidas tecnológicas preventivas necesarias para su correcto funcionamiento y seguridad.</p>
+      </div>
+
+      <!-- 5. Legislación Aplicable y Jurisdicción -->
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">5. Legislación Aplicable y Jurisdicción</h2>
+        <p>Para la resolución de cualquier controversia o cuestión litigiosa relativa a este sitio web o a las actividades en él desarrolladas, será de aplicación la legislación española vigente, sometiéndose expresamente las partes a la jurisdicción de los Juzgados y Tribunales competentes con renuncia a cualquier otro fuero que pudiera corresponderles.</p>
+      </div>
+
     </div>
   </section>
 </Base>

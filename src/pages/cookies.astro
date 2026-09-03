@@ -3,26 +3,32 @@ import Base from "../layouts/Base.astro";
 import { SITE } from "../config";
 ---
 
-<Base title="Política de cookies - PixelSalud" noindex={true}>
-  <section class="mx-auto max-w-3xl px-4 py-14">
-    <h1 class="text-3xl font-bold">Política de cookies</h1>
-    <div class="mt-6 space-y-4 text-sm text-ink-600 dark:text-ink-300">
-      <p>
-        Este sitio web no utiliza cookies de seguimiento, publicidad ni
-        analítica de terceros.
-      </p>
-      <p>
-        Solo se usa el almacenamiento local del navegador para recordar tu
-        preferencia de tema claro u oscuro. Ese dato no sale de tu navegador,
-        no te identifica y puedes borrarlo cuando quieras desde la
-        configuración de tu navegador.
-      </p>
-      <p>
-        Si en el futuro incorporamos herramientas que usen cookies, por
-        ejemplo analítica o sistemas de reserva, esta página se actualizará y,
-        cuando sea exigible, se mostrará un aviso de consentimiento previo.
-      </p>
-      <p>Dudas: {SITE.email}.</p>
+<Base
+  title={`Cookies y almacenamiento local — ${SITE.name}`}
+  description="Información sobre el almacenamiento técnico utilizado por la web."
+>
+  <section class="mx-auto max-w-4xl px-6 py-20">
+    <p class="eyebrow">Privacidad</p>
+    <h1 class="mt-3 text-4xl font-semibold tracking-[-0.045em] text-[#1d1d1f] dark:text-white sm:text-6xl">
+      Cookies y almacenamiento local
+    </h1>
+    <div class="mt-10 space-y-8 text-sm leading-7 text-[#6e6e73] dark:text-[#a1a1a6]">
+      <div>
+        <h2 class="text-lg font-semibold text-[#1d1d1f] dark:text-white">Qué utiliza esta versión</h2>
+        <p class="mt-2">
+          La versión actual no incorpora analítica, publicidad ni cookies de terceros. El navegador solo guarda
+          la preferencia de tema claro u oscuro en <code>localStorage</code> con la clave <code>varino_theme</code>.
+          La conversación con la guía se procesa en tu propio navegador y no se almacena: al cerrar la página desaparece.
+        </p>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-[#1d1d1f] dark:text-white">Cómo eliminar la preferencia</h2>
+        <p class="mt-2">
+          Puedes borrar los datos del sitio desde la configuración de privacidad de tu navegador. Si en el futuro
+          se añade analítica u otro rastreador, esta página y el mecanismo de consentimiento deberán actualizarse
+          antes de activarlo.
+        </p>
+      </div>
     </div>
   </section>
 </Base>

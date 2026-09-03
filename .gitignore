@@ -6,3 +6,7 @@ work/
 test-results/
 playwright-report/
 coverage/
+
+# Operación comercial y expedientes locales. El repositorio de la web es público.
+ops/
+.superpowers/

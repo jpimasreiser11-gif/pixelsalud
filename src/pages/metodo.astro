@@ -9,10 +9,31 @@ const steps = [
   ["04", "Revisar", "Probamos casos normales y excepciones. Una persona acepta, corrige o rechaza la entrega."],
   ["05", "Mejorar", "Solo escalamos lo que puede medirse, mantenerse y operarse con responsables claros."],
 ];
+const documents = [
+  ["01", "Diagnóstico CAIO", "Detecta dónde la IA aporta valor, qué datos existen y qué riesgos impiden avanzar."],
+  ["02", "Mapa del Bucle", "Hace visibles entradas, decisiones, excepciones, responsables y resultados."],
+  ["03", "PRD", "Convierte la conversación en requisitos, límites y criterios de aceptación verificables."],
+  ["04", "Plan de Implementación", "Ordena arquitectura, integraciones, pruebas, despliegue y recuperación."],
+  ["05", "Plan de Adopción", "Prepara formación, responsables y métricas para que el sistema se utilice de verdad."],
+  ["06", "Plan de Recurrencia", "Define monitorización, soporte, costes, mejoras y salida después de la entrega."],
+];
 ---
 <Base title={`Método — ${SITE.name}`} description="Diagnóstico, diseño, construcción, revisión y mejora con alcance y aprobaciones definidos.">
   <section class="mx-auto max-w-6xl px-6 py-24 sm:py-32"><p class="eyebrow">Método VARINO</p><h1 class="display-title max-w-5xl">Del proceso<br /><span>al progreso.</span></h1><p class="mt-8 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">Cada etapa produce evidencia y termina con una decisión humana. Si no se puede definir cómo probar, recuperar y mantener una solución, todavía no está lista para escalar.</p></section>
   <section class="mx-auto max-w-6xl px-6 pb-24"><ol class="space-y-4">{steps.map(([n,t,d]) => <li class="grid gap-5 rounded-3xl border border-black/8 p-7 dark:border-white/10 sm:grid-cols-[5rem_15rem_1fr] sm:items-center"><span class="text-sm font-bold text-[#655cff]">{n}</span><h2 class="text-2xl font-semibold tracking-[-0.03em]">{t}</h2><p class="leading-7 text-[#6e6e73] dark:text-[#a1a1a6]">{d}</p></li>)}</ol></section>
+  <section class="border-y border-black/6 bg-[#111318] text-white dark:border-white/10">
+    <div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+      <p class="eyebrow">Un expediente, no una caja negra</p>
+      <div class="section-heading mt-3"><h2>Seis documentos para que el sistema siga siendo tuyo.</h2><p class="!text-[#b7b7bf]">La IA puede preparar borradores y demos. El alcance, los datos, las credenciales y el despliegue siempre pasan por aprobación humana.</p></div>
+      <ol class="mt-12 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        {documents.map(([n, title, description]) => <li class="rounded-3xl border border-white/10 bg-white/5 p-6"><span class="text-xs font-bold text-[#aaa5ff]">{n}</span><h3 class="mt-8 text-xl font-semibold tracking-[-0.03em]">{title}</h3><p class="mt-3 text-sm leading-6 text-[#b7b7bf]">{description}</p></li>)}
+      </ol>
+      <div class="mt-10 rounded-3xl border border-white/10 bg-white/5 p-7 sm:grid sm:grid-cols-[1fr_auto] sm:items-center sm:gap-8">
+        <div><p class="text-xs font-bold uppercase tracking-[.14em] text-[#aaa5ff]">Circuito de entrega</p><p class="mt-3 max-w-3xl text-sm leading-7 text-[#d2d2d7]">Pago verificado → diagnóstico → documentos → construcción en sandbox → pruebas → aceptación → despliegue aprobado → adopción → mantenimiento.</p></div>
+        <span class="mt-5 inline-flex rounded-full border border-[#7770ff]/40 bg-[#655cff]/15 px-4 py-2 text-xs font-bold text-[#c6c3ff] sm:mt-0">Automatizado con control</span>
+      </div>
+    </div>
+  </section>
   <section class="border-y border-black/6 bg-[#f7f7f5] dark:border-white/10 dark:bg-[#0a0d14]"><div class="mx-auto grid max-w-6xl gap-5 px-6 py-24 md:grid-cols-3">{[["Antes","Objetivo, línea base, datos, permisos y criterio de aceptación."],["Durante","Registro de decisiones, pruebas de excepciones y documentación."],["Después","Transferencia, propiedad, soporte, reversibilidad y plan de mejora."]].map(([t,d]) => <article class="rounded-2xl bg-white p-6 dark:bg-[#111318]"><h2 class="text-xl font-semibold">{t}</h2><p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{d}</p></article>)}</div></section>
   <Cta />
 </Base>

@@ -12,15 +12,15 @@ describe("VARINO configuration", () => {
 
   it("publishes the approved offer ranges", () => {
     expect(SERVICES.map((service) => service.range)).toEqual([
-      "750–1.500 €",
-      "1.800–4.000 €",
-      "3.500–12.000 €+",
+      "950–1.500 €",
+      "2.500–4.500 €",
+      "4.500–12.000 €+",
     ]);
     expect(MAINTENANCE_PLANS.map((plan) => plan.monthly)).toEqual([
-      "99 €/mes",
-      "249 €/mes",
-      "549 €/mes",
-      "Desde 990 €/mes",
+      "149 €/mes",
+      "349 €/mes",
+      "690 €/mes",
+      "Desde 1.190 €/mes",
     ]);
   });
 });

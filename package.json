@@ -8,15 +8,14 @@
     "preview": "astro preview",
     "scripts:syntax": "node scripts/check-inline-script-syntax.mjs",
     "links:check": "node scripts/check-links.mjs",
-    "launch:check": "node scripts/check-launch-readiness.mjs",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
     "cf:local": "wrangler pages dev dist --local",
     "security:headers": "node scripts/check-security-headers.mjs",
+    "csp:check": "node scripts/check-csp-compatibility.mjs",
     "claims:check": "node scripts/check-claims.mjs",
-    "images:check": "node scripts/check-image-manifest.mjs",
-    "readiness": "npm run build && npm run scripts:syntax && npm run links:check"
+    "readiness": "npm run build && npm run scripts:syntax && npm run links:check && npm run csp:check"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "5.3.0",

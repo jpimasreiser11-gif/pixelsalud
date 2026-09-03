@@ -1,184 +1,214 @@
 ---
-import { MISSION_SCENARIOS } from "../lib/missions/scenarios";
-import MissionWorkflow from "./MissionWorkflow.astro";
-
 interface Props { compact?: boolean }
 const { compact = false } = Astro.props;
-const first = MISSION_SCENARIOS[0];
+import { BASE } from "../config";
+// En desarrollo existe /api/guide y un modelo local redacta las respuestas.
+// En la web publicada no hay servidor: el mismo motor corre en el navegador.
+const liveAi = import.meta.env.DEV;
 ---
 
-<section class:list={["mission-shell", compact && "mission-shell--compact"]} data-mission-root data-missions={JSON.stringify(MISSION_SCENARIOS)} aria-labelledby="mission-title">
-  <div class="mission-heading">
+<section class:list={["ai-guide", { "ai-guide--compact": compact }]} data-ai-guide data-base={BASE} data-live-ai={String(liveAi)}>
+  <div class="ai-guide__heading">
     <div>
-      <p class="eyebrow">Experiencia interactiva</p>
-      <h2 id="mission-title">Decide como si el proceso fuera tuyo.</h2>
+      <p class="eyebrow">Consultoría inteligente</p>
+      <h2>Diseñemos tu sistema juntos.</h2>
     </div>
-    <p>Explora situaciones demostrativas o construye un caso propio. Todo sucede en este navegador; en modo demo no enviamos tus elecciones.</p>
+    <p class="ai-guide__promise"><span><i></i>Análisis privado y guiado</span>Habla con la guía como con un consultor. Irá entendiendo tu negocio, dibujando la solución y calculando un rango basado en trabajo real.</p>
   </div>
 
-  <div class="mission-tabs" role="tablist" aria-label="Elegir una misión">
-    {MISSION_SCENARIOS.map((mission, index) => (
-      <button type="button" role="tab" aria-selected={index === 0 ? "true" : "false"} data-mission-select={mission.id}>
-        <span>{mission.label}</span>{mission.title}
-      </button>
-    ))}
-    <button type="button" role="tab" aria-selected="false" data-mission-select="custom">
-      <span>Tu situación</span>Construir mi caso
-    </button>
-  </div>
+  <div class="ai-studio">
+    <article class="ai-chat" aria-label="Conversación con VARINO Guide">
+      <header class="ai-chat__topbar">
+        <div class="ai-orb" aria-hidden="true"><span></span></div>
+        <div><strong>VARINO Guide</strong><small>Arquitecto de automatización e IA</small></div>
+        <span class="ai-chat__local" data-guide-status>{liveAi ? "Modelo local activo" : "Análisis en tu navegador"}</span>
+      </header>
+      <div class="ai-chat__messages" data-guide-messages aria-live="polite">
+        <div class="ai-message ai-message--assistant"><p>Hola, soy VARINO Guide. Cuéntame a qué se dedica tu empresa y qué te gustaría mejorar. Con tus respuestas dibujaré el sistema y un rango de horas y precio.</p></div>
+      </div>
+      <form class="ai-composer" data-guide-form>
+        <label class="sr-only" for="guide-message">Escribe tu mensaje</label>
+        <textarea id="guide-message" name="message" maxlength="1200" rows="1" placeholder="Por ejemplo: quiero automatizar la atención al cliente" required></textarea>
+        <button type="submit" aria-label="Enviar mensaje">↑</button>
+      </form>
+      <p class="ai-chat__privacy"><span aria-hidden="true">◉</span>No incluyas contraseñas, secretos ni datos personales de terceros. La conversación se procesa en tu equipo y no se guarda al cerrar la página.</p>
+    </article>
 
-  <div class="mission-stage" data-guided-panel>
-    <div class="mission-context">
-      <p class="mission-kicker" data-mission-label>{first.label}</p>
-      <h3 data-mission-heading>{first.title}</h3>
-      <p data-mission-situation>{first.situation}</p>
-      <p class="mission-disclaimer" data-mission-disclaimer>{first.disclaimer}</p>
-      <fieldset>
-        <legend data-mission-question>{first.question}</legend>
-        <div data-mission-options>
-          {first.options.map((option) => (
-            <button type="button" data-option={option.id}>{option.label}</button>
-          ))}
+    <article class="ai-preview" aria-label="Arquitectura propuesta">
+      <div class="ai-preview__media">
+        <div class="ai-preview__grid" aria-hidden="true"></div>
+        <header class="ai-preview__header"><span>ARQUITECTURA VARINO</span><span data-guide-stage>DESCUBRIMIENTO</span></header>
+        <div class="ai-preview__intro">
+          <p data-preview-kicker>Sistema en definición</p>
+          <h3 data-preview-title>Tu necesidad, convertida en una arquitectura clara.</h3>
+          <p data-preview-caption>La visualización cambiará mientras la guía comprende tu proceso, controles y objetivo.</p>
         </div>
-      </fieldset>
-      <div class="mission-consequence" aria-live="polite" data-mission-consequence>
-        Elige una decisión para ver sus consecuencias y controles.
       </div>
-    </div>
-
-    <div class="mission-system">
-      <MissionWorkflow title="Proceso actual" steps={first.currentFlow} tone="current" />
-      <MissionWorkflow title="Sistema propuesto" steps={first.proposedFlow} tone="proposed" />
-      <div class="mission-result">
-        <div><span>Encaje preliminar</span><strong data-mission-service>Sistema de crecimiento</strong></div>
-        <div><span>Rango indicativo</span><strong data-mission-range>{first.indicativeRange}</strong></div>
+      <div class="ai-blueprint" data-blueprint>
+        <div class="ai-blueprint__line"></div>
+        <article class="is-active"><span>01 · Entrada</span><strong data-node="input">Por descubrir</strong><small>Origen de la solicitud</small></article>
+        <article><span>02 · Inteligencia</span><strong data-node="logic">Análisis guiado</strong><small>Reglas, IA e integraciones</small></article>
+        <article><span>03 · Control</span><strong data-node="control">Aprobación humana</strong><small>Excepciones y seguridad</small></article>
+        <article><span>04 · Resultado</span><strong data-node="output">Objetivo medible</strong><small>Entrega y seguimiento</small></article>
       </div>
-      <p class="mission-note">No es un presupuesto ni el resultado de un cliente. El alcance se confirma tras revisar proceso, datos y dependencias.</p>
-    </div>
+      <div class="ai-budget" data-budget hidden>
+        <span>Estimación inicial transparente</span>
+        <div class="ai-budget__grid">
+          <p><strong data-budget-hours>—</strong><small>horas con margen</small></p>
+          <p><strong data-budget-range>—</strong><small>rango sin IVA</small></p>
+          <p><strong data-budget-monthly>—</strong><small>mantenimiento orientativo</small></p>
+        </div>
+        <p data-hardware>La infraestructura se dimensionará cuando conozcamos usuarios, datos y concurrencia.</p>
+      </div>
+      <div class="ai-insight">
+        <div><span>Recomendación actual</span><strong data-service>Diagnóstico y arquitectura</strong></div>
+        <p data-reason>Primero entendemos el proceso. Después decidimos qué automatizar y qué debe seguir bajo aprobación humana.</p>
+        <a class="ai-insight__cta" href={`${BASE}/contacto/`} data-service-link><span data-service-link-label>Revisar mi caso con VARINO</span> <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="ai-preview__restart"><span>¿Quieres empezar de nuevo?</span><br /><button type="button" data-guide-reset>Nueva conversación</button></div>
+    </article>
   </div>
-
-  <form class="mission-stage mission-custom" data-custom-panel hidden>
-    <div class="mission-context">
-      <p class="mission-kicker">Constructor de caso</p>
-      <h3>Describe el punto de fricción.</h3>
-      <p>Evita nombres de personas, contraseñas, documentos confidenciales o datos sensibles de terceros.</p>
-      <div class="mission-form-grid">
-        <label>Sector<input name="sector" maxlength="80" placeholder="Ej. consultoría" /></label>
-        <label>Objetivo<input name="objective" maxlength="120" placeholder="Ej. responder antes" /></label>
-        <label>Herramientas actuales<input name="tools" maxlength="120" placeholder="Ej. correo y CRM" /></label>
-        <label>Volumen aproximado<select name="volume"><option value="low">Bajo</option><option value="medium">Medio</option><option value="high">Alto</option></select></label>
-        <label>Sensibilidad de datos<select name="sensitivity"><option value="low">Baja</option><option value="medium">Media</option><option value="high">Alta</option></select></label>
-        <label>Bloqueo principal<select name="friction"><option value="manual">Trabajo manual</option><option value="sales-followup">Seguimiento comercial</option><option value="knowledge">Conocimiento interno</option></select></label>
-      </div>
-    </div>
-    <div class="mission-system mission-custom-result" aria-live="polite">
-      <p class="eyebrow">Lectura preliminar</p>
-      <h4 data-custom-service>Automation Sprint</h4>
-      <p data-custom-rationale>Un proceso delimitado permite empezar pequeño, observar excepciones y decidir con evidencia.</p>
-      <div class="mission-result"><div><span>Rango indicativo</span><strong data-custom-range>750–1.500 €</strong></div><div><span>Estado</span><strong>Solo borrador local</strong></div></div>
-      <ul data-custom-controls><li>Revisión del alcance</li><li>Aprobación antes de acciones externas</li><li>Recuperación manual documentada</li></ul>
-      <div class="mission-actions">
-        <button type="button" class="button-secondary" data-reset-mission>Reiniciar</button>
-        <button type="button" class="button-secondary" data-export-mission>Exportar JSON</button>
-        <button type="button" class="button-primary" data-transfer-mission>Pasar al asesor</button>
-      </div>
-      <p class="mission-note" data-transfer-status>No se ha guardado ni enviado información de contacto.</p>
-    </div>
-  </form>
 </section>
 
 <script>
-  import { evaluateCustomMission } from "../lib/missions/evaluate";
-  import { MISSION_DRAFT_KEY } from "../lib/missions/state";
+  import { advise } from "../lib/guide-engine.mjs";
 
-  const serviceNames = { "automation-sprint": "Automation Sprint", "growth-system": "Sistema de crecimiento", "private-ai": "IA privada" };
+  const stageNames = { welcome: "BIENVENIDA", discovery: "DESCUBRIMIENTO", process: "PROCESO", requirements: "REQUISITOS", architecture: "ARQUITECTURA", estimate: "ESTIMACIÓN" };
+  const activeNodes = { welcome: 1, discovery: 1, process: 2, requirements: 3, architecture: 4, estimate: 4 };
+  const money = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+  const rationale = {
+    "ia-privada": "Datos aislados, permisos explícitos y aprobación humana antes de cualquier acción sensible.",
+    "sistema-crecimiento": "Captura, cualificación y seguimiento medibles, sin automatizar decisiones que necesiten criterio humano.",
+    "automation-sprint": "Un flujo observable con reglas, excepciones y recuperación documentada.",
+  };
 
-  document.querySelectorAll("[data-mission-root]").forEach((root) => {
-    const scenarios = JSON.parse(root.getAttribute("data-missions") || "[]");
-    const guided = root.querySelector("[data-guided-panel]");
-    const custom = root.querySelector("[data-custom-panel]");
-    let active = scenarios[0];
+  document.querySelectorAll("[data-ai-guide]").forEach((root) => {
+    if (root.dataset.ready === "true") return;
+    root.dataset.ready = "true";
+    const form = root.querySelector("[data-guide-form]");
+    const input = form.querySelector("textarea");
+    const submit = form.querySelector("button");
+    const messages = root.querySelector("[data-guide-messages]");
+    const status = root.querySelector("[data-guide-status]");
+    const budget = root.querySelector("[data-budget]");
+    const base = root.dataset.base || "";
+    const liveAi = root.dataset.liveAi === "true";
+    const idleStatus = liveAi ? "Modelo local activo" : "Análisis en tu navegador";
+    let conversation = [];
+    let profile = {};
 
-    const save = (draft) => {
-      try { localStorage.setItem(MISSION_DRAFT_KEY, JSON.stringify({ ...draft, updatedAt: new Date().toISOString() })); } catch (_) {}
-    };
-
-    const renderScenario = (scenario) => {
-      active = scenario;
-      root.querySelector("[data-mission-label]").textContent = scenario.label;
-      root.querySelector("[data-mission-heading]").textContent = scenario.title;
-      root.querySelector("[data-mission-situation]").textContent = scenario.situation;
-      root.querySelector("[data-mission-disclaimer]").textContent = scenario.disclaimer;
-      root.querySelector("[data-mission-question]").textContent = scenario.question;
-      root.querySelector("[data-mission-service]").textContent = serviceNames[scenario.service];
-      root.querySelector("[data-mission-range]").textContent = scenario.indicativeRange;
-      root.querySelector("[data-mission-consequence]").textContent = "Elige una decisión para ver sus consecuencias y controles.";
-      const options = root.querySelector("[data-mission-options]");
-      options.innerHTML = "";
-      scenario.options.forEach((option) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.dataset.option = option.id;
-        button.textContent = option.label;
-        options.append(button);
-      });
-      const flows = root.querySelectorAll(".mission-flow ol");
-      [scenario.currentFlow, scenario.proposedFlow].forEach((steps, flowIndex) => {
-        flows[flowIndex].innerHTML = steps.map((step, index) => `<li><span aria-hidden="true">${String(index + 1).padStart(2, "0")}</span><strong>${step}</strong></li>`).join("");
-      });
-      save({ mode: "guided", scenario: scenario.id });
-    };
-
-    root.addEventListener("click", (event) => {
-      const target = event.target.closest("button");
-      if (!target) return;
-      if (target.dataset.missionSelect) {
-        root.querySelectorAll('[role="tab"]').forEach((tab) => tab.setAttribute("aria-selected", String(tab === target)));
-        const isCustom = target.dataset.missionSelect === "custom";
-        guided.hidden = isCustom;
-        custom.hidden = !isCustom;
-        if (!isCustom) renderScenario(scenarios.find((item) => item.id === target.dataset.missionSelect));
-        else save({ mode: "custom" });
+    const appendMessage = (paragraphs, role, pending = false) => {
+      const bubble = document.createElement("div");
+      bubble.className = `ai-message ai-message--${role}${pending ? " ai-message--pending" : ""}`;
+      for (const text of [].concat(paragraphs).filter(Boolean)) {
+        const paragraph = document.createElement("p");
+        paragraph.textContent = text;
+        bubble.append(paragraph);
       }
-      if (target.dataset.option) {
-        const option = active.options.find((item) => item.id === target.dataset.option);
-        root.querySelectorAll("[data-option]").forEach((button) => button.setAttribute("aria-pressed", String(button === target)));
-        root.querySelector("[data-mission-consequence]").textContent = `${option.consequence} Control: ${option.control}.`;
-        save({ mode: "guided", scenario: active.id, decision: option.id });
+      messages.append(bubble);
+      messages.scrollTop = messages.scrollHeight;
+      return bubble;
+    };
+
+    const setText = (selector, value) => {
+      const node = root.querySelector(selector);
+      if (node && value) node.textContent = value;
+    };
+
+    const updatePreview = (data) => {
+      profile = data.profile || profile;
+      setText("[data-guide-stage]", stageNames[data.stage] || "DESCUBRIMIENTO");
+      setText('[data-node="input"]', profile.channels || profile.business || "Por descubrir");
+      setText('[data-node="logic"]', profile.problem || "Análisis guiado");
+      setText('[data-node="control"]', profile.approvals || "Aprobación humana");
+      setText('[data-node="output"]', profile.goal || "Objetivo medible");
+      setText("[data-preview-kicker]", profile.sector ? `Sistema para ${profile.sector}` : profile.business ? `Sistema para ${profile.business}` : "Sistema en definición");
+      setText("[data-preview-title]", profile.problem || "Tu necesidad, convertida en una arquitectura clara.");
+      setText("[data-preview-caption]", profile.goal ? `Objetivo: ${profile.goal}` : "Seguimos concretando proceso, controles y resultado esperado.");
+
+      const count = activeNodes[data.stage] || 1;
+      root.querySelectorAll(".ai-blueprint article").forEach((card, index) => card.classList.toggle("is-active", index < count));
+
+      if (data.service) {
+        setText("[data-service]", data.service.name);
+        setText("[data-reason]", rationale[data.service.slug]);
+        const link = root.querySelector("[data-service-link]");
+        link.href = `${base}/servicios/${data.service.slug}/`;
+        setText("[data-service-link-label]", `Ver ${data.service.name}`);
+      }
+
+      if (data.estimate) {
+        budget.hidden = false;
+        setText("[data-budget-hours]", String(data.estimate.quotedHours));
+        setText("[data-budget-range]", `${money.format(data.estimate.range.min)}–${money.format(data.estimate.range.max)}`);
+        setText("[data-budget-monthly]", `${money.format(data.estimate.maintenanceMonthly)}/mes`);
+      }
+      if (data.hardware) setText("[data-hardware]", `${data.hardware.profile}: ${data.hardware.unifiedMemoryGb} GB de memoria unificada, ${data.hardware.freeStorageGb} GB libres y ${data.hardware.headroom}.`);
+    };
+
+    const render = (result) => {
+      appendMessage([result.reply, result.nextQuestion], "assistant");
+      conversation.push({ role: "assistant", content: [result.reply, result.nextQuestion].filter(Boolean).join(" ") });
+      conversation = conversation.slice(-36);
+      updatePreview(result);
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const text = input.value.trim();
+      if (!text || submit.disabled) return;
+      appendMessage(text, "user");
+      conversation.push({ role: "user", content: text });
+      conversation = conversation.slice(-36);
+      input.value = "";
+      input.disabled = submit.disabled = true;
+      status.textContent = "Analizando";
+      const pending = appendMessage("Estoy analizando tu respuesta…", "assistant", true);
+      let statusLabel = idleStatus;
+      try {
+        // El motor local siempre produce una respuesta completa. El modelo,
+        // cuando está disponible, solo mejora la redacción.
+        let result = advise({ messages: conversation, profile });
+        if (liveAi) {
+          try {
+            const response = await fetch(`${base}/api/guide`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ messages: conversation, profile }),
+            });
+            const data = await response.json();
+            if (response.ok && data.profile) {
+              result = data;
+              statusLabel = data.model ? `Modelo ${data.model}` : idleStatus;
+            }
+          } catch {
+            statusLabel = "Análisis en tu navegador";
+          }
+        }
+        pending.remove();
+        render(result);
+      } finally {
+        status.textContent = statusLabel;
+        input.disabled = submit.disabled = false;
+        input.focus();
       }
     });
 
-    const form = custom;
-    const readCustom = () => Object.fromEntries(new FormData(form).entries());
-    const renderCustom = () => {
-      const input = readCustom();
-      const result = evaluateCustomMission(input);
-      root.querySelector("[data-custom-service]").textContent = serviceNames[result.service];
-      root.querySelector("[data-custom-range]").textContent = result.indicativeRange;
-      root.querySelector("[data-custom-rationale]").textContent = result.rationale;
-      root.querySelector("[data-custom-controls]").innerHTML = result.humanControls.map((item) => `<li>${item}</li>`).join("");
-      save({ mode: "custom", custom: input });
-      return { input, result };
-    };
-    form.addEventListener("input", renderCustom);
-    root.querySelector("[data-reset-mission]").addEventListener("click", () => {
-      form.reset();
-      try { localStorage.removeItem(MISSION_DRAFT_KEY); } catch (_) {}
-      renderCustom();
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        form.requestSubmit();
+      }
     });
-    root.querySelector("[data-export-mission]").addEventListener("click", () => {
-      const payload = renderCustom();
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
-      link.download = "varino-caso-local.json";
-      link.click();
-      URL.revokeObjectURL(link.href);
-    });
-    root.querySelector("[data-transfer-mission]").addEventListener("click", () => {
-      const payload = renderCustom();
-      try { sessionStorage.setItem("varino_advisor_import_v1", JSON.stringify(payload)); } catch (_) {}
-      root.querySelector("[data-transfer-status]").textContent = "Resumen preparado localmente para el asesor. Podrás revisarlo antes de cualquier consentimiento.";
-      document.dispatchEvent(new CustomEvent("varino:open-advisor"));
+
+    root.querySelector("[data-guide-reset]").addEventListener("click", () => {
+      conversation = [];
+      profile = {};
+      messages.innerHTML = "";
+      appendMessage("Empezamos de nuevo. Cuéntame a qué se dedica tu empresa y qué quieres mejorar.", "assistant");
+      budget.hidden = true;
+      status.textContent = idleStatus;
+      input.focus();
     });
   });
 </script>

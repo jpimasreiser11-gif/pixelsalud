@@ -1,122 +1,133 @@
 ---
 import Base from "../layouts/Base.astro";
-import { BASE, SITE, whatsappUrl } from "../config";
+import { SITE, hasContactChannel } from "../config";
 
-const wa = whatsappUrl(
-  "Hola, tengo una clínica y quiero información de PixelSalud."
-);
 ---
 
 <Base
-  title="Contacto - PixelSalud"
-  description="Cuéntanos qué necesita tu clínica. Respondemos el mismo día laborable con una propuesta clara o un mini análisis gratuito de tu web."
+  title={`Contacto & Agendamiento — ${SITE.name} AI Studio`}
+  description="Cuéntanos qué proceso quieres mejorar. Revisaremos el contexto, las herramientas y el resultado que buscas antes de proponer un alcance."
 >
-  <section class="mx-auto max-w-6xl px-4 pb-16 pt-14">
-    <div class="grid gap-10 lg:grid-cols-2">
+  <section class="mx-auto max-w-6xl px-6 pb-20 pt-20 sm:pt-28">
+    <div class="grid gap-12 lg:grid-cols-2 items-start">
       <div>
-        <h1 class="text-3xl font-bold sm:text-4xl">Hablemos de tu clínica</h1>
-        <p class="mt-3 text-ink-500 dark:text-ink-300">
-          Rellena el formulario y te respondemos el mismo día laborable.
-          Si prefieres, escríbenos directamente a{" "}
-          <a href={`mailto:${SITE.email}`} class="font-semibold text-brand-600"
-            >{SITE.email}</a
-          >.
+        <p class="eyebrow">Plantear un proyecto</p>
+        <h1 class="mt-4 text-4xl sm:text-6xl font-semibold tracking-[-0.05em] leading-[1.02]">
+          Empecemos por el proceso, no por la herramienta.
+        </h1>
+        <p class="mt-4 text-[#86868b] leading-relaxed">
+          Cuéntanos qué proceso quieres mejorar, quién lo realiza y con qué herramientas. Esa información permite preparar una primera conversación útil.
         </p>
-        <ul class="mt-6 space-y-3 text-sm text-ink-500 dark:text-ink-400">
-          <li>✓ Respuesta en el mismo día laborable</li>
-          <li>✓ Mini análisis gratuito de tu web si ya tienes una</li>
-          <li>✓ Presupuesto cerrado por escrito, sin compromiso</li>
-          <li>✓ Cero llamadas pesadas: contactamos una vez, decides tú</li>
-        </ul>
-        {
-          wa && (
-            <a
-              href={wa}
-              class="mt-6 inline-block rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700"
-            >
-              Escribir por WhatsApp
-            </a>
-          )
-        }
-        {
-          SITE.calendly && (
-            <a
-              href={SITE.calendly}
-              class="mt-6 ml-3 inline-block rounded-xl border border-ink-200 px-6 py-3 font-semibold transition hover:border-brand-400 dark:border-ink-700"
-            >
-              Reservar llamada de 15 min
-            </a>
-          )
-        }
+
+        <div class="mt-8 space-y-3 text-sm">
+          <div class="flex items-center gap-2.5">
+            <span class="text-[#2997ff] font-bold">✓</span>
+            <span>Primera conversación centrada en un proceso real</span>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <span class="text-[#2997ff] font-bold">✓</span>
+            <span>Revisión de viabilidad, dependencias y forma de medir</span>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <span class="text-[#2997ff] font-bold">✓</span>
+            <span>Alcance y presupuesto por escrito antes de construir</span>
+          </div>
+        </div>
+
+        <div class="mt-10 pt-8 border-t border-[#424245]/30">
+          <p class="text-xs text-[#86868b] mb-2">Canal de contacto:</p>
+          {SITE.email ? (
+            <a href={`mailto:${SITE.email}`} class="text-sm font-semibold text-[#2997ff] hover:underline">{SITE.email}</a>
+          ) : (
+            <p class="text-sm text-[#6e6e73] dark:text-[#a1a1a6]">Estamos terminando la apertura pública. Mientras tanto puedes preparar y copiar el briefing sin que salga de tu dispositivo.</p>
+          )}
+        </div>
       </div>
 
+      <!-- Contact Form -->
       <form
         id="form-contacto"
         data-email={SITE.email}
-        class="rounded-2xl border border-ink-100 p-6 sm:p-8 dark:border-ink-800"
+        class="rounded-3xl border border-black/10 bg-[#f7f7f5] p-6 shadow-sm space-y-4 dark:border-white/10 dark:bg-[#111318] sm:p-8"
       >
-        <div class="grid gap-4">
-          <label class="block text-sm font-medium">
-            Tu nombre
+        {!hasContactChannel && (
+          <p class="rounded-xl border border-black/8 bg-white p-3 text-xs text-[#6e6e73] dark:border-white/10 dark:bg-black/20 dark:text-[#a1a1a6]">
+            Modo privado: prepara el briefing y cópialo. Nada se envía ni se almacena.
+          </p>
+        )}
+        <p class="font-semibold text-lg">Briefing inicial</p>
+
+        <div class="space-y-4">
+          <div>
+            <label for="contacto-nombre" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Nombre completo</label>
             <input
+              id="contacto-nombre"
               type="text"
               name="nombre"
               required
-              class="mt-1 w-full rounded-lg border border-ink-200 bg-transparent px-3 py-2 dark:border-ink-700"
+              placeholder="Tu nombre"
+              class="contact-field"
             />
-          </label>
-          <label class="block text-sm font-medium">
-            Nombre de la clínica
+          </div>
+
+          <div>
+            <label for="contacto-negocio" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Empresa / organización</label>
             <input
+              id="contacto-negocio"
               type="text"
-              name="clinica"
+              name="negocio"
               required
-              class="mt-1 w-full rounded-lg border border-ink-200 bg-transparent px-3 py-2 dark:border-ink-700"
+              placeholder="Nombre de tu empresa"
+              class="contact-field"
             />
-          </label>
-          <label class="block text-sm font-medium">
-            Web actual, si tienes
+          </div>
+
+          <div>
+            <label for="contacto-web" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Sitio web o software</label>
             <input
+              id="contacto-web"
               type="text"
               name="web"
-              placeholder="https://"
-              class="mt-1 w-full rounded-lg border border-ink-200 bg-transparent px-3 py-2 dark:border-ink-700"
+              placeholder="https://empresa.com"
+              class="contact-field"
             />
-          </label>
-          <label class="block text-sm font-medium">
-            ¿Qué necesitas?
+          </div>
+
+          <div>
+            <label for="contacto-servicio" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Servicio de interés</label>
             <select
+              id="contacto-servicio"
               name="servicio"
-              class="mt-1 w-full rounded-lg border border-ink-200 bg-transparent px-3 py-2 dark:border-ink-700 dark:bg-ink-950"
+              class="contact-field"
             >
-              <option>Web Express, 149 €</option>
-              <option>Pack Consulta Digital, 199 €</option>
-              <option>Pack Despegue, 379 €</option>
-              <option>SEO local mensual</option>
-              <option>Rediseño de mi web</option>
-              <option>No lo sé, aconsejadme</option>
+              <option>Diagnóstico inicial</option>
+              <option>Automatización de procesos</option>
+              <option>Producto o asistente con IA</option>
+              <option>Sistema comercial</option>
+              <option>Otro caso</option>
             </select>
-          </label>
-          <label class="block text-sm font-medium">
-            Cuéntanos lo que quieras
+          </div>
+
+          <div>
+            <label for="contacto-mensaje" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Detalles del proyecto</label>
             <textarea
+              id="contacto-mensaje"
               name="mensaje"
-              rows="4"
-              class="mt-1 w-full rounded-lg border border-ink-200 bg-transparent px-3 py-2 dark:border-ink-700"
+              rows="3"
+              placeholder="Cuéntanos brevemente qué te gustaría automatizar o desarrollar..."
+              class="contact-field"
             ></textarea>
-          </label>
+          </div>
+
           <button
             type="submit"
-            class="rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700"
-            >Preparar correo</button
+            class="w-full rounded-full bg-[#0071e3] px-6 py-3 font-semibold text-white transition hover:bg-[#0077ed] text-xs shadow-lg shadow-[#0071e3]/20"
           >
-          <p class="text-xs text-ink-500 dark:text-ink-400">
-            Este formulario abre tu aplicación de correo con el mensaje preparado. No se envía nada hasta que tú lo confirmas.
-          </p>
-          <p class="text-xs text-ink-400">
-            Al enviar aceptas nuestra{" "}
-            <a href={`${BASE}/privacidad/`} class="underline">política de privacidad</a
-            >. Usamos tus datos solo para responderte.
+            {hasContactChannel ? "Preparar correo →" : "Copiar briefing →"}
+          </button>
+
+          <p class="text-[11px] text-[#6e6e73] dark:text-[#a1a1a6] text-center" aria-live="polite" data-form-status>
+            No incluyas información confidencial o datos personales de terceros.
           </p>
         </div>
       </form>
@@ -124,8 +135,6 @@ const wa = whatsappUrl(
   </section>
 
   <script>
-    // JS puro. El formulario abre el correo del visitante con todo relleno:
-    // funciona sin backend y sin cuentas de terceros.
     (function () {
       var form = document.getElementById("form-contacto");
       if (!form) return;
@@ -137,18 +146,33 @@ const wa = whatsappUrl(
           return el && el.value ? el.value : "-";
         }
         var destinatario = f.getAttribute("data-email") || "";
-        var asunto = "Consulta desde pixelsalud.es: " + val("clinica");
+        var asunto = "Consulta de Proyecto: " + val("negocio");
         var cuerpo =
           "Nombre: " + val("nombre") + "\n" +
-          "Clinica: " + val("clinica") + "\n" +
+          "Empresa: " + val("negocio") + "\n" +
           "Web: " + val("web") + "\n" +
           "Servicio: " + val("servicio") + "\n\n" +
-          val("mensaje");
-        window.location.href =
-          "mailto:" + destinatario +
-          "?subject=" + encodeURIComponent(asunto) +
-          "&body=" + encodeURIComponent(cuerpo);
+          "Mensaje: " + val("mensaje");
+        if (destinatario) {
+          window.location.href =
+            "mailto:" + destinatario +
+            "?subject=" + encodeURIComponent(asunto) +
+            "&body=" + encodeURIComponent(cuerpo);
+          return;
+        }
+        var status = f.querySelector("[data-form-status]");
+        navigator.clipboard.writeText(asunto + "\n\n" + cuerpo).then(function () {
+          if (status) status.textContent = "Briefing copiado. Consérvalo para enviarlo cuando abramos el canal público.";
+        }).catch(function () {
+          if (status) status.textContent = "No se pudo copiar automáticamente. Selecciona el contenido de los campos para conservarlo.";
+        });
       });
     })();
   </script>
+
+  <style>
+    .contact-field { width: 100%; border-radius: .75rem; border: 1px solid rgb(0 0 0 / .12); background: white; padding: .7rem 1rem; font-size: .875rem; color: #1d1d1f; outline: none; transition: border-color .2s, box-shadow .2s; }
+    .contact-field:focus { border-color: #0071e3; box-shadow: 0 0 0 3px rgb(0 113 227 / .12); }
+    :global(.dark) .contact-field { border-color: rgb(255 255 255 / .14); background: #050506; color: #f5f5f7; }
+  </style>
 </Base>

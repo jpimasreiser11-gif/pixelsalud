@@ -2,7 +2,6 @@
 import "../styles/global.css";
 import { BASE, SITE, hasContactChannel } from "../config";
 import Logo from "../components/Logo.astro";
-import SystraCopilot from "../components/SystraCopilot.astro";
 
 interface Props {
   title: string;
@@ -160,9 +159,6 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
     <main id="contenido">
       <slot />
     </main>
-
-    <!-- Executive Assistant Widget -->
-    <SystraCopilot />
 
     <!-- Apple-style Pro Footer -->
     <footer

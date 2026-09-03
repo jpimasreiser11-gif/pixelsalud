@@ -1,11 +1,17 @@
 ---
 import Base from "../layouts/Base.astro";
 import Cta from "../components/Cta.astro";
-import { MAINTENANCE_PLANS, SERVICES, SITE } from "../config";
+import { BASE, MAINTENANCE_PLANS, SERVICES, SITE } from "../config";
 ---
 <Base title={`Precios orientativos — ${SITE.name}`} description="Rangos orientativos, entregables y mantenimiento de automatización e IA.">
   <section class="mx-auto max-w-6xl px-6 py-24 sm:py-32"><p class="eyebrow">Precios transparentes</p><h1 class="display-title max-w-5xl">Un rango para orientarte.<br /><span>Un alcance para decidir.</span></h1><p class="mt-8 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">No calculamos un retorno automático ni prometemos ahorro antes de observar el proceso. Cada propuesta detalla entregables, exclusiones, impuestos, costes externos y criterios de aceptación.</p></section>
+  <section class="mx-auto max-w-6xl px-6 pb-10">
+    <article class="grid gap-6 rounded-3xl border border-[#0071e3]/20 bg-[#0071e3]/5 p-7 sm:grid-cols-[1fr_auto] sm:items-center">
+      <div><p class="text-xs font-bold text-[#0071e3]">PUNTO DE ENTRADA</p><h2 class="mt-3 text-3xl font-semibold tracking-[-0.04em]">Diagnóstico CAIO</h2><p class="mt-3 max-w-2xl text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">Mapa del proceso, prioridades, riesgos, arquitectura inicial y presupuesto trazable. Los 290 € se descuentan si contratas la implementación propuesta.</p></div>
+      <div class="sm:text-right"><strong class="block text-2xl">290 € + IVA</strong><a class="button-primary mt-4" href={`${BASE}/auditoria/`}>Ver diagnóstico</a></div>
+    </article>
+  </section>
   <section class="mx-auto grid max-w-6xl gap-5 px-6 pb-24 lg:grid-cols-3">{SERVICES.map((service) => <article class="rounded-3xl border border-black/8 p-7 dark:border-white/10"><p class="text-xs font-bold text-[#655cff]">{service.tag}</p><h2 class="mt-7 text-3xl font-semibold tracking-[-0.04em]">{service.name}</h2><strong class="mt-3 block text-xl">{service.range}</strong><p class="mt-4 min-h-24 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{service.summary}</p><ul class="mt-6 space-y-3 text-sm">{service.deliverables.map((item) => <li class="border-t border-black/8 pt-3 dark:border-white/10">{item}</li>)}</ul><p class="mt-6 text-xs leading-5 text-[#6e6e73]">Rango indicativo, no oferta contractual.</p></article>)}</section>
   <section class="border-y border-black/6 bg-[#f7f7f5] dark:border-white/10 dark:bg-[#0a0d14]"><div class="mx-auto max-w-6xl px-6 py-24"><div class="section-heading"><div><p class="eyebrow">Mantenimiento opcional</p><h2>Ingresos recurrentes con trabajo recurrente real.</h2></div><p>Supervisión, incidencias, cambios y mejora se contratan con límites claros. Ningún plan es obligatorio para recibir la documentación del proyecto.</p></div><div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{MAINTENANCE_PLANS.map((plan) => <article class="rounded-2xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]"><h3 class="text-xl font-semibold">{plan.name}</h3><strong class="mt-2 block text-[#655cff]">{plan.monthly}</strong><ul class="mt-5 space-y-3 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">{plan.includes.map((item) => <li>{item}</li>)}</ul></article>)}</div></div></section>
-  <Cta titulo="Primero entendemos el caso." texto="Prueba una misión o comparte un resumen. Una persona revisará el alcance antes de cualquier compromiso." />
+  <Cta titulo="Primero entendemos el caso." texto="Habla con la guía o comparte un resumen. Una persona revisará el alcance antes de cualquier compromiso." />
 </Base>

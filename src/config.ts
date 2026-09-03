@@ -35,8 +35,8 @@ export const SERVICES = [
       "Mapeamos, construimos y probamos una automatización acotada, con observabilidad, recuperación y transferencia.",
     descripcion:
       "Mapeamos, construimos y probamos una automatización acotada, con observabilidad, recuperación y transferencia.",
-    range: "750–1.500 €",
-    precio: "750–1.500 €",
+    range: "950–1.500 €",
+    precio: "950–1.500 €",
     outcome: "Un proceso crítico automatizado",
     resultado: "Un proceso crítico automatizado",
     deliverables: [
@@ -67,8 +67,8 @@ export const SERVICES = [
       "Conectamos la entrada de oportunidades, su cualificación y el trabajo comercial manteniendo las decisiones en manos del equipo.",
     descripcion:
       "Conectamos la entrada de oportunidades, su cualificación y el trabajo comercial manteniendo las decisiones en manos del equipo.",
-    range: "1.800–4.000 €",
-    precio: "1.800–4.000 €",
+    range: "2.500–4.500 €",
+    precio: "2.500–4.500 €",
     outcome: "Captación, seguimiento y operaciones conectadas",
     resultado: "Captación, seguimiento y operaciones conectadas",
     deliverables: [
@@ -99,8 +99,8 @@ export const SERVICES = [
       "Diseñamos asistentes, búsqueda documental y flujos locales o privados con permisos, evaluación y trazabilidad.",
     descripcion:
       "Diseñamos asistentes, búsqueda documental y flujos locales o privados con permisos, evaluación y trazabilidad.",
-    range: "3.500–12.000 €+",
-    precio: "3.500–12.000 €+",
+    range: "4.500–12.000 €+",
+    precio: "4.500–12.000 €+",
     outcome: "Conocimiento y modelos bajo control",
     resultado: "Conocimiento y modelos bajo control",
     deliverables: [
@@ -129,25 +129,25 @@ export const MAINTENANCE_PLANS = [
   {
     id: "care",
     name: "Care",
-    monthly: "99 €/mes",
+    monthly: "149 €/mes",
     includes: ["Supervisión básica", "Actualizaciones menores", "Informe mensual"],
   },
   {
     id: "managed",
     name: "Managed",
-    monthly: "249 €/mes",
+    monthly: "349 €/mes",
     includes: ["Monitorización", "Gestión de incidencias", "Ajustes mensuales"],
   },
   {
     id: "optimize",
     name: "Optimize",
-    monthly: "549 €/mes",
+    monthly: "690 €/mes",
     includes: ["Todo Managed", "Mejoras continuas", "Revisión de métricas"],
   },
   {
     id: "private-ai-ops",
     name: "Private AI Ops",
-    monthly: "Desde 990 €/mes",
+    monthly: "Desde 1.190 €/mes",
     includes: ["Operación del modelo", "Evaluación", "Seguridad y capacidad"],
   },
 ] as const;

@@ -1,13 +1,11 @@
 // Comprueba que todo enlace interno del dist apunte a un archivo generado.
 import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join, extname } from "node:path";
+import { DEPLOY_BASE } from "../astro.config.mjs";
 
 const DIST = new URL("../dist", import.meta.url).pathname;
-// La base de despliegue no existe como carpeta en dist: se recorta.
-// Se deriva de la configuración para no conservar rutas de despliegues anteriores.
-const astroConfig = readFileSync(new URL("../astro.config.mjs", import.meta.url), "utf8");
-const configuredBase = astroConfig.match(/\bbase:\s*["']([^"']+)["']/)?.[1] ?? "/";
-const BASE = configuredBase === "/" ? "" : `/${configuredBase.replace(/^\/+|\/+$/g, "")}`;
+// La base de despliegue no existe como carpeta en dist: GitHub Pages la monta al servir.
+const BASE = process.env.GITHUB_ACTIONS === "true" ? DEPLOY_BASE : "";
 let errores = 0;
 const paginas = [];
 

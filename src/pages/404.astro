@@ -1,9 +1,9 @@
 ---
 import Base from "../layouts/Base.astro";
-import { BASE } from "../config";
+import { BASE, SITE } from "../config";
 ---
 
-<Base title="Página no encontrada - PixelSalud" noindex={true}>
+<Base title={`Página no encontrada - ${SITE.name}`} noindex={true}>
   <section class="mx-auto max-w-3xl px-4 py-24 text-center">
     <p class="text-6xl font-bold text-brand-600">404</p>
     <h1 class="mt-4 text-2xl font-bold">Esta página no existe</h1>
