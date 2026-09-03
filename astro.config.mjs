@@ -44,6 +44,9 @@ export const DEPLOY_BASE = "/pixelsalud";
 export default defineConfig({
   site: "https://jpimasreiser11-gif.github.io",
   base: process.env.GITHUB_ACTIONS === "true" ? DEPLOY_BASE : "/",
+  // La web no renderiza bloques Markdown. Desactivar Shiki evita estilos en
+  // linea incompatibles con la CSP y mantiene el build libre de advertencias.
+  markdown: { syntaxHighlight: false },
   security: { csp: { directives: CSP_DIRECTIVES } },
   vite: {
     plugins: [tailwindcss(), createLocalGuidePlugin()],
