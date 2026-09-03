@@ -15,6 +15,7 @@
     "security:headers": "node scripts/check-security-headers.mjs",
     "csp:check": "node scripts/check-csp-compatibility.mjs",
     "claims:check": "node scripts/check-claims.mjs",
+    "launch:check": "node scripts/check-launch-readiness.mjs",
     "readiness": "npm run build && npm run scripts:syntax && npm run links:check && npm run csp:check"
   },
   "dependencies": {
