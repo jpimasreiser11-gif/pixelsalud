@@ -5,9 +5,9 @@ import Cta from "../components/Cta.astro";
 import { BASE, MAINTENANCE_PLANS, SERVICES, SITE } from "../config";
 
 const DEMOS = [
-  { sector: "Clínica", title: "Solicitudes y documentación bajo control", problem: "Correos, formularios y documentos llegan por separado.", flow: ["Entrada unificada", "Clasificación privada", "Revisión humana", "Seguimiento"], service: "IA privada", href: `${BASE}/servicios/ia-privada/` },
-  { sector: "Servicios profesionales", title: "Cada oportunidad recibe seguimiento", problem: "Los contactos entran, pero no existe un proceso comercial consistente.", flow: ["Captura", "Cualificación", "Propuesta asistida", "Aviso comercial"], service: "Sistema de crecimiento", href: `${BASE}/servicios/sistema-crecimiento/` },
-  { sector: "Operaciones", title: "De una bandeja manual a un flujo observable", problem: "El equipo copia datos entre herramientas y descubre los errores tarde.", flow: ["Validación", "Automatización", "Excepciones", "Informe"], service: "Automation Sprint", href: `${BASE}/servicios/automation-sprint/` },
+  { sector: "Clínica", title: "Solicitudes y documentación bajo control", problem: "Correos, formularios y documentos llegan por separado.", flow: ["Entrada unificada", "Clasificación privada", "Revisión humana", "Seguimiento"], service: "IA privada", href: `${BASE}/demos/#clinica` },
+  { sector: "Servicios profesionales", title: "Cada oportunidad recibe seguimiento", problem: "Los contactos entran, pero no existe un proceso comercial consistente.", flow: ["Captura", "Cualificación", "Propuesta asistida", "Aviso comercial"], service: "Sistema de crecimiento", href: `${BASE}/demos/#crecimiento` },
+  { sector: "Operaciones", title: "De una bandeja manual a un flujo observable", problem: "El equipo copia datos entre herramientas y descubre los errores tarde.", flow: ["Validación", "Automatización", "Excepciones", "Informe"], service: "Automation Sprint", href: `${BASE}/demos/#operaciones` },
 ];
 ---
 
@@ -47,7 +47,7 @@ const DEMOS = [
                 {demo.flow.map((step, index) => <div class="rounded-xl border border-white/10 bg-white/5 p-3"><span class="text-[.55rem] text-[#9b95ff]">0{index + 1}</span><strong class="mt-1 block text-xs">{step}</strong></div>)}
               </div>
             </div>
-            <div class="p-6"><h3 class="text-2xl font-semibold tracking-[-0.04em]">{demo.title}</h3><p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{demo.problem}</p><a class="service-link" href={demo.href}>Explorar {demo.service} <span aria-hidden="true">→</span></a></div>
+            <div class="p-6"><h3 class="text-2xl font-semibold tracking-[-0.04em]">{demo.title}</h3><p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{demo.problem}</p><a class="service-link" href={demo.href}>Abrir demo técnica <span aria-hidden="true">→</span></a></div>
           </article>
         ))}
       </div>

@@ -1,0 +1,23 @@
+{
+  "id": "varino-demo-leads-v1",
+  "versionId": "varino-demo-leads-version-1",
+  "name": "[DEMO][INACTIVE] VARINO - Cualificación de oportunidades",
+  "nodes": [
+    { "parameters": {}, "id": "trigger", "name": "Prueba manual", "type": "n8n-nodes-base.manualTrigger", "typeVersion": 1, "position": [-520, 0] },
+    { "parameters": { "assignments": { "assignments": [
+      { "id": "lead", "name": "leadId", "value": "demo-lead-001", "type": "string" },
+      { "id": "need", "name": "need", "value": "Automatizar el seguimiento de presupuestos", "type": "string" },
+      { "id": "team", "name": "teamSize", "value": 4, "type": "number" }
+    ] }, "options": {} }, "id": "sample", "name": "Oportunidad sintética", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [-300, 0] },
+    { "parameters": { "jsCode": "const x=$input.first().json; const need=String(x.need||'').trim().slice(0,500); const teamSize=Math.max(1,Math.min(250,Number(x.teamSize)||1)); if(!/^demo-lead-[0-9]{3}$/.test(String(x.leadId||''))) throw new Error('Identificador no válido'); if(!need) throw new Error('Necesidad obligatoria'); const priority=/presupuesto|venta|seguimiento/i.test(need)?'review_high':'review_normal'; return [{json:{leadId:x.leadId,need,teamSize,priority,status:'pending_commercial_review',draftOnly:true,externalActionsAllowed:false}}];" }, "id": "qualify", "name": "Validar y priorizar", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [-60, 0] },
+    { "parameters": { "assignments": { "assignments": [
+      { "id": "gate", "name": "gate", "value": "COMMERCIAL_APPROVAL_REQUIRED", "type": "string" },
+      { "id": "next", "name": "nextAction", "value": "review_before_contact", "type": "string" }
+    ] }, "includeOtherFields": true, "options": {} }, "id": "gate", "name": "PARAR - revisión comercial", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [190, 0] }
+  ],
+  "connections": { "Prueba manual": { "main": [[{ "node": "Oportunidad sintética", "type": "main", "index": 0 }]] }, "Oportunidad sintética": { "main": [[{ "node": "Validar y priorizar", "type": "main", "index": 0 }]] }, "Validar y priorizar": { "main": [[{ "node": "PARAR - revisión comercial", "type": "main", "index": 0 }]] } },
+  "active": false,
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "meta": { "templateCredsSetupCompleted": false },
+  "tags": []
+}

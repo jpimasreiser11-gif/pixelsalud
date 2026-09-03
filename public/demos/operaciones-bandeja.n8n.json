@@ -1,0 +1,23 @@
+{
+  "id": "varino-demo-operations-v1",
+  "versionId": "varino-demo-operations-version-1",
+  "name": "[DEMO][INACTIVE] VARINO - Bandeja de operaciones",
+  "nodes": [
+    { "parameters": {}, "id": "trigger", "name": "Prueba manual", "type": "n8n-nodes-base.manualTrigger", "typeVersion": 1, "position": [-520, 0] },
+    { "parameters": { "assignments": { "assignments": [
+      { "id": "case", "name": "caseId", "value": "demo-ops-001", "type": "string" },
+      { "id": "source", "name": "source", "value": "email", "type": "string" },
+      { "id": "subject", "name": "subject", "value": "Actualizar datos del pedido", "type": "string" }
+    ] }, "options": {} }, "id": "sample", "name": "Caso sintético", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [-300, 0] },
+    { "parameters": { "jsCode": "const x=$input.first().json; const subject=String(x.subject||'').trim().slice(0,300); if(!/^demo-ops-[0-9]{3}$/.test(String(x.caseId||''))) throw new Error('Identificador no válido'); if(!['email','web','manual'].includes(String(x.source||'').toLowerCase())) throw new Error('Origen no permitido'); if(!subject) throw new Error('Asunto obligatorio'); const route=/pedido|factura|entrega/i.test(subject)?'operations_queue':'general_review'; return [{json:{caseId:x.caseId,source:x.source,subject,route,status:'pending_owner_review',externalActionsAllowed:false,recovery:'manual_queue'}}];" }, "id": "route", "name": "Validar y enrutar", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [-60, 0] },
+    { "parameters": { "assignments": { "assignments": [
+      { "id": "gate", "name": "gate", "value": "PROCESS_OWNER_REVIEW_REQUIRED", "type": "string" },
+      { "id": "next", "name": "nextAction", "value": "approve_or_return_to_queue", "type": "string" }
+    ] }, "includeOtherFields": true, "options": {} }, "id": "gate", "name": "PARAR - responsable del proceso", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [190, 0] }
+  ],
+  "connections": { "Prueba manual": { "main": [[{ "node": "Caso sintético", "type": "main", "index": 0 }]] }, "Caso sintético": { "main": [[{ "node": "Validar y enrutar", "type": "main", "index": 0 }]] }, "Validar y enrutar": { "main": [[{ "node": "PARAR - responsable del proceso", "type": "main", "index": 0 }]] } },
+  "active": false,
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "meta": { "templateCredsSetupCompleted": false },
+  "tags": []
+}

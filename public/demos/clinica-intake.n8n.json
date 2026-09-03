@@ -1,0 +1,23 @@
+{
+  "id": "varino-demo-clinic-v1",
+  "versionId": "varino-demo-clinic-version-1",
+  "name": "[DEMO][INACTIVE] VARINO - Solicitudes de clínica",
+  "nodes": [
+    { "parameters": {}, "id": "trigger", "name": "Prueba manual", "type": "n8n-nodes-base.manualTrigger", "typeVersion": 1, "position": [-520, 0] },
+    { "parameters": { "assignments": { "assignments": [
+      { "id": "request", "name": "requestId", "value": "demo-clinic-001", "type": "string" },
+      { "id": "channel", "name": "channel", "value": "whatsapp", "type": "string" },
+      { "id": "message", "name": "message", "value": "Quiero solicitar una primera cita", "type": "string" }
+    ] }, "options": {} }, "id": "sample", "name": "Solicitud sintética", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [-300, 0] },
+    { "parameters": { "jsCode": "const x=$input.first().json; const id=String(x.requestId||''); const channel=String(x.channel||'').toLowerCase(); const message=String(x.message||'').trim().slice(0,500); if(!/^demo-clinic-[0-9]{3}$/.test(id)) throw new Error('Identificador no válido'); if(!['web','whatsapp','telefono'].includes(channel)) throw new Error('Canal no permitido'); if(!message) throw new Error('Mensaje obligatorio'); return [{json:{requestId:id,channel,message,category:'solicitud_cita',status:'pending_human_review',externalActionsAllowed:false}}];" }, "id": "validate", "name": "Validar y minimizar", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [-60, 0] },
+    { "parameters": { "assignments": { "assignments": [
+      { "id": "gate", "name": "gate", "value": "REVIEW_REQUIRED", "type": "string" },
+      { "id": "next", "name": "nextAction", "value": "reception_confirms_or_rejects", "type": "string" }
+    ] }, "includeOtherFields": true, "options": {} }, "id": "gate", "name": "PARAR - revisión de recepción", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [190, 0] }
+  ],
+  "connections": { "Prueba manual": { "main": [[{ "node": "Solicitud sintética", "type": "main", "index": 0 }]] }, "Solicitud sintética": { "main": [[{ "node": "Validar y minimizar", "type": "main", "index": 0 }]] }, "Validar y minimizar": { "main": [[{ "node": "PARAR - revisión de recepción", "type": "main", "index": 0 }]] } },
+  "active": false,
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "meta": { "templateCredsSetupCompleted": false },
+  "tags": []
+}

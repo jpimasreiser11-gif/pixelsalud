@@ -94,3 +94,27 @@ test("el formulario de contacto sigue vivo en la web publicada", async ({ page }
 
   expect(bloqueos).toEqual([]);
 });
+
+test("el laboratorio publica tres demos n8n descargables y seguras", async ({ page }) => {
+  const respuestas: string[] = [];
+  page.on("response", (response) => {
+    if (response.status() >= 400) respuestas.push(`${response.status()} ${response.url()}`);
+  });
+
+  await page.goto("demos/");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Te enseñamos cómo se comporta");
+
+  const descargas = page.getByRole("link", { name: "Descargar flujo n8n" });
+  await expect(descargas).toHaveCount(3);
+  for (let index = 0; index < 3; index += 1) {
+    const href = await descargas.nth(index).getAttribute("href");
+    expect(href).toMatch(/\/demos\/.+\.n8n\.json$/);
+    const response = await page.request.get(new URL(href!, page.url()).toString());
+    expect(response.ok(), href ?? "descarga sin href").toBe(true);
+    const workflow = await response.json();
+    expect(workflow.active).toBe(false);
+    expect(workflow.nodes.at(-1)?.name).toMatch(/^PARAR -/);
+  }
+
+  expect(respuestas).toEqual([]);
+});
