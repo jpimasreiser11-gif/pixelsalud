@@ -10,3 +10,5 @@ coverage/
 # Operación comercial y expedientes locales. El repositorio de la web es público.
 ops/
 .superpowers/
+scripts/create-client-project.mjs
+tests/unit/delivery-system.test.ts
