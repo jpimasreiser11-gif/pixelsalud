@@ -1,4 +1,4 @@
-name: Deploy PixelSalud to GitHub Pages
+name: Deploy VARINO to GitHub Pages
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: pages-pixelsalud
+  group: pages-varino
   cancel-in-progress: false
 
 jobs:

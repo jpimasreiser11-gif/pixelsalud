@@ -41,8 +41,10 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
     <meta name="description" content={description} />
     {canonical && <link rel="canonical" href={canonical} />}
     {shouldNoindex && <meta name="robots" content="noindex,follow" />}
-    <link rel="icon" href={`${BASE}/favicon.svg`} type="image/svg+xml" />
-    {SITE.url && <link rel="sitemap" href={`${BASE}/sitemap-index.xml`} />}
+    <link rel="icon" href={`${BASE}/favicon.svg`} type="image/svg+xml" sizes="any" />
+    <link rel="shortcut icon" href={`${BASE}/favicon.ico`} />
+    <link rel="apple-touch-icon" href={`${BASE}/apple-touch-icon.png`} />
+    {SITE.url && SITE.launchReady && <link rel="sitemap" href={`${BASE}/sitemap-index.xml`} />}
     <meta property="og:title" content={`${title} — ${SITE.name}`} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />

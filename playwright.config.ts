@@ -3,7 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 const DEV_URL = "http://localhost:4321";
 // Puerto propio para el build estático: no puede compartirlo con el servidor de
 // desarrollo porque las dos pruebas corren a la vez.
-const PUBLISHED_URL = "http://localhost:4456/pixelsalud/";
+const PUBLISHED_URL = "http://localhost:4456/";
 
 export default defineConfig({
   testDir: "tests",
@@ -26,7 +26,7 @@ export default defineConfig({
       // El artefacto publicado, servido como lo sirve GitHub Pages: sin
       // cabeceras de seguridad. `astro preview` sí las manda, y eso escondía
       // que en producción la única CSP es el <meta> del HTML.
-      command: "GITHUB_ACTIONS=true npm run build && node scripts/serve-dist.mjs --port 4456 --base /pixelsalud",
+      command: "GITHUB_ACTIONS=true npm run build && node scripts/serve-dist.mjs --port 4456",
       url: PUBLISHED_URL,
       reuseExistingServer: true,
       timeout: 120_000,

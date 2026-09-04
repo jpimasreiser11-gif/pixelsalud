@@ -15,6 +15,14 @@ test("el HTML publicado trae su propia política de contenido", async ({ page })
   expect(csp).not.toContain("unsafe-eval");
 });
 
+test("publica el dominio canonico y el logo de la pestaña", async ({ page }) => {
+  await page.goto("./");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://varinoai.me/");
+  await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute("href", "/favicon.svg");
+  await expect(page.locator('link[rel="shortcut icon"]')).toHaveAttribute("href", "/favicon.ico");
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute("href", "/apple-touch-icon.png");
+});
+
 test("el tema y el menú funcionan bajo la CSP publicada", async ({ page, isMobile }) => {
   const bloqueos: string[] = [];
   page.on("console", (msg) => {

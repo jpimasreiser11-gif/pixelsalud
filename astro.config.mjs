@@ -38,12 +38,12 @@ const securityHeaders = {
   "Content-Security-Policy": CSP_HEADER,
 };
 
-export const DEPLOY_BASE = "/pixelsalud";
+export const DEPLOY_BASE = "";
 
 // Añadir site e integración de sitemap solo cuando exista un dominio verificado.
 export default defineConfig({
-  site: "https://jpimasreiser11-gif.github.io",
-  base: process.env.GITHUB_ACTIONS === "true" ? DEPLOY_BASE : "/",
+  site: "https://varinoai.me",
+  base: "/",
   // La web no renderiza bloques Markdown. Desactivar Shiki evita estilos en
   // linea incompatibles con la CSP y mantiene el build libre de advertencias.
   markdown: { syntaxHighlight: false },

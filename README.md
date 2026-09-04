@@ -10,5 +10,4 @@ Drive del propietario).
   borradores de email. No se publica: no está en `src/` ni `public/`.
 - Config de contacto y datos legales: `src/config.ts`.
 
-Dominio objetivo: pixelsalud.es (comprobar y comprar) o
-pixelsalud.com (libre por whois a 18-jul-2026).
+Dominio principal: https://varinoai.me
