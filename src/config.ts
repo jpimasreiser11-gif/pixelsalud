@@ -15,12 +15,12 @@ export const SITE = {
   outcomePromise: "Menos fricción. Más capacidad.",
   description:
     "Sistemas de automatización e inteligencia artificial para empresas, diseñados con alcance claro, privacidad y control humano.",
-  email: "",
-  whatsapp: "",
+  email: "varinoagency@gmail.com",
+  whatsapp: "34623204319",
   calendly: "",
-  legalOwner: "",
-  legalNif: "",
-  legalAddress: "",
+  legalOwner: "Joan Pimas Reiser",
+  legalNif: "20569591Q",
+  legalAddress: "Passeig de la Rectoria Vella, 08460 Barcelona, España",
 } as const;
 
 export const SERVICES = [

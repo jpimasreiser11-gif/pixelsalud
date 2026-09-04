@@ -153,14 +153,15 @@ import { SITE, hasContactChannel } from "../config";
           "Web: " + val("web") + "\n" +
           "Servicio: " + val("servicio") + "\n\n" +
           "Mensaje: " + val("mensaje");
+        var status = f.querySelector("[data-form-status]");
         if (destinatario) {
           window.location.href =
             "mailto:" + destinatario +
             "?subject=" + encodeURIComponent(asunto) +
             "&body=" + encodeURIComponent(cuerpo);
+          if (status) status.textContent = "Se ha abierto tu aplicación de correo con el briefing preparado. Si no se abre, copia los campos y escríbenos directamente.";
           return;
         }
-        var status = f.querySelector("[data-form-status]");
         navigator.clipboard.writeText(asunto + "\n\n" + cuerpo).then(function () {
           if (status) status.textContent = "Briefing copiado. Consérvalo para enviarlo cuando abramos el canal público.";
         }).catch(function () {
