@@ -1,0 +1,83 @@
+---
+import Base from "../../layouts/Base.astro";
+import { BASE, SITE } from "../../config";
+---
+
+<Base
+  title={`Qué presupuesto tiene automatizar un proceso con IA`}
+  description="Cómo se calcula de verdad el precio de una automatización: horas por partida, margen de contingencia y mantenimiento. Sin porcentajes mágicos de ahorro."
+>
+  <article class="mx-auto max-w-3xl px-6 pb-24 pt-20 sm:pt-28">
+    <p class="eyebrow">Precios</p>
+    <h1 class="mt-3 text-4xl font-semibold tracking-[-0.045em] text-[#1d1d1f] dark:text-white sm:text-5xl">
+      Qué presupuesto tiene automatizar un proceso (y cómo se calcula)
+    </h1>
+    <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">Guía práctica · 5 min de lectura</p>
+
+    <div class="mt-10 space-y-8 text-[15px] leading-8 text-[#3a3a3c] dark:text-[#d2d2d7]">
+      <p>
+        Busca «cuánto cuesta automatizar mi negocio» y encontrarás dos extremos: promesas de
+        herramientas de 20 € al mes que lo hacen todo, y presupuestos de consultora de cinco cifras
+        sin desglose. Ninguno de los dos ayuda a decidir. Aquí va cómo se calcula un precio honesto,
+        partida por partida, para que puedas comparar cualquier propuesta — la nuestra incluida.
+      </p>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">El precio real son horas, no licencias</h2>
+      <p>
+        Una automatización a medida se compone de trabajo humano: entender el proceso, diseñar la
+        arquitectura, construir los flujos, probar los casos que fallan, formar al equipo y dejarlo
+        documentado. Las licencias, cuando las hay, suelen ser la parte más pequeña.
+      </p>
+      <p>
+        Un presupuesto serio desglosa al menos: diagnóstico y mapa del proceso, diseño y
+        arquitectura, construcción de flujos, IA (prompts y evaluaciones, si aplica), pruebas y
+        seguridad, despliegue y formación, y dirección del proyecto. Si una propuesta no muestra
+        esas partidas, no puedes saber qué estás comprando.
+      </p>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Qué mueve el precio hacia arriba</h2>
+      <ul class="list-none space-y-3">
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Integraciones.</strong> Cada herramienta que el flujo tiene que tocar (WhatsApp, CRM, hojas de cálculo, agenda) añade horas de conexión y de pruebas.</li>
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Datos sensibles.</strong> Trabajar con datos de salud, fiscales o legales exige permisos, trazabilidad y pruebas adicionales. No es lo mismo clasificar pedidos que historiales.</li>
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Excepciones sin documentar.</strong> Cuantas más reglas de negocio viven en la cabeza de una persona, más horas de descubrimiento.</li>
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Interfaz a medida y migraciones.</strong> Un panel propio o traspasar años de datos son proyectos dentro del proyecto.</li>
+      </ul>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">El margen de contingencia no es relleno</h2>
+      <p>
+        Todo presupuesto serio incluye un 15–20 % de horas de contingencia, separado y visible. No
+        es una cola para inflar el precio: es lo que se consume cuando el proceso real revela
+        excepciones que nadie documentó. Si una propuesta no lo incluye, o lo esconde dentro de las
+        partidas, pregunta por qué.
+      </p>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Y después: el mantenimiento</h2>
+      <p>
+        Una automatización es un sistema vivo: las herramientas cambian sus APIs, aparecen casos
+        nuevos y alguien tiene que vigilar que las colas de excepción se vacían. Presupuestar la
+        implementación sin plan de mantenimiento es como comprar un coche sin contar las revisiones.
+        Razonable: desde unos cientos de euros al mes para un flujo simple, según criticidad y
+        número de integraciones.
+      </p>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Orden de magnitud honesto</h2>
+      <p>
+        Con esa forma de calcular, un proceso operativo acotado con una o dos integraciones se
+        mueve en el rango bajo de cuatro cifras; conectar captación, cualificación y seguimiento
+        comercial queda en torno a la mitad de esa decena; y un sistema con IA local, permisos y
+        documentación propia parte de la mitad alta. Nuestros <a class="text-[#0071e3] dark:text-[#2997ff] underline underline-offset-4" href={`${BASE}/precios/`}>rangos orientativos</a> están publicados con esa lógica, y el <a class="text-[#0071e3] dark:text-[#2997ff] underline underline-offset-4" href={`${BASE}/experiencia/`}>simulador conversacional</a> calcula horas y rango a partir de tu descripción, partidas incluidas.
+      </p>
+      <p>
+        Si alguien te promete un porcentaje de ahorro antes de haber visto tu proceso, o un plazo
+        fijo sin excepciones documentadas, te está vendiendo la parte fácil de la promesa. El
+        número honesto es el que se puede defender línea a línea.
+      </p>
+    </div>
+
+    <div class="mt-12 rounded-3xl border border-[#0071e3]/20 bg-[#0071e3]/5 p-8">
+      <p class="text-xs font-bold text-[#0071e3]">SIGUIENTE PASO</p>
+      <h2 class="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Presupuesto trazable para tu proceso</h2>
+      <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">El <a class="text-[#0071e3] dark:text-[#2997ff] underline underline-offset-4" href={`${BASE}/auditoria/`}>Diagnóstico CAIO</a> deja por escrito alcance, riesgos, partidas de horas y rango. 290 € + IVA, descontables si contratas la implementación.</p>
+    </div>
+  </article>
+</Base>

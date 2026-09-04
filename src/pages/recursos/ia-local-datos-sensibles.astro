@@ -1,0 +1,84 @@
+---
+import Base from "../../layouts/Base.astro";
+import { BASE, SITE } from "../../config";
+---
+
+<Base
+  title={`IA local para datos sensibles: qué es y cuándo compensa`}
+  description="Qué significa ejecutar un modelo de IA en tu propio equipo, cuándo tiene sentido para clínicas y despachos, y qué hardware pide de verdad."
+>
+  <article class="mx-auto max-w-3xl px-6 pb-24 pt-20 sm:pt-28">
+    <p class="eyebrow">IA privada</p>
+    <h1 class="mt-3 text-4xl font-semibold tracking-[-0.045em] text-[#1d1d1f] dark:text-white sm:text-5xl">
+      IA local para datos sensibles: qué es, cuándo compensa y qué hardware pide
+    </h1>
+    <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">Guía práctica · 7 min de lectura</p>
+
+    <div class="mt-10 space-y-8 text-[15px] leading-8 text-[#3a3a3c] dark:text-[#d2d2d7]">
+      <p>
+        «No puedo meter los datos de mis pacientes en ChatGPT.» Es la frase más repetida en
+        clínicas, despachos y asesorías cuando hablamos de IA. Y es una restricción razonable:
+        pasar datos de salud, información fiscal o expedientes legales por un servicio externo
+        obliga a revisar contratos, encargados de tratamiento y transferencias.
+      </p>
+      <p>
+        La alternativa que suele mencionarse es «IA local»: ejecutar el modelo en un equipo propio.
+        Funciona, pero conviene entender qué compra y qué no compra antes de invertir en hardware.
+      </p>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Qué es realmente la IA local</h2>
+      <p>
+        Un modelo de lenguaje abierto (por ejemplo, la familia Qwen) descargado y ejecutándose en
+        un equipo tuyo con <a class="text-[#0071e3] dark:text-[#2997ff] underline underline-offset-4" href="https://ollama.com" rel="noopener noreferrer" target="_blank">Ollama</a> o similar. Los datos que entran por el prompt no viajan a ningún servidor
+        externo: se procesan en tu máquina. Eso reduce mucho la superficie, aunque no elimina todas
+        las obligaciones: sigues siendo responsable de accesos, copias de seguridad, registros y de
+        que el modelo no vea más datos de los que necesita.
+      </p>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Qué hardware pide, con números</h2>
+      <p>
+        El tamaño del modelo determina la memoria. Modelos que existen hoy, con pesos reales
+        verificados, y la memoria unificada razonable para ejecutarlos con contexto:
+      </p>
+      <ul class="list-none space-y-3">
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Piloto (Qwen3 4B):</strong> 2,6 GB de pesos; funciona bien en equipos con 16 GB.</li>
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Equipo pequeño (Qwen3 8B):</strong> 5,2 GB; cómodo con 24 GB.</li>
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Producción (Qwen3 14B):</strong> 9,3 GB; pide 32 GB para contexto y margen.</li>
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Alta exigencia (Qwen3 32B):</strong> 20,2 GB; a partir de 64 GB.</li>
+      </ul>
+      <p>
+        A eso se suma almacenamiento para el corpus documental (si el sistema consulta documentos) y
+        su copia de seguridad, y conviene dejar un margen del orden del 30 % de memoria y disco tras
+        una prueba de carga real antes de dar el equipo por válido. Si alguien te presupuesta
+        «Qwen 27B», desconfía: ese modelo no existe en el registro público.
+      </p>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Qué compra y qué no compra</h2>
+      <p>
+        La IA local compra: control del dato, funcionamiento sin depender de la factura de un
+        proveedor de tokens, y la posibilidad de auditar qué se ejecuta. No compra: calidad
+        gratuita — un modelo de 4 B no razona como uno de 32 B —, inmunidad regulatoria, ni que las
+        respuestas sean correctas por estar en local. Un sistema serio añade permisos por fuente,
+        respuestas citadas y abstención verificable cuando no hay evidencia suficiente.
+      </p>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Cuándo compensa</h2>
+      <p>
+        Compensa cuando hay datos sensibles de terceros (salud, fiscal, legal), consultas internas
+        repetitivas sobre documentación propia, y personas que necesitan respuestas con fuente. No
+        compensa para tareas generales sin datos privados: ahí, un servicio externo es más simple y
+        más barato. La decisión correcta suele ser mixta: local para lo sensible, externo para lo
+        genérico, y reglas claras de qué pasa por dónde.
+      </p>
+      <p>
+        Si quieres ver qué pediría tu caso concreto, la <a class="text-[#0071e3] dark:text-[#2997ff] underline underline-offset-4" href={`${BASE}/experiencia/`}>guía conversacional</a> dimensiona el modelo y la memoria a partir de tu propia descripción del proceso, y explica el razonamiento.
+      </p>
+    </div>
+
+    <div class="mt-12 rounded-3xl border border-[#0071e3]/20 bg-[#0071e3]/5 p-8">
+      <p class="text-xs font-bold text-[#0071e3]">SIGUIENTE PASO</p>
+      <h2 class="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">¿Tu caso necesita IA local?</h2>
+      <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">El <a class="text-[#0071e3] dark:text-[#2997ff] underline underline-offset-4" href={`${BASE}/servicios/ia-privada/`}>servicio de IA privada</a> incluye análisis de datos, permisos, evaluación y despliegue. Todo con control humano y documentación de entrega.</p>
+    </div>
+  </article>
+</Base>

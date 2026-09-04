@@ -1,0 +1,87 @@
+---
+import Base from "../../layouts/Base.astro";
+import { BASE, SITE } from "../../config";
+---
+
+<Base
+  title={`Solicitudes por WhatsApp, teléfono y web: cómo ordenar la entrada`}
+  description="Cuando las peticiones llegan por WhatsApp, llamadas y formularios a la vez, lo que falla no es el canal: es no tener una entrada única. Cómo se ordena sin perder el control humano."
+>
+  <article class="mx-auto max-w-3xl px-6 pb-24 pt-20 sm:pt-28">
+    <p class="eyebrow">Operaciones</p>
+    <h1 class="mt-3 text-4xl font-semibold tracking-[-0.045em] text-[#1d1d1f] dark:text-white sm:text-5xl">
+      Solicitudes por WhatsApp, teléfono y web: el problema no es el canal
+    </h1>
+    <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">Guía práctica · 6 min de lectura</p>
+
+    <div class="mt-10 space-y-8 text-[15px] leading-8 text-[#3a3a3c] dark:text-[#d2d2d7]">
+      <p>
+        Una clínica, un despacho o un taller recibe peticiones por WhatsApp, por teléfono, por el
+        formulario de la web y a veces en persona. Cada canal funciona. El problema aparece cuando
+        nadie puede responder a tres preguntas: qué ha entrado hoy, quién lo atiende y qué ha pasado
+        con cada solicitud.
+      </p>
+      <p>
+        La respuesta habitual es «ponernos un CRM» o «contratar a alguien más». Pero mientras las
+        peticiones sigan llegando a tres bandejas distintas y se apunten a mano, el CRM también se
+        convierte en una cuarta bandeja.
+      </p>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Lo primero no es la herramienta: es la entrada</h2>
+      <p>
+        Un sistema de entrada ordenado hace cuatro cosas, siempre en el mismo orden: valida que la
+        petición está completa, la clasifica por tipo y urgencia, la deja visible en una sola cola y
+        detiene ahí. Quien decide qué hacer con cada solicitud sigue siendo una persona.
+      </p>
+      <p>
+        Ese «se detiene ahí» no es una limitación: es el diseño. Un sistema que clasifica y prepara
+        respuestas para revisión humana es útil desde el primer día. Un sistema que envía mensajes
+        por su cuenta a clientes reales, sin aprobación, es un incidente esperando ocurrir.
+      </p>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Qué se puede automatizar hoy y qué no</h2>
+      <p>Con herramientas como n8n en local o en un servidor propio, es factible desde ya:</p>
+      <ul class="list-none space-y-3">
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Unificar la entrada.</strong> WhatsApp, correo y formulario dejan cada petición en una sola cola con estado.</li>
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Clasificar.</strong> Tipo de solicitud, urgencia visible y datos mínimos necesarios, sin copiar conversaciones enteras.</li>
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Preparar el borrador de respuesta.</strong> El sistema propone; una persona revisa, edita y envía.</li>
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Registrar la trazabilidad.</strong> Qué entró, cuándo, quién lo atendió y qué pasó. Nada de datos sin necesidad.</li>
+      </ul>
+      <p>
+        Lo que conviene dejar fuera al principio: envíos automáticos a clientes, decisiones
+        irrevocables (cancelar, prometer, cobrar) y cualquier acceso que el modelo no necesite para
+        su trabajo.
+      </p>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">El patrón de fallo número uno</h2>
+      <p>
+        La mayoría de proyectos de automatización no fracasan por la tecnología. Fracasan porque se
+        automatiza un proceso que nadie había descrito: la persona que apuntaba las citas en el
+        Excel hacía excepciones que no estaban escritas en ninguna parte. Cuando el flujo las
+        encuentra, se atasca o, peor, las ignora.
+      </p>
+      <p>
+        Por eso el primer entregable de un proyecto serio no es un flujo: es el mapa del proceso
+        real, con sus excepciones, quién aprueba qué y qué pasa cuando algo falla. Con ese mapa,
+        automatizar es rápido. Sin él, es adivinar.
+      </p>
+
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Cómo empezar exponiendo poco</h2>
+      <p>
+        El orden que recomendamos a cualquier negocio que parte de cero: describir el proceso tal
+        como es hoy, elegir un solo bucle (la entrada de solicitudes suele ser el mejor), construir
+        el flujo con datos sintéticos y aprobación humana en cada paso, y solo entonces conectarlo
+        al canal real con un período de observación.
+      </p>
+      <p>
+        Puedes ver cómo funciona en la práctica: <a class="text-[#0071e3] dark:text-[#2997ff] underline underline-offset-4" href={`${BASE}/demos/`}>nuestras demos técnicas</a> incluyen un flujo de entrada de solicitudes de clínica que se ejecuta a mano, con datos inventados y sin tocar ningún sistema externo. Y si quieres ver cómo se ordenaría tu propio caso, la <a class="text-[#0071e3] dark:text-[#2997ff] underline underline-offset-4" href={`${BASE}/experiencia/`}>guía conversacional</a> lo convierte en una arquitectura visible en dos minutos, desde tu navegador.
+      </p>
+    </div>
+
+    <div class="mt-12 rounded-3xl border border-[#0071e3]/20 bg-[#0071e3]/5 p-8">
+      <p class="text-xs font-bold text-[#0071e3]">SIGUIENTE PASO</p>
+      <h2 class="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">¿Cuánto costaría ordenar tu entrada?</h2>
+      <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">El <a class="text-[#0071e3] dark:text-[#2997ff] underline underline-offset-4" href={`${BASE}/auditoria/`}>Diagnóstico CAIO</a> mapea tu proceso real, prioriza y deja el presupuesto por escrito. 290 € + IVA, descontables si contratas la implementación.</p>
+    </div>
+  </article>
+</Base>
