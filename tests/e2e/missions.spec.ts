@@ -7,7 +7,7 @@ const guideResponse = {
   nextQuestion: "¿Quién debe aprobar el resultado antes de enviarlo?",
   stage: "architecture",
   profile: { business: "Clínica", sector: "salud", problem: "Ordenar documentos sensibles", channels: "Formulario web", approvals: "Dirección", goal: "Reducir tiempos", integrations: 2, workflows: 2, users: 8, complexity: "standard", sensitivity: "high", customUi: true, dataMigration: false, localAi: true },
-  estimate: { quotedHours: 146, range: { min: 10250, max: 13100 }, maintenanceMonthly: 650 },
+  estimate: { quotedHours: 50.5, range: { min: 3600, max: 4550 }, maintenanceMonthly: 650 },
   hardware: { profile: "Producción (Qwen3 14B)", model: "qwen3:14b", unifiedMemoryGb: 32, freeStorageGb: 180, headroom: "30% libre tras las pruebas" },
   service: { name: "IA privada", slug: "ia-privada" },
 };
@@ -21,7 +21,7 @@ test("la guía responde y convierte la conversación en arquitectura", async ({ 
   await expect(page.getByText(/quieres ordenar un proceso sensible/i)).toBeVisible();
   await expect(page.getByText(/quién debe aprobar/i)).toBeVisible();
   await expect(page.locator("[data-service]")).toHaveText("IA privada");
-  await expect(page.getByText("146")).toBeVisible();
+  await expect(page.getByText("50.5")).toBeVisible();
   await expect(page.getByText(/32 GB de memoria unificada/i)).toBeVisible();
   await expect(page.getByRole("link", { name: /Ver IA privada/i })).toHaveAttribute("href", "/servicios/ia-privada/");
 });

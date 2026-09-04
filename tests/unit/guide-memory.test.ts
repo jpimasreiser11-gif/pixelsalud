@@ -63,11 +63,29 @@ describe("motor de VARINO Guide", () => {
     expect(result.service.slug).toBe("sistema-crecimiento");
     expect(result.estimate.quotedHours).toBeGreaterThan(0);
     expect(result.estimate.range.max).toBeGreaterThan(result.estimate.range.min);
-    // Un caso de una sola persona no debe pedir un equipo de 64 GB, pero sí
-    // memoria suficiente para el modelo y su contexto.
-    expect(result.hardware.model).toMatch(/^qwen3:/);
-    expect(result.hardware.unifiedMemoryGb).toBeGreaterThan(result.hardware.modelWeightsGb * 2);
+    // Un sistema de crecimiento no despliega modelo local: presupuestarle
+    // hardware era inflar la oferta con equipo que la solución no usa.
+    expect(result.hardware).toBeNull();
     expect(result.reply).not.toContain("¿");
+  });
+
+  it("recomienda modelo y hardware solo cuando el servicio es IA privada", () => {
+    const result = advise({
+      messages: [
+        { role: "user", content: "Somos una clínica dental" },
+        { role: "assistant", content: "¿Qué tarea, problema o cuello de botella quieres mejorar primero?" },
+        { role: "user", content: "Perdemos citas y los datos de pacientes son sensibles" },
+        { role: "assistant", content: "¿Cómo realizáis ahora ese proceso, desde que empieza hasta que termina?" },
+        { role: "user", content: "Recepción apunta las solicitudes en un Excel y confirma por teléfono" },
+      ],
+      profile: { business: "Somos una clínica dental", problem: "Perdemos citas y los datos de pacientes son sensibles" },
+    });
+    expect(result.service.slug).toBe("ia-privada");
+    expect(result.profile.localAi).toBe(true);
+    expect(result.hardware.model).toMatch(/^qwen3:/);
+    // Un caso pequeño no debe pedir un equipo de 64 GB, pero sí memoria
+    // suficiente para el modelo y su contexto.
+    expect(result.hardware.unifiedMemoryGb).toBeGreaterThan(result.hardware.modelWeightsGb * 2);
   });
 
   it("no vuelve a preguntar por un campo ya contestado", () => {

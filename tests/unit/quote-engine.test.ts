@@ -10,6 +10,23 @@ describe("motor de presupuesto", () => {
     expect(QUOTE_POLICY.vatIncluded).toBe(false);
   });
 
+  it("calibra los casos típicos dentro de los rangos publicados en la web", () => {
+    // Los rangos de config.ts son el compromiso comercial público
+    // (ops/PLAN-0-A-10K.md). Si el motor se descalibra y vuelve a presupuestar
+    // 22.000 € a una clínica de tres personas, esta prueba lo detiene.
+    const sprint = calculateEstimate({ integrations: 2, workflows: 1, users: 2, complexity: "standard", sensitivity: "medium", localAi: false });
+    expect(sprint.range.min).toBeGreaterThanOrEqual(900);
+    expect(sprint.range.max).toBeLessThanOrEqual(2400);
+
+    const crecimiento = calculateEstimate({ integrations: 3, workflows: 2, users: 4, complexity: "standard", sensitivity: "high", localAi: false });
+    expect(crecimiento.range.min).toBeGreaterThanOrEqual(2500);
+    expect(crecimiento.range.max).toBeLessThanOrEqual(4500);
+
+    const iaPrivada = calculateEstimate({ integrations: 5, workflows: 3, users: 3, complexity: "advanced", sensitivity: "high", localAi: true });
+    expect(iaPrivada.range.min).toBeGreaterThanOrEqual(4500);
+    expect(iaPrivada.range.max).toBeLessThanOrEqual(12000);
+  });
+
   it("incrementa horas cuando aumenta el alcance", () => {
     const small = calculateEstimate({ integrations: 1, workflows: 1, complexity: "simple", localAi: false });
     const advanced = calculateEstimate({ integrations: 7, workflows: 9, complexity: "advanced", localAi: true, customUi: true, dataMigration: true });

@@ -149,21 +149,23 @@ const DATA_MIGRATION = /migrar|migraci[óo]n|hist[óo]rico|traspasar datos|impor
 export function deriveScope(profile) {
   const toolText = `${profile.tools} ${profile.process}`.toLowerCase();
   const channelText = `${profile.channels} ${profile.process}`.toLowerCase();
-  const allText = `${profile.business} ${profile.problem} ${profile.process} ${profile.tools} ${profile.channels} ${profile.approvals} ${profile.goal}`.toLowerCase();
+  // El volumen entra en allText porque ahí es donde el visitante dice cuántas
+  // personas son: sin él, un equipo de 4 se presupuestaba como 1 usuario.
+  const allText = `${profile.business} ${profile.problem} ${profile.process} ${profile.tools} ${profile.channels} ${profile.volume} ${profile.approvals} ${profile.goal}`.toLowerCase();
 
   const tools = TOOL_PATTERNS.filter((pattern) => pattern.test(toolText)).length;
   const channels = CHANNEL_PATTERNS.filter((pattern) => pattern.test(channelText)).length;
   const integrations = Math.max(1, Math.min(12, tools + channels));
-  const workflows = Math.max(1, Math.min(20, Math.max(1, channels) + (profile.approvals ? 1 : 0)));
+  // Una aprobación humana es un control, no un flujo: sumarla inflaba el
+  // alcance y el precio de procesos sencillos.
+  const workflows = Math.max(1, Math.min(20, channels));
 
   const people = allText.match(/(\d{1,3})\s*(personas?|empleados?|usuarios?|trabajador\w*|profesionales?|recepcionistas?|comerciales?|t[ée]cnicos?)/);
   const users = people ? clampNumber(people[1], 1, 250, 1) : 1;
 
-  const complexity = integrations >= 5 || (profile.sensitivity === "high" && integrations >= 3)
-    ? "advanced"
-    : integrations <= 1 && !profile.approvals
-      ? "simple"
-      : "standard";
+  // La sensibilidad ya se cobra como horas de riesgo en el presupuesto; hacer
+  // que además subiera la complejidad era cobrar dos veces lo mismo.
+  const complexity = integrations >= 5 ? "advanced" : integrations <= 1 ? "simple" : "standard";
 
   return {
     integrations,
@@ -364,6 +366,10 @@ export function advise({ messages = [], profile: previousProfile = {}, modelProf
   if (SENSITIVE.test(profile.sector)) profile.sensitivity = "high";
   Object.assign(profile, deriveScope(profile));
   const service = recommendService(profile);
+  // El modelo local solo forma parte de la solución cuando el servicio es IA
+  // privada. Antes quedaba a true por defecto y la guía presupuestaba horas de
+  // IA y hardware (32 GB de memoria) para un Automation Sprint de 1.000 €.
+  profile.localAi = service.slug === "ia-privada";
   const stage = stageFor(profile);
   const quoteReady = Boolean(profile.problem && (profile.business || profile.sector) && profile.process);
   return {
