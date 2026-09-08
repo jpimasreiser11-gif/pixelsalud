@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import { BASE, SITE, hasContactChannel } from "../config";
 import Logo from "../components/Logo.astro";
+import AiChat from "../components/AiChat.astro";
 
 interface Props {
   title: string;
@@ -219,6 +220,8 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
         </div>
       </div>
     </footer>
+
+    <AiChat />
 
     <script>
       (function () {

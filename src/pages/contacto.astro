@@ -1,6 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
-import { SITE, hasContactChannel } from "../config";
+import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
 
 ---
 
@@ -48,6 +48,7 @@ import { SITE, hasContactChannel } from "../config";
       <form
         id="form-contacto"
         data-email={SITE.email}
+        data-lead={BACKEND_LEAD}
         class="rounded-3xl border border-black/10 bg-[#f7f7f5] p-6 shadow-sm space-y-4 dark:border-white/10 dark:bg-[#111318] sm:p-8"
       >
         {!hasContactChannel && (
@@ -119,12 +120,27 @@ import { SITE, hasContactChannel } from "../config";
             ></textarea>
           </div>
 
+          <div>
+            <label for="contacto-email" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Email</label>
+            <input id="contacto-email" type="email" name="email" required placeholder="tu@email.com" class="contact-field" />
+          </div>
+
+          <div>
+            <label for="contacto-whatsapp" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">WhatsApp (opcional)</label>
+            <input id="contacto-whatsapp" type="tel" name="whatsapp" placeholder="+34 600 000 000" class="contact-field" />
+          </div>
+
           <button
             type="submit"
             class="w-full rounded-full bg-[#0071e3] px-6 py-3 font-semibold text-white transition hover:bg-[#0077ed] text-xs shadow-lg shadow-[#0071e3]/20"
           >
-            {hasContactChannel ? "Preparar correo →" : "Copiar briefing →"}
+            {hasContactChannel ? "Enviar solicitud →" : "Copiar briefing →"}
           </button>
+
+          <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+            <input type="checkbox" name="consentimiento" required class="mt-0.5 shrink-0" />
+            <span>Acepto que VARINO guarde estos datos para contactarme, según su <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">política de privacidad</a>.</span>
+          </label>
 
           <p class="text-[11px] text-[#6e6e73] dark:text-[#a1a1a6] text-center" aria-live="polite" data-form-status>
             No incluyas información confidencial o datos personales de terceros.
@@ -138,35 +154,69 @@ import { SITE, hasContactChannel } from "../config";
     (function () {
       var form = document.getElementById("form-contacto");
       if (!form) return;
-      form.addEventListener("submit", function (ev) {
-        ev.preventDefault();
-        var f = form;
-        function val(name) {
-          var el = f.querySelector('[name="' + name + '"]');
-          return el && el.value ? el.value : "-";
-        }
-        var destinatario = f.getAttribute("data-email") || "";
+      var lead = form.getAttribute("data-lead") || "";
+      var statusEl = form.querySelector("[data-form-status]");
+      function val(name) {
+        var el = form.querySelector('[name="' + name + '"]');
+        return el ? el.value.trim() : "";
+      }
+      function servicioAI(nombre) {
+        var map = {
+          "Automatización de procesos": "automation-sprint",
+          "Sistema comercial": "growth-system",
+          "Producto o asistente con IA": "private-ai",
+        };
+        return map[nombre] || "otro";
+      }
+      function abrirMailto() {
+        var destinatario = form.getAttribute("data-email") || "";
         var asunto = "Consulta de Proyecto: " + val("negocio");
         var cuerpo =
           "Nombre: " + val("nombre") + "\n" +
+          "Email: " + val("email") + "\n" +
           "Empresa: " + val("negocio") + "\n" +
-          "Web: " + val("web") + "\n" +
           "Servicio: " + val("servicio") + "\n\n" +
           "Mensaje: " + val("mensaje");
-        var status = f.querySelector("[data-form-status]");
-        if (destinatario) {
-          window.location.href =
-            "mailto:" + destinatario +
-            "?subject=" + encodeURIComponent(asunto) +
-            "&body=" + encodeURIComponent(cuerpo);
-          if (status) status.textContent = "Se ha abierto tu aplicación de correo con el briefing preparado. Si no se abre, copia los campos y escríbenos directamente.";
-          return;
+        window.location.href = "mailto:" + destinatario + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(cuerpo);
+      }
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        var nombre = val("nombre");
+        var email = val("email");
+        var whatsapp = val("whatsapp");
+        var consent = form.querySelector('[name="consentimiento"]').checked;
+        if (!consent) { if (statusEl) statusEl.textContent = "Necesitamos tu consentimiento para contactarte."; return; }
+        if (lead) {
+          if (statusEl) statusEl.textContent = "Enviando…";
+          var payload = {
+            nombre: nombre,
+            email: email,
+            whatsapp: whatsapp,
+            empresa: val("negocio"),
+            interes: servicioAI(val("servicio")),
+            fuente: "form-contacto",
+            pagina: location.pathname,
+            consentimiento: true,
+            mensaje: val("mensaje"),
+          };
+          fetch(lead, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+            body: JSON.stringify(payload),
+          }).then(function (r) { return r.json(); }).then(function (d) {
+            if (d && d.ok) {
+              if (statusEl) statusEl.textContent = "✓ Recibido. El equipo de VARINO te escribirá en breve.";
+              form.reset();
+            } else {
+              abrirMailto();
+            }
+          }).catch(function () { abrirMailto(); });
+        } else {
+          // Sin backend (web estática): plantilla por correo como antes.
+          navigator.clipboard.writeText("Nombre: " + val("nombre") + "\nEmail: " + email + "\nEmpresa: " + val("negocio") + "\n\n" + val("mensaje"))
+            .then(function () { if (statusEl) statusEl.textContent = "Briefing copiado."; })
+            .catch(function () { abrirMailto(); });
         }
-        navigator.clipboard.writeText(asunto + "\n\n" + cuerpo).then(function () {
-          if (status) status.textContent = "Briefing copiado. Consérvalo para enviarlo cuando abramos el canal público.";
-        }).catch(function () {
-          if (status) status.textContent = "No se pudo copiar automáticamente. Selecciona el contenido de los campos para conservarlo.";
-        });
       });
     })();
   </script>

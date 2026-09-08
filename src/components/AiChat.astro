@@ -1,0 +1,237 @@
+---
+import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
+---
+<!-- Asistente IA de VARINO. Habla con la IA local de la agencia vía n8n y
+     captura datos de contacto solo con consentimiento explícito. -->
+<section
+  class="ai-chat-widget"
+  data-aichat
+  data-enabled={String(BACKEND.enabled)}
+  data-chat={BACKEND_CHAT}
+  data-lead={BACKEND_LEAD}
+  data-origin={BACKEND.origin}
+  aria-label="Asistente de VARINO"
+>
+  <button type="button" class="aichat-launcher" data-aichat-open aria-expanded="false">
+    <span aria-hidden="true">◉</span> Hablar con la IA
+  </button>
+
+  <div class="aichat-panel" hidden>
+    <header class="aichat-head">
+      <div>
+        <strong>Asistente VARINO</strong>
+        <small>IA local de la agencia</small>
+      </div>
+      <button type="button" class="aichat-close" data-aichat-close aria-label="Cerrar">✕</button>
+    </header>
+
+    <div class="aichat-msgs" data-aichat-msgs aria-live="polite"></div>
+
+    <form class="aichat-composer" data-aichat-form>
+      <label class="sr-only" for="aichat-input">Escribe tu mensaje</label>
+      <textarea id="aichat-input" data-aichat-input rows="1" maxlength="1200" placeholder="Pregunta por servicios, precios o cómo empezar…" required></textarea>
+      <button type="submit" aria-label="Enviar">↑</button>
+    </form>
+
+    <!-- Captura con consentimiento -->
+    <div class="aichat-capture" data-aichat-capture hidden>
+      <form data-aichat-lead>
+        <input type="hidden" name="website" value="" aria-hidden="true" tabindex="-1" autocomplete="off" />
+        <p class="aichat-capture-title">¿Quieres que el equipo de VARINO te contacte?</p>
+        <label class="sr-only" for="aichat-nombre">Nombre</label>
+        <input id="aichat-nombre" name="nombre" type="text" placeholder="Tu nombre" required />
+        <label class="sr-only" for="aichat-email">Email</label>
+        <input id="aichat-email" name="email" type="email" placeholder="Email (o WhatsApp abajo)" />
+        <label class="sr-only" for="aichat-whatsapp">WhatsApp</label>
+        <input id="aichat-whatsapp" name="whatsapp" type="tel" placeholder="WhatsApp (opcional)" />
+        <label class="aichat-consent">
+          <input type="checkbox" name="consentimiento" value="true" required />
+          <span>Acepto que VARINO guarde mis datos para contactarme según su <a href={`${"/privacidad/"}`} target="_blank" rel="noopener">política de privacidad</a>.</span>
+        </label>
+        <button type="submit" class="aichat-send">Enviar y que me contacten →</button>
+        <p class="aichat-status" data-aichat-lead-status aria-live="polite"></p>
+      </form>
+    </div>
+
+    <p class="aichat-legal">
+      Asistente con IA de {SITE.name}. No compartas datos de terceros ni información sensible.
+      <a href={`${"/privacidad/"}`} target="_blank" rel="noopener">Privacidad</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  :global(.dark) .ai-chat-widget { --ac: #2997ff; --panel: #111318; --line: #2a2a2c; }
+  .ai-chat-widget {
+    --ac: #0071e3; --panel: #ffffff; --line: #e5e5ea; --text: #1d1d1f; --muted: #6e6e73;
+    position: fixed; right: 18px; bottom: 18px; z-index: 70; font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+  .aichat-launcher {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: var(--ac); color: #fff; border: 0; border-radius: 999px;
+    padding: .7rem 1.1rem; font-size: .8rem; font-weight: 600; cursor: pointer;
+    box-shadow: 0 10px 30px rgb(0 0 0 / .18); transition: transform .15s ease, background .2s;
+  }
+  .aichat-launcher:hover { background: #0077ed; }
+  .aichat-panel {
+    width: min(92vw, 372px); max-height: min(80vh, 560px);
+    display: flex; flex-direction: column;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--line); border-radius: 18px; overflow: hidden;
+    box-shadow: 0 24px 70px rgb(0 0 0 / .28); margin-bottom: 10px;
+  }
+  .aichat-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: .8rem 1rem; border-bottom: 1px solid var(--line);
+  }
+  .aichat-head strong { display: block; font-size: .85rem; }
+  .aichat-head small { color: var(--muted); font-size: .68rem; }
+  .aichat-close, .aichat-composer button { background: none; border: 0; cursor: pointer; color: var(--muted); font-size: .9rem; }
+  .aichat-msgs { overflow-y: auto; padding: .9rem; display: flex; flex-direction: column; gap: .55rem; min-height: 180px; }
+  .aichat-msgs p { margin: 0; padding: .5rem .75rem; border-radius: 12px; font-size: .82rem; line-height: 1.5; max-width: 88%; white-space: pre-wrap; word-break: break-word; }
+  .aichat-msgs .assistant { background: #f0f0f2; align-self: flex-start; }
+  .aichat-msgs .user { background: var(--ac); color: #fff; align-self: flex-end; }
+  .aichat-msgs .typing { opacity: .7; font-style: italic; }
+  :global(.dark) .aichat-msgs .assistant { background: #1e2026; }
+  .aichat-composer { display: flex; gap: .5rem; padding: .6rem .8rem; border-top: 1px solid var(--line); }
+  .aichat-composer textarea {
+    flex: 1; resize: none; border: 1px solid var(--line); border-radius: 10px;
+    background: transparent; color: var(--text); padding: .45rem .6rem; font: inherit; font-size: .82rem;
+  }
+  .aichat-capture { border-top: 1px dashed var(--line); padding: .75rem .9rem; font-size: .8rem; }
+  .aichat-capture-title { margin: 0 0 .5rem; font-weight: 600; }
+  .aichat-capture input[type="text"], .aichat-capture input[type="email"], .aichat-capture input[type="tel"] {
+    width: 100%; margin-bottom: .45rem; box-sizing: border-box;
+    border: 1px solid var(--line); border-radius: 9px; padding: .45rem .6rem; font: inherit; font-size: .8rem;
+    background: transparent; color: var(--text);
+  }
+  .aichat-consent { display: flex; gap: .5rem; align-items: flex-start; color: var(--muted); font-size: .7rem; line-height: 1.4; margin: .4rem 0; }
+  .aichat-consent a, .aichat-legal a, .aichat-capture a { color: var(--ac); }
+  .aichat-send { width: 100%; background: var(--ac); color: #fff; border: 0; border-radius: 999px; padding: .55rem; font-weight: 600; cursor: pointer; font-size: .78rem; }
+  .aichat-status { min-height: 1em; margin: .35rem 0 0; color: var(--muted); font-size: .72rem; }
+  .aichat-legal { margin: 0; padding: .55rem .9rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .66rem; line-height: 1.45; }
+  .aichat-panel[hidden] { display: none; }
+</style>
+
+<script>
+  (function () {
+    var root = document.querySelector("[data-aichat]");
+    if (!root) return;
+    var CHAT = root.getAttribute("data-chat");
+    var LEAD = root.getAttribute("data-lead");
+    var enabled = root.getAttribute("data-enabled") === "true";
+    var OPEN = "varino_aichat_open", KEY = "varino_aichat_conv", MSGS = "varino_aichat_msgs";
+
+    var launcher = root.querySelector("[data-aichat-open]");
+    var panel = root.querySelector(".aichat-panel");
+    var msgsEl = root.querySelector("[data-aichat-msgs]");
+    var form = root.querySelector("[data-aichat-form]");
+    var input = root.querySelector("[data-aichat-input]");
+    var capture = root.querySelector("[data-aichat-capture]");
+    var leadForm = root.querySelector("[data-aichat-lead]");
+    var leadStatus = root.querySelector("[data-aichat-lead-status]");
+
+    function store(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {} }
+    function load(key, fallback) { try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
+
+    var msgs = load(MSGS, []);
+    var convId = load(KEY, "");
+    function persist() { store(MSGS, msgs.slice(-24)); if (convId) store(KEY, convId); }
+
+    function say(text, who) {
+      var p = document.createElement("p");
+      p.className = who || "assistant";
+      p.textContent = text;
+      msgsEl.appendChild(p);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+      return p;
+    }
+    function save(role, content) { msgs.push({ role: role, content: content }); persist(); }
+
+    function openPanel() {
+      if (!enabled) { window.open("https://wa.me/34623204319", "_blank"); return; }
+      panel.hidden = false;
+      launcher.setAttribute("aria-expanded", "true");
+      store(OPEN, true);
+      if (!msgs.length) {
+        say("Hola, soy el asistente de VARINO. Puedo contarte qué hacemos, darte precios orientativos y ayudarte a dar el primer paso. ¿Qué proceso te gustaría mejorar?");
+      } else {
+        for (var i = 0; i < msgs.length; i++) say(msgs[i].content, msgs[i].role === "user" ? "user" : "assistant");
+      }
+      input.focus();
+    }
+    function closePanel() { panel.hidden = true; launcher.setAttribute("aria-expanded", "false"); store(OPEN, false); }
+    launcher.addEventListener("click", function () { if (panel.hidden) openPanel(); else closePanel(); });
+    root.querySelector("[data-aichat-close]").addEventListener("click", closePanel);
+
+    form.addEventListener("submit", async function (ev) {
+      ev.preventDefault();
+      var text = input.value.trim();
+      if (!text) return;
+      say(text, "user");
+      save("user", text);
+      input.value = ""; input.disabled = true;
+      var pending = say("…", "assistant typing");
+      try {
+        var history = msgs.slice(-9, -1); // los turnos previos (sin este último)
+        var res = await fetch(CHAT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+          body: JSON.stringify({ message: text, history: history, conversationId: convId, pagina: location.pathname })
+        });
+        var data = await res.json();
+        if (res.ok && data && data.reply) {
+          if (!convId && data.conversationId) { convId = data.conversationId; persist(); }
+          pending.remove();
+          say(data.reply, "assistant");
+          save("assistant", data.reply);
+        } else { throw new Error("respuesta"); }
+        if (msgs.filter(function (m) { return m.role === "user"; }).length >= 2 && capture.hidden) {
+          capture.hidden = false;
+        }
+      } catch (err) {
+        pending.remove();
+        say("Ahora mismo no puedo responder. Escríbenos por WhatsApp https://wa.me/34623204319 y te atendemos en persona.", "assistant");
+      } finally {
+        input.disabled = false; input.focus();
+      }
+    });
+
+    leadForm.addEventListener("submit", async function (ev) {
+      ev.preventDefault();
+      var f = leadForm;
+      function val(n) { var el = f.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ""; }
+      var consent = f.querySelector('[name="consentimiento"]').checked;
+      var nombre = val("nombre"), email = val("email"), whatsapp = val("whatsapp");
+      var last = msgs[msgs.length - 1] ? msgs[msgs.length - 1].content : "";
+      if (!consent || !nombre) return;
+      if (!email && !whatsapp) { leadStatus.textContent = "Indica un email o un WhatsApp para poder contactarte."; return; }
+      leadStatus.textContent = "Enviando…";
+      try {
+        var r = await fetch(LEAD, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+          body: JSON.stringify({
+            nombre: nombre, email: email, whatsapp: whatsapp, empresa: "", interes: "otro",
+            fuente: "chat", pagina: location.pathname, consentimiento: true,
+            mensaje: "Chat VARINO: " + (last || "").slice(0, 900),
+            conversationId: convId
+          })
+        });
+        var d = await r.json();
+        if (r.ok && d.ok) { leadStatus.textContent = "¡Listo! El equipo de VARINO te escribirá pronto."; leadForm.reset(); capture.hidden = true; }
+        else { leadStatus.textContent = "No se pudo enviar. Escríbenos a " + (root.getAttribute("data-origin") ? "" : "") + "varinoagency@gmail.com."; }
+      } catch (e2) { leadStatus.textContent = "Sin conexión con el servidor. Escríbenos a varinoagency@gmail.com."; }
+    });
+
+    // Enviar con Enter (Shift+Enter = salto de línea)
+    input.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter" && !ev.shiftKey) { ev.preventDefault(); form.requestSubmit(); }
+    });
+    function auto() { input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, 120) + "px"; }
+    input.addEventListener("input", auto);
+
+    // Abrir si ya estaba abierto en esta visita
+    if (load(OPEN, false)) openPanel();
+  })();
+</script>
