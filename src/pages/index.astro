@@ -94,5 +94,23 @@ const DEMOS = [
     <div class="grid gap-3 sm:grid-cols-2">{MAINTENANCE_PLANS.map((plan) => <article class="rounded-2xl border border-black/8 p-5 dark:border-white/10"><div class="flex items-start justify-between gap-3"><h3 class="font-semibold">{plan.name}</h3><strong class="text-sm text-[#584ee8] dark:text-[#9b95ff]">{plan.monthly}</strong></div><p class="mt-4 text-xs leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{plan.includes.join(" · ")}</p></article>)}</div>
   </section>
 
+  <section class="mx-auto max-w-6xl px-6 pb-6">
+    <div class="section-heading"><div><p class="eyebrow">Sin sorpresas</p><h2>Garantías que sí podemos firmar.</h2></div><p>Preferimos decir menos y cumplirlo. Esto es lo que ofrecemos por escrito en cada proyecto.</p></div>
+    <div class="mt-10 grid gap-4 sm:grid-cols-2">
+      {[
+        ["Alcance por escrito","Firmamos alcance, entregables, exclusiones y precio antes de construir. Si algo cambia, lo acordamos antes de seguir."],
+        ["Rangos reales, no IVA oculto","Te orientamos con un rango y cerramos el presupuesto después de ver el proceso. Los costes externos y licencias se declaran por separado."],
+        ["Control humano","Nada se envía ni decide solo: los pasos sensibles pasan por la aprobación de tu equipo. Cada flujo tiene recuperación manual."],
+        ["Tus datos, bajo tu control","Podemos trabajar con datos sensibles sin que salgan de tu entorno (n8n privado, IA local). Recibes documentación y formación."],
+      ].map(([t,d]) => (
+        <div class="rounded-2xl border border-black/8 bg-[#f7f7f5] p-6 dark:border-white/10 dark:bg-[#111318]">
+          <p class="font-semibold">{t}</p>
+          <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{d}</p>
+        </div>
+      ))}
+    </div>
+    <p class="mt-5 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Más detalle en <a href={`${BASE}/seguridad/`} class="underline hover:text-[#0071e3]">seguridad e IA responsable</a> y en <a href={`${BASE}/metodo/`} class="underline hover:text-[#0071e3]">el método</a>.</p>
+  </section>
+
   <Cta titulo="Cuéntanos dónde se atasca el trabajo." texto="Puedes explorar tu caso sin identificarte. Una persona revisará alcance, seguridad y precio antes de cualquier implementación." />
 </Base>
