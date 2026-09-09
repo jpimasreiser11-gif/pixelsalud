@@ -12,6 +12,40 @@ import { BASE, MAINTENANCE_PLANS, SERVICES, SITE } from "../config";
     </article>
   </section>
   <section class="mx-auto grid max-w-6xl gap-5 px-6 pb-24 lg:grid-cols-3">{SERVICES.map((service) => <article class="rounded-3xl border border-black/8 p-7 dark:border-white/10"><p class="text-xs font-bold text-[#655cff]">{service.tag}</p><h2 class="mt-7 text-3xl font-semibold tracking-[-0.04em]">{service.name}</h2><strong class="mt-3 block text-xl">{service.range}</strong><p class="mt-4 min-h-24 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{service.summary}</p><ul class="mt-6 space-y-3 text-sm">{service.deliverables.map((item) => <li class="border-t border-black/8 pt-3 dark:border-white/10">{item}</li>)}</ul><p class="mt-6 text-xs leading-5 text-[#6e6e73]">Rango indicativo, no oferta contractual.</p></article>)}</section>
+  <section class="mx-auto max-w-6xl px-6 pb-6">
+    <div class="rounded-2xl border border-black/8 bg-[#f7f7f5] p-5 text-sm leading-6 text-[#6e6e73] dark:border-white/10 dark:bg-[#111318] dark:text-[#a1a1a6]">
+      <strong class="text-[#1d1d1f] dark:text-[#f5f5f7]">Cómo se paga.</strong> Sin IVA oculto: los rangos no incluyen IVA ni licencias de terceros. Antes de construir firmamos un presupuesto cerrado con alcance y exclusiones; si el alcance cambia, lo acordamos por escrito antes de seguir. El Diagnóstico CAIO (290 €) se descuenta si contratas la implementación propuesta.
+    </div>
+  </section>
+  <section class="mx-auto max-w-6xl px-6 pb-16">
+    <div class="section-heading"><div><p class="eyebrow">Alcance por proyecto</p><h2>Qué incluye y qué no.</h2></div><p>Cada propuesta detalla lo mismo: entregables, límites y costes externos. Así no hay sorpresas al final.</p></div>
+    <div class="mt-10 grid gap-5 lg:grid-cols-3">
+      {SERVICES.map((service) => (
+        <article class="rounded-3xl border border-black/8 p-6 dark:border-white/10">
+          <h3 class="text-xl font-semibold">{service.name}</h3>
+          <p class="mt-3 text-xs font-bold text-[#0071e3]">Incluye</p>
+          <ul class="mt-2 space-y-2 text-sm">{service.deliverables.map((i) => <li>· {i}</li>)}</ul>
+          <p class="mt-5 text-xs font-bold text-[#6e6e73] dark:text-[#a1a1a6]">No incluye</p>
+          <ul class="mt-2 space-y-2 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">{service.exclusions.map((i) => <li>— {i}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </section>
+  <section class="mx-auto max-w-3xl px-6 pb-20">
+    <p class="eyebrow">Preguntas frecuentes</p>
+    <h2 class="mt-2 text-3xl font-semibold tracking-[-0.04em]">Sobre precios y alcance.</h2>
+    <div class="mt-8 space-y-3">
+      {[["¿Por qué un rango y no un precio fijo?","Porque hasta ver el proceso real no conocemos sus excepciones. El rango te orienta; el presupuesto cerrado llega tras el diagnóstico o el mapa."],
+        ["¿El presupuesto puede subir luego?","Solo si cambia el alcance, y entonces lo acordamos por escrito antes de seguir. Las exclusiones están publicadas en cada servicio."],
+        ["¿Qué incluyen los rangos?","Horas de análisis, diseño, construcción, pruebas, seguridad, despliegue, documentación y formación. No incluyen IVA ni licencias de terceros."],
+        ["¿Necesito el mantenimiento?","No. Recibes la documentación del proyecto sí o sí. El mantenimiento es opcional para supervisión, incidencias y mejoras."],
+        ["¿El Diagnóstico CAIO se descuenta?","Sí, los 290 € se descuentan íntegramente si contratas la implementación propuesta."]].map(([q,a]) => (
+        <details class="group rounded-2xl border border-black/8 p-5 dark:border-white/10">
+          <summary class="cursor-pointer font-semibold list-none">{q}</summary>
+          <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{a}</p>
+        </details>))}
+    </div>
+  </section>
   <section class="border-y border-black/6 bg-[#f7f7f5] dark:border-white/10 dark:bg-[#0a0d14]"><div class="mx-auto max-w-6xl px-6 py-24"><div class="section-heading"><div><p class="eyebrow">Mantenimiento opcional</p><h2>Ingresos recurrentes con trabajo recurrente real.</h2></div><p>Supervisión, incidencias, cambios y mejora se contratan con límites claros. Ningún plan es obligatorio para recibir la documentación del proyecto.</p></div><div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{MAINTENANCE_PLANS.map((plan) => <article class="rounded-2xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]"><h3 class="text-xl font-semibold">{plan.name}</h3><strong class="mt-2 block text-[#655cff]">{plan.monthly}</strong><ul class="mt-5 space-y-3 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">{plan.includes.map((item) => <li>{item}</li>)}</ul></article>)}</div></div></section>
   <Cta titulo="Primero entendemos el caso." texto="Haz la auditoría gratuita con VARINO AI o comparte un resumen. Una persona revisará el alcance antes de cualquier compromiso." />
 </Base>
