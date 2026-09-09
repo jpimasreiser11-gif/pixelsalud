@@ -1,6 +1,5 @@
 ---
 import Base from "../layouts/Base.astro";
-import InteractiveMissions from "../components/InteractiveMissions.astro";
 import Cta from "../components/Cta.astro";
 import { BASE, MAINTENANCE_PLANS, SERVICES, SITE } from "../config";
 
@@ -15,10 +14,10 @@ const DEMOS = [
   <section class="mx-auto max-w-6xl px-6 pb-16 pt-28 sm:pb-24 sm:pt-36">
     <p class="eyebrow">Automatización e IA para empresas</p>
     <h1 class="display-title mt-5 max-w-5xl">Menos trabajo repetitivo.<br /><span>Más control para crecer.</span></h1>
-    <p class="mt-7 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">Diseñamos sistemas que conectan procesos, datos e inteligencia artificial. Empieza hablando con nuestra guía: entenderá tu caso y construirá una propuesta visual contigo.</p>
+    <p class="mt-7 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">Diseñamos sistemas que conectan procesos, datos e inteligencia artificial. Pregúntale a VARINO AI (abajo a la derecha) qué proceso automatizar y cuánto puede costar, o reserva una llamada y lo vemos juntos.</p>
   </section>
 
-  <InteractiveMissions compact />
+  
 
   <section class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
     <div class="section-heading"><div><p class="eyebrow">Tres formas de empezar</p><h2>Un problema concreto.<br />Un sistema útil.</h2></div><p>Los rangos son orientativos. Una persona confirma el alcance, dependencias y precio antes de comenzar.</p></div>
@@ -53,7 +52,7 @@ const DEMOS = [
       </div>
       <div class="mt-8 flex flex-col justify-between gap-4 rounded-2xl border border-black/8 bg-white p-5 dark:border-white/10 dark:bg-[#111318] sm:flex-row sm:items-center">
         <div><strong class="text-sm">Reseñas verificadas, no decorativas.</strong><p class="mt-1 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Publicaremos nombre, contexto y testimonio únicamente con autorización del cliente. Hasta entonces, demostramos el trabajo con sistemas que puedes explorar.</p></div>
-        <a class="button-secondary shrink-0" href={`${BASE}/experiencia/`}>Probar la guía</a>
+        <a class="button-secondary shrink-0" href={`${BASE}/reservar/`}>Reservar una llamada</a>
       </div>
     </div>
   </section>

@@ -1,14 +1,37 @@
 ---
 import Base from "../layouts/Base.astro";
-import InteractiveMissions from "../components/InteractiveMissions.astro";
+import Cta from "../components/Cta.astro";
 import { SITE } from "../config";
 ---
 
-<Base title={`Experiencia guiada por IA — ${SITE.name}`} description="Describe tu proceso con lenguaje natural y visualiza una arquitectura de automatización sin enviar ni guardar datos.">
-  <section class="mx-auto max-w-6xl px-6 pb-10 pt-20 sm:pt-28">
-    <p class="eyebrow">Diseñador conversacional</p>
-    <h1 class="display-title max-w-5xl">Entender haciendo.<br /><span>Decidir con control.</span></h1>
-    <p class="mt-7 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">Habla con la guía como hablarías con un consultor. Mientras responde, verás cómo tu necesidad se convierte en un sistema visual. No conecta con tus herramientas ni ejecuta acciones sin revisión y aprobación.</p>
+<Base
+  title={`Cómo es trabajar con VARINO AI — ${SITE.name}`}
+  description="Automatización e IA con proceso claro, control humano y precio cerrado antes de empezar."
+>
+  <section class="mx-auto max-w-6xl px-6 pb-6 pt-20 sm:pt-28">
+    <p class="eyebrow">La experiencia VARINO</p>
+    <h1 class="display-title max-w-5xl">Proceso claro.<br /><span>Control siempre tuyo.</span></h1>
+    <p class="mt-7 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
+      No prometemos magia: ordenamos el trabajo. Empiezas preguntándole a <strong>VARINO AI</strong> (chat,
+      abajo a la derecha) o reservando una llamada, y todo lo demás queda por escrito.
+    </p>
   </section>
-  <InteractiveMissions />
+
+  <section class="mx-auto max-w-6xl px-6 pb-12">
+    <div class="grid gap-px overflow-hidden rounded-3xl border border-black/10 bg-black/10 dark:border-white/10 dark:bg-white/10 md:grid-cols-3">
+      {[
+        ['01', 'Entender', 'Primera conversación (o chat con VARINO AI). Definimos el proceso, las herramientas y qué debe seguir aprobando una persona.'],
+        ['02', 'Acordar', 'Alcance, entregables y rango de precio cerrado por escrito antes de construir nada.'],
+        ['03', 'Construir y transferir', 'Automatizamos con pruebas, recuperación manual y documentación. Tú apruebas cada paso sensible.'],
+      ].map(([n, t, d]) => (
+        <article class="bg-white p-6 dark:bg-[#050505]">
+          <span class="text-xs font-bold text-[#0071e3]">{n}</span>
+          <h2 class="mt-6 text-xl font-semibold">{t}</h2>
+          <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{d}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <Cta />
 </Base>
