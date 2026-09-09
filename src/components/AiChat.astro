@@ -16,6 +16,8 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     <span aria-hidden="true">◉</span> Hablar con la IA
   </button>
 
+  <div class="aichat-backdrop" data-aichat-backdrop hidden></div>
+
   <div class="aichat-panel" hidden>
     <header class="aichat-head">
       <div>
@@ -73,27 +75,32 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     box-shadow: 0 10px 30px rgb(0 0 0 / .18); transition: transform .15s ease, background .2s;
   }
   .aichat-launcher:hover { background: #0077ed; }
+  .aichat-backdrop {
+    position: fixed; inset: 0; z-index: 69; background: rgba(15, 15, 20, .25);
+  }
   .aichat-panel {
-    width: min(92vw, 372px); max-height: min(80vh, 560px);
+    position: fixed; top: 0; right: 0; z-index: 71;
+    height: 100dvh; width: min(92vw, 410px);
     display: flex; flex-direction: column;
     background: var(--panel); color: var(--text);
-    border: 1px solid var(--line); border-radius: 18px; overflow: hidden;
-    box-shadow: 0 24px 70px rgb(0 0 0 / .28); margin-bottom: 10px;
+    border-left: 1px solid var(--line);
+    box-shadow: -18px 0 60px rgb(0 0 0 / .22);
   }
   .aichat-head {
     display: flex; justify-content: space-between; align-items: center;
-    padding: .8rem 1rem; border-bottom: 1px solid var(--line);
+    padding: .9rem 1.1rem; border-bottom: 1px solid var(--line);
   }
-  .aichat-head strong { display: block; font-size: .85rem; }
-  .aichat-head small { color: var(--muted); font-size: .68rem; }
-  .aichat-close, .aichat-composer button { background: none; border: 0; cursor: pointer; color: var(--muted); font-size: .9rem; }
-  .aichat-msgs { overflow-y: auto; padding: .9rem; display: flex; flex-direction: column; gap: .55rem; min-height: 180px; }
-  .aichat-msgs p { margin: 0; padding: .5rem .75rem; border-radius: 12px; font-size: .82rem; line-height: 1.5; max-width: 88%; white-space: pre-wrap; word-break: break-word; }
+  .aichat-head strong { display: block; font-size: .9rem; }
+  .aichat-head small { color: var(--muted); font-size: .7rem; }
+  .aichat-close, .aichat-composer button { background: none; border: 0; cursor: pointer; color: var(--muted); font-size: .95rem; }
+  .aichat-close { padding: .3rem .5rem; }
+  .aichat-msgs { flex: 1; min-height: 0; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .6rem; }
+  .aichat-msgs p { margin: 0; padding: .5rem .75rem; border-radius: 12px; font-size: .85rem; line-height: 1.5; max-width: 88%; white-space: pre-wrap; word-break: break-word; }
   .aichat-msgs .assistant { background: #f0f0f2; align-self: flex-start; }
   .aichat-msgs .user { background: var(--ac); color: #fff; align-self: flex-end; }
   .aichat-msgs .typing { opacity: .7; font-style: italic; }
   :global(.dark) .aichat-msgs .assistant { background: #1e2026; }
-  .aichat-composer { display: flex; gap: .5rem; padding: .6rem .8rem; border-top: 1px solid var(--line); }
+  .aichat-composer { display: flex; gap: .5rem; padding: .65rem .85rem; border-top: 1px solid var(--line); }
   .aichat-composer textarea {
     flex: 1; resize: none; border: 1px solid var(--line); border-radius: 10px;
     background: transparent; color: var(--text); padding: .45rem .6rem; font: inherit; font-size: .82rem;
@@ -130,6 +137,7 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     var capture = root.querySelector("[data-aichat-capture]");
     var leadForm = root.querySelector("[data-aichat-lead]");
     var leadStatus = root.querySelector("[data-aichat-lead-status]");
+    var backdrop = root.querySelector("[data-aichat-backdrop]");
 
     function store(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {} }
     function load(key, fallback) { try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
@@ -151,6 +159,8 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     function openPanel() {
       if (!enabled) { window.open("https://wa.me/34623204319", "_blank"); return; }
       panel.hidden = false;
+      if (backdrop) backdrop.hidden = false;
+      launcher.hidden = true;
       launcher.setAttribute("aria-expanded", "true");
       store(OPEN, true);
       if (!msgs.length) {
@@ -160,9 +170,16 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
       }
       input.focus();
     }
-    function closePanel() { panel.hidden = true; launcher.setAttribute("aria-expanded", "false"); store(OPEN, false); }
+    function closePanel() {
+      panel.hidden = true;
+      if (backdrop) backdrop.hidden = true;
+      launcher.hidden = false;
+      launcher.setAttribute("aria-expanded", "false");
+      store(OPEN, false);
+    }
     launcher.addEventListener("click", function () { if (panel.hidden) openPanel(); else closePanel(); });
     root.querySelector("[data-aichat-close]").addEventListener("click", closePanel);
+    if (backdrop) backdrop.addEventListener("click", closePanel);
 
     form.addEventListener("submit", async function (ev) {
       ev.preventDefault();
