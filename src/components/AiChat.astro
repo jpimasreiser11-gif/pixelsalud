@@ -10,10 +10,10 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
   data-chat={BACKEND_CHAT}
   data-lead={BACKEND_LEAD}
   data-origin={BACKEND.origin}
-  aria-label="Asistente de VARINO"
+  aria-label="Asistente VARINO AI"
 >
   <button type="button" class="aichat-launcher" data-aichat-open aria-expanded="false">
-    <span aria-hidden="true">◉</span> Hablar con la IA
+    <span aria-hidden="true">◉</span> VARINO AI
   </button>
 
   <div class="aichat-backdrop" data-aichat-backdrop hidden></div>
@@ -21,8 +21,8 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
   <div class="aichat-panel" hidden>
     <header class="aichat-head">
       <div>
-        <strong>Asistente VARINO</strong>
-        <small>IA local de la agencia</small>
+        <strong>VARINO AI</strong>
+        <small>Asistente de la agencia</small>
       </div>
       <button type="button" class="aichat-close" data-aichat-close aria-label="Cerrar">✕</button>
     </header>
@@ -164,7 +164,7 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
       launcher.setAttribute("aria-expanded", "true");
       store(OPEN, true);
       if (!msgs.length) {
-        say("Hola, soy el asistente de VARINO. Puedo contarte qué hacemos, darte precios orientativos y ayudarte a dar el primer paso. ¿Qué proceso te gustaría mejorar?");
+        say("Hola, soy VARINO AI. Puedo contarte qué hacemos, darte precios orientativos y ayudarte a dar el primer paso. ¿Qué proceso te gustaría mejorar?");
       } else {
         for (var i = 0; i < msgs.length; i++) say(msgs[i].content, msgs[i].role === "user" ? "user" : "assistant");
       }
