@@ -1,6 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
-import { BASE, SITE, SERVICIOS } from "../config";
+import { BASE, CAPACIDADES, SITE, SERVICIOS } from "../config";
 ---
 
 <Base
@@ -79,7 +79,21 @@ import { BASE, SITE, SERVICIOS } from "../config";
         ))
       }
     </div>
+  <section id="que-montamos" class="mx-auto max-w-6xl px-6 py-20 sm:py-28">
+    <div class="section-heading"><div><p class="eyebrow">Qué montamos</p><h2>Capacidades que usamos en cada proyecto.</h2></div><p>No son promesas: son las piezas que ya construimos en los demos y en cada servicio, elegidas según tu caso.</p></div>
+    <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {CAPACIDADES.map((cap) => (
+        <article class="rounded-3xl border border-black/8 p-6 dark:border-white/10">
+          <p class="text-xs font-bold text-[#655cff]">{cap.titulo}</p>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{cap.desc}</p>
+          <p class="mt-4 text-xs leading-5 text-[#0071e3]">{cap.ejemplo}</p>
+        </article>
+      ))}
+    </div>
+    <div class="mt-8 rounded-2xl border border-black/8 bg-[#f7f7f5] p-5 text-sm dark:border-white/10 dark:bg-[#111318]">¿Alguna de estas capacidades encaja con tu caso? <a href={`${BASE}/reservar/`} class="font-semibold text-[#0071e3]">Reserva una llamada</a> y la vemos sobre tu proceso.</div>
   </section>
+
+</section>
 
   <section id="metodo" class="border-y border-black/6 bg-[#f5f5f7] dark:border-white/10 dark:bg-[#101010]">
     <div class="mx-auto max-w-6xl px-6 py-20 sm:py-28">
