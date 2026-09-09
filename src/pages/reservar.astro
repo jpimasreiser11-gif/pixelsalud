@@ -1,0 +1,199 @@
+---
+import Base from "../layouts/Base.astro";
+import { BASE, SITE, BACKEND } from "../config";
+---
+<Base
+  title={`Reserva una llamada — ${SITE.name}`}
+  description="Elige día y hora para una primera conversación gratuita con el equipo de VARINO sobre automatización e IA para tu empresa."
+>
+  <section class="mx-auto max-w-4xl px-6 pt-20 pb-16 sm:pt-28">
+    <p class="eyebrow">Llamada gratuita · 30 min</p>
+    <h1 class="mt-3 text-4xl sm:text-5xl font-semibold tracking-[-0.05em] leading-[1.05]">Reserva una conversación.</h1>
+    <p class="mt-4 max-w-2xl text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+      Sin compromiso y sin coste: hablamos del proceso que te quita tiempo, te aclaro cómo lo automatizaríamos
+      y te dejo un rango de inversión real. Solo necesitas elegir hueco.
+    </p>
+
+    <div
+      id="app-reservar"
+      data-avail={`${BACKEND.url}/webhook/availability`}
+      data-book={`${BACKEND.url}/webhook/book`}
+      data-origin={BACKEND.origin}
+      class="mt-10 grid gap-6 lg:grid-cols-[1.1fr_.9fr]"
+    >
+      <!-- Paso 1: huecos -->
+      <div class="rounded-3xl border border-black/10 bg-[#f7f7f5] p-6 dark:border-white/10 dark:bg-[#111318] sm:p-8">
+        <h2 class="font-semibold text-lg">1 · Elige un hueco</h2>
+        <p class="text-xs text-[#6e6e73] dark:text-[#a1a1a6] mt-1" data-slot-status>Los horarios son de lunes a viernes, hora de España.</p>
+        <div class="mt-4 grid gap-3" data-slots role="list" aria-live="polite"></div>
+        <button type="button" class="mt-4 text-xs text-[#0071e3] hover:underline" data-refresh>↻ Ver más días</button>
+      </div>
+
+      <!-- Paso 2: datos -->
+      <form id="form-reservar" data-slot class="rounded-3xl border border-black/10 bg-[#f7f7f5] p-6 shadow-sm space-y-3 dark:border-white/10 dark:bg-[#111318] sm:p-8" hidden>
+        <input type="hidden" name="website" value="" aria-hidden="true" tabindex="-1" autocomplete="off" />
+        <input type="hidden" name="fecha" />
+        <input type="hidden" name="hora" />
+        <h2 class="font-semibold text-lg">2 · Tus datos</h2>
+        <p class="text-xs text-[#0071e3]" data-pick><strong data-pick-dia></strong> · <span data-pick-hora></span></p>
+
+        <div>
+          <label for="res-nombre" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Nombre</label>
+          <input id="res-nombre" name="nombre" type="text" required placeholder="Tu nombre" class="res-field" />
+        </div>
+        <div>
+          <label for="res-email" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Email</label>
+          <input id="res-email" name="email" type="email" required placeholder="tu@email.com" class="res-field" />
+        </div>
+        <div>
+          <label for="res-whatsapp" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">WhatsApp (opcional)</label>
+          <input id="res-whatsapp" name="whatsapp" type="tel" placeholder="+34 600 000 000" class="res-field" />
+        </div>
+        <div>
+          <label for="res-tema" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">¿De qué quieres hablar? (opcional)</label>
+          <textarea id="res-tema" name="mensaje" rows="2" placeholder="P.ej.: automatizar la entrada de pedidos del email a nuestro CRM" class="res-field"></textarea>
+        </div>
+
+        <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+          <input type="checkbox" name="consentimiento" required class="mt-0.5 shrink-0" />
+          <span>Acepto que VARINO guarde estos datos para gestionar la reserva y contactarme, según su <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">política de privacidad</a>.</span>
+        </label>
+
+        <button type="submit" class="w-full rounded-full bg-[#0071e3] px-6 py-3 font-semibold text-white transition hover:bg-[#0077ed] text-xs shadow-lg shadow-[#0071e3]/20">
+          Confirmar reserva →
+        </button>
+        <p class="text-[11px] text-[#6e6e73] dark:text-[#a1a1a6] text-center" aria-live="polite" data-form-status>
+          Recibirás una invitación por email con los datos de la llamada.
+        </p>
+      </form>
+
+      <!-- Confirmación -->
+      <div id="ok-reservar" hidden class="rounded-3xl border border-green-600/30 bg-green-50 p-8 text-center dark:bg-green-900/10">
+        <p class="text-3xl">✓</p>
+        <h2 class="mt-2 font-semibold text-xl">Reserva confirmada</h2>
+        <p class="mt-2 text-sm text-[#6e6e73] dark:text-[#a1a1a6]" data-ok-text></p>
+        <a data-ok-link href="#" target="_blank" rel="noopener" class="mt-4 inline-block rounded-full bg-[#0071e3] px-5 py-2 text-xs font-semibold text-white">Abrir invitación</a>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .res-field { width: 100%; border-radius: .75rem; border: 1px solid rgb(0 0 0 / .12); background: white; padding: .7rem 1rem; font-size: .875rem; color: #1d1d1f; outline: none; transition: border-color .2s, box-shadow .2s; }
+    .res-field:focus { border-color: #0071e3; box-shadow: 0 0 0 3px rgb(0 113 227 / .12); }
+    :global(.dark) .res-field { border-color: rgb(255 255 255 / .14); background: #050506; color: #f5f5f7; }
+    .slot-btn { width: 100%; text-align: left; border: 1px solid rgb(0 0 0 / .1); border-radius: .8rem; background: white; padding: .6rem .85rem; cursor: pointer; transition: border-color .15s, transform .1s; }
+    .slot-btn:hover { border-color: #0071e3; }
+    .slot-btn:disabled { opacity: .45; cursor: not-allowed; }
+    :global(.dark) .slot-btn { background: #050506; border-color: rgb(255 255 255 / .12); }
+    .slot-day { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: #6e6e73; }
+  </style>
+
+  <script>
+    (function () {
+      var app = document.getElementById("app-reservar");
+      if (!app) return;
+      var AVAIL = app.getAttribute("data-avail");
+      var BOOK = app.getAttribute("data-book");
+      var slotsEl = app.querySelector("[data-slots]");
+      var statusEl = app.querySelector("[data-slot-status]");
+      var refreshBtn = app.querySelector("[data-refresh]");
+      var form = document.getElementById("form-reservar");
+      var formStatus = form.querySelector("[data-form-status]");
+      var okBox = document.getElementById("ok-reservar");
+      var diasCargados = 0;
+      var slots = [];
+
+      function fechaDia(iso) { return new Date(iso).toLocaleDateString("es-ES", { weekday: "short", day: "numeric", month: "short" }); }
+
+      function renderSlots() {
+        slotsEl.innerHTML = "";
+        var actual = slots;
+        if (!actual.length) {
+          var p = document.createElement("p");
+          p.className = "text-sm text-[#6e6e73]";
+          p.textContent = "No hay huecos disponibles ahora mismo. Escríbenos por WhatsApp y te buscamos hueco.";
+          slotsEl.appendChild(p);
+          return;
+        }
+        var porDia = {};
+        actual.forEach(function (s) { (porDia[s.date] = porDia[s.date] || []).push(s.hora); });
+        Object.keys(porDia).forEach(function (dia) {
+          var diaEl = document.createElement("div");
+          var h = document.createElement("p");
+          h.className = "slot-day";
+          h.textContent = fechaDia(dia + "T12:00:00");
+          diaEl.appendChild(h);
+          var grid = document.createElement("div");
+          grid.className = "mt-1 grid grid-cols-3 gap-2";
+          porDia[dia].forEach(function (hora) {
+            var b = document.createElement("button");
+            b.type = "button";
+            b.className = "slot-btn text-xs font-medium";
+            b.textContent = hora;
+            b.addEventListener("click", function () { elegir(dia, hora); });
+            grid.appendChild(b);
+          });
+          diaEl.appendChild(grid);
+          slotsEl.appendChild(diaEl);
+        });
+      }
+
+      function cargar() {
+        if (statusEl) statusEl.textContent = "Buscando huecos…";
+        fetch(AVAIL, { headers: { "ngrok-skip-browser-warning": "true" } })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            slots = (d && d.ok && d.slots) || [];
+            renderSlots();
+            if (statusEl) statusEl.textContent = "Los horarios son de lunes a viernes, hora de España.";
+          })
+          .catch(function () {
+            if (statusEl) statusEl.textContent = "No pudimos cargar los huecos. Escríbenos a varinoagency@gmail.com y te buscamos sitio.";
+          });
+      }
+
+      function elegir(dia, hora) {
+        form.hidden = false;
+        okBox.hidden = true;
+        form.querySelector('[name="fecha"]').value = dia;
+        form.querySelector('[name="hora"]').value = hora;
+        form.querySelector("[data-pick-dia]").textContent = fechaDia(dia + "T12:00:00");
+        form.querySelector("[data-pick-hora]").textContent = hora + " (España)";
+        form.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      refreshBtn.addEventListener("click", function () { cargar(); });
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        function val(n) { var el = form.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ""; }
+        var nombre = val("nombre"), email = val("email"), whatsapp = val("whatsapp");
+        var fecha = val("fecha"), hora = val("hora");
+        if (!form.querySelector('[name="consentimiento"]').checked) { formStatus.textContent = "Necesitamos tu consentimiento para gestionar la reserva."; return; }
+        if (!email && !whatsapp) { formStatus.textContent = "Indica un email o un WhatsApp para enviarte la invitación."; return; }
+        formStatus.textContent = "Confirmando…";
+        fetch(BOOK, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+          body: JSON.stringify({ nombre: nombre, email: email, whatsapp: whatsapp, fecha: fecha, hora: hora, interes: "otro", mensaje: val("mensaje"), consentimiento: true })
+        }).then(function (r) {
+          if (r.status === 409) throw new Error("ocupado");
+          return r.json();
+        }).then(function (d) {
+          if (d && d.ok) {
+            okBox.hidden = false;
+            form.hidden = true;
+            okBox.querySelector("[data-ok-text]").textContent = d.fecha_local ? "Tu llamada queda para el " + d.fecha_local.replace("T", " ") + ". Te hemos enviado la invitación a " + email + "." : "Te hemos enviado la invitación por email.";
+            var link = okBox.querySelector("[data-ok-link]");
+            link.href = d.htmlLink || "https://varinoai.me";
+            link.textContent = d.htmlLink ? "Abrir invitación en Google Calendar" : "Volver a varinoai.me";
+          } else { formStatus.textContent = "No se pudo reservar. Escríbenos a varinoagency@gmail.com."; }
+        }).catch(function () {
+          formStatus.textContent = "Ese hueco acaba de ocuparse. Elige otro, por favor.";
+          cargar();
+          form.hidden = true;
+        });
+      });
+      cargar();
+    })();
+  </script>
+</Base>

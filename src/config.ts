@@ -2,6 +2,18 @@
 // Los campos vacíos son deliberados: no se publican identidades o canales inventados.
 export const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
+// Backend de operaciones (n8n local + túnel estable). La web llama aquí a
+// /webhook/chat, /webhook/lead, /webhook/availability y /webhook/book.
+// enabled:false mantiene la web 100% estática (guía local) si el backend cae.
+export const BACKEND = {
+  enabled: true,
+  url: "https://ettie-submicroscopic-gannon.ngrok-free.dev",
+  origin: "https://varinoai.me",
+} as const;
+
+export const BACKEND_CHAT = (BACKEND.enabled && BACKEND.url) ? `${BACKEND.url}/webhook/chat` : "";
+export const BACKEND_LEAD = (BACKEND.enabled && BACKEND.url) ? `${BACKEND.url}/webhook/lead` : "";
+
 export const SITE = {
   name: "VARINO",
   brandDisplay: "VARINO",

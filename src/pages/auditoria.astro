@@ -2,7 +2,7 @@
 import Base from "../layouts/Base.astro";
 import InteractiveMissions from "../components/InteractiveMissions.astro";
 import Cta from "../components/Cta.astro";
-import { SITE } from "../config";
+import { BASE, SITE, BACKEND_LEAD } from "../config";
 ---
 
 <Base title={`Diagnóstico CAIO — ${SITE.name}`} description="Diagnóstico de procesos, automatización e IA con mapa de prioridades, riesgos y presupuesto trazable.">
@@ -22,5 +22,89 @@ import { SITE } from "../config";
   </section>
 
   <InteractiveMissions />
+
+  <section class="mx-auto max-w-3xl px-6 pb-6">
+    <div class="rounded-3xl border border-black/10 bg-[#f7f7f5] p-7 dark:border-white/10 dark:bg-[#111318] sm:p-9">
+      <p class="eyebrow">Diagnóstico gratuito</p>
+      <h2 class="mt-2 text-2xl font-semibold sm:text-3xl">¿Prefieres que el equipo de {SITE.name} te escriba?</h2>
+      <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">Te contactamos para una primera conversación sin compromiso y preparamos un mapa de tu proceso.</p>
+
+      <form id="form-auditoria" data-lead={BACKEND_LEAD} class="mt-6 space-y-3">
+        <input type="hidden" name="website" value="" aria-hidden="true" tabindex="-1" autocomplete="off" />
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label for="aud-nombre" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Nombre</label>
+            <input id="aud-nombre" name="nombre" type="text" required placeholder="Tu nombre" class="contact-field" />
+          </div>
+          <div>
+            <label for="aud-email" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Email</label>
+            <input id="aud-email" name="email" type="email" placeholder="tu@email.com" class="contact-field" />
+          </div>
+          <div>
+            <label for="aud-whatsapp" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">WhatsApp</label>
+            <input id="aud-whatsapp" name="whatsapp" type="tel" placeholder="+34 600 000 000" class="contact-field" />
+          </div>
+          <div>
+            <label for="aud-interes" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">¿Qué te interesa?</label>
+            <select id="aud-interes" name="interes" class="contact-field">
+              <option value="otro">Todavía no lo sé / otro</option>
+              <option value="automation-sprint">Automatizar un proceso concreto</option>
+              <option value="growth-system">Sistema de captación y seguimiento</option>
+              <option value="private-ai">IA privada o asistente</option>
+            </select>
+          </div>
+        </div>
+        <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+          <input type="checkbox" name="consentimiento" value="true" required class="mt-0.5 shrink-0" />
+          <span>Acepto que VARINO guarde estos datos para contactarme, según su <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">política de privacidad</a>.</span>
+        </label>
+        <button type="submit" class="w-full rounded-full bg-[#0071e3] px-6 py-3 font-semibold text-white transition hover:bg-[#0077ed] text-xs shadow-lg shadow-[#0071e3]/20 sm:w-auto">
+          Quiero que me contacten →
+        </button>
+        <p class="text-[11px] text-[#6e6e73] dark:text-[#a1a1a6]" aria-live="polite" data-form-status></p>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      var form = document.getElementById("form-auditoria");
+      if (!form) return;
+      var statusEl = form.querySelector("[data-form-status]");
+      function val(n) { var el = form.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ""; }
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        var nombre = val("nombre"), email = val("email"), whatsapp = val("whatsapp");
+        var consent = form.querySelector('[name="consentimiento"]').checked;
+        if (!consent) { if (statusEl) statusEl.textContent = "Necesitamos tu consentimiento para contactarte."; return; }
+        if (!email && !whatsapp) { if (statusEl) statusEl.textContent = "Indica un email o un WhatsApp para poder contactarte."; return; }
+        var lead = form.getAttribute("data-lead");
+        if (!lead) { if (statusEl) statusEl.textContent = "El envío aún no está disponible. Escríbenos a varinoagency@gmail.com."; return; }
+        if (statusEl) statusEl.textContent = "Enviando…";
+        fetch(lead, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+          body: JSON.stringify({
+            nombre: nombre, email: email, whatsapp: whatsapp, empresa: "",
+            interes: val("interes") || "otro", fuente: "form-auditoria",
+            pagina: location.pathname, consentimiento: true,
+            mensaje: "Ha completado el formulario del diagnóstico CAIO en /auditoria."
+          })
+        }).then(function (r) { return r.json(); }).then(function (d) {
+          if (d && d.ok) { if (statusEl) statusEl.textContent = "✓ Recibido. El equipo de VARINO te escribirá en breve."; form.reset(); }
+          else if (statusEl) statusEl.textContent = "No se pudo enviar. Escríbenos a varinoagency@gmail.com.";
+        }).catch(function () {
+          if (statusEl) statusEl.textContent = "Sin conexión. Escríbenos a varinoagency@gmail.com.";
+        });
+      });
+    })();
+  </script>
+
   <Cta titulo="Convierte la conversación en un plan revisado." texto="El precio, plazo y retorno solo se confirman después de validar la información con una persona." />
+
+  <style>
+    .contact-field { width: 100%; border-radius: .75rem; border: 1px solid rgb(0 0 0 / .12); background: white; padding: .7rem 1rem; font-size: .875rem; color: #1d1d1f; outline: none; transition: border-color .2s, box-shadow .2s; }
+    .contact-field:focus { border-color: #0071e3; box-shadow: 0 0 0 3px rgb(0 113 227 / .12); }
+    :global(.dark) .contact-field { border-color: rgb(255 255 255 / .14); background: #050506; color: #f5f5f7; }
+  </style>
 </Base>

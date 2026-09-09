@@ -12,3 +12,6 @@ ops/
 .superpowers/
 scripts/create-client-project.mjs
 tests/unit/delivery-system.test.ts
+
+# Secretos locales (no publicar)
+.env

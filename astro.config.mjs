@@ -17,7 +17,7 @@ export const CSP_DIRECTIVES = [
   "form-action 'self' mailto:",
   "img-src 'self' data:",
   "font-src 'self'",
-  "connect-src 'self'",
+  "connect-src 'self' https://ettie-submicroscopic-gannon.ngrok-free.dev",
 ];
 
 // frame-ancestors no existe en <meta>: solo funciona como cabecera. Se queda
