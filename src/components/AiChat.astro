@@ -197,6 +197,11 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     launcher.addEventListener("click", function () { if (panel.hidden) openPanel(); else closePanel(); });
     root.querySelector("[data-aichat-close]").addEventListener("click", closePanel);
     if (backdrop) backdrop.addEventListener("click", closePanel);
+    // Cualquier botón [data-open-chat] (p. ej. en la portada) abre el asistente
+    var openers = document.querySelectorAll("[data-open-chat]");
+    for (var oi = 0; oi < openers.length; oi++) {
+      openers[oi].addEventListener("click", function () { openPanel(); });
+    }
 
     form.addEventListener("submit", async function (ev) {
       ev.preventDefault();
