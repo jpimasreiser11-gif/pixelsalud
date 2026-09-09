@@ -200,6 +200,7 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
             <p class="font-medium text-[#1d1d1f] dark:text-[#f5f5f7] mb-3 text-xs">Empresa & Contacto</p>
             <ul class="space-y-2">
               <li><a href={`${BASE}/contacto/`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Plantear un proyecto</a></li>
+              <li><a href={`${BASE}/reservar/`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Reservar una llamada</a></li>
               <li><a href={`${BASE}/sobre/`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Sobre VARINO</a></li>
               {SITE.email && <li><a href={`mailto:${SITE.email}`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">{SITE.email}</a></li>}
               {!hasContactChannel && <li>Canal de contacto pendiente</li>}
