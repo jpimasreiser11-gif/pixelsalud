@@ -137,8 +137,48 @@ export const SERVICES = [
 // Alias temporal para las páginas del prototipo. Se elimina al migrar todas las vistas.
 export const SERVICIOS = SERVICES;
 
-export const MAINTENANCE_PLANS = [
+// Capacidades técnicas transversales ("Qué montamos"). Son reales y verificables:
+// se corresponden con lo que ya se construye en los demos y servicios del sitio.
+export const CAPACIDADES = [
   {
+    id: "integraciones",
+    titulo: "Integraciones",
+    desc: "Conectamos las herramientas que ya usas (correo, hojas, CRM, WhatsApp, ERP) para que la información fluya sin copiar a mano.",
+    ejemplo: "Pedidos por email → tabla central → tu ERP.",
+  },
+  {
+    id: "agentes-ia",
+    titulo: "Agentes y flujos con IA",
+    desc: "Asistentes y automatizaciones con IA evaluados, con permisos y aprobación humana en cada paso sensible.",
+    ejemplo: "Clasificar solicitudes, redactar borradores, responder dudas frecuentes.",
+  },
+  {
+    id: "migracion",
+    titulo: "Migración desde Zapier o Make",
+    desc: "Trasladamos tus automatizaciones a n8n propio para bajar el coste por operación y ganar control.",
+    ejemplo: "De 20 'zaps' sueltos a flujos observables y documentados.",
+  },
+  {
+    id: "privado",
+    titulo: "IA y n8n privados",
+    desc: "Datos y flujos bajo tu control: n8n en tu servidor y modelos locales o privados, sin depender de un proveedor.",
+    ejemplo: "Automatización de datos sensibles sin salir de tu entorno.",
+  },
+  {
+    id: "mantenimiento",
+    titulo: "Monitorización y mantenimiento",
+    desc: "Vigilamos que los flujos sigan funcionando y los mejoramos, con planes opcionales de soporte y ajustes.",
+    ejemplo: "Avisos de error, incidencias y mejoras mensuales.",
+  },
+  {
+    id: "documentacion",
+    titulo: "Documentación y formación",
+    desc: "Entregamos flujos comprensibles y transferibles: manual, recuperación manual y formación a tu equipo.",
+    ejemplo: "Que cualquiera del equipo sepa qué hace cada flujo.",
+  },
+] as const;
+
+export const MAINTENANCE_PLANS = [  {
     id: "care",
     name: "Care",
     monthly: "149 €/mes",
