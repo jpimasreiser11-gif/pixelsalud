@@ -18,7 +18,7 @@ export const SITE = {
   name: "VARINO",
   brandDisplay: "VARINO",
   brandSuffix: "",
-  launchReady: false,
+  launchReady: true,
   domainVerified: true,
   trademarkReviewed: false,
   url: "https://varinoai.me",
