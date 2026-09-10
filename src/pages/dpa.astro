@@ -1,0 +1,73 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../config";
+---
+<Base
+  title={`Encargo de tratamiento (DPA) — ${SITE.name}`}
+  description="Contrato de encargo de tratamiento de datos para clientes de VARINO conforme al RGPD."
+>
+  <section class="mx-auto max-w-4xl px-6 py-20">
+    <p class="eyebrow">Protección de datos</p>
+    <h1 class="mt-3 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">Encargo de tratamiento (DPA)</h1>
+    <p class="mt-6 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
+      Cuando automatizamos procesos que tratan datos personales de tus clientes o empleados, {SITE.name}
+      actúa como <strong>encargado del tratamiento</strong> y tú como <strong>responsable</strong>. Este es el
+      contrato que firmamos antes de empezar.
+    </p>
+
+    <div class="mt-10 space-y-8 text-sm leading-7 text-[#6e6e73] dark:text-[#a1a1a6]">
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">1. Partes y objeto</h2>
+        <p>
+          Responsable: el cliente. Encargado: {SITE.legalOwner} (NIF {SITE.legalNif}). El encargado tratará datos
+          personales únicamente para prestar los servicios de automatización y mantenimiento contratados y
+          conforme a las instrucciones documentadas del responsable.
+        </p>
+      </div>
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">2. Finalidad, categorías y duración</h2>
+        <p>
+          La finalidad y las categorías de datos se detallan en cada propuesta (por ejemplo: datos identificativos
+          y de contacto, y datos contenidos en las comunicaciones que se automaticen). La duración coincide con
+          la prestación del servicio y el plazo de conservación acordado.
+        </p>
+      </div>
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">3. Obligaciones del encargado</h2>
+        <ul class="mt-2 space-y-2">
+          <li>· Tratar los datos solo siguiendo instrucciones del responsable y con fines vinculados al servicio.</li>
+          <li>· Garantizar confidencialidad del personal autorizado.</li>
+          <li>· Aplicar medidas técnicas y organizativas apropiadas (control de acceso, cifrado, copias, registro).</li>
+          <li>· No subcontratar sin autorización; si lo hace, imponer las mismas obligaciones mediante subencargados.</li>
+          <li>· Asistir al responsable en los derechos de las personas, brechas de seguridad y evaluaciones (EIPD).</li>
+          <li>· Notificar brechas sin dilación indebida y, como máximo, en 48 horas.</li>
+          <li>· Suprimir o devolver los datos al finalizar el servicio, salvo obligación legal de conservación.</li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">4. Medidas y transferencias</h2>
+        <p>
+          Trabajamos preferentemente con <strong>n8n autoalojado</strong> y modelos de IA <strong>locales o
+          privados</strong> cuando hay datos sensibles, para minimizar transferencias. Si se usan proveedores en
+          la nube, se limitan al mínimo necesario y se documentan sus garantías (cláusulas contractuales tipo).
+        </p>
+      </div>
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">5. Uso de IA</h2>
+        <p>
+          Cuando el servicio usa sistemas de IA, el responsable informa a las personas implicadas y se mantiene
+          <strong>control humano</strong> en decisiones sensibles. No se toman decisiones automatizadas con efectos
+          jurídicos sin intervención y revisión humanas.
+        </p>
+      </div>
+      <div>
+        <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">6. Cómo firmarlo</h2>
+        <p>
+          Escríbenos a <a href={`mailto:${SITE.email}`} class="text-[#0071e3]">{SITE.email}</a> con los datos del
+          responsable y la descripción del proceso, y preparamos el DPA adaptado a tu caso para firma.
+        </p>
+      </div>
+      <p class="text-xs">Plantilla base conforme al art. 28 RGPD. Recomendamos revisión por un asesor legal antes de firmar.</p>
+    </div>
+  </section>
+</Base>

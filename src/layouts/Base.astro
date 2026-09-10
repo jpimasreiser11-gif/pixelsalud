@@ -3,6 +3,8 @@ import "../styles/global.css";
 import { BASE, SITE, hasContactChannel } from "../config";
 import Logo from "../components/Logo.astro";
 import AiChat from "../components/AiChat.astro";
+import Analytics from "../components/Analytics.astro";
+import Reveal from "../components/Reveal.astro";
 
 interface Props {
   title: string;
@@ -21,6 +23,7 @@ const nav = [
   { href: `${BASE}/metodo/`, label: "Método" },
   { href: `${BASE}/seguridad/`, label: "Seguridad" },
   { href: `${BASE}/precios/`, label: "Precios" },
+  { href: `${BASE}/planes/`, label: "Planes" },
 ];
 
 const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
@@ -185,6 +188,7 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
               <li><a href={`${BASE}/servicios/#growth-system`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Sistema de crecimiento</a></li>
               <li><a href={`${BASE}/servicios/#private-ai`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">IA privada</a></li>
               <li><a href={`${BASE}/precios/`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Forma de trabajo</a></li>
+              <li><a href={`${BASE}/planes/`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Planes mensuales</a></li>
             </ul>
           </div>
           <div>
@@ -224,6 +228,8 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
     </footer>
 
     <AiChat />
+    <Analytics />
+    <Reveal />
 
     <script>
       (function () {
