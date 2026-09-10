@@ -1,0 +1,22 @@
+---
+import Base from "../layouts/Base.astro";
+import Cta from "../components/Cta.astro";
+import { BASE, SITE } from "../config";
+---
+<Base title={`Casos — ${SITE.name}`} description="Casos reales de automatización, publicados solo con autorización del cliente.">
+  <section data-reveal class="mx-auto max-w-4xl px-6 pb-10 pt-24 sm:pt-32">
+    <p class="eyebrow">Casos</p>
+    <h1 class="display-title mt-4">Casos reales, no decorativos.</h1>
+    <p class="mt-6 text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
+      Publicaremos aquí cada proyecto con <strong>nombre, contexto y resultado reales</strong>, y solo con la
+      autorización por escrito del cliente. Hasta entonces, no inventamos logos ni cifras: mostramos cómo
+      trabajamos con <a href={`${BASE}/demos/`} class="text-[#0071e3]">demos técnicas</a> que puedes explorar.
+    </p>
+    <div class="mt-10 rounded-3xl border border-dashed border-black/15 p-8 text-sm leading-6 text-[#6e6e73] dark:border-white/15 dark:text-[#a1a1a6]">
+      <p class="font-semibold text-[#1d1d1f] dark:text-white">¿Has trabajado con nosotros?</p>
+      <p class="mt-2">Si eres cliente y quieres que publiquemos tu caso (o que no lo hagamos), escríbenos a
+      <a href={`mailto:${SITE.email}`} class="text-[#0071e3]">{SITE.email}</a>. Tú decides qué se cuenta y qué no.</p>
+    </div>
+  </section>
+  <Cta titulo="¿Prefieres verlo en tu caso?" texto="Reserva una llamada y aplicamos el método a tu proceso, sin compromiso." />
+</Base>

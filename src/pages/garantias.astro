@@ -1,0 +1,26 @@
+---
+import Base from "../layouts/Base.astro";
+import Cta from "../components/Cta.astro";
+import { SITE } from "../config";
+const items = [
+  ["Alcance por escrito", "Entregables, exclusiones y criterios de aceptación firmados antes de empezar. Si cambia el alcance, se acuerda antes de seguir."],
+  ["Precio cerrado", "Rango orientativo antes, presupuesto cerrado después del diagnóstico. Sin IVA oculto ni costes escondidos."],
+  ["Garantía de proyecto", "Corregimos sin coste los defectos imputables a nuestro trabajo durante el periodo de garantía tras la entrega."],
+  ["Tus flujos son tuyos", "Trabajamos sobre n8n y te entregamos los flujos exportables y documentados. Sin lock-in."],
+  ["Sin permanencia", "Los planes mensuales no obligan. Solo el descuento por compromiso anual tiene 12 meses, y lo sabes al firmar."],
+  ["Control humano", "Ningún paso sensible se ejecuta solo: hay aprobación y recuperación manual en cada flujo."],
+];
+---
+<Base title={`Garantías — ${SITE.name}`} description="Qué garantizamos por escrito: alcance, precio, garantía de proyecto, propiedad de los flujos y sin permanencia.">
+  <section data-reveal class="mx-auto max-w-4xl px-6 pb-10 pt-24 sm:pt-32">
+    <p class="eyebrow">Garantías</p>
+    <h1 class="display-title mt-4">Lo que firmamos.</h1>
+    <p class="mt-6 text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">Preferimos decir menos y cumplirlo. Estas son las condiciones que puedes exigirnos por contrato.</p>
+  </section>
+  <section class="mx-auto max-w-4xl px-6 pb-20">
+    <div class="grid gap-4 sm:grid-cols-2">
+      {items.map(([t, d]) => (<div data-reveal class="rounded-2xl border border-black/8 bg-[#f7f7f5] p-6 dark:border-white/10 dark:bg-[#111318]"><p class="font-semibold">{t}</p><p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{d}</p></div>))}
+    </div>
+  </section>
+  <Cta titulo="¿Quieres verlo en un contrato?" texto="Te enviamos las condiciones y el DPA antes de firmar nada, para que lo revise quien necesites." />
+</Base>

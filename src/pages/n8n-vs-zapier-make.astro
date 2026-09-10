@@ -1,0 +1,27 @@
+---
+import Base from "../layouts/Base.astro";
+import Cta from "../components/Cta.astro";
+import { SITE } from "../config";
+const filas = [
+  { c: "Coste por uso", n8n: "Autoalojado: coste plano de servidor", z: "Pago por tarea (sube con el volumen)", m: "Pago por operación (sube con el volumen)" },
+  { c: "Datos", n8n: "En tu servidor si lo autoalojas", z: "En la nube del proveedor", m: "En la nube del proveedor" },
+  { c: "Lógica compleja", n8n: "Código, bucles, sub-flujos, IA", z: "Limitada en planes bajos", m: "Limitada en planes bajos" },
+  { c: "Lock-in", n8n: "Flujos exportables (open source)", z: "Atado a la plataforma", m: "Atado a la plataforma" },
+  { c: "IA y modelos", n8n: "Locales o en la nube, tú decides", z: "Proveedor", m: "Proveedor" },
+];
+---
+<Base title={`n8n vs Zapier vs Make — ${SITE.name}`} description="Comparativa honesta entre n8n, Zapier y Make para automatizar procesos de empresa.">
+  <section data-reveal class="mx-auto max-w-5xl px-6 pb-10 pt-24 sm:pt-32">
+    <p class="eyebrow">Comparativa</p>
+    <h1 class="display-title mt-4 max-w-4xl">n8n, Zapier o Make.</h1>
+    <p class="mt-6 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">No hay una herramienta mejor para todo. Esto es lo que cambia de verdad, con supuestos claros y sin promesas de ahorro inventadas.</p>
+  </section>
+  <section class="mx-auto max-w-6xl overflow-x-auto px-6 pb-16">
+    <table class="w-full min-w-[720px] border-collapse text-sm">
+      <thead><tr class="border-b border-black/10 text-left dark:border-white/10"><th class="py-3 pr-4">Criterio</th><th class="px-3 py-3">n8n</th><th class="px-3 py-3">Zapier</th><th class="px-3 py-3">Make</th></tr></thead>
+      <tbody>{filas.map((f) => (<tr class="border-b border-black/5 dark:border-white/5"><td class="py-3 pr-4 text-[#6e6e73] dark:text-[#a1a1a6]">{f.c}</td><td class="px-3 py-3">{f.n8n}</td><td class="px-3 py-3">{f.z}</td><td class="px-3 py-3">{f.m}</td></tr>))}</tbody>
+    </table>
+    <p class="mt-4 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Supuestos: precios y límites de terceros cambian; lo revisamos en cada proyecto. Elegimos n8n cuando hay volumen, datos sensibles o lógica compleja, y lo decimos si otra herramienta encaja mejor.</p>
+  </section>
+  <Cta titulo="¿No sabes cuál te conviene?" texto="En 30 minutos vemos tu caso y te decimos qué herramienta usaría yo, aunque no sea la nuestra." />
+</Base>
