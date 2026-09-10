@@ -1,0 +1,29 @@
+---
+import { BACKEND_EVENT } from "../config";
+---
+<!-- Analítica propia SIN cookies: envía un pageview anónimo (ruta, referente y idioma) a n8n.
+     No usa cookies ni identificadores persistentes, por eso no requiere banner de consentimiento. -->
+{BACKEND_EVENT && <div data-analytics data-endpoint={BACKEND_EVENT} hidden></div>}
+{BACKEND_EVENT && (
+  <script>
+    (function () {
+      var el = document.querySelector("[data-analytics]");
+      if (!el) return;
+      var ep = el.getAttribute("data-endpoint");
+      if (!ep) return;
+      if (location.hostname === "localhost" || location.hostname === "127.0.0.1") return;
+      try {
+        fetch(ep, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+          body: JSON.stringify({
+            path: location.pathname,
+            referrer: document.referrer ? new URL(document.referrer).hostname : "",
+            lang: navigator.language || "",
+          }),
+          keepalive: true,
+        }).catch(function () {});
+      } catch (e) {}
+    })();
+  </script>
+)}

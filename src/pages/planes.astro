@@ -1,0 +1,132 @@
+---
+import Base from "../layouts/Base.astro";
+import Cta from "../components/Cta.astro";
+import { BASE, MAINTENANCE_PLANS, PLAN_RULES, SITE, STRIPE_LINKS } from "../config";
+
+const filas = [
+  { label: "Horas de trabajo al mes", key: "horas" },
+  { label: "Tiempo de respuesta (SLA)", key: "sla" },
+  { label: "Monitorización y avisos", v: [true, true, true, true] },
+  { label: "Gestión de incidencias", v: [false, true, true, true] },
+  { label: "Copia de seguridad verificada", v: [false, true, true, true] },
+  { label: "Mejoras continuas incluidas", v: [false, false, true, true] },
+  { label: "Prioridad de atención", v: [false, false, true, true] },
+  { label: "Alta técnica", v: ["190 €", "0 €", "0 €", "0 €"] },
+];
+
+const link = (id: string) => (STRIPE_LINKS as Record<string, string>)[id] || "";
+const hayPago = Object.values(STRIPE_LINKS).some(Boolean);
+---
+
+<Base
+  title={`Planes mensuales — ${SITE.name}`}
+  description="Planes de mantenimiento y operación para tus automatizaciones: qué incluye cada uno, tiempos de respuesta y precios claros."
+>
+  <section data-reveal class="mx-auto max-w-6xl px-6 pb-10 pt-24 sm:pt-32">
+    <p class="eyebrow">Planes mensuales</p>
+    <h1 class="display-title mt-4 max-w-5xl">Tu sistema, atendido.<br /><span>Sin sorpresas.</span></h1>
+    <p class="mt-6 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
+      Después del proyecto, el trabajo real es que siga funcionando. Elige el nivel de atención que necesitas:
+      horas incluidas, tiempo de respuesta y qué cubrimos, todo por escrito. Nada es obligatorio para recibir la
+      documentación de tu proyecto.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href={`${BASE}/reservar/`} class="button-primary">Reservar una llamada</a>
+      <a href={`${BASE}/precios/`} class="button-secondary">Ver precios de proyecto</a>
+    </div>
+  </section>
+
+  <!-- Tarjetas de planes -->
+  <section class="mx-auto max-w-6xl px-6 pb-16">
+    <div data-reveal class="grid gap-5 lg:grid-cols-4">
+      {MAINTENANCE_PLANS.map((plan) => (
+        <article class:list={["flex flex-col rounded-3xl border p-6", plan.destacado ? "border-[#0071e3] bg-[#0071e3]/5" : "border-black/8 dark:border-white/10"]}>
+          <div class="flex items-center justify-between gap-2">
+            <h2 class="text-xl font-semibold">{plan.name}</h2>
+            {plan.destacado && <span class="rounded-full bg-[#0071e3] px-2.5 py-1 text-[10px] font-bold text-white">RECOMENDADO</span>}
+          </div>
+          <strong class="mt-3 block text-2xl">{plan.monthly}</strong>
+          <p class="mt-1 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">{plan.ideal}</p>
+          <ul class="mt-5 flex-1 space-y-2.5 text-sm">
+            {plan.includes.map((i) => <li class="leading-6">✓ {i}</li>)}
+          </ul>
+          <p class="mt-5 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Respuesta en {plan.sla} · {plan.horas} h/mes</p>
+          {
+            link(plan.id) ? (
+              <a href={link(plan.id)} class="button-primary mt-4 text-center" rel="noopener">Contratar {plan.name}</a>
+            ) : (
+              <a href={`${BASE}/contacto/`} class="button-secondary mt-4 text-center">Solicitar alta</a>
+            )
+          }
+        </article>
+      ))}
+    </div>
+    <p class="mt-4 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">
+      {hayPago ? "Pago seguro con tarjeta o domiciliación (SEPA)." : "El alta se activa por Stripe en cuanto conectemos el pago; mientras, la solicitamos contigo."}
+    </p>
+  </section>
+
+  <!-- Comparador -->
+  <section class="border-y border-black/6 bg-[#f7f7f5] dark:border-white/10 dark:bg-[#0a0d14]">
+    <div class="mx-auto max-w-6xl overflow-x-auto px-6 py-16">
+      <h2 class="text-3xl font-semibold tracking-[-0.04em]">Comparador de planes</h2>
+      <table class="mt-8 w-full min-w-[640px] border-collapse text-sm">
+        <thead>
+          <tr class="border-b border-black/10 text-left dark:border-white/10">
+            <th class="py-3 pr-4 font-semibold">Qué incluye</th>
+            {MAINTENANCE_PLANS.map((p) => <th class="px-3 py-3 text-center font-semibold">{p.name}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {filas.map((f) => (
+            <tr class="border-b border-black/5 dark:border-white/5">
+              <td class="py-3 pr-4 text-[#6e6e73] dark:text-[#a1a1a6]">{f.label}</td>
+              {MAINTENANCE_PLANS.map((p, i) => {
+                const valor = f.v ? f.v[i] : (p as Record<string, unknown>)[f.key as string];
+                const texto = valor === true ? "✓" : valor === false ? "—" : String(valor);
+                return <td class:list={["px-3 py-3 text-center", valor === false ? "text-[#c7c7cc]" : ""]}>{texto}</td>;
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Reglas comerciales -->
+  <section class="mx-auto max-w-4xl px-6 py-16">
+    <p class="eyebrow">Condiciones</p>
+    <h2 class="mt-2 text-3xl font-semibold tracking-[-0.04em]">Cómo funciona la mensualidad.</h2>
+    <ul class="mt-6 space-y-3 text-sm leading-6">
+      <li>· <strong>Permanencia:</strong> {PLAN_RULES.permanencia}</li>
+      <li>· <strong>Pago anual:</strong> {PLAN_RULES.anual}</li>
+      <li>· <strong>Horas extra:</strong> {PLAN_RULES.horasExtra}</li>
+      <li>· <strong>Alta:</strong> {PLAN_RULES.setup}</li>
+      <li>· <strong>IVA:</strong> {PLAN_RULES.iva}</li>
+      <li>· <strong>Horario:</strong> {PLAN_RULES.sla}</li>
+    </ul>
+  </section>
+
+  <!-- FAQ -->
+  <section class="mx-auto max-w-4xl px-6 pb-20">
+    <p class="eyebrow">Preguntas frecuentes</p>
+    <h2 class="mt-2 text-3xl font-semibold tracking-[-0.04em]">Sobre los planes.</h2>
+    <div class="mt-8 space-y-3">
+      {[
+        ["¿Qué pasa si no consumo las horas de un mes?", "Las horas incluidas no se acumulan de un mes a otro, pero si un mes necesitas más, se facturan como horas extra a 85 €/h o con el bono de 10 horas (−10 %)."],
+        ["¿Puedo cambiar de plan?", "Sí. Puedes subir o bajar de plan al inicio de cualquier mes. Los cambios se avisan por email y quedan reflejados en la factura."],
+        ["¿El mantenimiento es obligatorio?", "No. Recibes la documentación y la formación del proyecto igualmente. El plan es para quien quiere que otro vigile, arregle y mejore el sistema."],
+        ["¿Qué no incluye?", "Desarrollo de nuevos procesos fuera del alcance del plan, licencias y consumos de terceros (APIs, servidores), y cambios de alcance: eso se presupuesta aparte antes de hacerlo."],
+        ["¿Cómo se paga?", "Tarjeta o domiciliación SEPA mediante Stripe, con factura automática y sin IVA oculto (21 %). También se puede pagar por transferencia con factura."],
+        ["¿De quién son los flujos?", "Tuyos. Trabajamos sobre n8n (propio o en tu servidor) y te entregamos los flujos exportables y documentados, sin lock-in."],
+      ].map(([q, a]) => (
+        <details class="group rounded-2xl border border-black/8 p-5 dark:border-white/10">
+          <summary class="cursor-pointer font-semibold list-none">{q}</summary>
+          <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <Cta titulo="¿No sabes qué plan te encaja?" texto="En una llamada de 30 minutos vemos qué necesita tu sistema y te decimos el plan mínimo suficiente (o si no necesitas ninguno)." />
+</Base>

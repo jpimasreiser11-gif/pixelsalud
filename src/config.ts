@@ -13,6 +13,17 @@ export const BACKEND = {
 
 export const BACKEND_CHAT = (BACKEND.enabled && BACKEND.url) ? `${BACKEND.url}/webhook/chat` : "";
 export const BACKEND_LEAD = (BACKEND.enabled && BACKEND.url) ? `${BACKEND.url}/webhook/lead` : "";
+// Analítica propia sin cookies (pageviews anónimos → n8n). Si no hay URL, no se envía nada.
+export const BACKEND_EVENT = (BACKEND.enabled && BACKEND.url) ? `${BACKEND.url}/webhook/event` : "";
+
+// Enlaces de pago (Stripe Payment Links / Checkout). Vacío = el botón se muestra como
+// "Solicitar alta" y lleva al formulario. Rellenar cuando existan en Stripe.
+export const STRIPE_LINKS = {
+  care: "",
+  managed: "",
+  optimize: "",
+  privateOps: "",
+} as const;
 
 export const SITE = {
   name: "VARINO",
@@ -47,8 +58,8 @@ export const SERVICES = [
       "Mapeamos, construimos y probamos una automatización acotada, con observabilidad, recuperación y transferencia.",
     descripcion:
       "Mapeamos, construimos y probamos una automatización acotada, con observabilidad, recuperación y transferencia.",
-    range: "950–1.500 €",
-    precio: "950–1.500 €",
+    range: "950–1.900 €",
+    precio: "950–1.900 €",
     outcome: "Un proceso crítico automatizado",
     resultado: "Un proceso crítico automatizado",
     deliverables: [
@@ -79,8 +90,8 @@ export const SERVICES = [
       "Conectamos la entrada de oportunidades, su cualificación y el trabajo comercial manteniendo las decisiones en manos del equipo.",
     descripcion:
       "Conectamos la entrada de oportunidades, su cualificación y el trabajo comercial manteniendo las decisiones en manos del equipo.",
-    range: "2.500–4.500 €",
-    precio: "2.500–4.500 €",
+    range: "2.500–6.000 €",
+    precio: "2.500–6.000 €",
     outcome: "Captación, seguimiento y operaciones conectadas",
     resultado: "Captación, seguimiento y operaciones conectadas",
     deliverables: [
@@ -111,8 +122,8 @@ export const SERVICES = [
       "Diseñamos asistentes, búsqueda documental y flujos locales o privados con permisos, evaluación y trazabilidad.",
     descripcion:
       "Diseñamos asistentes, búsqueda documental y flujos locales o privados con permisos, evaluación y trazabilidad.",
-    range: "4.500–12.000 €+",
-    precio: "4.500–12.000 €+",
+    range: "Desde 5.500 €",
+    precio: "Desde 5.500 €",
     outcome: "Conocimiento y modelos bajo control",
     resultado: "Conocimiento y modelos bajo control",
     deliverables: [
@@ -178,31 +189,84 @@ export const CAPACIDADES = [
   },
 ] as const;
 
-export const MAINTENANCE_PLANS = [  {
+export const MAINTENANCE_PLANS = [
+  {
     id: "care",
     name: "Care",
     monthly: "149 €/mes",
-    includes: ["Supervisión básica", "Actualizaciones menores", "Informe mensual"],
+    horas: 1,
+    sla: "48 h laborables",
+    setup: "190 €",
+    ideal: "Proyectos sencillos",
+    destacado: false,
+    includes: [
+      "Monitorización básica y avisos",
+      "1 hora de ajustes al mes",
+      "Informe mensual de actividad",
+      "Actualizaciones con pruebas en staging",
+    ],
   },
   {
     id: "managed",
     name: "Managed",
     monthly: "349 €/mes",
-    includes: ["Monitorización", "Gestión de incidencias", "Ajustes mensuales"],
+    horas: 3,
+    sla: "24 h laborables",
+    setup: "0 €",
+    ideal: "La mayoría de proyectos",
+    destacado: true,
+    includes: [
+      "Todo lo de Care",
+      "3 horas de ajustes al mes",
+      "Gestión de incidencias y errores",
+      "Copia de seguridad verificada",
+      "Alta técnica sin coste",
+    ],
   },
   {
     id: "optimize",
     name: "Optimize",
     monthly: "690 €/mes",
-    includes: ["Todo Managed", "Mejoras continuas", "Revisión de métricas"],
+    horas: 8,
+    sla: "8 h laborables",
+    setup: "0 €",
+    ideal: "Sistemas que facturan cada mes",
+    destacado: false,
+    includes: [
+      "Todo lo de Managed",
+      "8 horas al mes con mejoras incluidas",
+      "Revisión de métricas y oportunidades",
+      "Prioridad de atención",
+    ],
   },
   {
     id: "private-ai-ops",
     name: "Private AI Ops",
     monthly: "Desde 1.190 €/mes",
-    includes: ["Operación del modelo", "Evaluación", "Seguridad y capacidad"],
+    horas: 12,
+    sla: "8 h laborables",
+    setup: "0 €",
+    ideal: "Datos sensibles o IA en local",
+    destacado: false,
+    includes: [
+      "Operación del modelo y capacidad",
+      "Evaluación y control de calidad",
+      "Seguridad, permisos y trazabilidad",
+      "12 horas al mes",
+      "Informe técnico mensual",
+    ],
   },
 ] as const;
+
+// Reglas comerciales de las mensualidades (explícitas para que no haya sorpresas).
+export const PLAN_RULES = {
+  permanencia: "Sin permanencia. Con 12 meses de compromiso, −15 % en la cuota.",
+  anual: "Pago anual: 2 meses gratis (pagas 10 cuotas).",
+  horasExtra: "Horas extra: 85 €/hora; bono de 10 horas con −10 %.",
+  setup: "Alta técnica: 190 € en Care; sin coste en Managed, Optimize y Private AI Ops.",
+  iva: "Todos los precios son sin IVA (21 %).",
+  sla: "Atención de 9:00 a 18:00 (Europe/Madrid) en días laborables.",
+} as const;
 
 // Compatibilidad temporal con la página de precios actual.
 export const PLANES_PRECIOS = [
