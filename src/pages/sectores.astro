@@ -1,0 +1,33 @@
+---
+import Base from "../layouts/Base.astro";
+import Cta from "../components/Cta.astro";
+import { BASE, SITE } from "../config";
+const sectores = [
+  { n: "Servicios profesionales", e: "asesorías, gestorías, consultoras, agencias, despachos", dolor: "Cada cierre mensual empieza reuniendo y clasificando documentación que llega por correo, portal o WhatsApp.", montamos: ["Entrada unificada de documentos", "Clasificación y avisos", "Seguimiento comercial sin Excel"] },
+  { n: "Comercio y ecommerce", e: "tiendas, distribución, retail", dolor: "Pedidos, stock y devoluciones se copian a mano entre la tienda, el ERP y el transportista.", montamos: ["Sincronización de pedidos y stock", "Avisos de incidencias", "Informes de ventas automáticos"] },
+  { n: "Operaciones", e: "logística, administración, soporte", dolor: "El equipo copia datos entre herramientas y descubre los errores cuando ya es tarde.", montamos: ["Flujos observables con errores controlados", "Excepciones y recuperación manual", "Panel de actividad"] },
+  { n: "Equipos de conocimiento", e: "documentación, formación, compliance", dolor: "El conocimiento está repartido y responder dudas repetidas consume horas.", montamos: ["Buscador sobre vuestros documentos", "Asistentes con permisos", "IA local para datos sensibles"] },
+];
+---
+<Base title={`Sectores — ${SITE.name}`} description="Automatización e IA aplicada a servicios profesionales, comercio, operaciones y equipos de conocimiento.">
+  <section data-reveal class="mx-auto max-w-6xl px-6 pb-10 pt-24 sm:pt-32">
+    <p class="eyebrow">Sectores</p>
+    <h1 class="display-title mt-4 max-w-5xl">Mismo método.<br /><span>Problemas distintos.</span></h1>
+    <p class="mt-6 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">Estos son los sectores donde más se repite el trabajo manual. Elige el tuyo y verás qué automatizamos primero.</p>
+  </section>
+  <section class="mx-auto max-w-6xl px-6 pb-20">
+    <div class="grid gap-5 md:grid-cols-2">
+      {sectores.map((s) => (
+        <article data-reveal class="rounded-3xl border border-black/8 p-7 dark:border-white/10">
+          <h2 class="text-xl font-semibold">{s.n}</h2>
+          <p class="mt-1 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">{s.e}</p>
+          <p class="mt-4 text-sm leading-6">{s.dolor}</p>
+          <p class="mt-4 text-xs font-bold text-[#0071e3]">Qué montamos</p>
+          <ul class="mt-2 space-y-1.5 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">{s.montamos.map((m) => <li>· {m}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+    <a href={`${BASE}/reservar/`} class="button-primary mt-8 inline-flex">Reservar una llamada</a>
+  </section>
+  <Cta titulo="¿Tu sector no está aquí?" texto="Cuéntanos el proceso que te quita horas: si no encaja, te lo diremos igualmente." />
+</Base>
