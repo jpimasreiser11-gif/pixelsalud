@@ -63,7 +63,6 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
 </section>
 
 <style is:global>
-  :global(.dark) .ai-chat-widget { --ac: #2997ff; --panel: #111318; --line: #2a2a2c; }
   .ai-chat-widget {
     --ac: #0071e3; --panel: #ffffff; --line: #e5e5ea; --text: #1d1d1f; --muted: #6e6e73;
     position: fixed; right: 18px; bottom: 18px; z-index: 70; font-family: ui-sans-serif, system-ui, sans-serif;
@@ -108,7 +107,8 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
   .aichat-row.bot .aichat-bubble { background: #e9edf3; color: var(--text); border-bottom-left-radius: 5px; }
   .aichat-row.user .aichat-bubble { background: var(--ac); color: #fff; border-bottom-right-radius: 5px; }
   .aichat-bubble.typing { opacity: .7; font-style: italic; }
-  :global(.dark) .aichat-row.bot .aichat-bubble { background: #23262d; color: #f5f5f7; }
+  .dark .ai-chat-widget { --ac: #2997ff; --panel: #111318; --line: #2a2a2c; --text: #f5f5f7; --muted: #a1a1a6; }
+  .dark .aichat-row.bot .aichat-bubble { background: #23262d; color: #f5f5f7; }
   .aichat-composer { display: flex; gap: .5rem; padding: .65rem .85rem; border-top: 1px solid var(--line); }
   .aichat-composer textarea {
     flex: 1; resize: none; border: 1px solid var(--line); border-radius: 10px;
@@ -151,9 +151,13 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     function store(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {} }
     function load(key, fallback) { try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
 
-    var msgs = load(MSGS, []);
+    var savedMsgs = load(MSGS, []);
+    var msgs = Array.isArray(savedMsgs) ? savedMsgs.filter(function (m) {
+      return m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string";
+    }).slice(-48) : [];
+    var sending = false;
     var convId = load(KEY, "");
-    function persist() { store(MSGS, msgs.slice(-24)); if (convId) store(KEY, convId); }
+    function persist() { msgs = msgs.slice(-48); store(MSGS, msgs); if (convId) store(KEY, convId); }
 
     function say(text, who, typing) {
       var isUser = who === "user";
@@ -174,12 +178,14 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     function save(role, content) { msgs.push({ role: role, content: content }); persist(); }
 
     function openPanel() {
+      if (!panel.hidden) return;
       if (!enabled) { window.open("https://wa.me/34623204319", "_blank"); return; }
       panel.hidden = false;
       if (backdrop) backdrop.hidden = false;
       launcher.hidden = true;
       launcher.setAttribute("aria-expanded", "true");
       store(OPEN, true);
+      msgsEl.replaceChildren();
       if (!msgs.length) {
         say("Hola, soy VARINO AI. Puedo contarte qué hacemos, darte precios orientativos y ayudarte a dar el primer paso. ¿Qué proceso te gustaría mejorar?");
       } else {
@@ -193,6 +199,7 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
       launcher.hidden = false;
       launcher.setAttribute("aria-expanded", "false");
       store(OPEN, false);
+      launcher.focus();
     }
     launcher.addEventListener("click", function () { if (panel.hidden) openPanel(); else closePanel(); });
     root.querySelector("[data-aichat-close]").addEventListener("click", closePanel);
@@ -206,15 +213,17 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     form.addEventListener("submit", async function (ev) {
       ev.preventDefault();
       var text = input.value.trim();
-      if (!text) return;
+      if (!text || sending) return;
+      sending = true;
       say(text, "user");
       save("user", text);
       input.value = ""; input.disabled = true;
       var pending = say("…", "assistant", true);
       try {
-        var history = msgs.slice(-9, -1); // los turnos previos (sin este último)
+        var history = msgs.slice(-33, -1); // hasta 16 intercambios previos
         var res = await fetch(CHAT, {
           method: "POST",
+          signal: AbortSignal.timeout(90000),
           headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
           body: JSON.stringify({ message: text, history: history, conversationId: convId, pagina: location.pathname })
         });
@@ -232,6 +241,7 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
         pending.remove();
         say("Ahora mismo no puedo responder. Escríbenos por WhatsApp https://wa.me/34623204319 y te atendemos en persona.", "assistant");
       } finally {
+        sending = false;
         input.disabled = false; input.focus();
       }
     });
@@ -249,6 +259,7 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
       try {
         var r = await fetch(LEAD, {
           method: "POST",
+          signal: AbortSignal.timeout(20000),
           headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
           body: JSON.stringify({
             nombre: nombre, email: email, whatsapp: whatsapp, empresa: "", interes: "otro",
