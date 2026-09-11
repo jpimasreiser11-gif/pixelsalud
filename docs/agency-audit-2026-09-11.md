@@ -67,6 +67,18 @@ propuesta escrita, no despliegue automático sin validar accesos y alcance.
 
 ## Orden de cierre con evidencia
 
+### Recuperación verificada durante la auditoría
+
+Tras confirmar cero ejecuciones running/new/waiting, se reinició únicamente el
+servicio n8n mediante su servicio de arranque existente. La comprobación local
+de disponibilidad respondió HTTP 200 en 0,006 s y la agenda pública devolvió
+HTTP 200 con huecos en 1,05 s. No se reservó ninguna cita. Esto demuestra la
+recuperación puntual, no la corrección de la causa raíz ni estabilidad prolongada.
+
+La comprobación en el navegador autenticado queda bloqueada: browser-skill
+informa de cero navegadores conectados. Requiere conectar la extensión del
+usuario; no se extrajeron cookies ni credenciales para sortear ese bloqueo.
+
 1. Estabilizar backend y acceso de administración; conservar workflows y datos antes de cambios.
 2. Verificar lead propio de prueba de extremo a extremo, CRM y Telegram, con recuperación ante errores.
 3. Separar permiso comercial, probar bajas y bloquear secuencias sin evidencia.
