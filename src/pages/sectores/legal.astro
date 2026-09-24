@@ -1,0 +1,975 @@
+---
+import Base from "../../layouts/Base.astro";
+import Cta from "../../components/Cta.astro";
+import { BASE, SITE, BACKEND_LEAD, whatsappUrl } from "../../config";
+
+const wa = whatsappUrl(
+  "Hola, me interesa conocer la solución de automatización e IA privada para despachos legales y tributarios de VARINO."
+);
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Automatización e IA Privada para Despachos Legales y Asesorías Tributarias en Barcelona",
+  provider: {
+    "@type": "ProfessionalService",
+    name: SITE.name,
+    url: SITE.url,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Barcelona",
+      addressRegion: "Catalunya",
+      addressCountry: "ES",
+    },
+  },
+  description:
+    "Sistemas de automatización e IA privada on-premise para bufetes de abogados y despachos tributarios en Barcelona: ingesta de notificaciones oficiales (LexNET, DEHú, AEAT), extracción de escrituras y modelos tributarios, y triaje multicanal.",
+  serviceType: "Automatización LegalTech e IA Privada",
+});
+---
+
+<Base
+  title="Sector Legal y Tributario en Barcelona"
+  description="Automatización e IA privada on-premise para despachos legales y asesores tributarios en Barcelona: ingesta de LexNET/DEHú/AEAT, cotejo documental y triaje multicanal."
+>
+  <script type="application/ld+json" set:html={schema} />
+
+  <!-- HERO SECTION -->
+  <section class="relative overflow-hidden pt-20 pb-16 sm:pt-28 sm:pb-24 border-b border-black/5 dark:border-white/10">
+    <div class="mx-auto max-w-6xl px-6">
+      <!-- Breadcrumbs & Local Badge -->
+      <div data-reveal class="flex flex-wrap items-center gap-2 text-xs text-[#6e6e73] dark:text-[#a1a1a6] mb-6">
+        <a href={`${BASE}/`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Inicio</a>
+        <span>/</span>
+        <a href={`${BASE}/sectores/`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Sectores</a>
+        <span>/</span>
+        <span class="text-[#1d1d1f] dark:text-white font-medium">Legal y Tributario</span>
+      </div>
+
+      <div data-reveal class="inline-flex items-center gap-2 rounded-full border border-[#0071e3]/20 bg-[#0071e3]/10 px-3.5 py-1 text-xs font-semibold text-[#0071e3] dark:text-[#2997ff] mb-6">
+        <span class="h-2 w-2 rounded-full bg-[#0071e3] live-dot"></span>
+        <span>Despachos y Asesorías Tributarias · Barcelona · IA Privada On-Premise</span>
+      </div>
+
+      <div data-reveal class="max-w-4xl">
+        <p class="eyebrow">Solución sectorial · Bufetes jurídicos y despachos fiscales</p>
+        <h1 class="display-title mt-4">
+          Sistemas de alta precisión jurídica.<br />
+          <span>Cero exposición de datos confidenciales.</span>
+        </h1>
+        <p class="mt-7 max-w-2xl text-lg sm:text-xl leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+          Diseñado para <strong>socios directores, letrados sénior y directores de operaciones</strong> de bufetes de abogados y firmas tributarias de Barcelona. Automatizamos la ingesta de notificaciones judiciales y administrativas, el cotejo documental y el triaje de consultas con infraestructura privada y control humano estricto.
+        </p>
+
+        <!-- CTAs -->
+        <div class="mt-8 flex flex-wrap items-center gap-4">
+          <a href="#calculadora" class="button-primary">
+            Calcular capacidad recuperable →
+          </a>
+          <a href="#sprint" class="button-secondary">
+            Automation Sprint (7 días)
+          </a>
+          {wa && (
+            <a
+              href={wa}
+              class="inline-flex items-center gap-2 text-xs font-semibold text-[#0071e3] dark:text-[#2997ff] hover:underline px-3 py-2"
+            >
+              Consulta confidencial por WhatsApp ↗
+            </a>
+          )}
+        </div>
+
+        <!-- Trust Highlights -->
+        <div class="mt-12 grid grid-cols-2 gap-4 border-t border-black/8 dark:border-white/10 pt-8 sm:grid-cols-4">
+          <div>
+            <span class="block text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Despliegue</span>
+            <strong class="mt-1 block text-sm font-semibold text-[#1d1d1f] dark:text-white">On-premise / Local</strong>
+          </div>
+          <div>
+            <span class="block text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Secreto profesional</span>
+            <strong class="mt-1 block text-sm font-semibold text-[#1d1d1f] dark:text-white">Art. 542 LOPJ & RGPD</strong>
+          </div>
+          <div>
+            <span class="block text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Supervisión</span>
+            <strong class="mt-1 block text-sm font-semibold text-[#1d1d1f] dark:text-white">Firma letrada preceptiva</strong>
+          </div>
+          <div>
+            <span class="block text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Ámbito</span>
+            <strong class="mt-1 block text-sm font-semibold text-[#1d1d1f] dark:text-white">Barcelona y área metropolitana</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EL CONTEXTO OPERATIVO DEL SECTOR LEGAL -->
+  <section class="py-20 sm:py-28 bg-[#f7f7f5] dark:bg-[#0a0d14]">
+    <div class="mx-auto max-w-6xl px-6">
+      <div data-reveal class="max-w-2xl">
+        <p class="eyebrow">Realidad operativa</p>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+          El valor del despacho reside en el criterio jurídico, no en descargar notificaciones.
+        </h2>
+        <p class="mt-4 text-base text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+          En los despachos de abogados y asesorías tributarias de Barcelona, los profesionales de mayor cualificación dedican decenas de horas mensuales a tareas manuales de alta fricción y riesgo administrativo.
+        </p>
+      </div>
+
+      <div class="mt-12 grid gap-6 md:grid-cols-3">
+        <!-- Friccion 1 -->
+        <article data-reveal class="rounded-3xl border border-black/8 bg-white p-7 dark:border-white/10 dark:bg-[#111318]">
+          <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-sm">
+            01
+          </div>
+          <h3 class="mt-5 text-xl font-semibold text-[#1d1d1f] dark:text-white">
+            Dispersión de sedes electrónicas
+          </h3>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+            Revisión manual cada mañana en LexNET, DEHú, AEAT, Seguridad Social y portales autonómicos. Riesgo de plazos procesales perentorios traspapelados en buzones personales.
+          </p>
+          <div class="mt-5 border-t border-black/5 dark:border-white/10 pt-4 text-xs text-[#86868b]">
+            <span class="font-medium text-[#1d1d1f] dark:text-white">Impacto:</span> Tiempo de letrados y procuradores consumido en descargas y renombrado de PDFs.
+          </div>
+        </article>
+
+        <!-- Friccion 2 -->
+        <article data-reveal class="rounded-3xl border border-black/8 bg-white p-7 dark:border-white/10 dark:bg-[#111318]">
+          <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-sm">
+            02
+          </div>
+          <h3 class="mt-5 text-xl font-semibold text-[#1d1d1f] dark:text-white">
+            Cotejo documental exhaustivo a mano
+          </h3>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+            Comprobación casilla a casilla entre libros contables, escrituras notariales y modelos tributarios (303, 390, 111, 200). Horas de trabajo repetitivo propensas a fatiga humana.
+          </p>
+          <div class="mt-5 border-t border-black/5 dark:border-white/10 pt-4 text-xs text-[#86868b]">
+            <span class="font-medium text-[#1d1d1f] dark:text-white">Impacto:</span> Cuellos de botella en campañas trimestrales y cierres de operaciones societarias.
+          </div>
+        </article>
+
+        <!-- Friccion 3 -->
+        <article data-reveal class="rounded-3xl border border-black/8 bg-white p-7 dark:border-white/10 dark:bg-[#111318]">
+          <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold text-sm">
+            03
+          </div>
+          <h3 class="mt-5 text-xl font-semibold text-[#1d1d1f] dark:text-white">
+            Miedo legítimo a filtraciones en IA pública
+          </h3>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+            Pegar información procesal, balances de clientes o borradores de contratos en chatbots públicos viola el secreto profesional y el RGPD. El despacho necesita IA local que no salga de su perímetro.
+          </p>
+          <div class="mt-5 border-t border-black/5 dark:border-white/10 pt-4 text-xs text-[#86868b]">
+            <span class="font-medium text-[#1d1d1f] dark:text-white">Impacto:</span> Parálisis tecnológica por falta de soluciones con custodia on-premise verificada.
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASOS DE USO CLAVE -->
+  <section id="casos" class="py-24 sm:py-32">
+    <div class="mx-auto max-w-6xl px-6">
+      <div data-reveal class="max-w-3xl">
+        <p class="eyebrow">Arquitectura aplicada</p>
+        <h2 class="mt-3 text-3xl sm:text-5xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+          Tres soluciones críticas para el despacho legal y tributario
+        </h2>
+        <p class="mt-5 text-lg text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+          Flujos diseñados en n8n e IA privada que respetan los protocolos del bufete, con paradas de aprobación preceptivas y registro de auditoría documental.
+        </p>
+      </div>
+
+      <!-- 3 Use Cases Detail -->
+      <div class="mt-16 space-y-8">
+        <!-- Caso A -->
+        <article data-reveal class="overflow-hidden rounded-[2rem] border border-black/8 bg-[#fbfbfd] dark:border-white/10 dark:bg-[#111318]">
+          <div class="grid gap-0 lg:grid-cols-[1.15fr_.85fr]">
+            <div class="p-8 sm:p-12">
+              <span class="text-xs font-bold uppercase tracking-wider text-[#0071e3] dark:text-[#2997ff]">
+                Caso de uso A · Gestión procesal y administrativa
+              </span>
+              <h3 class="mt-4 text-2xl sm:text-3xl font-semibold text-[#1d1d1f] dark:text-white">
+                Clasificación e ingesta automática de notificaciones de sedes electrónicas
+              </h3>
+              <p class="mt-4 text-sm leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+                Conectamos de forma periódica y segura los buzones de <strong>LexNET, DEHú, Agencia Tributaria (AEAT) y Seguridad Social (SEDESS)</strong> para centralizar la recepción de actos de comunicación oficial.
+              </p>
+
+              <div class="mt-6 grid gap-3 sm:grid-cols-2 text-xs">
+                <div class="rounded-xl border border-black/5 bg-white p-4 dark:border-white/5 dark:bg-[#161617]">
+                  <strong class="block text-[#1d1d1f] dark:text-white mb-1">Extracción y Metadatos</strong>
+                  Identificación automática del órgano emisor, juzgado o tribunal, número de autos/expediente, partes implicadas y letrado asignado en el bufete.
+                </div>
+                <div class="rounded-xl border border-black/5 bg-white p-4 dark:border-white/5 dark:bg-[#161617]">
+                  <strong class="block text-[#1d1d1f] dark:text-white mb-1">Cálculo de Plazos Procesales</strong>
+                  Estimación de fecha de vencimiento según calendario judicial de días hábiles en Cataluña/España, generando borrador de apunte en agenda.
+                </div>
+              </div>
+
+              <div class="mt-6 flex items-center gap-2 text-xs text-[#0071e3] dark:text-[#2997ff] font-medium">
+                <span>Parada humana preceptiva:</span>
+                <span class="text-[#6e6e73] dark:text-[#a1a1a6]">El letrado valida el plazo antes de incorporar el apunte al calendario definitivo.</span>
+              </div>
+            </div>
+
+            <div class="bg-[#0b0d12] p-8 sm:p-12 text-white flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-white/10">
+              <div>
+                <div class="flex items-center justify-between text-[11px] font-mono uppercase tracking-widest text-[#a1a1a6]">
+                  <span>FUENTES OFICIALES</span>
+                  <span>INGESTA SEGURA</span>
+                </div>
+                <ul class="mt-6 space-y-3 font-mono text-xs text-[#d2d2d7]">
+                  <li class="flex items-center gap-2">
+                    <span class="text-emerald-400">●</span> LexNET (Ministerio de Justicia)
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="text-emerald-400">●</span> DEHú (Dirección Electrónica Habilitada única)
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="text-emerald-400">●</span> Sede Electrónica AEAT (Notificaciones tributarias)
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="text-emerald-400">●</span> SEDESS (Seguridad Social) y sedes autonómicas
+                  </li>
+                </ul>
+              </div>
+              <div class="mt-8 border-t border-white/10 pt-6">
+                <span class="text-[11px] text-[#a1a1a6] block">Resultado directo</span>
+                <strong class="text-sm text-white mt-1 block">Bandeja unificada con PDFs clasificados por letrado y alerta de vencimiento</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Caso B -->
+        <article data-reveal class="overflow-hidden rounded-[2rem] border border-black/8 bg-[#fbfbfd] dark:border-white/10 dark:bg-[#111318]">
+          <div class="grid gap-0 lg:grid-cols-[1.15fr_.85fr]">
+            <div class="p-8 sm:p-12">
+              <span class="text-xs font-bold uppercase tracking-wider text-[#0071e3] dark:text-[#2997ff]">
+                Caso de uso B · Asesoría tributaria y mercantil
+              </span>
+              <h3 class="mt-4 text-2xl sm:text-3xl font-semibold text-[#1d1d1f] dark:text-white">
+                Extracción estructurada y cotejo de escrituras, contratos y modelos tributarios
+              </h3>
+              <p class="mt-4 text-sm leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+                Flujos de análisis con visión estructurada y modelos privados para cotejar declaraciones oficiales frente a libros contables y escrituras notariales.
+              </p>
+
+              <div class="mt-6 grid gap-3 sm:grid-cols-2 text-xs">
+                <div class="rounded-xl border border-black/5 bg-white p-4 dark:border-white/5 dark:bg-[#161617]">
+                  <strong class="block text-[#1d1d1f] dark:text-white mb-1">Modelos Tributarios Recurrentes</strong>
+                  Lectura y verificación de casillas en <strong>Modelo 303 (IVA), 390 (resumen anual), 111 (retenciones) y 200 (Sociedades)</strong>.
+                </div>
+                <div class="rounded-xl border border-black/5 bg-white p-4 dark:border-white/5 dark:bg-[#161617]">
+                  <strong class="block text-[#1d1d1f] dark:text-white mb-1">Escrituras y Contratos</strong>
+                  Extracción de poderes, facultades de administradores, titulares reales, cláusulas de responsabilidad y discrepancias en balances mercantiles.
+                </div>
+              </div>
+
+              <div class="mt-6 flex items-center gap-2 text-xs text-[#0071e3] dark:text-[#2997ff] font-medium">
+                <span>Trazabilidad documental:</span>
+                <span class="text-[#6e6e73] dark:text-[#a1a1a6]">Cada discrepancia detectada enlaza a la página y línea exacta del documento fuente.</span>
+              </div>
+            </div>
+
+            <div class="bg-[#0b0d12] p-8 sm:p-12 text-white flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-white/10">
+              <div>
+                <div class="flex items-center justify-between text-[11px] font-mono uppercase tracking-widest text-[#a1a1a6]">
+                  <span>MODELOS COTEJADOS</span>
+                  <span>CERO ALUCINACIÓN</span>
+                </div>
+                <div class="mt-6 grid grid-cols-2 gap-2 text-xs font-mono">
+                  <div class="rounded-lg bg-white/5 p-3 border border-white/10">
+                    <span class="text-[#2997ff] block font-bold">Mod. 303 / 390</span>
+                    <span class="text-[11px] text-[#a1a1a6] mt-1 block">Bases imponibles y cuotas devengadas vs libros</span>
+                  </div>
+                  <div class="rounded-lg bg-white/5 p-3 border border-white/10">
+                    <span class="text-[#2997ff] block font-bold">Mod. 111 / 190</span>
+                    <span class="text-[11px] text-[#a1a1a6] mt-1 block">Retenciones IRPF nóminas y profesionales</span>
+                  </div>
+                  <div class="rounded-lg bg-white/5 p-3 border border-white/10">
+                    <span class="text-[#2997ff] block font-bold">Mod. 200</span>
+                    <span class="text-[11px] text-[#a1a1a6] mt-1 block">Ajustes extracontables y bases imponibles</span>
+                  </div>
+                  <div class="rounded-lg bg-white/5 p-3 border border-white/10">
+                    <span class="text-[#2997ff] block font-bold">Escrituras</span>
+                    <span class="text-[11px] text-[#a1a1a6] mt-1 block">Poderes, socios, titularidad y objeto social</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-8 border-t border-white/10 pt-6">
+                <span class="text-[11px] text-[#a1a1a6] block">Resultado directo</span>
+                <strong class="text-sm text-white mt-1 block">Informe de cotejo previo a la presentación tributaria o firma notarial</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Caso C -->
+        <article data-reveal class="overflow-hidden rounded-[2rem] border border-black/8 bg-[#fbfbfd] dark:border-white/10 dark:bg-[#111318]">
+          <div class="grid gap-0 lg:grid-cols-[1.15fr_.85fr]">
+            <div class="p-8 sm:p-12">
+              <span class="text-xs font-bold uppercase tracking-wider text-[#0071e3] dark:text-[#2997ff]">
+                Caso de uso C · Intake comercial y admisión
+              </span>
+              <h3 class="mt-4 text-2xl sm:text-3xl font-semibold text-[#1d1d1f] dark:text-white">
+                Triaje multicanal de consultas de nuevos clientes y asignación por especialidad
+              </h3>
+              <p class="mt-4 text-sm leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+                Entrada ordenada de oportunidades que llegan por formulario web, correo corporativo o WhatsApp profesional del bufete.
+              </p>
+
+              <div class="mt-6 grid gap-3 sm:grid-cols-2 text-xs">
+                <div class="rounded-xl border border-black/5 bg-white p-4 dark:border-white/5 dark:bg-[#161617]">
+                  <strong class="block text-[#1d1d1f] dark:text-white mb-1">Clasificación por Área</strong>
+                  Detección de la disciplina aplicable: Mercantil/M&A, Fiscal/Tributario, Laboral, Litigación civil/penal o Inmobiliario.
+                </div>
+                <div class="rounded-xl border border-black/5 bg-white p-4 dark:border-white/5 dark:bg-[#161617]">
+                  <strong class="block text-[#1d1d1f] dark:text-white mb-1">Control de Conflictos Previo</strong>
+                  Cruce automatizado contra la base interna de clientes y contrapartes activas antes de aceptar la consulta o emitir propuesta.
+                </div>
+              </div>
+
+              <div class="mt-6 flex items-center gap-2 text-xs text-[#0071e3] dark:text-[#2997ff] font-medium">
+                <span>Aprobación del socio:</span>
+                <span class="text-[#6e6e73] dark:text-[#a1a1a6]">El sistema prepara el borrador; el socio responsable decide la admisión y presupuesto.</span>
+              </div>
+            </div>
+
+            <div class="bg-[#0b0d12] p-8 sm:p-12 text-white flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-white/10">
+              <div>
+                <div class="flex items-center justify-between text-[11px] font-mono uppercase tracking-widest text-[#a1a1a6]">
+                  <span>DISCIPLINAS</span>
+                  <span>ASIGNACIÓN AUTOMATIZADA</span>
+                </div>
+                <div class="mt-6 space-y-2 text-xs font-mono text-[#d2d2d7]">
+                  <div class="flex justify-between border-b border-white/10 pb-2">
+                    <span>Mercantil & Societario</span>
+                    <span class="text-white">Socio Área Mercantil</span>
+                  </div>
+                  <div class="flex justify-between border-b border-white/10 pb-2">
+                    <span>Fiscal & Tributario</span>
+                    <span class="text-white">Equipo Tributario</span>
+                  </div>
+                  <div class="flex justify-between border-b border-white/10 pb-2">
+                    <span>Litigación & Arbitraje</span>
+                    <span class="text-white">Letrado Procesalista</span>
+                  </div>
+                  <div class="flex justify-between border-b border-white/10 pb-2">
+                    <span>Laboral & Compliance</span>
+                    <span class="text-white">Asociado Especialista</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-8 border-t border-white/10 pt-6">
+                <span class="text-[11px] text-[#a1a1a6] block">Resultado directo</span>
+                <strong class="text-sm text-white mt-1 block">Respuesta inicial estructurada en menos de 2 horas con conflicto verificado</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULADORA INTERACTIVA DE AHORRO PARA DESPACHOS -->
+  <section id="calculadora" class="py-24 sm:py-32 bg-[#f7f7f5] dark:bg-[#0a0d14] border-y border-black/5 dark:border-white/10">
+    <div class="mx-auto max-w-5xl px-6">
+      <div data-reveal class="text-center max-w-2xl mx-auto">
+        <p class="eyebrow">Calculadora de Productividad Legal</p>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+          Calcula la capacidad y valor recuperable en tu despacho
+        </h2>
+        <p class="mt-4 text-base text-[#6e6e73] dark:text-[#a1a1a6]">
+          Evalúa cuántas horas de letrados y tramitadores se liberan al automatizar la ingesta de notificaciones, el cotejo tributario y el triaje.
+        </p>
+      </div>
+
+      <div data-reveal class="mt-12 rounded-[2.5rem] border border-black/10 bg-white p-6 sm:p-10 dark:border-white/10 dark:bg-[#111318] shadow-xl">
+        <div class="grid gap-10 lg:grid-cols-12 items-start">
+          <!-- Controles de la calculadora (7 cols) -->
+          <div class="lg:col-span-7 space-y-6">
+            <h3 class="text-xl font-semibold text-[#1d1d1f] dark:text-white">
+              1. Parámetros del despacho
+            </h3>
+
+            <!-- Número de profesionales -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label for="calc-profesionales" class="text-xs font-semibold uppercase tracking-wider text-[#6e6e73] dark:text-[#a1a1a6]">
+                  Número de abogados / economistas en el bufete
+                </label>
+                <span id="label-profesionales" class="text-sm font-bold text-[#0071e3] dark:text-[#2997ff]">8 profesionales</span>
+              </div>
+              <input
+                id="calc-profesionales"
+                type="range"
+                min="2"
+                max="50"
+                step="1"
+                value="8"
+                class="w-full accent-[#0071e3] cursor-pointer"
+              />
+              <div class="flex justify-between text-[11px] text-[#86868b] mt-1">
+                <span>2 (Boutique)</span>
+                <span>20 (Despacho medio)</span>
+                <span>50+ (Firma consolidada)</span>
+              </div>
+            </div>
+
+            <!-- Horas semanales repetitivas -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label for="calc-horas" class="text-xs font-semibold uppercase tracking-wider text-[#6e6e73] dark:text-[#a1a1a6]">
+                  Horas semanales dedicadas a tareas administrativas repetitivas por profesional
+                </label>
+                <span id="label-horas" class="text-sm font-bold text-[#0071e3] dark:text-[#2997ff]">5 horas / semana</span>
+              </div>
+              <input
+                id="calc-horas"
+                type="range"
+                min="2"
+                max="15"
+                step="1"
+                value="5"
+                class="w-full accent-[#0071e3] cursor-pointer"
+              />
+              <p class="text-xs text-[#86868b] mt-1">
+                Incluye descarga de LexNET/DEHú, cotejo de modelos tributarios, revisión de casillas y transcripción manual.
+              </p>
+            </div>
+
+            <!-- Tarifa / coste hora interna -->
+            <div>
+              <label for="calc-tarifa" class="block text-xs font-semibold uppercase tracking-wider text-[#6e6e73] dark:text-[#a1a1a6] mb-2">
+                Coste o tarifa horaria interna estimada
+              </label>
+              <select
+                id="calc-tarifa"
+                class="w-full rounded-2xl border border-black/12 bg-[#f7f7f5] px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+              >
+                <option value="50">50 € / hora (Tramitadores / Paralegals / Asociados júnior)</option>
+                <option value="80" selected>80 € / hora (Asociados medios / Asesores fiscales)</option>
+                <option value="120">120 € / hora (Letrados sénior / Socios)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Resultados dinámicos (5 cols) -->
+          <div class="lg:col-span-5 rounded-3xl border border-black/8 bg-[#f7f7f5] p-6 sm:p-8 dark:border-white/10 dark:bg-[#161617] space-y-6">
+            <div class="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-4">
+              <span class="text-xs font-bold text-[#0071e3] dark:text-[#2997ff] uppercase tracking-wider">Capacidad Recuperable Anual</span>
+              <span class="text-[11px] text-[#6e6e73] dark:text-[#a1a1a6]">Base 45 semanas hábiles</span>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <span class="text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Horas profesionales liberadas al año:</span>
+                <strong id="res-horas-anuales" class="mt-1 block text-3xl font-bold text-[#1d1d1f] dark:text-white">
+                  1.080 horas / año
+                </strong>
+                <p class="text-xs text-[#6e6e73] dark:text-[#a1a1a6] mt-0.5">
+                  Tiempo transferido de tareas burocráticas a preparación de casos y dictámenes jurídicos.
+                </p>
+              </div>
+
+              <div class="border-t border-black/5 dark:border-white/10 pt-4">
+                <span class="text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Valor económico anual de capacidad recuperada:</span>
+                <strong id="res-valor-economico" class="mt-1 block text-3xl font-bold text-[#0071e3] dark:text-[#2997ff]">
+                  86.400 € / año
+                </strong>
+                <p class="text-xs text-[#6e6e73] dark:text-[#a1a1a6] mt-0.5">
+                  Calculado sobre 60% de eficiencia de automatización en procesos repetitivos.
+                </p>
+              </div>
+
+              <div class="border-t border-black/5 dark:border-white/10 pt-4">
+                <span class="text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Retorno frente a un Sprint (1.450 €):</span>
+                <strong id="res-multiplicador" class="mt-1 block text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                  La inversión se amortiza en el primer mes de operativa
+                </strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario confidencial de solicitud de propuesta -->
+        <div class="mt-12 border-t border-black/10 dark:border-white/10 pt-10">
+          <h3 class="text-xl font-semibold text-[#1d1d1f] dark:text-white">
+            2. Solicita el informe de arquitectura para tu despacho
+          </h3>
+          <p class="mt-2 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">
+            Revisamos la integración con vuestro gestor de expedientes (Aranzadi, Kleos, MN Program, BaseNet o similar) bajo estricto acuerdo de confidencialidad.
+          </p>
+
+          <form
+            id="form-legal-lead"
+            data-lead={BACKEND_LEAD}
+            data-email={SITE.email}
+            class="mt-6 space-y-4"
+          >
+            <!-- Honeypot anti-spam -->
+            <input type="hidden" name="website" value="" aria-hidden="true" tabindex="-1" autocomplete="off" />
+
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div>
+                <label for="legal-nombre" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">
+                  Nombre y cargo
+                </label>
+                <input
+                  id="legal-nombre"
+                  name="nombre"
+                  type="text"
+                  required
+                  placeholder="Carlos Font (Socio Director)"
+                  class="w-full rounded-xl border border-black/12 bg-white px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="legal-despacho" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">
+                  Nombre del bufete / despacho
+                </label>
+                <input
+                  id="legal-despacho"
+                  name="despacho"
+                  type="text"
+                  required
+                  placeholder="Font & Asociados Abogados"
+                  class="w-full rounded-xl border border-black/12 bg-white px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="legal-software" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">
+                  Software de gestión actual
+                </label>
+                <input
+                  id="legal-software"
+                  name="software"
+                  type="text"
+                  placeholder="Aranzadi, Kleos, MN Program, A3, etc."
+                  class="w-full rounded-xl border border-black/12 bg-white px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="legal-email" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">
+                  Email profesional corporativo
+                </label>
+                <input
+                  id="legal-email"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="cfont@bufete.com"
+                  class="w-full rounded-xl border border-black/12 bg-white px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="legal-telefono" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">
+                  Teléfono de contacto
+                </label>
+                <input
+                  id="legal-telefono"
+                  name="telefono"
+                  type="tel"
+                  required
+                  placeholder="+34 93 000 00 00"
+                  class="w-full rounded-xl border border-black/12 bg-white px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="legal-prioridad" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">
+                  Proceso que prioritariamente queréis resolver
+                </label>
+                <select
+                  id="legal-prioridad"
+                  name="prioridad"
+                  class="w-full rounded-xl border border-black/12 bg-white px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+                >
+                  <option value="notificaciones">Ingesta de notificaciones (LexNET / DEHú / AEAT)</option>
+                  <option value="modelos_tributarios">Cotejo de modelos tributarios y escrituras</option>
+                  <option value="intake_consultas">Triaje y filtro de consultas multicanal</option>
+                  <option value="buscador_interno">Buscador semántico privado sobre expedientes</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Checkbox RGPD -->
+            <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6] pt-1">
+              <input type="checkbox" name="consentimiento" required class="mt-0.5 shrink-0" />
+              <span>
+                Acepto que VARINO trate estos datos exclusivamente para remitir la propuesta técnica al despacho, conforme a su <a href={`${BASE}/privacidad/`} class="underline text-[#0071e3] dark:text-[#2997ff]">política de privacidad</a>.
+              </span>
+            </label>
+
+            <!-- Actions & Status -->
+            <div class="pt-2 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <button
+                type="submit"
+                id="btn-enviar-legal"
+                class="button-primary w-full sm:w-auto text-sm px-8"
+              >
+                Solicitar informe técnico para el bufete →
+              </button>
+              <p
+                id="form-legal-status"
+                class="text-xs text-[#6e6e73] dark:text-[#a1a1a6]"
+                aria-live="polite"
+              >
+                Respuesta confidencial en menos de 24 horas por Joan Pimas Reiser.
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN AUTOMATION SPRINT EN 7 DÍAS -->
+  <section id="sprint" class="py-24 sm:py-32">
+    <div class="mx-auto max-w-6xl px-6">
+      <div data-reveal class="rounded-[2.5rem] border border-black/8 bg-gradient-to-br from-[#fbfbfd] to-[#f2f2f7] p-8 sm:p-14 dark:border-white/10 dark:from-[#111318] dark:to-[#0a0d14]">
+        <div class="grid gap-10 lg:grid-cols-12 items-center">
+          <div class="lg:col-span-7">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#0071e3] dark:text-[#2997ff]">
+              Solución Cerrada · Sin Horas Indefinidas
+            </span>
+            <h2 class="mt-4 text-3xl sm:text-5xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+              Automation Sprint en 7 días
+            </h2>
+            <p class="mt-4 text-base sm:text-lg text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+              En una semana laborable convertimos un proceso crítico de vuestro despacho en un sistema automatizado, observable y con parada humana obligatoria. Sin permanencia ni licencias recurrentes obligadas.
+            </p>
+
+            <div class="mt-8 space-y-3 text-sm">
+              <div class="flex items-start gap-3">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0071e3] text-white font-bold text-xs">✓</span>
+                <span class="text-[#1d1d1f] dark:text-[#d2d2d7]"><strong>Día 1 a 2:</strong> Mapeo del proceso judicial/tributario seleccionado y definición estricta de excepciones.</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0071e3] text-white font-bold text-xs">✓</span>
+                <span class="text-[#1d1d1f] dark:text-[#d2d2d7]"><strong>Día 3 a 5:</strong> Construcción del flujo en n8n on-premise con datos sintéticos y pruebas de cotejo.</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0071e3] text-white font-bold text-xs">✓</span>
+                <span class="text-[#1d1d1f] dark:text-[#d2d2d7]"><strong>Día 6 a 7:</strong> Puesta en producción bajo supervisión, formación a los asociados y manual de transferencia.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 rounded-3xl border border-black/8 bg-white p-8 dark:border-white/10 dark:bg-[#161617] text-center sm:text-left">
+            <span class="text-xs text-[#6e6e73] dark:text-[#a1a1a6] uppercase tracking-wider block">Precio de proyecto cerrado</span>
+            <div class="mt-2 flex items-baseline justify-center sm:justify-start gap-2">
+              <span class="text-4xl sm:text-5xl font-bold tracking-tight text-[#1d1d1f] dark:text-white">1.450 €</span>
+              <span class="text-sm text-[#6e6e73] dark:text-[#a1a1a6]">+ IVA</span>
+            </div>
+            <p class="mt-3 text-xs text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+              Compromiso de entrega en 7 días laborables. Se descuenta íntegramente de ampliaciones futuras si el bufete decide automatizar más áreas.
+            </p>
+
+            <div class="mt-6 space-y-3">
+              <a
+                href={`${BASE}/reservar/`}
+                class="button-primary w-full justify-center text-sm py-3.5 block text-center"
+              >
+                Reservar Automation Sprint (7 días) →
+              </a>
+              <a
+                href={`${BASE}/contacto/`}
+                class="button-secondary w-full justify-center text-xs py-2.5 block text-center"
+              >
+                Plantear un caso particular
+              </a>
+            </div>
+
+            <div class="mt-6 border-t border-black/5 dark:border-white/10 pt-4 text-[11px] text-[#86868b] text-center">
+              Reuniones de trabajo presenciales en Barcelona o telemáticas seguras.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GARANTÍAS Y CONFIDENCIALIDAD -->
+  <section class="py-20 bg-[#f7f7f5] dark:bg-[#0a0d14] border-t border-black/5 dark:border-white/10">
+    <div class="mx-auto max-w-6xl px-6">
+      <div data-reveal class="max-w-3xl">
+        <p class="eyebrow">Seguridad institucional</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+          Secreto profesional garantizado por diseño
+        </h2>
+        <p class="mt-3 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">
+          El cumplimiento deontológico y legal no es un añadido opcional: es el fundamento de nuestra arquitectura para el sector legal.
+        </p>
+      </div>
+
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div data-reveal class="rounded-2xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]">
+          <span class="text-xs font-bold text-[#0071e3]">01</span>
+          <h4 class="mt-3 font-semibold text-[#1d1d1f] dark:text-white">Aislamiento On-Premise</h4>
+          <p class="mt-2 text-xs leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+            Despliegue de los motores de automatización en vuestra propia infraestructura o servidores privados en la UE bajo custodia estricta del despacho.
+          </p>
+        </div>
+
+        <div data-reveal class="rounded-2xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]">
+          <span class="text-xs font-bold text-[#0071e3]">02</span>
+          <h4 class="mt-3 font-semibold text-[#1d1d1f] dark:text-white">Cero Entrenamiento Externo</h4>
+          <p class="mt-2 text-xs leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+            Ninguna consulta, auto o modelo tributario de vuestros clientes se utiliza jamás para entrenar o ajustar modelos de terceros.
+          </p>
+        </div>
+
+        <div data-reveal class="rounded-2xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]">
+          <span class="text-xs font-bold text-[#0071e3]">03</span>
+          <h4 class="mt-3 font-semibold text-[#1d1d1f] dark:text-white">Contrato DPA Riguroso</h4>
+          <p class="mt-2 text-xs leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+            Suscripción previa de Acuerdo de Encargo de Tratamiento (<a href={`${BASE}/dpa/`} class="underline text-[#0071e3] dark:text-[#2997ff]">DPA</a>) con deber reforzado de secreto profesional y confidencialidad.
+          </p>
+        </div>
+
+        <div data-reveal class="rounded-2xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]">
+          <span class="text-xs font-bold text-[#0071e3]">04</span>
+          <h4 class="mt-3 font-semibold text-[#1d1d1f] dark:text-white">Código Abierto y Transferible</h4>
+          <p class="mt-2 text-xs leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+            Sin dependencias propietarias opacas: todos los flujos n8n y scripts se entregan documentados y en propiedad del bufete.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREGUNTAS FRECUENTES (FAQ) -->
+  <section class="py-24">
+    <div class="mx-auto max-w-4xl px-6">
+      <div data-reveal class="text-center">
+        <p class="eyebrow">Resolución de dudas</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+          Preguntas frecuentes de socios y letrados
+        </h2>
+      </div>
+
+      <div class="mt-12 space-y-4">
+        <details data-reveal class="group rounded-2xl border border-black/8 bg-[#fbfbfd] p-6 dark:border-white/10 dark:bg-[#111318]">
+          <summary class="flex cursor-pointer items-center justify-between font-semibold text-[#1d1d1f] dark:text-white list-none">
+            <span>¿Con qué programas de gestión jurídica o contable se conecta?</span>
+            <span class="text-xs text-[#0071e3] transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+            Podemos conectar flujos con los principales programas del mercado legal español (Aranzadi One, Kleos, MN Program, BaseNet, Sudespacho, A3 Asesor) mediante API directa, conectores de base de datos o monitorización de carpetas compartidas de red seguras. Si el software es cerrado, la ingesta genera una cola estructurada sin alterar vuestra operativa.
+          </p>
+        </details>
+
+        <details data-reveal class="group rounded-2xl border border-black/8 bg-[#fbfbfd] p-6 dark:border-white/10 dark:bg-[#111318]">
+          <summary class="flex cursor-pointer items-center justify-between font-semibold text-[#1d1d1f] dark:text-white list-none">
+            <span>¿El sistema puede tomar decisiones procesales o presentar escritos por sí mismo?</span>
+            <span class="text-xs text-[#0071e3] transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+            Categóricamente no. La arquitectura de VARINO impone paradas humanas preceptivas en cualquier acción procesal o tributaria. El sistema extrae, calcula, categoriza y prepara el borrador; la firma, presentación en sede electrónica y cómputo definitivo siempre recaen en el letrado o asesor responsable.
+          </p>
+        </details>
+
+        <details data-reveal class="group rounded-2xl border border-black/8 bg-[#fbfbfd] p-6 dark:border-white/10 dark:bg-[#111318]">
+          <summary class="flex cursor-pointer items-center justify-between font-semibold text-[#1d1d1f] dark:text-white list-none">
+            <span>¿Cómo se garantiza que no salgan datos de los clientes a la nube de OpenAI u otros proveedores?</span>
+            <span class="text-xs text-[#0071e3] transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+            Para información sensible o expedientes de clientes implementamos modelos de lenguaje de pesos abiertos (como la familia Qwen3 u Ollama) ejecutándose en vuestra propia máquina o servidor local. Los datos nunca salen de la red del despacho. Para flujos de clasificación genérica sin datos personales, utilizamos endpoints europeos con acuerdos estrictos de confidencialidad.
+          </p>
+        </details>
+
+        <details data-reveal class="group rounded-2xl border border-black/8 bg-[#fbfbfd] p-6 dark:border-white/10 dark:bg-[#111318]">
+          <summary class="flex cursor-pointer items-center justify-between font-semibold text-[#1d1d1f] dark:text-white list-none">
+            <span>¿Cuánto tiempo de nuestro equipo requiere el Automation Sprint de 7 días?</span>
+            <span class="text-xs text-[#0071e3] transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+            Aproximadamente 3 a 4 horas en total distribuidas a lo largo de la semana: una sesión de toma de requisitos de 60 minutos el primer día, validación intermedia de 30 minutos a mitad de semana, y una sesión de formación y puesta en marcha de 90 minutos el último día. El resto del desarrollo lo ejecuta íntegramente VARINO.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <Cta
+    titulo="Hablemos del proceso que queréis optimizar en el despacho."
+    texto="Revisamos vuestro volumen de expedientes, sedes y herramientas actuales antes de proponer un alcance cerrado y garantizado."
+  />
+
+  <!-- SCRIPT VANILLA JS (CALCULADORA REACTIVA & FORMULARIO SEGURO) -->
+  <script>
+    (function () {
+      // 1. Calculadora de Ahorro y Capacidad
+      var inputProfesionales = document.getElementById("calc-profesionales");
+      var inputHoras = document.getElementById("calc-horas");
+      var selectTarifa = document.getElementById("calc-tarifa");
+
+      var labelProfesionales = document.getElementById("label-profesionales");
+      var labelHoras = document.getElementById("label-horas");
+
+      var resHorasAnuales = document.getElementById("res-horas-anuales");
+      var resValorEconomico = document.getElementById("res-valor-economico");
+      var resMultiplicador = document.getElementById("res-multiplicador");
+
+      function recalcularAhorro() {
+        if (!inputProfesionales || !inputHoras || !selectTarifa) return;
+
+        var numProf = parseInt(inputProfesionales.value, 10) || 8;
+        var horasSemana = parseInt(inputHoras.value, 10) || 5;
+        var tarifaHora = parseInt(selectTarifa.value, 10) || 80;
+
+        if (labelProfesionales) {
+          labelProfesionales.textContent = numProf + " profesionales";
+        }
+        if (labelHoras) {
+          labelHoras.textContent = horasSemana + " horas / semana";
+        }
+
+        // Semanas hábiles de trabajo al año en despacho medio: 45 semanas
+        // Eficiencia estimada de automatización en tareas mecánicas: 60%
+        var totalHorasRepetitivas = numProf * horasSemana * 45;
+        var horasLiberadas = Math.round(totalHorasRepetitivas * 0.6);
+        var valorLiberado = Math.round(horasLiberadas * tarifaHora);
+
+        if (resHorasAnuales) {
+          resHorasAnuales.textContent = horasLiberadas.toLocaleString("es-ES") + " horas / año";
+        }
+        if (resValorEconomico) {
+          resValorEconomico.textContent = valorLiberado.toLocaleString("es-ES") + " € / año";
+        }
+        if (resMultiplicador) {
+          var sprintCost = 1450;
+          var ratio = (valorLiberado / sprintCost).toFixed(1);
+          resMultiplicador.textContent =
+            "Capacidad equivalente a " + ratio + " veces la inversión del sprint de 1.450 €";
+        }
+      }
+
+      if (inputProfesionales) inputProfesionales.addEventListener("input", recalcularAhorro);
+      if (inputHoras) inputHoras.addEventListener("input", recalcularAhorro);
+      if (selectTarifa) selectTarifa.addEventListener("change", recalcularAhorro);
+
+      // 2. Envío del Formulario Confidencial
+      var form = document.getElementById("form-legal-lead");
+      if (!form) return;
+
+      var statusEl = document.getElementById("form-legal-status");
+      var btnSubmit = document.getElementById("btn-enviar-legal");
+      var leadUrl = form.getAttribute("data-lead") || "";
+      var fallbackEmail = form.getAttribute("data-email") || "varinoagency@gmail.com";
+
+      function getVal(name) {
+        var el = form.querySelector('[name="' + name + '"]');
+        return el ? el.value.trim() : "";
+      }
+
+      function enviarPorMailto(datos) {
+        var asunto = "Solicitud Confidencial Despacho: " + datos.despacho;
+        var cuerpo =
+          "SOLICITUD DE AUDITORÍA / PROPUESTA TÉCNICA PARA BUFETE\n\n" +
+          "Letrado / Contacto: " + datos.nombre + "\n" +
+          "Despacho: " + datos.despacho + "\n" +
+          "Email: " + datos.email + "\n" +
+          "Teléfono: " + datos.telefono + "\n" +
+          "Software de gestión: " + datos.software + "\n" +
+          "Prioridad declarada: " + datos.prioridad + "\n\n" +
+          "PARÁMETROS DEL CÁLCULO:\n" +
+          "- Profesionales: " + datos.profesionales + "\n" +
+          "- Horas repetitivas/sem: " + datos.horas_semana + "\n" +
+          "- Tarifa estimada: " + datos.tarifa + " €/h\n" +
+          "- Horas liberadas estimadas: " + datos.horas_liberadas + " h/año\n";
+
+        window.location.href =
+          "mailto:" + fallbackEmail + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(cuerpo);
+
+        if (statusEl) {
+          statusEl.textContent = "✓ Preparando correo seguro hacia el equipo de VARINO. Te responderemos en breve.";
+        }
+      }
+
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+
+        // Honeypot anti-spam check
+        var honeypot = form.querySelector('input[name="website"]');
+        if (honeypot && honeypot.value) return;
+
+        var consentEl = form.querySelector('input[name="consentimiento"]');
+        if (!consentEl || !consentEl.checked) {
+          if (statusEl) statusEl.textContent = "Por favor, marca la casilla de consentimiento para continuar.";
+          return;
+        }
+
+        var numProf = inputProfesionales ? inputProfesionales.value : "8";
+        var horasSem = inputHoras ? inputHoras.value : "5";
+        var tarifaVal = selectTarifa ? selectTarifa.value : "80";
+
+        var payload = {
+          nombre: getVal("nombre"),
+          empresa: getVal("despacho"),
+          despacho: getVal("despacho"),
+          software: getVal("software"),
+          email: getVal("email"),
+          whatsapp: getVal("telefono"),
+          prioridad: getVal("prioridad"),
+          profesionales: numProf,
+          horas_semana: horasSem,
+          tarifa: tarifaVal,
+          horas_liberadas: resHorasAnuales ? resHorasAnuales.textContent : "",
+          valor_estimado: resValorEconomico ? resValorEconomico.textContent : "",
+          interes: "automation-sprint-legal-7-dias",
+          fuente: "landing-sectores-legal",
+          pagina: location.pathname,
+          consentimiento: true,
+          fecha: new Date().toISOString(),
+        };
+
+        if (statusEl) statusEl.textContent = "Enviando solicitud confidencial…";
+        if (btnSubmit) btnSubmit.setAttribute("disabled", "true");
+
+        if (leadUrl) {
+          fetch(leadUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+            },
+            body: JSON.stringify(payload),
+          })
+            .then(function (res) {
+              return res.json();
+            })
+            .then(function (data) {
+              if (data && data.ok) {
+                if (statusEl) {
+                  statusEl.textContent = "✓ Solicitud recibida. Joan Pimas Reiser contactará con el despacho en menos de 24h.";
+                }
+                form.reset();
+                recalcularAhorro();
+              } else {
+                enviarPorMailto(payload);
+              }
+            })
+            .catch(function () {
+              enviarPorMailto(payload);
+            })
+            .finally(function () {
+              if (btnSubmit) btnSubmit.removeAttribute("disabled");
+            });
+        } else {
+          enviarPorMailto(payload);
+          if (btnSubmit) btnSubmit.removeAttribute("disabled");
+        }
+      });
+    })();
+  </script>
+</Base>

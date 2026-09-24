@@ -1,0 +1,901 @@
+---
+import Base from "../../layouts/Base.astro";
+import Cta from "../../components/Cta.astro";
+import { BASE, SITE, BACKEND_LEAD, whatsappUrl } from "../../config";
+
+const wa = whatsappUrl(
+  "Hola, me interesa conocer la solución de triaje inmediato y captura 24/7 para clínicas de medicina estética y dermatología de VARINO."
+);
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Triaje Inmediato y Automatización para Clínicas de Estética y Dermatología en Barcelona",
+  provider: {
+    "@type": "MedicalBusiness",
+    name: SITE.name,
+    url: SITE.url,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Barcelona",
+      addressRegion: "Catalunya",
+      addressCountry: "ES",
+    },
+  },
+  description:
+    "Automatización de triaje en 60 segundos y captura 24/7 de pacientes de alto ticket para clínicas de cirugía estética, dermatología y medicina estética en Barcelona. Cumplimiento estricto del Art. 9 del RGPD.",
+  serviceType: "Automatización de Admisión y Triaje Sanitario Privado",
+});
+---
+
+<Base
+  title="Cirugía Estética y Dermatología en Barcelona"
+  description="Triaje inmediato en 60 segundos y captura 24/7 de pacientes de alto ticket para clínicas de cirugía estética, dermatología y medicina estética en Barcelona."
+>
+  <script type="application/ld+json" set:html={schema} />
+
+  <!-- HERO SECTION -->
+  <section class="relative overflow-hidden pt-20 pb-16 sm:pt-28 sm:pb-24 border-b border-black/5 dark:border-white/10">
+    <div class="mx-auto max-w-6xl px-6">
+      <!-- Breadcrumbs & Local Badge -->
+      <div data-reveal class="flex flex-wrap items-center gap-2 text-xs text-[#6e6e73] dark:text-[#a1a1a6] mb-6">
+        <a href={`${BASE}/`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Inicio</a>
+        <span>/</span>
+        <a href={`${BASE}/sectores/`} class="hover:text-[#1d1d1f] dark:hover:text-white transition">Sectores</a>
+        <span>/</span>
+        <span class="text-[#1d1d1f] dark:text-white font-medium">Estética y Dermatología</span>
+      </div>
+
+      <div data-reveal class="inline-flex items-center gap-2 rounded-full border border-rose-500/20 bg-rose-500/10 px-3.5 py-1 text-xs font-semibold text-rose-700 dark:text-rose-400 mb-6">
+        <span class="h-2 w-2 rounded-full bg-rose-500 live-dot"></span>
+        <span>Cirugía Plástica & Medicina Estética de Alto Ticket · Barcelona · RGPD Art. 9</span>
+      </div>
+
+      <div data-reveal class="max-w-4xl">
+        <p class="eyebrow">Solución sectorial · Cirugía estética, dermatología y medicina estética</p>
+        <h1 class="display-title mt-4">
+          Triaje inmediato en 60 segundos.<br />
+          <span>Captura de pacientes de alto ticket.</span>
+        </h1>
+        <p class="mt-7 max-w-2xl text-lg sm:text-xl leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+          Diseñado para <strong>directores médicos y gerentes</strong> de clínicas de cirugía estética, dermatología clínica y medicina estética avanzada en Barcelona. Elimine la fuga de pacientes que solicitan cita por Instagram o web fuera de horario: cualificación clínica en el primer minuto bajo estricto cumplimiento del Artículo 9 del RGPD.
+        </p>
+
+        <!-- CTAs -->
+        <div class="mt-8 flex flex-wrap items-center gap-4">
+          <a href="#calculadora" class="button-primary">
+            Calcular facturación recuperable →
+          </a>
+          <a href="#sprint" class="button-secondary">
+            Automation Sprint (7 días)
+          </a>
+          {wa && (
+            <a
+              href={wa}
+              class="inline-flex items-center gap-2 text-xs font-semibold text-[#0071e3] dark:text-[#2997ff] hover:underline px-3 py-2"
+            >
+              Consulta confidencial por WhatsApp ↗
+            </a>
+          )}
+        </div>
+
+        <!-- Trust Highlights -->
+        <div class="mt-12 grid grid-cols-2 gap-4 border-t border-black/8 dark:border-white/10 pt-8 sm:grid-cols-4">
+          <div>
+            <span class="block text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Respuesta al paciente</span>
+            <strong class="mt-1 block text-sm font-semibold text-[#1d1d1f] dark:text-white">&lt; 60 segundos (24/7)</strong>
+          </div>
+          <div>
+            <span class="block text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Privacidad médica</span>
+            <strong class="mt-1 block text-sm font-semibold text-[#1d1d1f] dark:text-white">Art. 9 RGPD On-Premise</strong>
+          </div>
+          <div>
+            <span class="block text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Control de agenda</span>
+            <strong class="mt-1 block text-sm font-semibold text-[#1d1d1f] dark:text-white">Recepción valida cada cita</strong>
+          </div>
+          <div>
+            <span class="block text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Zona de cobertura</span>
+            <strong class="mt-1 block text-sm font-semibold text-[#1d1d1f] dark:text-white">Barcelona y área metropolitana</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EL CUELLO DE BOTELLA DEL ALTO TICKET EN BARCELONA -->
+  <section class="py-20 sm:py-28 bg-[#f7f7f5] dark:bg-[#0a0d14]">
+    <div class="mx-auto max-w-6xl px-6">
+      <div data-reveal class="max-w-2xl">
+        <p class="eyebrow">La fuga oculta de pacientes</p>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+          Invierten miles de euros en captación para dejar al paciente esperando 12 horas.
+        </h2>
+        <p class="mt-4 text-base text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+          En las clínicas de medicina estética y cirugía plástica de Barcelona, más del 40% de las solicitudes de valoración médica entran por las noches o en fin de semana.
+        </p>
+      </div>
+
+      <div class="mt-12 grid gap-6 md:grid-cols-3">
+        <!-- Friccion 1 -->
+        <article data-reveal class="rounded-3xl border border-black/8 bg-white p-7 dark:border-white/10 dark:bg-[#111318]">
+          <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold text-sm">
+            01
+          </div>
+          <h3 class="mt-5 text-xl font-semibold text-[#1d1d1f] dark:text-white">
+            La fuga nocturna y de fin de semana
+          </h3>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+            El paciente consulta Instagram o la web a las 23:00 o un domingo por la tarde. Si la clínica tarda 12 horas en responder cuando abre recepción, el paciente ya ha agendado en otro centro que le atendió al instante.
+          </p>
+          <div class="mt-5 border-t border-black/5 dark:border-white/10 pt-4 text-xs text-[#86868b]">
+            <span class="font-medium text-[#1d1d1f] dark:text-white">Consecuencia:</span> Pérdida directa de presupuestos de 1.500€ a 6.000€ en tratamientos quirúrgicos y médico-estéticos.
+          </div>
+        </article>
+
+        <!-- Friccion 2 -->
+        <article data-reveal class="rounded-3xl border border-black/8 bg-white p-7 dark:border-white/10 dark:bg-[#111318]">
+          <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-sm">
+            02
+          </div>
+          <h3 class="mt-5 text-xl font-semibold text-[#1d1d1f] dark:text-white">
+            Recepción colapsada por consultas no cualificadas
+          </h3>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+            El personal de recepción pasa horas respondiendo preguntas genéricas sobre precios básicos, sin tiempo para hacer un seguimiento cuidado a pacientes que desean procedimientos de alto ticket (rinoplastia, blefaroplastia, lifting).
+          </p>
+          <div class="mt-5 border-t border-black/5 dark:border-white/10 pt-4 text-xs text-[#86868b]">
+            <span class="font-medium text-[#1d1d1f] dark:text-white">Consecuencia:</span> Falta de atención personalizada a las oportunidades más rentables para la clínica.
+          </div>
+        </article>
+
+        <!-- Friccion 3 -->
+        <article data-reveal class="rounded-3xl border border-black/8 bg-white p-7 dark:border-white/10 dark:bg-[#111318]">
+          <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-sm">
+            03
+          </div>
+          <h3 class="mt-5 text-xl font-semibold text-[#1d1d1f] dark:text-white">
+            Riesgo legal con imágenes y datos de salud (Art. 9 RGPD)
+          </h3>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+            Pacientes enviando fotos faciales o corporales por WhatsApp o Instagram direct sin consentimiento explícito ni canal cifrado homologado. Un riesgo sancionador crítico para la reputación de la clínica.
+          </p>
+          <div class="mt-5 border-t border-black/5 dark:border-white/10 pt-4 text-xs text-[#86868b]">
+            <span class="font-medium text-[#1d1d1f] dark:text-white">Consecuencia:</span> Exposición a multas de la AEPD por tratamiento no custodiado de datos de salud.
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- LA SOLUCIÓN: AUTOMATION SPRINT PARA ESTÉTICA Y DERMATOLOGÍA -->
+  <section id="solucion" class="py-24 sm:py-32">
+    <div class="mx-auto max-w-6xl px-6">
+      <div data-reveal class="max-w-3xl">
+        <p class="eyebrow">La arquitectura para clínicas de estética</p>
+        <h2 class="mt-3 text-3xl sm:text-5xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+          Triaje Clínico 24/7 y Captura de Pacientes Alto Ticket
+        </h2>
+        <p class="mt-5 text-lg text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+          Conectamos la entrada de vuestra clínica (Instagram, web, WhatsApp oficial) con un sistema de triaje médico que responde en menos de un minuto, recopila antecedentes bajo protocolo seguro y prepara la cita para recepción.
+        </p>
+      </div>
+
+      <!-- 4 Pillars Grid -->
+      <div class="mt-16 grid gap-8 md:grid-cols-2">
+        <!-- Pillar 1 -->
+        <article data-reveal class="rounded-3xl border border-black/8 p-8 bg-[#fbfbfd] dark:border-white/10 dark:bg-[#111318]">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#0071e3] dark:text-[#2997ff]">Módulo 01</span>
+            <span class="rounded-full bg-rose-500/10 px-3 py-0.5 text-xs font-medium text-rose-700 dark:text-rose-400">Respuesta &lt; 60 s</span>
+          </div>
+          <h3 class="mt-6 text-2xl font-semibold text-[#1d1d1f] dark:text-white">
+            Triaje inteligente inmediato (Instagram, Web y WhatsApp)
+          </h3>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+            Atención instantánea las 24 horas del día, los 7 días de la semana. Cuando un paciente escribe solicitando información sobre un tratamiento, recibe una respuesta profesional en menos de 60 segundos.
+          </p>
+          <ul class="mt-6 space-y-2.5 text-xs text-[#424245] dark:text-[#d2d2d7]">
+            <li class="flex items-start gap-2">
+              <span class="text-[#0071e3] font-bold">✓</span>
+              <span>Identificación del motivo de consulta: cirugía corporal/facial, inyectables, dermatología clínica o láser médico.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#0071e3] font-bold">✓</span>
+              <span>Pre-cualificación de expectativas, presupuesto aproximado y disponibilidad de fechas para primera visita.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#0071e3] font-bold">✓</span>
+              <span>Elimina la pérdida de oportunidades mientras la recepción física está cerrada.</span>
+            </li>
+          </ul>
+        </article>
+
+        <!-- Pillar 2 -->
+        <article data-reveal class="rounded-3xl border border-black/8 p-8 bg-[#fbfbfd] dark:border-white/10 dark:bg-[#111318]">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#0071e3] dark:text-[#2997ff]">Módulo 02</span>
+            <span class="rounded-full bg-black/5 dark:bg-white/10 px-3 py-0.5 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Custodia Segura</span>
+          </div>
+          <h3 class="mt-6 text-2xl font-semibold text-[#1d1d1f] dark:text-white">
+            Pre-evaluación médica y envío de imágenes cifrado
+          </h3>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+            El paciente recibe un enlace seguro de un solo uso para completar un cuestionario de antecedentes estéticos y, opcionalmente, adjuntar fotografías de la zona a valorar.
+          </p>
+          <ul class="mt-6 space-y-2.5 text-xs text-[#424245] dark:text-[#d2d2d7]">
+            <li class="flex items-start gap-2">
+              <span class="text-[#0071e3] font-bold">✓</span>
+              <span>Cifrado de extremo a extremo conforme al Art. 9 del RGPD para datos biométricos y de salud.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#0071e3] font-bold">✓</span>
+              <span>Generación de ficha previa para el cirujano o dermatólogo antes de que el paciente entre al gabinete.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#0071e3] font-bold">✓</span>
+              <span>Cero almacenamiento de imágenes sensibles en chats personales de empleados o dispositivos móviles.</span>
+            </li>
+          </ul>
+        </article>
+
+        <!-- Pillar 3 -->
+        <article data-reveal class="rounded-3xl border border-black/8 p-8 bg-[#fbfbfd] dark:border-white/10 dark:bg-[#111318]">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#0071e3] dark:text-[#2997ff]">Módulo 03</span>
+            <span class="rounded-full bg-black/5 dark:bg-white/10 px-3 py-0.5 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Agenda Optimizada</span>
+          </div>
+          <h3 class="mt-6 text-2xl font-semibold text-[#1d1d1f] dark:text-white">
+            Agendamiento prioritario y confirmación activa
+          </h3>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+            Filtro inteligente que asigna el hueco adecuado según el tiempo de consulta requerido (ej. 45 min para valoración de cirugía vs. 20 min para toxina botulínica).
+          </p>
+          <ul class="mt-6 space-y-2.5 text-xs text-[#424245] dark:text-[#d2d2d7]">
+            <li class="flex items-start gap-2">
+              <span class="text-[#0071e3] font-bold">✓</span>
+              <span>Recordatorios personalizados y confirmación interactiva 48h y 24h antes por WhatsApp oficial.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#0071e3] font-bold">✓</span>
+              <span>Protocolo de cancelación temprana con activación de lista de espera para no dejar gabinetes vacíos.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#0071e3] font-bold">✓</span>
+              <span>Supervisión humana: la recepción siempre tiene la última palabra para confirmar o mover la cita.</span>
+            </li>
+          </ul>
+        </article>
+
+        <!-- Pillar 4 -->
+        <article data-reveal class="rounded-3xl border border-black/8 p-8 bg-[#fbfbfd] dark:border-white/10 dark:bg-[#111318]">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#0071e3] dark:text-[#2997ff]">Módulo 04</span>
+            <span class="rounded-full bg-black/5 dark:bg-white/10 px-3 py-0.5 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Soberanía y Privacidad</span>
+          </div>
+          <h3 class="mt-6 text-2xl font-semibold text-[#1d1d1f] dark:text-white">
+            Alojamiento privado en Europa y DPA sanitario
+          </h3>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+            Toda la infraestructura de automatización se ejecuta en servidores locales (on-premise) en la propia clínica o en centros de datos con certificación europea de máxima seguridad.
+          </p>
+          <ul class="mt-6 space-y-2.5 text-xs text-[#424245] dark:text-[#d2d2d7]">
+            <li class="flex items-start gap-2">
+              <span class="text-[#0071e3] font-bold">✓</span>
+              <span>Acuerdo de Encargo de Tratamiento (<a href={`${BASE}/dpa/`} class="underline text-[#0071e3] dark:text-[#2997ff]">DPA</a>) específico para clínicas médico-estéticas.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#0071e3] font-bold">✓</span>
+              <span>Ninguna fotografía ni expediente se utiliza para entrenar algoritmos públicos o externos.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#0071e3] font-bold">✓</span>
+              <span>Cumplimiento estricto de la Ley de Autonomía del Paciente y la LOPDGDD.</span>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULADORA INTERACTIVA DE FACTURACIÓN RECUPERABLE -->
+  <section id="calculadora" class="py-24 sm:py-32 bg-[#f7f7f5] dark:bg-[#0a0d14] border-y border-black/5 dark:border-white/10">
+    <div class="mx-auto max-w-5xl px-6">
+      <div data-reveal class="text-center max-w-2xl mx-auto">
+        <p class="eyebrow">Calculadora de Retorno Sanitario</p>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+          Calcula la facturación que tu clínica deja escapar fuera de horario
+        </h2>
+        <p class="mt-4 text-base text-[#6e6e73] dark:text-[#a1a1a6]">
+          Simula el impacto de atender en menos de 60 segundos a los pacientes que entran por Instagram Ads y web en horarios nocturnos y fines de semana.
+        </p>
+      </div>
+
+      <div data-reveal class="mt-12 rounded-[2.5rem] border border-black/10 bg-white p-6 sm:p-10 dark:border-white/10 dark:bg-[#111318] shadow-xl">
+        <div class="grid gap-10 lg:grid-cols-12 items-start">
+          <!-- Parámetros (7 cols) -->
+          <div class="lg:col-span-7 space-y-6">
+            <h3 class="text-xl font-semibold text-[#1d1d1f] dark:text-white">
+              1. Datos comerciales de la clínica
+            </h3>
+
+            <!-- Inversión mensual en publicidad -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label for="calc-inversion" class="text-xs font-semibold uppercase tracking-wider text-[#6e6e73] dark:text-[#a1a1a6]">
+                  Inversión mensual en publicidad (Instagram / Google Ads)
+                </label>
+                <span id="label-inversion" class="text-sm font-bold text-[#0071e3] dark:text-[#2997ff]">3.000 € / mes</span>
+              </div>
+              <input
+                id="calc-inversion"
+                type="range"
+                min="1000"
+                max="10000"
+                step="500"
+                value="3000"
+                class="w-full accent-[#0071e3] cursor-pointer"
+              />
+              <div class="flex justify-between text-[11px] text-[#86868b] mt-1">
+                <span>1.000 €</span>
+                <span>5.000 €</span>
+                <span>10.000 €+</span>
+              </div>
+            </div>
+
+            <!-- Ticket medio de tratamiento -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label for="calc-ticket" class="text-xs font-semibold uppercase tracking-wider text-[#6e6e73] dark:text-[#a1a1a6]">
+                  Ticket medio de tratamiento realizado
+                </label>
+                <span id="label-ticket" class="text-sm font-bold text-[#0071e3] dark:text-[#2997ff]">1.800 €</span>
+              </div>
+              <input
+                id="calc-ticket"
+                type="range"
+                min="500"
+                max="5000"
+                step="100"
+                value="1800"
+                class="w-full accent-[#0071e3] cursor-pointer"
+              />
+              <p class="text-xs text-[#86868b] mt-1">
+                Promedio ponderado entre medicina estética (400–1.200 €) y cirugía plástica (2.500–8.000 €).
+              </p>
+            </div>
+
+            <!-- Porcentaje fuera de horario -->
+            <div>
+              <label for="calc-porcentaje-horario" class="block text-xs font-semibold uppercase tracking-wider text-[#6e6e73] dark:text-[#a1a1a6] mb-2">
+                Porcentaje estimado de solicitudes fuera de horario comercial (tardes, noches y fines de semana)
+              </label>
+              <select
+                id="calc-porcentaje-horario"
+                class="w-full rounded-2xl border border-black/12 bg-[#f7f7f5] px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+              >
+                <option value="0.30">30% de solicitudes fuera de horario</option>
+                <option value="0.40" selected>40% de solicitudes fuera de horario (Media del sector)</option>
+                <option value="0.50">50% de solicitudes fuera de horario (Campañas activas en redes)</option>
+                <option value="0.60">60% de solicitudes fuera de horario (Enfoque digital intensivo)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Resultados dinámicos (5 cols) -->
+          <div class="lg:col-span-5 rounded-3xl border border-black/8 bg-[#f7f7f5] p-6 sm:p-8 dark:border-white/10 dark:bg-[#161617] space-y-6">
+            <div class="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-4">
+              <span class="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">Impacto Mensual Estimado</span>
+              <span class="text-[11px] text-[#6e6e73] dark:text-[#a1a1a6]">Modelo de conversión</span>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <span class="text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Pacientes adicionales atendidos en &lt; 60 s:</span>
+                <strong id="res-leads-rescatados" class="mt-1 block text-3xl font-bold text-[#1d1d1f] dark:text-white">
+                  36 solicitudes / mes
+                </strong>
+                <p class="text-xs text-[#6e6e73] dark:text-[#a1a1a6] mt-0.5">
+                  Pacientes que reciben triaje inmediato antes de buscar en otra clínica.
+                </p>
+              </div>
+
+              <div class="border-t border-black/5 dark:border-white/10 pt-4">
+                <span class="text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Facturación potencial recuperada estimada:</span>
+                <strong id="res-facturacion-recuperada" class="mt-1 block text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                  9.720 € / mes
+                </strong>
+                <p class="text-xs text-[#6e6e73] dark:text-[#a1a1a6] mt-0.5">
+                  Basado en conversión conservadora del 15% de lead cualificado a tratamiento realizado.
+                </p>
+              </div>
+
+              <div class="border-t border-black/5 dark:border-white/10 pt-4">
+                <span class="text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Retorno frente a un Sprint (1.450 €):</span>
+                <strong id="res-multiplicador-estetica" class="mt-1 block text-sm font-semibold text-[#0071e3] dark:text-[#2997ff]">
+                  Recuperación de la inversión con 1 solo tratamiento adicional
+                </strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario confidencial de solicitud de auditoría -->
+        <div class="mt-12 border-t border-black/10 dark:border-white/10 pt-10">
+          <h3 class="text-xl font-semibold text-[#1d1d1f] dark:text-white">
+            2. Solicita una auditoría de captación y triaje para tu clínica
+          </h3>
+          <p class="mt-2 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">
+            Analizamos los puntos de fuga de vuestros canales actuales (Instagram Ads, web y WhatsApp) sin ningún compromiso.
+          </p>
+
+          <form
+            id="form-estetica-lead"
+            data-lead={BACKEND_LEAD}
+            data-email={SITE.email}
+            class="mt-6 space-y-4"
+          >
+            <!-- Honeypot anti-spam -->
+            <input type="hidden" name="website" value="" aria-hidden="true" tabindex="-1" autocomplete="off" />
+
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div>
+                <label for="estetica-nombre" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">
+                  Nombre y cargo
+                </label>
+                <input
+                  id="estetica-nombre"
+                  name="nombre"
+                  type="text"
+                  required
+                  placeholder="Dra. Laura Soler (Directora Médica)"
+                  class="w-full rounded-xl border border-black/12 bg-white px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="estetica-clinica" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">
+                  Nombre de la clínica
+                </label>
+                <input
+                  id="estetica-clinica"
+                  name="clinica"
+                  type="text"
+                  required
+                  placeholder="Instituto de Cirugía y Medicina Estética"
+                  class="w-full rounded-xl border border-black/12 bg-white px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="estetica-especialidad" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">
+                  Especialidad principal
+                </label>
+                <select
+                  id="estetica-especialidad"
+                  name="especialidad"
+                  class="w-full rounded-xl border border-black/12 bg-white px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+                >
+                  <option value="cirugia_plastica">Cirugía Plástica y Estética</option>
+                  <option value="medicina_estetica">Medicina Estética Facial y Corporal</option>
+                  <option value="dermatologia">Dermatología Clínica y Estética</option>
+                  <option value="integral">Centro Médico-Quirúrgico Integral</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="estetica-email" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">
+                  Email profesional corporativo
+                </label>
+                <input
+                  id="estetica-email"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="direccion@clinicaestetica.es"
+                  class="w-full rounded-xl border border-black/12 bg-white px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="estetica-whatsapp" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">
+                  WhatsApp / Teléfono de contacto
+                </label>
+                <input
+                  id="estetica-whatsapp"
+                  name="whatsapp"
+                  type="tel"
+                  required
+                  placeholder="+34 600 000 000"
+                  class="w-full rounded-xl border border-black/12 bg-white px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="estetica-software" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">
+                  Software clínico de gestión actual
+                </label>
+                <input
+                  id="estetica-software"
+                  name="software"
+                  type="text"
+                  placeholder="DriCloud, Gesden, Nimbo, Kliniik, etc."
+                  class="w-full rounded-xl border border-black/12 bg-white px-4 py-3 text-sm text-[#1d1d1f] dark:border-white/15 dark:bg-[#0a0d14] dark:text-white focus:border-[#0071e3] focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <!-- Checkbox RGPD -->
+            <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6] pt-1">
+              <input type="checkbox" name="consentimiento" required class="mt-0.5 shrink-0" />
+              <span>
+                Acepto que VARINO trate estos datos exclusivamente para remitir la propuesta técnica a la clínica, conforme a su <a href={`${BASE}/privacidad/`} class="underline text-[#0071e3] dark:text-[#2997ff]">política de privacidad</a>.
+              </span>
+            </label>
+
+            <!-- Actions & Status -->
+            <div class="pt-2 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <button
+                type="submit"
+                id="btn-enviar-estetica"
+                class="button-primary w-full sm:w-auto text-sm px-8"
+              >
+                Solicitar auditoría de triaje y propuesta →
+              </button>
+              <p
+                id="form-estetica-status"
+                class="text-xs text-[#6e6e73] dark:text-[#a1a1a6]"
+                aria-live="polite"
+              >
+                Respuesta técnica confidencial en menos de 24 horas por Joan Pimas Reiser.
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN AUTOMATION SPRINT EN 7 DÍAS -->
+  <section id="sprint" class="py-24 sm:py-32">
+    <div class="mx-auto max-w-6xl px-6">
+      <div data-reveal class="rounded-[2.5rem] border border-black/8 bg-gradient-to-br from-[#fbfbfd] to-[#f2f2f7] p-8 sm:p-14 dark:border-white/10 dark:from-[#111318] dark:to-[#0a0d14]">
+        <div class="grid gap-10 lg:grid-cols-12 items-center">
+          <div class="lg:col-span-7">
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
+              Despliegue Rápido · Alcance Delimitado
+            </span>
+            <h2 class="mt-4 text-3xl sm:text-5xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+              Automation Sprint en 7 días
+            </h2>
+            <p class="mt-4 text-base sm:text-lg text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+              En una semana laborable implementamos el sistema de triaje en 60 segundos y captura 24/7 conectado a vuestro canal de Instagram y WhatsApp oficial. Sin permanencia ni cambios traumáticos en vuestro software clínico.
+            </p>
+
+            <div class="mt-8 space-y-3 text-sm">
+              <div class="flex items-start gap-3">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0071e3] text-white font-bold text-xs">✓</span>
+                <span class="text-[#1d1d1f] dark:text-[#d2d2d7]"><strong>Día 1 a 2:</strong> Definición del árbol de triaje estético por tratamiento y filtros de cualificación.</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0071e3] text-white font-bold text-xs">✓</span>
+                <span class="text-[#1d1d1f] dark:text-[#d2d2d7]"><strong>Día 3 a 5:</strong> Construcción de flujos n8n y cuestionario cifrado de pre-evaluación en servidor europeo.</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0071e3] text-white font-bold text-xs">✓</span>
+                <span class="text-[#1d1d1f] dark:text-[#d2d2d7]"><strong>Día 6 a 7:</strong> Pruebas piloto con el equipo de recepción, puesta en marcha y manual de transferencia.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 rounded-3xl border border-black/8 bg-white p-8 dark:border-white/10 dark:bg-[#161617] text-center sm:text-left">
+            <span class="text-xs text-[#6e6e73] dark:text-[#a1a1a6] uppercase tracking-wider block">Inversión cerrada</span>
+            <div class="mt-2 flex items-baseline justify-center sm:justify-start gap-2">
+              <span class="text-4xl sm:text-5xl font-bold tracking-tight text-[#1d1d1f] dark:text-white">1.450 €</span>
+              <span class="text-sm text-[#6e6e73] dark:text-[#a1a1a6]">+ IVA</span>
+            </div>
+            <p class="mt-3 text-xs text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+              Precio fijo por proyecto con entrega verificada en 7 días laborables. Se amortiza habitualmente con la primera cirugía o tratamiento captado fuera de horario.
+            </p>
+
+            <div class="mt-6 space-y-3">
+              <a
+                href={`${BASE}/reservar/`}
+                class="button-primary w-full justify-center text-sm py-3.5 block text-center"
+              >
+                Reservar Automation Sprint (7 días) →
+              </a>
+              <a
+                href={`${BASE}/contacto/`}
+                class="button-secondary w-full justify-center text-xs py-2.5 block text-center"
+              >
+                Plantear consulta particular
+              </a>
+            </div>
+
+            <div class="mt-6 border-t border-black/5 dark:border-white/10 pt-4 text-[11px] text-[#86868b] text-center">
+              Acompañamiento presencial en Barcelona o telemático seguro.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GARANTÍAS DE PRIVACIDAD Y CUMPLIMIENTO SANITARIO -->
+  <section class="py-20 bg-[#f7f7f5] dark:bg-[#0a0d14] border-t border-black/5 dark:border-white/10">
+    <div class="mx-auto max-w-6xl px-6">
+      <div data-reveal class="max-w-3xl">
+        <p class="eyebrow">Seguridad de datos de salud</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+          Cumplimiento riguroso del Artículo 9 del RGPD
+        </h2>
+        <p class="mt-3 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">
+          El sector estético maneja información de salud e imágenes íntimas. Nuestra ingeniería blinda la responsabilidad de la dirección médica.
+        </p>
+      </div>
+
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div data-reveal class="rounded-2xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]">
+          <span class="text-xs font-bold text-[#0071e3]">01</span>
+          <h4 class="mt-3 font-semibold text-[#1d1d1f] dark:text-white">Alojamiento Europeo o Local</h4>
+          <p class="mt-2 text-xs leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+            Despliegue exclusivo en servidores de la Unión Europea o en servidores propios de la clínica en Barcelona bajo control perimetral.
+          </p>
+        </div>
+
+        <div data-reveal class="rounded-2xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]">
+          <span class="text-xs font-bold text-[#0071e3]">02</span>
+          <h4 class="mt-3 font-semibold text-[#1d1d1f] dark:text-white">Cero Exposición a IAs Públicas</h4>
+          <p class="mt-2 text-xs leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+            Ninguna imagen, conversación o dato clínico se envía a OpenAI ni se utiliza para entrenar modelos externos.
+          </p>
+        </div>
+
+        <div data-reveal class="rounded-2xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]">
+          <span class="text-xs font-bold text-[#0071e3]">03</span>
+          <h4 class="mt-3 font-semibold text-[#1d1d1f] dark:text-white">Contrato DPA Homologado</h4>
+          <p class="mt-2 text-xs leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+            Firma de Acuerdo de Encargo de Tratamiento de Datos sanitarios (<a href={`${BASE}/dpa/`} class="underline text-[#0071e3] dark:text-[#2997ff]">DPA</a>) con responsabilidades estipuladas.
+          </p>
+        </div>
+
+        <div data-reveal class="rounded-2xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]">
+          <span class="text-xs font-bold text-[#0071e3]">04</span>
+          <h4 class="mt-3 font-semibold text-[#1d1d1f] dark:text-white">Canales Cifrados</h4>
+          <p class="mt-2 text-xs leading-relaxed text-[#6e6e73] dark:text-[#a1a1a6]">
+            Formularios de pre-anamnesis con enlaces seguros de un solo uso que caducan tras la recepción en consulta.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ ESPECÍFICO DE CLÍNICAS ESTÉTICAS -->
+  <section class="py-24">
+    <div class="mx-auto max-w-4xl px-6">
+      <div data-reveal class="text-center">
+        <p class="eyebrow">Dudas habituales</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+          Preguntas de directores médicos y administradores de clínicas
+        </h2>
+      </div>
+
+      <div class="mt-12 space-y-4">
+        <details data-reveal class="group rounded-2xl border border-black/8 bg-[#fbfbfd] p-6 dark:border-white/10 dark:bg-[#111318]">
+          <summary class="flex cursor-pointer items-center justify-between font-semibold text-[#1d1d1f] dark:text-white list-none">
+            <span>¿El sistema puede dar diagnósticos médicos o presupuestos definitivos por sí solo?</span>
+            <span class="text-xs text-[#0071e3] transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+            No. Una regla ética innegociable de VARINO es que ningún flujo automático emite diagnósticos clínicos ni presupuestos cerrados. El sistema realiza un triaje orientativo, recopila la necesidad del paciente, informa de rangos habituales aprobados por la dirección médica y agenda la primera visita presencial para valoración con el facultativo.
+          </p>
+        </details>
+
+        <details data-reveal class="group rounded-2xl border border-black/8 bg-[#fbfbfd] p-6 dark:border-white/10 dark:bg-[#111318]">
+          <summary class="flex cursor-pointer items-center justify-between font-semibold text-[#1d1d1f] dark:text-white list-none">
+            <span>¿Cómo se conecta con nuestro Instagram y WhatsApp actual?</span>
+            <span class="text-xs text-[#0071e3] transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+            Utilizamos las APIs oficiales de Meta para WhatsApp Business e Instagram Messaging. Esto aporta estabilidad técnica evitando el bloqueo de cuentas y permite que vuestro equipo de recepción siga viendo y tomando el control de cualquier conversación en tiempo real cuando lo desee.
+          </p>
+        </details>
+
+        <details data-reveal class="group rounded-2xl border border-black/8 bg-[#fbfbfd] p-6 dark:border-white/10 dark:bg-[#111318]">
+          <summary class="flex cursor-pointer items-center justify-between font-semibold text-[#1d1d1f] dark:text-white list-none">
+            <span>¿Qué ocurre si ya tenemos un software de gestión clínica (DriCloud, Gesden, etc.)?</span>
+            <span class="text-xs text-[#0071e3] transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+            No necesitáis cambiar de programa. Integramos los flujos para que los datos del paciente cualificado y su ficha previa se vuelquen directamente en vuestra agenda o lleguen a una bandeja de pre-admisión que recepción valida con un solo clic.
+          </p>
+        </details>
+
+        <details data-reveal class="group rounded-2xl border border-black/8 bg-[#fbfbfd] p-6 dark:border-white/10 dark:bg-[#111318]">
+          <summary class="flex cursor-pointer items-center justify-between font-semibold text-[#1d1d1f] dark:text-white list-none">
+            <span>¿Por qué es tan crítico el tiempo de respuesta en menos de 60 segundos?</span>
+            <span class="text-xs text-[#0071e3] transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6] leading-relaxed">
+            En intervenciones de alto ticket, la decisión de contactar suele ocurrir en momentos de alta motivación emocional. Diversos estudios de conversión señalan que responder en los primeros 5 minutos multiplica por más de 7 la probabilidad de agendar una primera visita frente a respuestas demoradas varias horas.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <Cta
+    titulo="Hablemos de la captación y triaje de tu clínica en Barcelona."
+    texto="Revisamos vuestro volumen de pacientes, canales de entrada y herramientas antes de proponer un alcance cerrado y seguro."
+  />
+
+  <!-- SCRIPT VANILLA JS (CALCULADORA DE RETORNO Y FORMULARIO DE LEAD) -->
+  <script>
+    (function () {
+      // 1. Lógica interactiva de la calculadora
+      var inputInversion = document.getElementById("calc-inversion");
+      var inputTicket = document.getElementById("calc-ticket");
+      var selectPorcentaje = document.getElementById("calc-porcentaje-horario");
+
+      var labelInversion = document.getElementById("label-inversion");
+      var labelTicket = document.getElementById("label-ticket");
+
+      var resLeadsRescatados = document.getElementById("res-leads-rescatados");
+      var resFacturacionRecuperada = document.getElementById("res-facturacion-recuperada");
+      var resMultiplicador = document.getElementById("res-multiplicador-estetica");
+
+      function recalcularRetorno() {
+        if (!inputInversion || !inputTicket || !selectPorcentaje) return;
+
+        var inversion = parseInt(inputInversion.value, 10) || 3000;
+        var ticket = parseInt(inputTicket.value, 10) || 1800;
+        var pctFueraHorario = parseFloat(selectPorcentaje.value) || 0.40;
+
+        if (labelInversion) {
+          labelInversion.textContent = inversion.toLocaleString("es-ES") + " € / mes";
+        }
+        if (labelTicket) {
+          labelTicket.textContent = ticket.toLocaleString("es-ES") + " €";
+        }
+
+        // Estimación del sector médico-estético en Barcelona:
+        // Coste medio por lead en Ads estético de calidad: ~35 € por contacto
+        var leadsTotalesMes = Math.round(inversion / 35);
+        var leadsFueraHorario = Math.round(leadsTotalesMes * pctFueraHorario);
+
+        // Conversión estimada de lead cualificado con respuesta en < 60s a tratamiento contratado: ~15%
+        var tratamientosAdicionales = Math.max(1, Math.round(leadsFueraHorario * 0.15));
+        var facturacionRecuperada = tratamientosAdicionales * ticket;
+
+        if (resLeadsRescatados) {
+          resLeadsRescatados.textContent = leadsFueraHorario + " solicitudes / mes";
+        }
+        if (resFacturacionRecuperada) {
+          resFacturacionRecuperada.textContent = facturacionRecuperada.toLocaleString("es-ES") + " € / mes";
+        }
+        if (resMultiplicador) {
+          var sprintCost = 1450;
+          var ratio = (facturacionRecuperada / sprintCost).toFixed(1);
+          resMultiplicador.textContent =
+            "Retorno potencial equivalente a " + ratio + " veces el coste del sprint de 1.450 €";
+        }
+      }
+
+      if (inputInversion) inputInversion.addEventListener("input", recalcularRetorno);
+      if (inputTicket) inputTicket.addEventListener("input", recalcularRetorno);
+      if (selectPorcentaje) selectPorcentaje.addEventListener("change", recalcularRetorno);
+
+      // 2. Envío del Formulario Confidencial de Lead
+      var form = document.getElementById("form-estetica-lead");
+      if (!form) return;
+
+      var statusEl = document.getElementById("form-estetica-status");
+      var btnSubmit = document.getElementById("btn-enviar-estetica");
+      var leadUrl = form.getAttribute("data-lead") || "";
+      var fallbackEmail = form.getAttribute("data-email") || "varinoagency@gmail.com";
+
+      function getVal(name) {
+        var el = form.querySelector('[name="' + name + '"]');
+        return el ? el.value.trim() : "";
+      }
+
+      function enviarPorMailto(datos) {
+        var asunto = "Solicitud Auditoría Clínica Estética: " + datos.clinica;
+        var cuerpo =
+          "SOLICITUD DE AUDITORÍA Y TRIAJE 24/7 PARA CLÍNICA ESTÉTICA\n\n" +
+          "Nombre y cargo: " + datos.nombre + "\n" +
+          "Clínica: " + datos.clinica + "\n" +
+          "Especialidad: " + datos.especialidad + "\n" +
+          "Email: " + datos.email + "\n" +
+          "WhatsApp/Teléfono: " + datos.whatsapp + "\n" +
+          "Software de gestión: " + datos.software + "\n\n" +
+          "PARÁMETROS ESTIMADOS:\n" +
+          "- Inversión mensual Ads: " + datos.inversion_ads + " €/mes\n" +
+          "- Ticket medio: " + datos.ticket_medio + " €\n" +
+          "- Solicitudes fuera de horario calculadas: " + datos.leads_fuera_horario + "\n" +
+          "- Facturación mensual recuperable estimada: " + datos.facturacion_estimada + "\n";
+
+        window.location.href =
+          "mailto:" + fallbackEmail + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(cuerpo);
+
+        if (statusEl) {
+          statusEl.textContent = "✓ Abriendo gestor de correo seguro para remitir la solicitud a VARINO. Respuesta en < 24 h.";
+        }
+      }
+
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+
+        // Honeypot anti-spam
+        var honeypot = form.querySelector('input[name="website"]');
+        if (honeypot && honeypot.value) return;
+
+        var consentEl = form.querySelector('input[name="consentimiento"]');
+        if (!consentEl || !consentEl.checked) {
+          if (statusEl) statusEl.textContent = "Por favor, marque la casilla de consentimiento para continuar.";
+          return;
+        }
+
+        var invVal = inputInversion ? inputInversion.value : "3000";
+        var tickVal = inputTicket ? inputTicket.value : "1800";
+
+        var payload = {
+          nombre: getVal("nombre"),
+          empresa: getVal("clinica"),
+          clinica: getVal("clinica"),
+          especialidad: getVal("especialidad"),
+          email: getVal("email"),
+          whatsapp: getVal("whatsapp"),
+          software: getVal("software"),
+          inversion_ads: invVal,
+          ticket_medio: tickVal,
+          leads_fuera_horario: resLeadsRescatados ? resLeadsRescatados.textContent : "",
+          facturacion_estimada: resFacturacionRecuperada ? resFacturacionRecuperada.textContent : "",
+          interes: "automation-sprint-estetica-7-dias",
+          fuente: "landing-sectores-estetica",
+          pagina: location.pathname,
+          consentimiento: true,
+          fecha: new Date().toISOString(),
+        };
+
+        if (statusEl) statusEl.textContent = "Procesando solicitud confidencial…";
+        if (btnSubmit) btnSubmit.setAttribute("disabled", "true");
+
+        if (leadUrl) {
+          fetch(leadUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+            },
+            body: JSON.stringify(payload),
+          })
+            .then(function (res) {
+              return res.json();
+            })
+            .then(function (data) {
+              if (data && data.ok) {
+                if (statusEl) {
+                  statusEl.textContent = "✓ Solicitud recibida. Joan Pimas Reiser se pondrá en contacto con la clínica en menos de 24 horas.";
+                }
+                form.reset();
+                recalcularRetorno();
+              } else {
+                enviarPorMailto(payload);
+              }
+            })
+            .catch(function () {
+              enviarPorMailto(payload);
+            })
+            .finally(function () {
+              if (btnSubmit) btnSubmit.removeAttribute("disabled");
+            });
+        } else {
+          enviarPorMailto(payload);
+          if (btnSubmit) btnSubmit.removeAttribute("disabled");
+        }
+      });
+    })();
+  </script>
+</Base>

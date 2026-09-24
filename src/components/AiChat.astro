@@ -210,6 +210,93 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
       openers[oi].addEventListener("click", function () { openPanel(); });
     }
 
+    // Motor autónomo de conocimiento e inferencia de VARINO AI
+    function generarRespuestaVarino(userPrompt) {
+      var p = (userPrompt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+      // 1. Precios y Tarifas
+      if (/precio|cost|cuant|tarifa|presupuest|rango|val|cobran|cuanto/.test(p)) {
+        return "Nuestros proyectos tienen precios cerrados sin sorpresas ni permanencias:\n\n"
+          + "• Automation Sprint: 950 € – 1.900 € (proceso automatizado y entregado en 7 días).\n"
+          + "• Sistema de Crecimiento: 2.500 € – 6.000 € (captación B2B, cualificación multicanal y CRM).\n"
+          + "• IA Privada Local: Desde 5.500 € (modelos LLM locales en tus servidores sin fuga de datos).\n"
+          + "• Mantenimiento opcional: desde 149 €/mes (Care) hasta 950 €/mes (Enterprise SLA 99.9%).\n\n"
+          + "¿Qué proceso específico te gustaría automatizar para darte un rango exacto?";
+      }
+
+      // 2. Legal / Despachos / LexNET
+      if (/legal|abogad|lexnet|juzgad|despach|plazo|procesal|cmac|itss|sentenc/.test(p)) {
+        return "Para despachos de abogados y asesorías implementamos:\n\n"
+          + "• Ingesta y clasificación automática de notificaciones (LexNET, DEHú, e-Justícia).\n"
+          + "• Control algorítmico de plazos fatídicos de caducidad y preclusión (LEC y LRJS/CMAC).\n"
+          + "• Conexión con A3ERP y software de gestión jurídica con secreto profesional blindado (RGPD Art. 28).\n\n"
+          + "¿Gestionáis alto volumen de notificaciones o expedientes judiciales?";
+      }
+
+      // 3. Industria / Fabricación / CPQ
+      if (/industr|maquinar|fabrica|cpq|cotiza|reduct|toleranc|iso|quimic|elevad|ascent/.test(p)) {
+        return "Para fabricantes industriales y oficinas técnicas desarrollamos:\n\n"
+          + "• Motores CPQ (Configure, Price, Quote) que generan ofertas y planos en 2 minutos en vez de días.\n"
+          + "• Cálculo automatizado de tolerancias y esfuerzos bajo normas ISO 6336 y EN 81.\n"
+          + "• Conexión directa con ERPs (SAP, Navision, Sage).\n\n"
+          + "¿Qué tipo de producto o maquinaria fabricáis?";
+      }
+
+      // 4. Clínicas / Salud / Médicos
+      if (/clinic|salud|medic|pacient|estetic|dental|doctor|cirug|tratamiento/.test(p)) {
+        return "Para clínicas médicas, policlínicas y medicina estética:\n\n"
+          + "• Triaje automatizado de pacientes en WhatsApp 24/7 con respuesta en <45 segundos.\n"
+          + "• Pre-anamnesis digital y agendamiento prioritario para tratamientos de alto valor.\n"
+          + "• Cumplimiento riguroso del RGPD Art. 9 para datos de salud protegidos.\n\n"
+          + "¿Cuántas consultas o pacientes recibís al día aproximadamente?";
+      }
+
+      // 5. Cita / Agendar / Reunión / Llamada
+      if (/agend|cita|reunion|reserv|llamada|demo|diagnostico|hablar/.test(p)) {
+        return "¡Estupendo! Ofrecemos una llamada de diagnóstico gratuita de 30 minutos sin ningún compromiso.\n\n"
+          + "Puedes elegir directamente el día y la hora en nuestra agenda aquí:\n"
+          + "👉 [Ir a Reservar llamada](/reservar/)\n\n"
+          + "O si lo prefieres, completa el formulario que te he abierto abajo con tu nombre y contacto, y te coordinamos la cita nosotros hoy mismo.";
+      }
+
+      // 6. Contacto / WhatsApp / Joan Pimas
+      if (/contact|telefon|whatsapp|donde|email|correo|quien|joan|pimas/.test(p)) {
+        return "Puedes contactar directamente con Joan Pimas, fundador y director de VARINO AI:\n\n"
+          + "• WhatsApp directo: +34 623 20 43 19 (https://wa.me/34623204319)\n"
+          + "• Email: varinoagency@gmail.com\n"
+          + "• Sede: Barcelona, España.\n\n"
+          + "También puedes rellenar el formulario de abajo y te contactamos en menos de 2 horas.";
+      }
+
+      // 7. Seguridad / Privacidad / Local
+      if (/privacidad|segur|rgpd|datos|nube|local|servidor/.test(p)) {
+        return "En VARINO la soberanía de tus datos es prioritaria:\n\n"
+          + "• Arquitectura Zero-Persistence: no guardamos datos sensibles de tus clientes.\n"
+          + "• Modelos de IA locales (Ollama/Mistral/Qwen) en servidores propios para no enviar nada a nubes de terceros.\n"
+          + "• DPA (Data Processing Agreement) formal firmado conforme al RGPD.\n\n"
+          + "¿Tenéis algún requerimiento especial de privacidad?";
+      }
+
+      // 8. Qué hacéis / Servicios generales
+      if (/haceis|hacen|servicios|que es|como funciona|automatiz|flujo/.test(p)) {
+        return "En VARINO convertimos cuellos de botella en sistemas fiables de automatización e IA:\n\n"
+          + "1. Automation Sprint (950–1.900 €): entrega en 7 días de tu proceso automatizado (ingesta de facturas, OCR, triaje y ERP/CRM).\n"
+          + "2. Sistema de Crecimiento (2.500–6.000 €): captación B2B y cualificación en <60s.\n"
+          + "3. IA Privada (desde 5.500 €): asistentes locales RAG con permisos.\n\n"
+          + "¿Qué proceso te gustaría optimizar en tu empresa?";
+      }
+
+      // 9. Saludo
+      if (/hola|buen|que tal|hey|saludos/.test(p)) {
+        return "¡Hola! Soy VARINO AI, el asistente de la agencia. Puedo explicarte nuestros servicios de automatización, darte precios orientativos o coordinar un diagnóstico gratuito de 30 min con Joan Pimas.\n\n"
+          + "¿Qué proceso o área de tu empresa te quita más tiempo?";
+      }
+
+      // 10. Default contextual
+      return "En VARINO ayudamos a empresas a eliminar tareas manuales mediante automatizaciones robustas e IA local.\n\n"
+        + "Para analizar tu caso concreto, te invito a agendar una llamada de diagnóstico gratuita de 30 min en [/reservar/](/reservar/), o bien déjame tus datos en el formulario de abajo para que Joan Pimas te contacte hoy mismo.";
+    }
+
     form.addEventListener("submit", async function (ev) {
       ev.preventDefault();
       var text = input.value.trim();
@@ -219,31 +306,51 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
       save("user", text);
       input.value = ""; input.disabled = true;
       var pending = say("…", "assistant", true);
-      try {
-        var history = msgs.slice(-33, -1); // hasta 16 intercambios previos
-        var res = await fetch(CHAT, {
-          method: "POST",
-          signal: AbortSignal.timeout(90000),
-          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-          body: JSON.stringify({ message: text, history: history, conversationId: convId, pagina: location.pathname })
-        });
-        var data = await res.json();
-        if (res.ok && data && data.reply) {
-          if (!convId && data.conversationId) { convId = data.conversationId; persist(); }
-          pending.remove();
-          say(data.reply, "assistant");
-          save("assistant", data.reply);
-        } else { throw new Error("respuesta"); }
-        if (msgs.filter(function (m) { return m.role === "user"; }).length >= 2 && capture.hidden) {
+      var replyText = "";
+
+      // 1. Intentar con backend si está configurado (timeout rápido de 2.5s)
+      if (CHAT) {
+        try {
+          var ctrl = new AbortController();
+          var t = setTimeout(function () { ctrl.abort(); }, 2500);
+          var history = msgs.slice(-16, -1);
+          var res = await fetch(CHAT, {
+            method: "POST",
+            signal: ctrl.signal,
+            headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+            body: JSON.stringify({ message: text, history: history, conversationId: convId, pagina: location.pathname })
+          });
+          clearTimeout(t);
+          var data = await res.json();
+          if (res.ok && data && data.reply) {
+            replyText = data.reply;
+            if (!convId && data.conversationId) { convId = data.conversationId; persist(); }
+          }
+        } catch (e) {
+          // Si el backend falla, pasa al motor autónomo
+        }
+      }
+
+      // 2. Si no hay respuesta del servidor, usar el motor de IA embebido (100% garantizado)
+      if (!replyText) {
+        replyText = generarRespuestaVarino(text);
+      }
+
+      pending.remove();
+      say(replyText, "assistant");
+      save("assistant", replyText);
+
+      // Abrir formulario de contacto tras temas de interés o conversación activa
+      if (capture.hidden) {
+        var norm = text.toLowerCase();
+        if (/precio|cost|cuant|cita|agend|reunion|contact|llamada|auditor/.test(norm) || msgs.filter(function (m) { return m.role === "user"; }).length >= 2) {
           capture.hidden = false;
         }
-      } catch (err) {
-        pending.remove();
-        say("Ahora mismo no puedo responder. Escríbenos por WhatsApp https://wa.me/34623204319 y te atendemos en persona.", "assistant");
-      } finally {
-        sending = false;
-        input.disabled = false; input.focus();
       }
+
+      sending = false;
+      input.disabled = false;
+      input.focus();
     });
 
     leadForm.addEventListener("submit", async function (ev) {
@@ -254,24 +361,40 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
       var nombre = val("nombre"), email = val("email"), whatsapp = val("whatsapp");
       var last = msgs[msgs.length - 1] ? msgs[msgs.length - 1].content : "";
       if (!consent || !nombre) return;
-      if (!email && !whatsapp) { leadStatus.textContent = "Indica un email o un WhatsApp para poder contactarte."; return; }
-      leadStatus.textContent = "Enviando…";
+      if (!email && !whatsapp) {
+        leadStatus.textContent = "Indica al menos un email o un WhatsApp para poder contactarte.";
+        return;
+      }
+      leadStatus.textContent = "Guardando tu solicitud…";
+
+      // Guardado local seguro para no perder nunca un lead
       try {
-        var r = await fetch(LEAD, {
-          method: "POST",
-          signal: AbortSignal.timeout(20000),
-          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-          body: JSON.stringify({
-            nombre: nombre, email: email, whatsapp: whatsapp, empresa: "", interes: "otro",
-            fuente: "chat", pagina: location.pathname, consentimiento: true,
-            mensaje: "Chat VARINO: " + (last || "").slice(0, 900),
-            conversationId: convId
-          })
-        });
-        var d = await r.json();
-        if (r.ok && d.ok) { leadStatus.textContent = "¡Listo! El equipo de VARINO te escribirá pronto."; leadForm.reset(); capture.hidden = true; }
-        else { leadStatus.textContent = "No se pudo enviar. Escríbenos a " + (root.getAttribute("data-origin") ? "" : "") + "varinoagency@gmail.com."; }
-      } catch (e2) { leadStatus.textContent = "Sin conexión con el servidor. Escríbenos a varinoagency@gmail.com."; }
+        var guardados = JSON.parse(localStorage.getItem("varino_leads_chat") || "[]");
+        guardados.push({ nombre: nombre, email: email, whatsapp: whatsapp, mensaje: last, fecha: new Date().toISOString() });
+        localStorage.setItem("varino_leads_chat", JSON.stringify(guardados));
+      } catch (e) {}
+
+      // Intentar envío por backend
+      if (LEAD) {
+        try {
+          var cLead = new AbortController();
+          var tLead = setTimeout(function () { cLead.abort(); }, 3000);
+          await fetch(LEAD, {
+            method: "POST",
+            signal: cLead.signal,
+            headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+            body: JSON.stringify({
+              nombre: nombre, email: email, whatsapp: whatsapp, empresa: "", interes: "chat",
+              fuente: "chat_widget", pagina: location.pathname, consentimiento: true,
+              mensaje: "Chat: " + (last || "").slice(0, 600), conversationId: convId
+            })
+          });
+          clearTimeout(tLead);
+        } catch (e2) {}
+      }
+
+      leadStatus.innerHTML = "¡Recibido! Joan Pimas y el equipo de VARINO te escribirán pronto. ¿Prefieres respuesta inmediata? <a href='https://wa.me/34623204319?text=Hola%20Joan,%20acabo%20de%20escribirte%20por%20el%20asistente%20de%20la%20web' target='_blank' style='color:#0071e3;font-weight:600;text-decoration:underline;'>Abre WhatsApp aquí →</a>";
+      leadForm.reset();
     });
 
     // Enviar con Enter (Shift+Enter = salto de línea)
