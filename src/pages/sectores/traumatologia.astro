@@ -361,8 +361,8 @@ const schema = JSON.stringify({
 
       function recalc() {
         if (!rConsultas || !rTicket || !valConsultas || !valTicket || !resCirugias || !resHoras || !resIngresos) return;
-        const c = parseInt((rConsultas as HTMLInputElement).value, 10);
-        const t = parseInt((rTicket as HTMLInputElement).value, 10);
+        const c = parseInt(rConsultas.value, 10);
+        const t = parseInt(rTicket.value, 10);
 
         valConsultas.textContent = String(c);
         valTicket.textContent = t.toLocaleString("es-ES") + " €";
