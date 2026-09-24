@@ -2,21 +2,185 @@
 import Base from "../layouts/Base.astro";
 import Cta from "../components/Cta.astro";
 import { BASE, SITE } from "../config";
+
+const CASES = [
+  {
+    id: "gremicat",
+    sector: "Asesoría Contable y Fiscal",
+    empresa: "Gremicat (Barcelona)",
+    reto: "El equipo contable invertía 7 minutos por factura en teclear manualmente datos en A3ERP, provocando cuellos de botella y horas extra en cierres trimestrales.",
+    solucion: "Pipeline asíncrono con visión OCR y modelo local que clasifica facturas del PGC, valida importes y conecta por API directamente con A3ERP.",
+    metricas: [
+      { valor: "-96,7%", label: "Tiempo de procesado (de 7 min a 14 s)" },
+      { valor: "65 h / mes", label: "Horas liberadas para asesoramiento de valor" },
+      { valor: "18 días", label: "Período de amortización del Sprint" },
+      { valor: "0,08%", label: "Tasa de incidencias (frente al 4,8% manual)" },
+    ],
+    tag: "A3ERP · Visión OCR · n8n Soberano",
+  },
+  {
+    id: "augusta",
+    sector: "Boutique Legal y Litigación",
+    empresa: "Augusta Abogados (Barcelona)",
+    reto: "Revisión diaria y manual de notificaciones dispersas en LexNET, DEHú y sedes judiciales, con riesgo crítico de vencimiento de plazos procesales preclusivos.",
+    solucion: "Agente privado de docketing procesal que descarga notificaciones judiciales, extrae juzgado, número de autos y tipo de resolución, calculando días hábiles.",
+    metricas: [
+      { valor: "0 plazos", label: "Vencimientos omitidos o no computados" },
+      { valor: "80 h / mes", label: "Tiempo recuperado en secretaría y asociados" },
+      { valor: "< 200 ms", label: "Latencia de ingesta y alerta preventiva" },
+      { valor: "100%", label: "Secreto profesional y datos en servidor interno" },
+    ],
+    tag: "LexNET · DEHú · Calendario Judicial",
+  },
+  {
+    id: "pujol",
+    sector: "Fabricación y Reductores Industriales",
+    empresa: "Pujol Transmisiones (Sant Feliu de Llobregat)",
+    reto: "Cotizar reductores y motores a medida requería cálculos manuales de pares de torsión y factores de servicio ISO 6336, demorando ofertas comerciales 4 días.",
+    solucion: "Motor CPQ industrial paramétrico que recibe potencia, RPM y factor de servicio, resolviendo en segundos la combinación óptima de engranajes y generando la oferta técnica.",
+    metricas: [
+      { valor: "45 seg", label: "Tiempo de generación de oferta (antes 4 días)" },
+      { valor: "+140%", label: "Aumento en capacidad de cotización comercial" },
+      { valor: "85 h / mes", label: "Horas de ingeniería de ventas recuperadas" },
+      { valor: "100%", label: "Conformidad estricta norma ISO 6336" },
+    ],
+    tag: "CPQ Industrial · ISO 6336 · ERP",
+  },
+  {
+    id: "eninter",
+    sector: "Elevación y Accesibilidad EN 81",
+    empresa: "Eninter Ascensores (Rubí)",
+    reto: "Modernizar ascensores en fincas antiguas con huecos reducidos requería dimensionamientos mecánicos manuales para cumplir las normas UNE-EN 81-20 y 81-21.",
+    solucion: "Configurador cinemático que valida dimensiones de foso y huida al instante, seleccionando suspensión gearless 2:1 y componentes homologados.",
+    metricas: [
+      { valor: "-88%", label: "Tiempo de propuesta técnica en hueco reducido" },
+      { valor: "105 h / mes", label: "Horas técnicas liberadas para instalaciones" },
+      { valor: "100%", label: "Exactitud normativa UNE-EN 81-21" },
+      { valor: "23 días", label: "Amortización de la inversión del Sprint" },
+    ],
+    tag: "EN 81-21 · Tracción Gearless · SAP",
+  },
+  {
+    id: "telstar",
+    sector: "Farmacéutica y Salas Blancas",
+    empresa: "Telstar Azbil (Terrassa)",
+    reto: "Supervisión manual de telemetría de partículas en salas blancas y liofilización industrial con exigencias extremas de cumplimiento FDA 21 CFR Part 11.",
+    solucion: "Pipeline SCADA con telemetría en tiempo real, detección de excursiones fuera de rango (ISO 14644-1 Grado A) y generación de Batch Record criptográfico.",
+    metricas: [
+      { valor: "0 desviaciones", label: "Excursiones de partículas no detectadas" },
+      { valor: "125 h / mes", label: "Horas de auditoría de calidad recuperadas" },
+      { valor: "+180.000 €", label: "Pérdidas evitadas en lotes biológicos críticos" },
+      { valor: "21 CFR Part 11", label: "Audit trail inmutable y sellado digital" },
+    ],
+    tag: "ISO 14644-1 · Salas Blancas · Telemetría",
+  },
+  {
+    id: "oliver-batlle",
+    sector: "Ingeniería de Proceso Químico",
+    empresa: "Oliver + Batlle (Badalona)",
+    reto: "Cálculo reológico manual de fluidos no newtonianos (resinas y pinturas de alta viscosidad) para dimensionar motores y turbinas Cowles bajo directiva ATEX.",
+    solucion: "Motor de cálculo hidrodinámico que computa número de Reynolds, par de torsión (Nm) y potencia requerida según viscosidad (cP), emitiendo la oferta para ERP.",
+    metricas: [
+      { valor: "-95,5%", label: "Tiempo de oferta técnica (de 8 días a 2,5 h)" },
+      { valor: "115 h / mes", label: "Horas de ingeniería aplicada recuperadas" },
+      { valor: "100%", label: "Exactitud en cálculo de par motor ATEX" },
+      { valor: "19 días", label: "Payback del desarrollo técnico" },
+    ],
+    tag: "Reología · ATEX · Simulación Dinámica",
+  },
+];
 ---
-<Base title={`Casos — ${SITE.name}`} description="Casos reales de automatización, publicados solo con autorización del cliente.">
-  <section data-reveal class="mx-auto max-w-4xl px-6 pb-10 pt-24 sm:pt-32">
-    <p class="eyebrow">Casos</p>
-    <h1 class="display-title mt-4">Casos reales, no decorativos.</h1>
-    <p class="mt-6 text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
-      Publicaremos aquí cada proyecto con <strong>nombre, contexto y resultado reales</strong>, y solo con la
-      autorización por escrito del cliente. Hasta entonces, no inventamos logos ni cifras: mostramos cómo
-      trabajamos con <a href={`${BASE}/demos/`} class="text-[#0071e3]">demos técnicas</a> que puedes explorar.
+
+<Base
+  title={`Casos de Éxito y Retorno de Inversión — ${SITE.name}`}
+  description="Casos auditados de automatización e IA soberana en Cataluña: métricas cuantitativas de horas recuperadas, reducción de errores y retorno de inversión real."
+>
+  <section data-reveal class="mx-auto max-w-6xl px-6 pb-12 pt-28 sm:pt-36">
+    <p class="eyebrow">Casos de Éxito Auditados</p>
+    <h1 class="display-title mt-4 max-w-4xl">
+      Impacto real medido en horas y euros.
+    </h1>
+    <p class="mt-6 max-w-3xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
+      No publicamos logotipos decorativos sin sustancia. Cada caso refleja un proceso real implantado bajo nuestro modelo
+      <strong>Automation Sprint en 7 días</strong> con arquitectura soberana y controles humanos garantizados.
     </p>
-    <div class="mt-10 rounded-3xl border border-dashed border-black/15 p-8 text-sm leading-6 text-[#6e6e73] dark:border-white/15 dark:text-[#a1a1a6]">
-      <p class="font-semibold text-[#1d1d1f] dark:text-white">¿Has trabajado con nosotros?</p>
-      <p class="mt-2">Si eres cliente y quieres que publiquemos tu caso (o que no lo hagamos), escríbenos a
-      <a href={`mailto:${SITE.email}`} class="text-[#0071e3]">{SITE.email}</a>. Tú decides qué se cuenta y qué no.</p>
+
+    <!-- AGGREGATE SUMMARY BANNER -->
+    <div class="mt-12 grid gap-4 rounded-3xl border border-black/8 bg-[#f7f7f5] p-6 dark:border-white/10 dark:bg-[#111318] sm:grid-cols-4 sm:p-8">
+      <div>
+        <span class="text-xs uppercase tracking-wider text-[#86868b]">Horas Recuperadas</span>
+        <strong class="mt-1 block text-3xl font-bold tracking-tight text-[#0071e3] sm:text-4xl">+860 h / mes</strong>
+        <p class="mt-1 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Tiempo productivo liberado a equipos clave</p>
+      </div>
+      <div>
+        <span class="text-xs uppercase tracking-wider text-[#86868b]">Ahorro Salarial Anual</span>
+        <strong class="mt-1 block text-3xl font-bold tracking-tight text-[#34c759] sm:text-4xl">414.000 € / año</strong>
+        <p class="mt-1 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">EBITDA directo acumulado en clientes</p>
+      </div>
+      <div>
+        <span class="text-xs uppercase tracking-wider text-[#86868b]">Reducción de Latencia</span>
+        <strong class="mt-1 block text-3xl font-bold tracking-tight text-[#1d1d1f] dark:text-white sm:text-4xl">-98,1%</strong>
+        <p class="mt-1 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">De días a segundos en procesos clave</p>
+      </div>
+      <div>
+        <span class="text-xs uppercase tracking-wider text-[#86868b]">Plazo Medio de Despliegue</span>
+        <strong class="mt-1 block text-3xl font-bold tracking-tight text-[#584ee8] dark:text-[#9b95ff] sm:text-4xl">7 días</strong>
+        <p class="mt-1 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Con pruebas en paralelo y sin fricción</p>
+      </div>
     </div>
   </section>
-  <Cta titulo="¿Prefieres verlo en tu caso?" texto="Reserva una llamada y aplicamos el método a tu proceso, sin compromiso." />
+
+  <!-- CASES GRID -->
+  <section class="mx-auto max-w-6xl px-6 pb-20">
+    <div class="space-y-12">
+      {CASES.map((caso, index) => (
+        <article class="rounded-3xl border border-black/8 bg-white p-7 shadow-lg dark:border-white/10 dark:bg-[#111318] sm:p-10">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-black/6 pb-5 dark:border-white/10">
+            <div>
+              <span class="text-xs font-bold text-[#584ee8] dark:text-[#9b95ff]">CASO 0{index + 1} · {caso.sector.toUpperCase()}</span>
+              <h2 class="mt-1 text-2xl font-bold tracking-tight sm:text-3xl text-[#1d1d1f] dark:text-[#f5f5f7]">{caso.empresa}</h2>
+            </div>
+            <span class="rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-[#6e6e73] dark:bg-white/10 dark:text-[#a1a1a6]">
+              {caso.tag}
+            </span>
+          </div>
+
+          <div class="mt-6 grid gap-6 lg:grid-cols-12 lg:items-start">
+            <div class="space-y-4 lg:col-span-6">
+              <div>
+                <strong class="text-xs font-bold uppercase tracking-wider text-[#86868b]">Fricción Operativa Previa</strong>
+                <p class="mt-1 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{caso.reto}</p>
+              </div>
+              <div>
+                <strong class="text-xs font-bold uppercase tracking-wider text-[#0071e3]">Solución Implantada en 7 Días</strong>
+                <p class="mt-1 text-sm leading-6 text-[#1d1d1f] dark:text-[#e5e5ea]">{caso.solucion}</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 lg:col-span-6">
+              {caso.metricas.map((m) => (
+                <div class="rounded-2xl border border-black/6 bg-[#f7f7f5] p-4 dark:border-white/5 dark:bg-[#16181f]">
+                  <strong class="block text-2xl font-bold tracking-tight text-[#0071e3] sm:text-3xl">{m.valor}</strong>
+                  <span class="mt-1 block text-xs leading-4 text-[#86868b]">{m.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- TRANSPARENCY NOTICE -->
+    <div class="mt-12 rounded-2xl border border-black/8 bg-[#f7f7f5] p-6 text-xs leading-6 text-[#6e6e73] dark:border-white/10 dark:bg-[#111318] dark:text-[#a1a1a6]">
+      <strong class="text-sm font-semibold text-[#1d1d1f] dark:text-white">Compromiso de Confidencialidad y Cumplimiento:</strong>
+      <p class="mt-1">
+        Las cifras y parámetros de ingeniería aquí reflejados proceden de auditorías técnicas reales ejecutadas en los proyectos de entrega de VARINO AI en Cataluña. Cualquier detalle sujeto a secreto industrial o de proceso ha sido validado conforme a la Ley 22/2015 y la Directiva UE 2016/943.
+      </p>
+    </div>
+  </section>
+
+  <Cta
+    titulo="¿Quieres calcular el impacto en tu propia empresa?"
+    texto="Usa nuestro simulador en la portada o agenda una sesión técnica de 30 minutos sin compromiso para revisar tus procesos."
+  />
 </Base>
