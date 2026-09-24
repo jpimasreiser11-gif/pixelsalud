@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import Cta from "../components/Cta.astro";
+import SavingsCalculator from "../components/SavingsCalculator.astro";
 import { BASE, MAINTENANCE_PLANS, SERVICES, SITE } from "../config";
 
 const DEMOS = [
@@ -54,6 +55,8 @@ const DEMOS = [
       <a href={`${BASE}/servicios/#que-montamos`} class="shrink-0 font-semibold text-[#0071e3]">Ver capacidades →</a>
     </div>
   </section>
+
+  <SavingsCalculator />
 
   <section class="border-y border-black/6 bg-[#f7f7f5] dark:border-white/10 dark:bg-[#0a0d14]">
     <div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">

@@ -1,0 +1,337 @@
+---
+import { BASE, SITE, whatsappUrl } from "../config";
+
+const wa = whatsappUrl(
+  `Hola, he calculado el caso de mejora para mi empresa en la web y me gustaría recibir un diagnóstico personalizado.`
+);
+---
+
+<section id="calculadora-ahorro" class="mx-auto max-w-6xl px-6 py-20 sm:py-28" data-reveal>
+  <div class="rounded-3xl border border-black/8 bg-white p-7 shadow-xl dark:border-white/10 dark:bg-[#111318] sm:p-12">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="eyebrow">Simulador de Impacto Económico</p>
+        <h2 class="mt-2 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl text-[#1d1d1f] dark:text-[#f5f5f7]">
+          Calcula cuánto tiempo y dinero ahorra tu empresa.
+        </h2>
+        <p class="mt-3 max-w-2xl text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+          Selecciona tu sector y ajusta el volumen de trabajo manual repetitivo. Descubre el retorno de inversión (ROI), las horas liberadas al año y qué implicaría implantarlo en 7 días sin fricción.
+        </p>
+      </div>
+      <div class="shrink-0">
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-[#34c759]/10 px-3 py-1 text-xs font-semibold text-[#34c759]">
+          <span class="h-1.5 w-1.5 rounded-full bg-[#34c759] animate-pulse"></span>
+          Algoritmo de ROI Auditado
+        </span>
+      </div>
+    </div>
+
+    <!-- SECTOR SELECTOR TABS -->
+    <div class="mt-10">
+      <label class="block text-xs font-bold uppercase tracking-wider text-[#86868b] mb-3">
+        1. Selecciona tu sector de actividad:
+      </label>
+      <div class="grid grid-cols-2 gap-2 sm:grid-cols-5" id="calc-sector-tabs">
+        <button type="button" class="calc-tab is-active" data-sector="legal" data-hours="16" data-cost="32" data-name="Legal y Asesorías" data-flow="Ingesta LexNET, gestión de plazos procesales y apertura automática de expedientes en ERP.">
+          ⚖️ Legal / Asesoría
+        </button>
+        <button type="button" class="calc-tab" data-sector="industrial" data-hours="20" data-cost="35" data-name="Industria y Fabricación" data-flow="Configuración técnica de presupuestos (CPQ), despiece de componentes y cálculo de tolerancias.">
+          🏭 Industria / CPQ
+        </button>
+        <button type="button" class="calc-tab" data-sector="clinicas" data-hours="18" data-cost="22" data-name="Salud y Clínicas" data-flow="Triaje automatizado de WhatsApp, citas prioritarias, confirmaciones y RGPD Art. 9 blindado.">
+          🏥 Clínicas / Salud
+        </button>
+        <button type="button" class="calc-tab" data-sector="inmobiliario" data-hours="15" data-cost="25" data-name="Inmobiliarias" data-flow="Filtrado y scoring de solvencia de leads de Idealista/Fotocasa, agenda de visitas y redacción de contratos.">
+          🏢 Inmobiliaria
+        </button>
+        <button type="button" class="calc-tab" data-sector="operaciones" data-hours="14" data-cost="26" data-name="Operaciones y Pymes" data-flow="Conexión de pedidos, facturación desatendida, reclamación de impagos y sincronización de ERP.">
+          💼 Pymes / Ops
+        </button>
+      </div>
+    </div>
+
+    <!-- INPUT CONTROLS & DYNAMIC SLIDERS -->
+    <div class="mt-10 grid gap-8 lg:grid-cols-12 lg:items-center">
+      <div class="space-y-6 lg:col-span-6">
+        <!-- Slider 1: Horas semanales -->
+        <div class="rounded-2xl border border-black/6 bg-[#f7f7f5] p-5 dark:border-white/10 dark:bg-[#16181f]">
+          <div class="flex items-center justify-between">
+            <label for="range-horas-calc" class="text-sm font-semibold text-[#1d1d1f] dark:text-[#f5f5f7]">
+              Horas manuales por semana
+            </label>
+            <span class="rounded-lg bg-[#0071e3]/10 px-2.5 py-1 text-sm font-bold text-[#0071e3]" id="val-horas-calc">
+              16 h / semana
+            </span>
+          </div>
+          <p class="mt-1 text-xs text-[#86868b]">
+            Dedicadas por el equipo a copiar datos, cotizar presupuestos, clasificar correos o perseguir facturas.
+          </p>
+          <input
+            id="range-horas-calc"
+            type="range"
+            min="4"
+            max="60"
+            step="1"
+            value="16"
+            class="mt-4 h-2 w-full cursor-pointer appearance-none rounded-lg bg-[#e5e5ea] accent-[#0071e3] dark:bg-[#2c2c2e]"
+          />
+          <div class="mt-2 flex justify-between text-[10px] text-[#86868b]">
+            <span>4 h</span>
+            <span>20 h</span>
+            <span>40 h</span>
+            <span>60 h</span>
+          </div>
+        </div>
+
+        <!-- Slider 2: Coste medio por hora -->
+        <div class="rounded-2xl border border-black/6 bg-[#f7f7f5] p-5 dark:border-white/10 dark:bg-[#16181f]">
+          <div class="flex items-center justify-between">
+            <label for="range-coste-calc" class="text-sm font-semibold text-[#1d1d1f] dark:text-[#f5f5f7]">
+              Coste medio por hora del empleado
+            </label>
+            <span class="rounded-lg bg-[#0071e3]/10 px-2.5 py-1 text-sm font-bold text-[#0071e3]" id="val-coste-calc">
+              32 € / h
+            </span>
+          </div>
+          <p class="mt-1 text-xs text-[#86868b]">
+            Coste empresa hora bruto (incluye salario bruto proporcional y cotización seguridad social).
+          </p>
+          <input
+            id="range-coste-calc"
+            type="range"
+            min="15"
+            max="75"
+            step="1"
+            value="32"
+            class="mt-4 h-2 w-full cursor-pointer appearance-none rounded-lg bg-[#e5e5ea] accent-[#0071e3] dark:bg-[#2c2c2e]"
+          />
+          <div class="mt-2 flex justify-between text-[10px] text-[#86868b]">
+            <span>15 €/h</span>
+            <span>35 €/h</span>
+            <span>55 €/h</span>
+            <span>75 €/h</span>
+          </div>
+        </div>
+
+        <!-- Resumen del flujo propuesto -->
+        <div class="rounded-2xl border border-[#0071e3]/20 bg-[#0071e3]/5 p-4 text-xs leading-5 text-[#0071e3] dark:border-[#0071e3]/30 dark:bg-[#0071e3]/10">
+          <strong class="block text-sm font-semibold text-[#0071e3] mb-1">Caso de mejora identificado para tu sector:</strong>
+          <span id="calc-flow-desc">
+            Ingesta LexNET, gestión de plazos procesales y apertura automática de expedientes en ERP.
+          </span>
+        </div>
+      </div>
+
+      <!-- RESULTS PANEL & ROI METRICS -->
+      <div class="lg:col-span-6">
+        <div class="rounded-3xl border border-black/8 bg-gradient-to-br from-[#1d1d1f] to-black p-7 text-white shadow-2xl dark:border-white/15 sm:p-9">
+          <div class="flex items-center justify-between border-b border-white/10 pb-4">
+            <span class="text-xs uppercase tracking-wider text-[#86868b]">Balance de Ahorro Estimado</span>
+            <span class="rounded-full bg-[#34c759]/20 px-2.5 py-0.5 text-xs font-semibold text-[#34c759]" id="calc-tag-roi">
+              ROI 980%
+            </span>
+          </div>
+
+          <div class="mt-6 grid grid-cols-2 gap-4">
+            <div class="rounded-2xl bg-white/5 p-4 border border-white/5">
+              <span class="text-xs text-[#86868b]">Horas liberadas al año</span>
+              <strong class="mt-1 block text-2xl font-bold tracking-tight text-white sm:text-3xl" id="calc-res-horas">
+                736 h
+              </strong>
+              <small class="text-[11px] text-[#86868b]">~16 h semanales ahorradas</small>
+            </div>
+            <div class="rounded-2xl bg-white/5 p-4 border border-white/5">
+              <span class="text-xs text-[#86868b]">Ahorro económico anual</span>
+              <strong class="mt-1 block text-2xl font-bold tracking-tight text-[#34c759] sm:text-3xl" id="calc-res-ahorro">
+                23.552 €
+              </strong>
+              <small class="text-[11px] text-[#86868b]">EBITDA directo recuperado</small>
+            </div>
+          </div>
+
+          <div class="mt-4 rounded-2xl bg-white/5 p-4 border border-white/5 flex items-center justify-between">
+            <div>
+              <span class="text-xs text-[#86868b]">Período de amortización (Payback)</span>
+              <strong class="mt-0.5 block text-lg font-semibold text-white" id="calc-res-payback">
+                ~29 días
+              </strong>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-[#86868b]">Inversión VARINO Sprint</span>
+              <strong class="mt-0.5 block text-lg font-semibold text-[#2997ff]" id="calc-res-inversion">
+                1.900 €
+              </strong>
+              <small class="text-[10px] text-[#86868b]">Pago único sin suscripción obligatoria</small>
+            </div>
+          </div>
+
+          <!-- QUÉ IMPLICA -->
+          <div class="mt-6 border-t border-white/10 pt-4">
+            <p class="text-xs font-bold uppercase tracking-wider text-[#86868b] mb-2">
+              ¿Qué implica la implantación en tu empresa?
+            </p>
+            <ul class="space-y-1.5 text-xs text-[#d2d2d7]">
+              <li class="flex items-center gap-2">
+                <span class="text-[#34c759]">✓</span>
+                <strong>Despliegue en 7 días laborables</strong> sin alterar tu operativa diaria.
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-[#34c759]">✓</span>
+                <strong>0 € en costes ocultos de licencias</strong> (arquitectura n8n e IA soberana).
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-[#34c759]">✓</span>
+                <strong>Datos 100% privados bajo RGPD</strong>: nada se comparte con terceros.
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-[#34c759]">✓</span>
+                <strong>Supervisión humana garantizada</strong>: validación paso a paso de cada proceso.
+              </li>
+            </ul>
+          </div>
+
+          <!-- CTAS -->
+          <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+            <a
+              href={`${BASE}/reservar/`}
+              class="flex-1 rounded-full bg-[#0071e3] px-5 py-3 text-center text-xs sm:text-sm font-semibold text-white transition hover:bg-[#0077ed] shadow-lg shadow-[#0071e3]/30 active:scale-95"
+            >
+              Pedir este caso de mejora · Llamada 30 min
+            </a>
+            {wa && (
+              <a
+                href={wa}
+                class="rounded-full border border-white/20 bg-white/10 px-5 py-3 text-center text-xs sm:text-sm font-medium text-white transition hover:bg-white/15"
+              >
+                WhatsApp Directo
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .calc-tab {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.65rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 1rem;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background-color: #f7f7f5;
+      color: #6e6e73;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      text-align: center;
+    }
+    :global(.dark) .calc-tab {
+      border-color: rgba(255, 255, 255, 0.1);
+      background-color: #16181f;
+      color: #a1a1a6;
+    }
+    .calc-tab:hover {
+      border-color: rgba(0, 113, 227, 0.4);
+      color: #0071e3;
+    }
+    .calc-tab.is-active {
+      border-color: #0071e3;
+      background-color: #0071e3;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 113, 227, 0.25);
+    }
+  </style>
+
+  <script>
+    (function () {
+      const rHoras = document.getElementById("range-horas-calc");
+      const rCoste = document.getElementById("range-coste-calc");
+      const valHoras = document.getElementById("val-horas-calc");
+      const valCoste = document.getElementById("val-coste-calc");
+      const flowDesc = document.getElementById("calc-flow-desc");
+      const resHoras = document.getElementById("calc-res-horas");
+      const resAhorro = document.getElementById("calc-res-ahorro");
+      const resInversion = document.getElementById("calc-res-inversion");
+      const resPayback = document.getElementById("calc-res-payback");
+      const tagRoi = document.getElementById("calc-tag-roi");
+      const tabs = document.querySelectorAll("#calc-sector-tabs .calc-tab");
+
+      let currentSector = "legal";
+
+      function recalcularAhorro() {
+        if (!rHoras || !rCoste || !valHoras || !valCoste || !resHoras || !resAhorro || !resInversion || !resPayback || !tagRoi) return;
+
+        const horasSemana = parseInt(rHoras.value, 10);
+        const costeHora = parseInt(rCoste.value, 10);
+
+        valHoras.textContent = horasSemana + " h / semana";
+        valCoste.textContent = costeHora + " € / h";
+
+        // 46 semanas laborales efectivas al año
+        const horasAnuales = Math.round(horasSemana * 46);
+        const ahorroAnual = horasAnuales * costeHora;
+
+        // Inversión según complejidad de horas
+        let inversion = 1450;
+        if (horasSemana <= 10) {
+          inversion = 950;
+        } else if (horasSemana <= 20) {
+          inversion = 1900;
+        } else if (horasSemana <= 35) {
+          inversion = 2900;
+        } else {
+          inversion = 4200;
+        }
+
+        // Días de amortización (payback)
+        const ahorroDiario = ahorroAnual / 365;
+        const diasPayback = Math.max(12, Math.round(inversion / ahorroDiario));
+
+        // Porcentaje ROI año 1
+        const roiPorcentaje = Math.round(((ahorroAnual - inversion) / inversion) * 100);
+
+        resHoras.textContent = horasAnuales.toLocaleString("es-ES") + " h";
+        resAhorro.textContent = ahorroAnual.toLocaleString("es-ES") + " €";
+        resInversion.textContent = inversion.toLocaleString("es-ES") + " €";
+        resPayback.textContent = "~" + diasPayback + " días";
+        tagRoi.textContent = "ROI " + roiPorcentaje + "% año 1";
+      }
+
+      if (tabs) {
+        tabs.forEach(function (tab) {
+          tab.addEventListener("click", function () {
+            tabs.forEach(function (t) { t.classList.remove("is-active"); });
+            tab.classList.add("is-active");
+
+            currentSector = tab.getAttribute("data-sector") || "legal";
+            const defHours = tab.getAttribute("data-hours");
+            const defCost = tab.getAttribute("data-cost");
+            const flow = tab.getAttribute("data-flow");
+
+            if (flowDesc && flow) {
+              flowDesc.textContent = flow;
+            }
+
+            if (rHoras && defHours) {
+              rHoras.value = defHours;
+            }
+            if (rCoste && defCost) {
+              rCoste.value = defCost;
+            }
+
+            recalcularAhorro();
+          });
+        });
+      }
+
+      if (rHoras && rCoste) {
+        rHoras.addEventListener("input", recalcularAhorro);
+        rCoste.addEventListener("input", recalcularAhorro);
+        recalcularAhorro();
+      }
+    })();
+  </script>
+</section>
