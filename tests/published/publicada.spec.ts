@@ -31,8 +31,29 @@ test("la versión no aprobada bloquea robots y no publica sitemap", async ({ pag
 test("las páginas sectoriales se presentan como propuestas, no como proyectos implantados", async ({ page }) => {
   for (const path of ["sectores/", "sectores/clinicas/", "sectores/veterinarias/"]) {
     await page.goto(path);
-    await expect(page.getByRole("note")).toContainText(/ejemplo de diseño, no un sistema implantado/i);
+    await expect(page.locator('main [role="note"]:not(aside)')).toContainText(/ejemplo de diseño, no un sistema implantado/i);
     await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(0);
+  }
+});
+
+test("las páginas sectoriales no prometen métricas inventadas ni decisiones clínicas o financieras automatizadas", async ({ page }) => {
+  const rutas = [
+    "sectores/clinicas/",
+    "sectores/estetica/",
+    "sectores/fertilidad/",
+    "sectores/inmobiliarias/",
+    "sectores/legal/",
+    "sectores/oftalmologia/",
+    "sectores/traumatologia/",
+    "sectores/veterinarias/",
+  ];
+  const afirmacionesRetiradas = /70% de solicitudes|facturación (?:quirúrgica )?recuperada|incomparecencias reducidas|100% conforme al Art\. 9|entrega garantizada en 7 días|triaje (?:automatizado|automático) de urgencias|pre-KYC y verificación de fondos/i;
+
+  for (const ruta of rutas) {
+    await page.goto(ruta);
+    await expect(page.locator('main [role="note"]:not(aside)')).toContainText(/ejemplo de diseño, no un sistema implantado/i);
+    await expect(page.getByRole("heading", { name: "Lo que esta propuesta no hace" })).toBeVisible();
+    expect(await page.locator("main").innerText()).not.toMatch(afirmacionesRetiradas);
   }
 });
 
