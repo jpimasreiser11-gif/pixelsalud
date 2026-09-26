@@ -6,10 +6,11 @@ describe("VARINO configuration", () => {
   it("keeps launch indexing gated while legal and brand reviews remain incomplete", () => {
     expect(SITE.name).toBe("VARINO");
     expect(SITE.tagline).toBe("Inteligencia, puesta a trabajar.");
-    // La presencia de datos del titular no sustituye las revisiones legal,
-    // de seguridad y de marca necesarias para habilitar la indexación.
-    expect(SITE.legalOwner).toBe("Joan Pimas Reiser");
-    expect(SITE.legalNif).toBe("20569591Q");
+    // Los datos legales identificativos se mantienen fuera del repositorio
+    // público durante el prelanzamiento.
+    expect(SITE.legalOwner).toBe("");
+    expect(SITE.legalNif).toBe("");
+    expect(SITE.legalAddress).toBe("");
     expect(SITE.email).toBe("varinoagency@gmail.com");
     expect(SITE.whatsapp).toBe("34623204319");
     expect(SITE.url).toBe("https://varinoai.me");

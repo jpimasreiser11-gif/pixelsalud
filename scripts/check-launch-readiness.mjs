@@ -38,6 +38,13 @@ for (const [name, pattern] of required) {
   if (!value) failures.push(`${name} no está configurado`);
 }
 
+const legalIdentityValues = ["legalOwner", "legalNif", "legalAddress"].map(
+  (name) => config.match(new RegExp(`${name}:\\s*"([^"]*)"`))?.[1]?.trim() || ""
+);
+if (!launchReady && legalIdentityValues.some(Boolean)) {
+  failures.push("no incluyas identificadores personales del titular en el repositorio público antes de aprobar y lanzar el sitio");
+}
+
 const emailValue = config.match(/email:\s*"([^"]*)"/)?.[1]?.trim();
 const whatsappValue = config.match(/whatsapp:\s*"([^"]*)"/)?.[1]?.trim();
 if (!emailValue && !whatsappValue) {

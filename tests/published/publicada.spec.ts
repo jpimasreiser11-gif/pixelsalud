@@ -28,6 +28,22 @@ test("la versión no aprobada bloquea robots y no publica sitemap", async ({ pag
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex,follow");
 });
 
+test("el HTML legal de prelanzamiento no contiene identidad ni permite contratar", async ({ page }) => {
+  await page.goto("aviso-legal/");
+  await expect(page.getByRole("status")).toContainText(/prelanzamiento/i);
+  const text = await page.locator("main").innerText();
+  expect(text).not.toMatch(/\b\d{8}[A-Z]\b/i);
+  expect(text).not.toMatch(/domicilio:\s*\S/i);
+  expect(text).not.toMatch(/contratar servicios|contratación online está habilitada/i);
+});
+
+test("la plantilla DPA permanece oculta hasta aprobación de identidad y seguridad", async ({ page }) => {
+  await page.goto("dpa/");
+  await expect(page.getByRole("status")).toContainText(/no publicable ni firmable/i);
+  const text = await page.locator("main").innerText();
+  expect(text).not.toMatch(/\b\d{8}[A-Z]\b/i);
+});
+
 test("las páginas sectoriales se presentan como propuestas, no como proyectos implantados", async ({ page }) => {
   for (const path of ["sectores/", "sectores/clinicas/", "sectores/veterinarias/"]) {
     await page.goto(path);

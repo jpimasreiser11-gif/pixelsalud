@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import { SITE } from "../config";
+const legalIdentityReady = Boolean(SITE.launchReady && SITE.legalOwner && SITE.legalNif && SITE.legalAddress);
 ---
 <Base
   title={`Encargo de tratamiento (DPA) — ${SITE.name}`}
@@ -9,12 +10,19 @@ import { SITE } from "../config";
   <section class="mx-auto max-w-4xl px-6 py-20">
     <p class="eyebrow">Protección de datos</p>
     <h1 class="mt-3 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">Encargo de tratamiento (DPA)</h1>
+    {legalIdentityReady ? (
     <p class="mt-6 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
       Cuando automatizamos procesos que tratan datos personales de tus clientes o empleados, {SITE.name}
       actúa como <strong>encargado del tratamiento</strong> y tú como <strong>responsable</strong>. Este es el
       contrato que firmamos antes de empezar.
     </p>
+    ) : (
+    <p role="status" class="mt-6 max-w-2xl rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5 text-sm leading-7 text-amber-900 dark:text-amber-100">
+      Plantilla de trabajo no publicable ni firmable. La identidad del encargado, los proveedores y las medidas aplicables deben verificarse y aprobarse antes de preparar un contrato para un cliente.
+    </p>
+    )}
 
+    {legalIdentityReady ? (
     <div class="mt-10 space-y-8 text-sm leading-7 text-[#6e6e73] dark:text-[#a1a1a6]">
       <div>
         <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">1. Partes y objeto</h2>
@@ -69,5 +77,6 @@ import { SITE } from "../config";
       </div>
       <p class="text-xs">Plantilla base conforme al art. 28 RGPD. Recomendamos revisión por un asesor legal antes de firmar.</p>
     </div>
+    ) : null}
   </section>
 </Base>

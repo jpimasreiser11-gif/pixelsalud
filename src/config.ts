@@ -43,9 +43,11 @@ export const SITE = {
   email: "varinoagency@gmail.com",
   whatsapp: "34623204319",
   calendly: "",
-  legalOwner: "Joan Pimas Reiser",
-  legalNif: "20569591Q",
-  legalAddress: "Passeig de la Rectoria Vella, 08460 Barcelona, España",
+  // No incluir datos personales identificativos en el repositorio público
+  // durante el prelanzamiento. Completar solo tras aprobación expresa y revisión.
+  legalOwner: "",
+  legalNif: "",
+  legalAddress: "",
 } as const;
 
 export const SERVICES = [

@@ -47,9 +47,11 @@ test("la reserva se presenta como no disponible si no hay agenda conectada", asy
   expect(webhooks).toEqual([]);
 });
 
-test("el aviso legal muestra los datos configurados del titular", async ({ page }) => {
+test("el aviso legal oculta los datos identificativos durante el prelanzamiento", async ({ page }) => {
   await page.goto("/aviso-legal/");
-  await expect(page.getByText("Joan Pimas Reiser").first()).toBeVisible();
-  await expect(page.getByText("20569591Q").first()).toBeVisible();
-  await expect(page.getByText(/passeig de la rectoria vella/i).first()).toBeVisible();
+  await expect(page.getByRole("status")).toContainText(/información de prelanzamiento/i);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex,follow");
+  const text = await page.locator("main").innerText();
+  expect(text).not.toMatch(/\b\d{8}[A-Z]\b/i);
+  expect(text).not.toMatch(/domicilio:\s*\S/i);
 });

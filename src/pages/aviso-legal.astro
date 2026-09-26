@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import { SITE } from "../config";
+const legalIdentityReady = Boolean(SITE.launchReady && SITE.legalOwner && SITE.legalNif && SITE.legalAddress);
 ---
 <Base
   title={`Aviso legal y condiciones — ${SITE.name}`}
@@ -11,6 +12,7 @@ import { SITE } from "../config";
     <h1 class="mt-3 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">Aviso legal y condiciones</h1>
     <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">Última actualización: septiembre de 2026.</p>
 
+    {legalIdentityReady ? (
     <div class="mt-10 space-y-10 text-sm leading-7 text-[#6e6e73] dark:text-[#a1a1a6]">
       <div>
         <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">1. Identificación del titular</h2>
@@ -78,5 +80,11 @@ import { SITE } from "../config";
         un asesor legal antes de su uso en contratación con clientes.
       </p>
     </div>
+    ) : (
+    <div role="status" class="mt-10 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-6 text-sm leading-7 text-amber-900 dark:text-amber-100">
+      <h2 class="font-semibold">Información de prelanzamiento</h2>
+      <p class="mt-2">Esta página no constituye un aviso legal completo ni condiciones de contratación. Los datos identificativos del titular y las condiciones están pendientes de verificación y aprobación para publicación. La contratación online no está habilitada en esta versión.</p>
+    </div>
+    )}
   </section>
 </Base>
