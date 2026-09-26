@@ -1,0 +1,83 @@
+---
+import Base from "../layouts/Base.astro";
+import InteractiveMissions from "./InteractiveMissions.astro";
+import SavingsCalculator from "./SavingsCalculator.astro";
+import { BASE } from "../config";
+
+interface Props {
+  title: string;
+  description: string;
+  sector: string;
+  intro: string;
+  steps: string[];
+  boundaries: string[];
+}
+
+const { title, description, sector, intro, steps, boundaries } = Astro.props;
+---
+
+<Base title={title} description={description}>
+    <section class="mx-auto max-w-6xl px-6 pb-12 pt-16 sm:pb-16 sm:pt-24">
+      <div class="max-w-4xl">
+        <p class="eyebrow">Propuesta ilustrativa · {sector}</p>
+        <h1 class="mt-4 text-4xl font-semibold tracking-[-0.05em] text-[#1d1d1f] dark:text-white sm:text-6xl">
+          Una idea de flujo. <span class="text-[#0071e3] dark:text-[#2997ff]">Validada con tu equipo.</span>
+        </h1>
+        <p class="mt-6 max-w-3xl text-lg leading-8 text-[#5b5b60] dark:text-[#c4c4cc]">{intro}</p>
+        <div role="note" class="mt-7 rounded-2xl border border-amber-500/25 bg-amber-50 p-5 text-sm leading-6 text-amber-950 dark:bg-amber-950/30 dark:text-amber-100">
+          <strong>Transparencia:</strong> ejemplo de diseño, no un sistema implantado ni un cliente de VARINO. No publicamos métricas de ahorro o rendimiento sin una medición verificable y permiso para compartirla.
+        </div>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a class="button-primary" href={`${BASE}/experiencia/`}>Explorar mi proceso con la guía →</a>
+          <a class="button-secondary" href={`${BASE}/precios/`}>Ver rangos y condiciones</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto grid max-w-6xl gap-8 px-6 py-12 md:grid-cols-[.8fr_1.2fr]">
+      <div>
+        <p class="eyebrow">Ejemplo de arquitectura</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-[-0.04em]">Un proceso sencillo, con control humano.</h2>
+        <p class="mt-4 text-sm leading-7 text-[#5b5b60] dark:text-[#c4c4cc]">El alcance se decide después de mapear herramientas, datos, excepciones y responsables. Cada paso puede descartarse o cambiarse antes de construir.</p>
+      </div>
+      <ol class="space-y-3">
+        {steps.map((step, index) => (
+          <li class="flex gap-4 rounded-2xl border border-black/8 bg-[#f7f7f8] p-5 dark:border-white/10 dark:bg-[#111318]">
+            <span class="font-mono text-sm text-[#0071e3] dark:text-[#2997ff]">0{index + 1}</span>
+            <span class="text-sm leading-6">{step}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-6 py-8">
+      <div class="rounded-3xl border border-black/8 bg-white p-7 dark:border-white/10 dark:bg-[#111318] sm:p-10">
+        <p class="eyebrow">Límites antes de automatizar</p>
+        <h2 class="mt-3 text-2xl font-semibold tracking-[-0.04em]">Lo que esta propuesta no hace</h2>
+        <ul class="mt-6 grid gap-3 md:grid-cols-2">
+          {boundaries.map((item) => <li class="rounded-xl bg-[#f7f7f8] p-4 text-sm leading-6 dark:bg-black">{item}</li>)}
+        </ul>
+        <p class="mt-5 text-xs leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">Cualquier uso con datos personales, información sensible o decisiones reguladas requiere análisis específico, autorización del responsable, controles técnicos y revisión profesional antes de producción. La guía y la calculadora usan supuestos introducidos por quien visita la web; no predicen resultados.</p>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-6 py-10">
+      <div class="rounded-3xl bg-[#080b12] px-6 py-10 text-white sm:px-10">
+        <p class="eyebrow text-[#aab2c0]">Diseño interactivo</p>
+        <InteractiveMissions compact={true} />
+      </div>
+    </section>
+
+    <SavingsCalculator />
+
+    <section class="mx-auto max-w-6xl px-6 pb-20">
+      <div class="flex flex-col gap-4 rounded-3xl border border-black/8 p-7 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+        <div>
+          <p class="eyebrow">Siguiente paso</p>
+          <h2 class="mt-2 text-2xl font-semibold">Primero medimos el proceso real.</h2>
+          <p class="mt-2 max-w-2xl text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">No se activa ningún flujo ni se envían mensajes sin alcance escrito, pruebas y aprobación de una persona responsable.</p>
+        </div>
+        <a class="button-primary shrink-0" href={`${BASE}/auditoria/`}>Ver diagnóstico y precio →</a>
+      </div>
+    </section>
+</Base>

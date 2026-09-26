@@ -15,6 +15,7 @@ interface Props {
 const { title, description = SITE.description, noindex = false } = Astro.props;
 const shouldNoindex = noindex || !SITE.launchReady;
 const canonical = SITE.url ? new URL(Astro.url.pathname, SITE.url).href : "";
+const isSectorPage = Astro.url.pathname.replace(/\/+$/, "").startsWith(`${BASE}/sectores`);
 
 const nav = [
   { href: `${BASE}/`, label: "Inicio" },
@@ -26,7 +27,7 @@ const nav = [
   { href: `${BASE}/planes/`, label: "Planes" },
 ];
 
-const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
+const schema = SITE.launchReady && SITE.url && SITE.legalOwner ? JSON.stringify({
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
   name: SITE.name,
@@ -164,6 +165,14 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
     </header>
 
     <main id="contenido">
+      {isSectorPage && (
+        <aside role="note" class="mx-auto mt-4 max-w-6xl px-6">
+          <div class="rounded-2xl border border-black/10 bg-[#f5f5f7] px-5 py-4 text-sm leading-6 text-[#3a3a3c] dark:border-white/10 dark:bg-[#16181f] dark:text-[#d1d1d6]">
+            <strong class="text-[#1d1d1f] dark:text-white">Ejemplo de diseño, no un sistema implantado.</strong>
+            Las funciones, tiempos e integraciones de esta página son hipótesis para evaluar; no son resultados de clientes ni promesas. La viabilidad y los controles se definen antes de construir. No compartas datos personales o sensibles en esta demo.
+          </div>
+        </aside>
+      )}
       <slot />
     </main>
 

@@ -2,6 +2,7 @@ import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import { createLocalGuidePlugin } from "./src/lib/local-guide-plugin.mjs";
 import sitemap from "@astrojs/sitemap";
+import { launchReady } from "./src/lib/launch-config.mjs";
 
 // Una sola fuente para la política de contenido. Se usa en tres sitios:
 //  1. Las cabeceras de los servidores de desarrollo y de preview (abajo).
@@ -18,7 +19,7 @@ export const CSP_DIRECTIVES = [
   "form-action 'self' mailto:",
   "img-src 'self' data:",
   "font-src 'self'",
-  "connect-src 'self' https://ettie-submicroscopic-gannon.ngrok-free.dev",
+  "connect-src 'self'",
 ];
 
 // frame-ancestors no existe en <meta>: solo funciona como cabecera. Se queda
@@ -48,7 +49,7 @@ export default defineConfig({
   // La web no renderiza bloques Markdown. Desactivar Shiki evita estilos en
   // linea incompatibles con la CSP y mantiene el build libre de advertencias.
   markdown: { syntaxHighlight: false },
-  integrations: [sitemap()],
+  integrations: launchReady ? [sitemap()] : [],
   security: { csp: { directives: CSP_DIRECTIVES } },
   vite: {
     plugins: [tailwindcss(), createLocalGuidePlugin()],

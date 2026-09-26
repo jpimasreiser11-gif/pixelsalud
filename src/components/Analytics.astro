@@ -1,8 +1,8 @@
 ---
 import { BACKEND_EVENT } from "../config";
 ---
-<!-- Analítica propia SIN cookies: envía un pageview anónimo (ruta, referente y idioma) a n8n.
-     No usa cookies ni identificadores persistentes, por eso no requiere banner de consentimiento. -->
+<!-- Analítica propia sin identificador persistente: envía ruta, dominio de referencia e idioma a n8n.
+     El envío y los metadatos de red deben describirse en privacidad y revisarse antes del lanzamiento. -->
 {BACKEND_EVENT && <div data-analytics data-endpoint={BACKEND_EVENT} hidden></div>}
 {BACKEND_EVENT && (
   <script>

@@ -16,17 +16,17 @@ import { BASE, SITE, BACKEND } from "../config";
 
     <div
       id="app-reservar"
-      data-avail={`${BACKEND.url}/webhook/availability`}
-      data-book={`${BACKEND.url}/webhook/book`}
+      data-avail={BACKEND.enabled && BACKEND.url ? `${BACKEND.url}/webhook/availability` : ""}
+      data-book={BACKEND.enabled && BACKEND.url ? `${BACKEND.url}/webhook/book` : ""}
       data-origin={BACKEND.origin}
       class="mt-10 grid gap-6 lg:grid-cols-[1.1fr_.9fr]"
     >
       <!-- Paso 1: huecos -->
       <div class="rounded-3xl border border-black/10 bg-[#f7f7f5] p-6 dark:border-white/10 dark:bg-[#111318] sm:p-8">
         <h2 class="font-semibold text-lg">1 · Elige un hueco</h2>
-        <p class="text-xs text-[#6e6e73] dark:text-[#a1a1a6] mt-1" data-slot-status>Los horarios son de lunes a viernes, hora de España.</p>
+        <p class="text-xs text-[#6e6e73] dark:text-[#a1a1a6] mt-1" data-slot-status aria-live="polite">Consultando la agenda real…</p>
         <div class="mt-4 grid gap-3" data-slots role="list" aria-live="polite"></div>
-        <button type="button" class="mt-4 text-xs text-[#0071e3] hover:underline" data-refresh>↻ Ver más días</button>
+        <button type="button" class="mt-4 text-xs text-[#0071e3] hover:underline" data-refresh>↻ Volver a consultar</button>
       </div>
 
       <!-- Paso 2: datos -->
@@ -56,14 +56,14 @@ import { BASE, SITE, BACKEND } from "../config";
 
         <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
           <input type="checkbox" name="consentimiento" required class="mt-0.5 shrink-0" />
-          <span>Acepto que VARINO guarde estos datos para gestionar la reserva y contactarme, según su <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">política de privacidad</a>.</span>
+          <span>He leído la <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">información de privacidad</a>. Usaremos estos datos para tramitar esta solicitud; no es una suscripción comercial.</span>
         </label>
 
         <button type="submit" class="w-full rounded-full bg-[#0071e3] px-6 py-3 font-semibold text-white transition hover:bg-[#0077ed] text-xs shadow-lg shadow-[#0071e3]/20">
           Confirmar reserva →
         </button>
         <p class="text-[11px] text-[#6e6e73] dark:text-[#a1a1a6] text-center" aria-live="polite" data-form-status>
-          Recibirás una invitación por email con los datos de la llamada.
+          La cita solo queda confirmada cuando la agenda la registra correctamente.
         </p>
       </form>
 
@@ -72,7 +72,7 @@ import { BASE, SITE, BACKEND } from "../config";
         <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-400 text-2xl font-bold">
           ✓
         </div>
-        <h2 class="mt-4 font-semibold text-2xl tracking-tight">¡Reserva solicitada con éxito!</h2>
+        <h2 class="mt-4 font-semibold text-2xl tracking-tight">Reserva confirmada</h2>
         <p class="mt-2 text-sm text-[#6e6e73] dark:text-[#a1a1a6] max-w-md mx-auto" data-ok-text></p>
         
         <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center items-center">
@@ -131,7 +131,6 @@ import { BASE, SITE, BACKEND } from "../config";
       var okWa = okBox.querySelector("[data-ok-wa]");
       var slots = [];
       var selectedSlotBtn = null;
-      var offsetDias = 0;
 
       function fechaDia(iso) {
         try {
@@ -141,63 +140,22 @@ import { BASE, SITE, BACKEND } from "../config";
         }
       }
 
-      // Motor de generación autónoma de huecos hábiles (Lunes a Viernes de 09:30 a 18:00)
-      function generarHuecosAutonomos(diasSalto) {
-        var base = new Date();
-        var lista = [];
-        var horasBase = ["09:30", "11:00", "12:30", "15:30", "16:30", "17:30"];
-        var cursor = new Date(base.getTime());
-        // Salto inicial: empezar a partir de mañana o hoy si es temprano
-        if (base.getHours() >= 16) {
-          cursor.setDate(cursor.getDate() + 1);
-        }
-        if (diasSalto) {
-          cursor.setDate(cursor.getDate() + diasSalto);
-        }
-
-        var diasEncontrados = 0;
-        while (diasEncontrados < 5) {
-          var dow = cursor.getDay(); // 0 domingo, 6 sábado
-          if (dow !== 0 && dow !== 6) {
-            var y = cursor.getFullYear();
-            var m = String(cursor.getMonth() + 1).padStart(2, '0');
-            var d = String(cursor.getDate()).padStart(2, '0');
-            var ds = y + '-' + m + '-' + d;
-
-            for (var hi = 0; hi < horasBase.length; hi++) {
-              var h = horasBase[hi];
-              // Si es hoy, no mostrar horas pasadas
-              var hoyStr = base.toISOString().slice(0, 10);
-              if (ds === hoyStr) {
-                var partesH = h.split(':').map(Number);
-                if (base.getHours() > partesH[0] || (base.getHours() === partesH[0] && base.getMinutes() >= partesH[1])) {
-                  continue;
-                }
-              }
-              lista.push({ date: ds, hora: h, iso: ds + 'T' + h + ':00' });
-            }
-            diasEncontrados++;
-          }
-          cursor.setDate(cursor.getDate() + 1);
-        }
-        return lista;
-      }
-
       function renderSlots() {
-        slotsEl.innerHTML = "";
-        var actual = slots.length ? slots : generarHuecosAutonomos(offsetDias);
+        slotsEl.replaceChildren();
+        if (!slots.length) {
+          var empty = document.createElement("p");
+          empty.className = "rounded-2xl border border-black/5 bg-white p-4 text-sm leading-6 text-[#6e6e73] dark:border-white/10 dark:bg-[#16181f] dark:text-[#a1a1a6]";
+          empty.textContent = "No hay horarios confirmados ahora. Puedes volver a consultar o escribirnos por WhatsApp para coordinarlo.";
+          slotsEl.appendChild(empty);
+          return;
+        }
+        var actual = slots;
         var porDia = {};
         actual.forEach(function (s) {
           (porDia[s.date] = porDia[s.date] || []).push(s.hora);
         });
 
         var dias = Object.keys(porDia);
-        if (!dias.length) {
-          actual = generarHuecosAutonomos(1);
-          actual.forEach(function (s) { (porDia[s.date] = porDia[s.date] || []).push(s.hora); });
-          dias = Object.keys(porDia);
-        }
-
         dias.forEach(function (dia) {
           var diaEl = document.createElement("div");
           diaEl.className = "mb-2";
@@ -227,30 +185,42 @@ import { BASE, SITE, BACKEND } from "../config";
       }
 
       function cargar() {
-        if (statusEl) statusEl.textContent = "Horarios disponibles de lunes a viernes (hora de España):";
-        // Renderizado instantáneo garantizado (cero espera)
-        slots = generarHuecosAutonomos(offsetDias);
+        slots = [];
+        if (statusEl) statusEl.textContent = "Consultando huecos libres en la agenda…";
         renderSlots();
-
-        // Intento en segundo plano con timeout estricto de 2.5s para no bloquear al usuario
-        if (AVAIL) {
-          var controller = new AbortController();
-          var timer = setTimeout(function () { controller.abort(); }, 2500);
-          fetch(AVAIL, {
-            headers: { "ngrok-skip-browser-warning": "true" },
-            signal: controller.signal
-          })
-            .then(function (r) { clearTimeout(timer); return r.json(); })
-            .then(function (d) {
-              if (d && d.ok && Array.isArray(d.slots) && d.slots.length > 0) {
-                slots = d.slots;
-                renderSlots();
-              }
-            })
-            .catch(function () {
-              // Si falla o no hay conexión, los huecos calculados se mantienen sin interrupción
-            });
+        if (!AVAIL) {
+          if (statusEl) statusEl.textContent = "La reserva online no está disponible ahora.";
+          return;
         }
+        var controller = new AbortController();
+        var timer = setTimeout(function () { controller.abort(); }, 10000);
+        fetch(AVAIL, { headers: { "ngrok-skip-browser-warning": "true" }, signal: controller.signal })
+          .then(function (r) {
+            clearTimeout(timer);
+            if (!r.ok) throw new Error("availability_request_failed");
+            return r.json();
+          })
+          .then(function (d) {
+            var valid = d && d.ok && Array.isArray(d.slots) ? d.slots.filter(function (slot) {
+              var date = slot && String(slot.date || "");
+              var time = slot && String(slot.hora || slot.hhmm || "");
+              if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) return false;
+              var parts = date.split("-").map(Number);
+              var parsed = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+              return parsed.getUTCFullYear() === parts[0] && parsed.getUTCMonth() === parts[1] - 1 && parsed.getUTCDate() === parts[2];
+            }) : [];
+            slots = valid.map(function (slot) { return { date: String(slot.date), hora: String(slot.hora || slot.hhmm) }; });
+            if (statusEl) statusEl.textContent = slots.length
+              ? "Huecos comprobados en la agenda · hora de España."
+              : "La agenda no confirma huecos disponibles.";
+            renderSlots();
+          })
+          .catch(function () {
+            clearTimeout(timer);
+            slots = [];
+            if (statusEl) statusEl.textContent = "No se pudo consultar la agenda. La reserva no está confirmada.";
+            renderSlots();
+          });
       }
 
       function elegir(dia, hora) {
@@ -265,8 +235,6 @@ import { BASE, SITE, BACKEND } from "../config";
 
       if (refreshBtn) {
         refreshBtn.addEventListener("click", function () {
-          offsetDias += 5;
-          if (offsetDias > 20) offsetDias = 0;
           cargar();
         });
       }
@@ -277,11 +245,16 @@ import { BASE, SITE, BACKEND } from "../config";
         var nombre = val("nombre"), email = val("email"), whatsapp = val("whatsapp");
         var fecha = val("fecha"), hora = val("hora"), mensaje = val("mensaje");
         if (!form.querySelector('[name="consentimiento"]').checked) {
-          formStatus.textContent = "Por favor, marca la casilla de consentimiento para continuar.";
+          formStatus.textContent = "Confirma que has leído la información de privacidad para continuar.";
           return;
         }
-        if (!email && !whatsapp) {
-          formStatus.textContent = "Indica al menos un email o un WhatsApp para enviarte el enlace de acceso.";
+        if (!email) {
+          formStatus.textContent = "Indica un email válido para recibir la invitación de calendario.";
+          return;
+        }
+
+        if (!BOOK) {
+          formStatus.textContent = "La reserva online no está disponible ahora. No se ha enviado ni guardado esta solicitud.";
           return;
         }
 
@@ -289,66 +262,41 @@ import { BASE, SITE, BACKEND } from "../config";
         var submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
 
-        var reservaExitosa = false;
-        var calendarLink = "";
-
-        // Generar enlaces directos universales (Google Calendar + WhatsApp)
+        var ctrl = new AbortController();
+        var timer = setTimeout(function () { ctrl.abort(); }, 15000);
         try {
-          var ymd = fecha.replace(/-/g, '');
-          var hm = hora.replace(':', '');
-          var hFin = String(Number(hora.split(':')[0]) + 1).padStart(2, '0') + hora.split(':')[1];
-          var startCal = ymd + 'T' + hm + '00';
-          var endCal = ymd + 'T' + hFin + '00';
-          var calTitle = encodeURIComponent("Diagnóstico de Automatización e IA · VARINO AI (" + nombre + ")");
-          var calDesc = encodeURIComponent("Llamada técnica de 30 min con Joan Pimas (Fundador de VARINO AI).\n\nDetalles del proceso:\n" + (mensaje || "Consultoría general de automatización") + "\n\nContacto cliente: " + email + " / " + whatsapp);
-          calendarLink = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + calTitle + "&dates=" + startCal + "/" + endCal + "&details=" + calDesc + "&location=Google+Meet";
-        } catch (e) {
-          calendarLink = "https://varinoai.me";
-        }
+          var r = await fetch(BOOK, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+            signal: ctrl.signal,
+            body: JSON.stringify({
+              nombre: nombre, email: email, whatsapp: whatsapp, fecha: fecha, hora: hora,
+              interes: "auditoria", mensaje: mensaje, privacy_acknowledged: true, fuente: "web_reservar",
+              website: form.querySelector('[name="website"]').value
+            })
+          });
+          if (!r.ok) throw new Error("booking_request_failed");
+          var d = await r.json();
+          if (!d || d.ok !== true || !d.eventId) throw new Error("booking_not_confirmed");
 
-        var waMsg = "Hola Joan, acabo de solicitar una reunión de diagnóstico de 30 min para el " + fecha + " a las " + hora + " (hora España). Mi nombre es " + nombre + " (" + email + "). " + (mensaje ? "Tema: " + mensaje : "");
-        var waLink = "https://wa.me/34623204319?text=" + encodeURIComponent(waMsg);
-
-        // Guardado local seguro para que jamás se pierda la reserva
-        try {
-          var guardadas = JSON.parse(localStorage.getItem("varino_reservas_usuario") || "[]");
-          guardadas.push({ nombre: nombre, email: email, whatsapp: whatsapp, fecha: fecha, hora: hora, mensaje: mensaje, createdAt: new Date().toISOString() });
-          localStorage.setItem("varino_reservas_usuario", JSON.stringify(guardadas));
-        } catch (e) {}
-
-        // Intentar registrar en n8n con timeout de 3.5s
-        if (BOOK) {
-          try {
-            var ctrl = new AbortController();
-            var t = setTimeout(function () { ctrl.abort(); }, 3500);
-            var r = await fetch(BOOK, {
-              method: "POST",
-              headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-              signal: ctrl.signal,
-              body: JSON.stringify({
-                nombre: nombre, email: email, whatsapp: whatsapp, fecha: fecha, hora: hora,
-                interes: "auditoria", mensaje: mensaje, consentimiento: true, fuente: "web_reservar"
-              })
-            });
-            clearTimeout(t);
-            var d = await r.json();
-            if (d && d.ok) {
-              reservaExitosa = true;
-              if (d.htmlLink) calendarLink = d.htmlLink;
-            }
-          } catch (err) {
-            // El backend no estaba disponible, procedemos con el circuito resiliente de éxito
+          okText.textContent = "La cita está creada para el " + fechaDia(fecha + "T12:00:00") + " a las " + hora + " (hora peninsular española). La invitación se enviará a " + email + ".";
+          if (d.htmlLink) {
+            okLink.href = d.htmlLink;
+            okLink.hidden = false;
+          } else {
+            okLink.hidden = true;
           }
+          okWa.href = "https://wa.me/34623204319?text=" + encodeURIComponent("Hola, tengo una cita VARINO el " + fecha + " a las " + hora + ". Mi nombre es " + nombre + ".");
+          form.reset();
+          form.hidden = true;
+          okBox.hidden = false;
+          okBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        } catch (err) {
+          formStatus.textContent = "No hemos podido confirmar la reserva. No se ha creado una cita ni guardado una copia en este navegador. Vuelve a intentarlo o coordínala por WhatsApp.";
+        } finally {
+          clearTimeout(timer);
+          if (submitBtn) submitBtn.disabled = false;
         }
-
-        // Mostrar pantalla de confirmación garantizada
-        form.hidden = true;
-        okBox.hidden = false;
-        okText.textContent = "Tu llamada queda confirmada para el " + fechaDia(fecha + "T12:00:00") + " a las " + hora + " (hora peninsular española). Te hemos reservado el hueco y te enviaremos los detalles de acceso a " + (email || whatsapp) + ".";
-        okLink.href = calendarLink;
-        okWa.href = waLink;
-        okBox.scrollIntoView({ behavior: "smooth", block: "center" });
-        if (submitBtn) submitBtn.disabled = false;
       });
 
       // Arranque inmediato

@@ -15,15 +15,16 @@ const guideResponse = {
 test("la guía responde y convierte la conversación en arquitectura", async ({ page }) => {
   await page.route("**/api/guide", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(guideResponse) }));
   await page.goto("/experiencia/");
-  const answer = page.getByLabel("Escribe tu mensaje");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
   await answer.fill("Somos una clínica y queremos ordenar documentos sensibles");
   await answer.press("Enter");
   await expect(page.getByText(/quieres ordenar un proceso sensible/i)).toBeVisible();
   await expect(page.getByText(/quién debe aprobar/i)).toBeVisible();
-  await expect(page.locator("[data-service]")).toHaveText("IA privada");
-  await expect(page.getByText("50.5")).toBeVisible();
-  await expect(page.getByText(/32 GB de memoria unificada/i)).toBeVisible();
-  await expect(page.getByRole("link", { name: /Ver IA privada/i })).toHaveAttribute("href", "/servicios/ia-privada/");
+  await expect(guide.locator("[data-service]")).toHaveText("IA privada");
+  await expect(guide.getByText("50.5")).toBeVisible();
+  await expect(guide.getByText(/32 GB de memoria unificada/i)).toBeVisible();
+  await expect(guide.getByRole("link", { name: /Ver IA privada/i })).toHaveAttribute("href", "/servicios/ia-privada/");
 });
 
 // La web publicada es estática: no existe /api/guide. Esta prueba simula esa
@@ -32,12 +33,13 @@ test("la guía responde y convierte la conversación en arquitectura", async ({ 
 test("la guía sigue funcionando sin servidor, como en la web publicada", async ({ page }) => {
   await page.route("**/api/guide", (route) => route.abort());
   await page.goto("/experiencia/");
-  const answer = page.getByLabel("Escribe tu mensaje");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
 
   await answer.fill("Tenemos una clínica dental y perdemos citas");
   await answer.press("Enter");
-  await expect(page.locator("[data-service]")).toHaveText("IA privada");
-  await expect(page.locator("[data-guide-status]")).toContainText(/navegador/i);
+  await expect(guide.locator("[data-service]")).toHaveText("IA privada");
+  await expect(guide.locator("[data-guide-status]")).toContainText(/navegador/i);
 
   await answer.fill("Se nos pierden las solicitudes que llegan por WhatsApp");
   await answer.press("Enter");
@@ -45,18 +47,19 @@ test("la guía sigue funcionando sin servidor, como en la web publicada", async 
   await answer.press("Enter");
   // Con negocio, problema y proceso ya hay horas y precio calculados en local:
   // sin ese mínimo no se presupuesta, para no inventar alcance.
-  await expect(page.locator("[data-budget]")).toBeVisible();
-  await expect(page.locator("[data-budget-hours]")).not.toHaveText("—");
-  await expect(page.locator("[data-hardware]")).toContainText(/GB de memoria unificada/i);
+  await expect(guide.locator("[data-budget]")).toBeVisible();
+  await expect(guide.locator("[data-budget-hours]")).not.toHaveText("—");
+  await expect(guide.locator("[data-hardware]")).toContainText(/GB de memoria unificada/i);
 });
 
 test("la conversación no persiste en el navegador y puede reiniciarse", async ({ page }) => {
   await page.route("**/api/guide", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(guideResponse) }));
   await page.goto("/experiencia/");
-  const answer = page.getByLabel("Escribe tu mensaje");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
   await answer.fill("Quiero mejorar mi proceso");
   await answer.press("Enter");
-  await page.getByRole("button", { name: "Nueva conversación" }).click();
-  await expect(page.getByText(/Empezamos de nuevo/i)).toBeVisible();
+  await guide.getByRole("button", { name: "Nueva conversación" }).click();
+  await expect(guide.getByText(/Empezamos de nuevo/i)).toBeVisible();
   expect(await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length }))).toEqual({ local: 0, session: 0 });
 });
