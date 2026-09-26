@@ -32,7 +32,7 @@ const schema = JSON.stringify({
   title="Clínicas Oftalmológicas en Barcelona — Triaje Cirugía Refractiva y Captación 24/7"
   description="Triaje automatizado de idoneidad para cirugía refractiva y cataratas por WhatsApp en menos de 60s, preevaluación y agenda diagnóstica en Barcelona."
 >
-  <script type="application/ld+json" set:html={schema} />
+  {SITE.launchReady && <script type="application/ld+json" set:html={schema} />}
 
   <!-- HERO SECTION -->
   <section class="relative overflow-hidden pt-20 pb-16 sm:pt-28 sm:pb-24 border-b border-black/5 dark:border-white/10">
@@ -333,7 +333,7 @@ const schema = JSON.stringify({
           Hablemos sobre su clínica oftalmológica
         </h2>
         <p class="mt-4 text-[#6e6e73] dark:text-[#a1a1a6] text-sm">
-          Le responderemos en menos de 24 horas con una propuesta técnica ajustada a su software clínico.
+          El equipo revisará la solicitud y confirmará si puede preparar una propuesta técnica para su software clínico.
         </p>
       </div>
 

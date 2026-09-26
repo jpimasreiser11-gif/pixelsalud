@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import Cta from "../components/Cta.astro";
+import InteractiveMissions from "../components/InteractiveMissions.astro";
 import { SITE } from "../config";
 ---
 
@@ -12,9 +13,13 @@ import { SITE } from "../config";
     <p class="eyebrow">La experiencia VARINO</p>
     <h1 class="display-title max-w-5xl">Proceso claro.<br /><span>Control siempre tuyo.</span></h1>
     <p class="mt-7 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
-      No prometemos magia: ordenamos el trabajo. Empiezas preguntándole a <strong>VARINO AI</strong> (chat,
-      abajo a la derecha) o reservando una llamada, y todo lo demás queda por escrito.
+      No prometemos magia: ordenamos el trabajo. Cuéntale tu caso a <strong>VARINO Guide</strong> y verás cómo
+      se transforma, paso a paso, en una arquitectura y una estimación inicial revisable.
     </p>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-6 pb-14" aria-label="Guía interactiva de VARINO">
+    <InteractiveMissions />
   </section>
 
   <section class="mx-auto max-w-6xl px-6 pb-12">

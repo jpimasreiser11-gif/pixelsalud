@@ -1,13 +1,15 @@
+import { launchReady } from "./lib/launch-config.mjs";
+
 // Fuente única de verdad para marca, oferta y canales de contacto.
 // Los campos vacíos son deliberados: no se publican identidades o canales inventados.
 export const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-// Backend de operaciones (n8n local + túnel estable). La web llama aquí a
-// /webhook/chat, /webhook/lead, /webhook/availability y /webhook/book.
-// enabled:false mantiene la web 100% estática (guía local) si el backend cae.
+// Backend de operaciones (n8n local). Mantener desconectado hasta comprobar que
+// el túnel llega a n8n y no a otro servicio local: no enviar datos de visitantes
+// a un destino sin verificar. La guía estática sigue disponible mientras tanto.
 export const BACKEND = {
-  enabled: true,
-  url: "https://ettie-submicroscopic-gannon.ngrok-free.dev",
+  enabled: false,
+  url: "",
   origin: "https://varinoai.me",
 } as const;
 
@@ -29,7 +31,7 @@ export const SITE = {
   name: "VARINO",
   brandDisplay: "VARINO",
   brandSuffix: "",
-  launchReady: true,
+  launchReady,
   domainVerified: true,
   trademarkReviewed: false,
   url: "https://varinoai.me",

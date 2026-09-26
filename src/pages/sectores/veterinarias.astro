@@ -32,7 +32,7 @@ const schema = JSON.stringify({
   title="Hospitales Veterinarios 24h en Barcelona — Triaje UCI y Urgencias"
   description="Triaje automatizado de urgencias veterinarias 24h por WhatsApp, clasificación clínica en menos de 45s y pre-aviso directo a UCI y quirófano en Barcelona."
 >
-  <script type="application/ld+json" set:html={schema} />
+  {SITE.launchReady && <script type="application/ld+json" set:html={schema} />}
 
   <!-- HERO SECTION -->
   <section class="relative overflow-hidden pt-20 pb-16 sm:pt-28 sm:pb-24 border-b border-black/5 dark:border-white/10">
@@ -701,7 +701,7 @@ const schema = JSON.stringify({
           "mailto:" + fallbackEmail + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(cuerpo);
 
         if (statusEl) {
-          statusEl.textContent = "✓ Preparando correo seguro para el equipo de VARINO. Te responderemos en < 24 h.";
+          statusEl.textContent = "Se ha preparado un correo. Solo se enviará cuando pulses Enviar en tu aplicación de correo.";
         }
       }
 
@@ -760,7 +760,7 @@ const schema = JSON.stringify({
             .then(function (data) {
               if (data && data.ok) {
                 if (statusEl) {
-                  statusEl.textContent = "✓ Solicitud recibida. Joan Pimas Reiser contactará con la dirección médica en menos de 24 horas.";
+                  statusEl.textContent = "✓ Solicitud recibida. El equipo revisará la información.";
                 }
                 form.reset();
                 recalcularCapacidad();

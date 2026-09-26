@@ -38,9 +38,10 @@ import { SITE } from "../config";
         <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">2. Finalidad del Tratamiento de los Datos</h2>
         <p>En {SITE.name} tratamos la información que nos facilitan las personas interesadas con las siguientes finalidades exclusivas:</p>
         <ul class="mt-2 space-y-1.5 list-disc pl-5">
-          <li><strong>Gestión de consultas y solicitudes:</strong> Atender las peticiones de contacto, presupuestos y solicitudes de información recibidas por los canales que se habiliten.</li>
+          <li><strong>Gestión de consultas y solicitudes:</strong> Atender peticiones recibidas por los formularios, chat y agenda, y preparar una respuesta o propuesta solicitada.</li>
           <li><strong>Ejecución de Servicios Contratados:</strong> Desarrollar, desplegar y mantener los proyectos de automatización, software e inteligencia artificial acordados con clientes.</li>
-          <li><strong>Cumplimiento de Obligaciones Legales:</strong> Facturación, contabilidad y cumplimiento fiscal exigible.</li>
+         <li><strong>Cumplimiento de Obligaciones Legales:</strong> Facturación, contabilidad y cumplimiento fiscal exigible.</li>
+          <li><strong>Medición básica:</strong> La versión actual puede remitir al backend la ruta visitada, el dominio de referencia y el idioma del navegador; no usa identificadores publicitarios.</li>
         </ul>
       </div>
 
@@ -58,13 +59,21 @@ import { SITE } from "../config";
       <!-- Conservación -->
       <div>
         <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">4. Plazo de Conservación de los Datos</h2>
-        <p>Las consultas se conservarán solo durante el tiempo necesario para responder y gestionar la relación precontractual. Si existe una relación contractual, la documentación se conservará durante los plazos aplicables a cada obligación y posible responsabilidad. Los libros, correspondencia, documentación y justificantes del negocio tienen, con carácter general, un plazo mercantil de seis años desde el último asiento, sin perjuicio de plazos tributarios o especiales distintos.</p>
+        <p>La configuración de borrado automático y los plazos concretos del CRM, las ejecuciones de n8n, los registros del alojamiento y el correo aún deben verificarse. No se publica aquí un plazo como si ya estuviera configurado. Antes de publicar esta política hay que fijar y aplicar criterios de eliminación para consultas no convertidas, datos de agenda, registros técnicos y documentación contractual o fiscal.</p>
       </div>
 
       <!-- Destinatarios -->
       <div>
         <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">5. Comunicación de Datos a Terceros</h2>
-        <p>Los destinatarios y proveedores deberán enumerarse aquí cuando se hayan decidido los servicios reales de formularios, analítica, alojamiento e inteligencia artificial. No debe publicarse este apartado hasta completar esa revisión.</p>
+        <p>Según la función solicitada y solo cuando el backend esté operativo, los datos pueden pasar por:</p>
+        <ul class="mt-2 space-y-1.5 list-disc pl-5">
+          <li><strong>GitHub Pages:</strong> publicación y alojamiento de esta web.</li>
+          <li><strong>ngrok:</strong> túnel HTTPS que comunica el navegador con el n8n autoalojado; no significa que el recorrido sea exclusivamente local.</li>
+          <li><strong>n8n y Ollama:</strong> automatización y generación de respuestas con el modelo configurado localmente.</li>
+          <li><strong>Google Sheets, Gmail y Google Calendar:</strong> CRM, correo e invitaciones de agenda cuando el flujo correspondiente se ejecuta.</li>
+          <li><strong>Telegram:</strong> avisos operativos al responsable, si el flujo correspondiente los genera.</li>
+        </ul>
+        <p class="mt-2">Falta confirmar los roles contractuales, regiones de tratamiento, transferencias internacionales aplicables, acuerdos de encargo y configuración de retención de cada proveedor. Esta lista describe integraciones presentes en los flujos; no afirma que todas se activen para cada visitante.</p>
       </div>
 
       <!-- Derechos -->
@@ -78,12 +87,12 @@ import { SITE } from "../config";
           <li>Solicitar la limitación u oposición a su tratamiento.</li>
           <li>Solicitar la portabilidad de sus datos.</li>
         </ul>
-        <p class="mt-3">El canal para ejercer estos derechos se publicará aquí antes de que la web empiece a recoger datos. Podrá solicitarse información adicional únicamente cuando sea necesaria para verificar la identidad de quien ejerce el derecho. Asimismo, puede presentar una reclamación ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" class="text-[#0071e3] underline">www.aepd.es</a>).</p>
+        <p class="mt-3">Puedes solicitar el ejercicio de tus derechos escribiendo a <a class="text-[#0071e3] underline" href={`mailto:${SITE.email}`}>{SITE.email}</a>. Se podrá pedir información adicional únicamente cuando sea necesaria para verificar la identidad. También puedes reclamar ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" class="text-[#0071e3] underline">www.aepd.es</a>). El responsable debe verificar y atender ese canal antes de publicar esta política.</p>
       </div>
 
       <div>
         <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">7. Funcionamiento de esta versión</h2>
-        <p>La guía pública calcula la orientación dentro del navegador y no conserva la conversación. El formulario sin canal configurado únicamente copia un briefing al portapapeles del visitante. No se usan analítica, publicidad ni rastreadores de terceros. La preferencia de tema se guarda localmente en el navegador.</p>
+        <p>El chat envía el mensaje y un historial limitado al endpoint de n8n para generar una respuesta con Ollama. El formulario de contacto transmite los datos facilitados al CRM y puede activar un aviso operativo. La agenda transmite fecha, hora y datos de contacto para comprobar disponibilidad y, si se confirma, crear una invitación. La analítica envía ruta, dominio de referencia e idioma. En esta rama, el historial del chat y los datos del formulario no se guardan en el almacenamiento del navegador; la preferencia de tema sí se guarda allí. Los registros técnicos de los proveedores pueden incluir datos de conexión como la dirección IP. No se debe introducir información sensible ni datos de terceros en el asistente.</p>
       </div>
 
     </div>

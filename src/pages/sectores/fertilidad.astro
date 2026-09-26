@@ -32,7 +32,7 @@ const schema = JSON.stringify({
   title="Clínicas de Fertilidad en Barcelona — Triaje Confidencial 24/7 y Captación FIV"
   description="Triaje confidencial para clínicas de reproducción asistida y fertilidad por WhatsApp en menos de 60s, precalificación de perfil reproductivo y agenda diagnóstica en Barcelona."
 >
-  <script type="application/ld+json" set:html={schema} />
+  {SITE.launchReady && <script type="application/ld+json" set:html={schema} />}
 
   <!-- HERO SECTION -->
   <section class="relative overflow-hidden pt-20 pb-16 sm:pt-28 sm:pb-24 border-b border-black/5 dark:border-white/10">

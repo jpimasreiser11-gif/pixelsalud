@@ -1,32 +1,23 @@
 import { test, expect } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
-  // No personal data, CRM writes, or real model calls during UI tests.
-  await page.route('**/webhook/**', async route => {
-    await route.fulfill({ json: { ok: true, reply: 'Entendido. ¿Qué herramientas utilizas?' } });
+test('el chat desconectado ofrece una ruta útil y no finge ser IA', async ({ page }) => {
+  const backendRequests: string[] = [];
+  page.on('request', request => {
+    if (/\/webhook\/|ollama|ngrok/i.test(request.url())) backendRequests.push(request.url());
   });
-});
 
-test('reabrir el chat no duplica el historial', async ({ page }) => {
   await page.goto('/');
+  await expect(page.locator('[data-aichat-open]')).toHaveText(/Guía VARINO/);
   await page.locator('[data-aichat-open]').click();
-  await page.locator('[data-aichat-input]').fill('Quiero automatizar presupuestos');
-  await page.locator('[data-aichat-form]').getByRole('button', { name: 'Enviar', exact: true }).click();
-  await expect(page.locator('.aichat-bubble').last()).toHaveText('Entendido. ¿Qué herramientas utilizas?');
+  await expect(page.locator('[data-aichat-offline]')).toBeVisible();
+  await expect(page.locator('[data-aichat-offline]')).toContainText('La IA conversacional no está conectada');
+  await expect(page.locator('[data-aichat-form]')).toHaveCount(0);
+  await expect(page.locator('[data-aichat-lead]')).toHaveCount(0);
+  await expect(page.locator('[data-aichat-offline] a').first()).toHaveAttribute('href', /experiencia/);
+
   await page.locator('[data-aichat-close]').click();
   await page.locator('[data-aichat-open]').click();
-  await expect(page.locator('.aichat-bubble')).toHaveCount(2);
-});
-
-test('el chat conserva más de ocho mensajes de contexto', async ({ page }) => {
-  await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('varino_aichat_msgs', JSON.stringify(
-    Array.from({ length: 20 }, (_, i) => ({ role: i % 2 ? 'assistant' : 'user', content: `Dato ${i}` }))
-  )));
-  await page.reload();
-  await page.locator('[data-aichat-open]').click();
-  await page.locator('[data-aichat-input]').fill('Continúa con lo que te he explicado');
-  const request = page.waitForRequest('**/webhook/chat');
-  await page.locator('[data-aichat-form]').getByRole('button', { name: 'Enviar', exact: true }).click();
-  expect((await request).postDataJSON().history).toHaveLength(20);
+  await expect(page.locator('[data-aichat-offline]')).toHaveCount(1);
+  expect(await page.evaluate(() => localStorage.length)).toBe(0);
+  expect(backendRequests).toEqual([]);
 });

@@ -5,7 +5,8 @@ import { SITE } from "../config";
 
 <Base
   title={`Cookies y almacenamiento local — ${SITE.name}`}
-  description="Información sobre el almacenamiento técnico utilizado por la web."
+ description="Información sobre el almacenamiento técnico utilizado por la web."
+  noindex={true}
 >
   <section class="mx-auto max-w-4xl px-6 py-20">
     <p class="eyebrow">Privacidad</p>
@@ -16,30 +17,31 @@ import { SITE } from "../config";
       <div>
         <h2 class="text-lg font-semibold text-[#1d1d1f] dark:text-white">Qué utiliza esta versión</h2>
         <p class="mt-2">
-          La versión actual no incorpora analítica, publicidad ni cookies de terceros. El navegador solo guarda
-          la preferencia de tema claro u oscuro en <code>localStorage</code> con la clave <code>varino_theme</code>.
-          La conversación con la guía se procesa en tu propio navegador y no se almacena: al cerrar la página desaparece.
+          Esta rama no escribe cookies ni instala identificadores publicitarios. Guarda la preferencia de tema claro u oscuro en
+          <code>localStorage</code> con la clave <code>varino_theme</code>. El chat y los formularios envían datos al backend de VARINO
+          cuando está disponible; el texto del chat y los datos de contacto ya no se guardan en el almacenamiento del navegador en
+          esta versión. Las visitas envían ruta, dominio de referencia e idioma a la analítica propia. La petición también puede ser
+          tratada técnicamente por el alojamiento y el túnel de conexión. No equivale a una analítica anónima solo por no usar cookies.
         </p>
       </div>
       <div>
         <h2 class="text-lg font-semibold text-[#1d1d1f] dark:text-white">Cómo eliminar la preferencia</h2>
         <p class="mt-2">
-          Puedes borrar los datos del sitio desde la configuración de privacidad de tu navegador. Si en el futuro
-          se añade analítica u otro rastreador, esta página y el mecanismo de consentimiento deberán actualizarse
-          antes de activarlo.
+          Una versión anterior podía haber dejado en este navegador el historial del chat o datos escritos en los formularios.
+          La actualización detiene nuevas escrituras, pero no borra silenciosamente esos datos antiguos: puedes eliminar los datos
+          de varinoai.me desde la configuración de privacidad del navegador. La revisión legal del almacenamiento y la analítica
+          sigue pendiente; esta página no concluye que no haga falta consentimiento o banner.
         </p>
       </div>
     </div>
   </section>
 
   <section class="mx-auto max-w-4xl px-6 pb-20">
-    <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">Analítica sin cookies</h2>
+    <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">Medición de visitas</h2>
     <p class="text-sm leading-7 text-[#6e6e73] dark:text-[#a1a1a6]">
-      Para saber qué páginas resultan útiles medimos visitas con una <strong>analítica propia que no usa cookies
-      ni identificadores persistentes</strong>: solo registramos la ruta, el dominio de procedencia y el idioma.
-      No creamos perfiles ni compartimos datos con terceros, por lo que <strong>no necesitas aceptar ningún
-      banner</strong>. El único almacenamiento local es técnico (preferencia de tema y el hilo del chat en tu
-      navegador), y puedes borrarlo desde los ajustes de tu navegador.
+      La analítica transmite ruta, dominio de referencia e idioma al backend; el servidor y los proveedores de red pueden tratar
+      metadatos técnicos como la dirección IP. Aún no se ha verificado una evaluación documentada de base jurídica, retención y
+      alcance de proveedores. Por tanto, esta página no concluye que no haga falta consentimiento o banner.
     </p>
   </section>
 

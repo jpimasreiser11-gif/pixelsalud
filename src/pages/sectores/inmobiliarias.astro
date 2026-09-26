@@ -32,7 +32,7 @@ const schema = JSON.stringify({
   title="Inmobiliarias de Alto Standing en Barcelona"
   description="Filtro automatizado de compradores VIP, pre-calificación de solvencia y pre-KYC (Ley 10/2010) para agencias inmobiliarias de lujo en Barcelona."
 >
-  <script type="application/ld+json" set:html={schema} />
+  {SITE.launchReady && <script type="application/ld+json" set:html={schema} />}
 
   <!-- HERO SECTION -->
   <section class="relative overflow-hidden pt-20 pb-16 sm:pt-28 sm:pb-24 border-b border-black/5 dark:border-white/10">
@@ -552,7 +552,7 @@ const schema = JSON.stringify({
                 class="text-xs text-[#6e6e73] dark:text-[#a1a1a6]"
                 aria-live="polite"
               >
-                Respuesta confidencial en menos de 24 horas por Joan Pimas Reiser.
+                Revisamos la solicitud y confirmamos el alcance antes de proponer una solución.
               </p>
             </div>
           </form>
@@ -827,7 +827,7 @@ const schema = JSON.stringify({
           "mailto:" + fallbackEmail + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(cuerpo);
 
         if (statusEl) {
-          statusEl.textContent = "✓ Preparando correo seguro para el equipo de VARINO. Te responderemos en < 24 h.";
+          statusEl.textContent = "Se ha preparado un correo. Solo se enviará cuando pulses Enviar en tu aplicación de correo.";
         }
       }
 
@@ -886,7 +886,7 @@ const schema = JSON.stringify({
             .then(function (data) {
               if (data && data.ok) {
                 if (statusEl) {
-                  statusEl.textContent = "✓ Solicitud recibida. Joan Pimas Reiser contactará con la agencia en menos de 24 horas.";
+                  statusEl.textContent = "✓ Solicitud recibida. El equipo revisará la información.";
                 }
                 form.reset();
                 recalcularCapacidad();

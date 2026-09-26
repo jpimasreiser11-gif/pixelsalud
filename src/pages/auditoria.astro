@@ -89,7 +89,7 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
             mensaje: "Ha completado el formulario del diagnóstico CAIO en /auditoria."
           })
         }).then(function (r) { return r.json(); }).then(function (d) {
-          if (d && d.ok) { if (statusEl) statusEl.textContent = "✓ Recibido. El equipo de VARINO te escribirá en breve."; form.reset(); }
+          if (d && d.ok) { if (statusEl) statusEl.textContent = "✓ Solicitud recibida. El equipo revisará la información."; form.reset(); }
           else if (statusEl) statusEl.textContent = "No se pudo enviar. Escríbenos a varinoagency@gmail.com.";
         }).catch(function () {
           if (statusEl) statusEl.textContent = "Sin conexión. Escríbenos a varinoagency@gmail.com.";

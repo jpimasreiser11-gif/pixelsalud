@@ -11,6 +11,9 @@ test("la portada empieza limpia y sin la antigua entrada de scroll", async ({ pa
 });
 
 test("la portada no tiene fallos axe serios o críticos", async ({ page }) => {
+  // Escanea la versión accesible con movimiento reducido; las animaciones
+  // de entrada no deben dejar texto a media opacidad durante el análisis.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations.filter((violation) => ["serious", "critical"].includes(violation.impact || ""))).toEqual([]);
