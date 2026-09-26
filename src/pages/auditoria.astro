@@ -9,7 +9,7 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
     <p class="eyebrow">Diagnóstico CAIO</p>
     <h1 class="display-title max-w-5xl">Antes de automatizar,<br /><span>decidimos qué merece existir.</span></h1>
     <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_.55fr]">
-      <p class="max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">VARINO AI ordena una primera conversación en el chat (abajo a la derecha). El diagnóstico profesional valida el proceso, prioriza oportunidades y deja por escrito alcance, riesgos y siguiente inversión.</p>
+      <p class="max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">La guía interactiva de la web ayuda a perfilar el caso. El diagnóstico profesional valida el proceso, prioriza oportunidades y deja por escrito alcance, riesgos y siguiente inversión.</p>
       <div class="border-l border-black/10 pl-6 dark:border-white/10"><span class="text-xs text-[#6e6e73]">Precio cerrado</span><strong class="mt-1 block text-3xl">290 € + IVA</strong><p class="mt-2 text-xs leading-5 text-[#6e6e73]">Se descuenta íntegramente si contratas la implementación propuesta.</p></div>
     </div>
   </section>
@@ -23,9 +23,9 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
 
   <section class="mx-auto max-w-3xl px-6 pb-6">
     <div class="rounded-3xl border border-black/10 bg-[#f7f7f5] p-7 dark:border-white/10 dark:bg-[#111318] sm:p-9">
-      <p class="eyebrow">Diagnóstico gratuito</p>
-      <h2 class="mt-2 text-2xl font-semibold sm:text-3xl">¿Prefieres que el equipo de {SITE.name} te escriba?</h2>
-      <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">Te contactamos para una primera conversación sin compromiso y preparamos un mapa de tu proceso.</p>
+      <p class="eyebrow">Primera llamada gratuita · 30 min</p>
+      <h2 class="mt-2 text-2xl font-semibold sm:text-3xl">¿Prefieres que el equipo de {SITE.name} te escriba para coordinarla?</h2>
+      <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">La llamada de encaje no tiene coste y no incluye informe ni entregable. Si después quieres el análisis con mapa, prioridades, riesgos y presupuesto, el Diagnóstico CAIO cuesta 290 € + IVA y se descuenta si contratas la implementación propuesta.</p>
 
       <form id="form-auditoria" data-lead={BACKEND_LEAD} class="mt-6 space-y-3">
         <input type="hidden" name="website" value="" aria-hidden="true" tabindex="-1" autocomplete="off" />
@@ -57,7 +57,7 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
           <span>Acepto que VARINO guarde estos datos para contactarme, según su <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">política de privacidad</a>.</span>
         </label>
         <button type="submit" class="w-full rounded-full bg-[#0071e3] px-6 py-3 font-semibold text-white transition hover:bg-[#0077ed] text-xs shadow-lg shadow-[#0071e3]/20 sm:w-auto">
-          Quiero que me contacten →
+          Solicitar llamada gratuita →
         </button>
         <p class="text-[11px] text-[#6e6e73] dark:text-[#a1a1a6]" aria-live="polite" data-form-status></p>
       </form>
@@ -86,7 +86,7 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
             nombre: nombre, email: email, whatsapp: whatsapp, empresa: "",
             interes: val("interes") || "otro", fuente: "form-auditoria",
             pagina: location.pathname, consentimiento: true,
-            mensaje: "Ha completado el formulario del diagnóstico CAIO en /auditoria."
+            mensaje: "Ha solicitado una llamada de encaje gratuita desde /auditoria."
           })
         }).then(function (r) { return r.json(); }).then(function (d) {
           if (d && d.ok) { if (statusEl) statusEl.textContent = "✓ Solicitud recibida. El equipo revisará la información."; form.reset(); }

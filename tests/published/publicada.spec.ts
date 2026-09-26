@@ -65,6 +65,19 @@ test("publica el dominio canonico y el logo de la pestaña", async ({ page }) =>
   await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute("href", "/apple-touch-icon.png");
 });
 
+test("distingue la llamada gratuita del Diagnóstico CAIO de pago", async ({ page }) => {
+  await page.goto("precios/");
+  await expect(page.getByRole("heading", { name: "Diagnóstico CAIO" })).toBeVisible();
+  await expect(page.getByText("290 € + IVA").first()).toBeVisible();
+  await expect(page.getByText(/llamada de encaje gratuita de 30 minutos, sin informe ni entregable/i)).toBeVisible();
+  await expect(page.getByText(/auditoría gratuita/i)).toHaveCount(0);
+
+  await page.goto("auditoria/");
+  await expect(page.getByText(/llamada de encaje no tiene coste y no incluye informe ni entregable/i)).toBeVisible();
+  await expect(page.getByText(/Diagnóstico CAIO cuesta 290 € \+ IVA/i)).toBeVisible();
+  await expect(page.getByRole("button", { name: /Solicitar llamada gratuita/i })).toBeVisible();
+});
+
 test("el tema y el menú funcionan bajo la CSP publicada", async ({ page, isMobile }) => {
   const bloqueos: string[] = [];
   page.on("console", (msg) => {
