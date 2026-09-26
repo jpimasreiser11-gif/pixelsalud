@@ -70,3 +70,43 @@ Consulta puntual de las páginas públicas el 26-09-2026. Los importes pueden ca
 - [n8n Cloud](https://n8n.io/pricing/): licencia base de 20 €/mes facturada anualmente y 2.500 ejecuciones, útil para separar herramienta/infraestructura del servicio profesional. No se usa como benchmark del coste de implementación.
 
 No se puede inferir de estas páginas cuál proveedor convierte mejor, retiene clientes o entrega con mayor calidad. La acción correcta para VARINO es probar su oferta con métricas propias después de contar con funnel, consentimiento, CRM y servicio operativo verificables.
+
+## Segunda pasada de competidores y paquetes — 26 septiembre 2026
+
+Se amplió la muestra con cuatro proveedores cuyas páginas exponen paquetes, mantenimiento o un proceso de diagnóstico. Los precios y garantías siguientes son declaraciones comerciales publicadas por cada proveedor; no se han auditado contratos, entregas ni resultados. La página consultada no siempre aclara IVA o condiciones completas.
+
+| Proveedor | Precio y paquete que publica | Señales de posicionamiento y límites de la evidencia |
+|---|---|---|
+| [AUVORA](https://automatizacionprocesos.es/precios) | Starter desde 1.500 € (1–2 procesos con n8n/Make, formación y 30 días de soporte); agente IA desde 3.500 €; transformación desde 8.000 € (4–6 automatizaciones, 2 agentes y 6 meses de soporte). | Diagnóstico inicial gratuito, escalera explícita y costes de herramientas/LLM separados según su FAQ. También anuncia ROI estimado; es una estimación propia, no un benchmark. IVA no identificado en la página revisada. |
+| [LaudeMMedia](https://www.laudemmedia.com/cuanto-cuesta-automatizar-una-empresa/) | Guía 2026: implantación 1.500–15.000 € y mantenimiento 100–800 €/mes; desglosa flujos simples, medios, con IA e integrales. | Separa consultoría, construcción, licencias y mantenimiento. Sus cifras de horas recuperadas y retorno son afirmaciones del proveedor, no resultados independientes ni base para prometer ahorros a VARINO. |
+| [La Bahía Digital](https://labahiadigital.es/automatizaciones/) | Pack inicial desde 990 € (tres flujos); proyecto con n8n autohospedado desde 2.890 €; mantenimiento opcional desde 149 €/mes. | Publica auditoría, diseño, pruebas/monitorización, documentación, formación y 60 días de soporte. Sus “casos reales” y resultados (“cero leads perdidos”, aumentos de conversión) son afirmaciones propias, no auditadas por esta investigación. |
+| [Chronomatic](https://chronomatic.es/agencia/automatizacion-procesos/) | Auditoría estratégica anunciada a 140 € y descontada si se contrata; puesta en marcha 800–2.500 €; mantenimiento opcional 200 €/mes. | Detalla propiedad de flujos en cuenta del cliente, límite de decisión humana, reintentos y cola manual de fallos; anuncia garantía de 14 días y ausencia de permanencia. Verificar alcance y condiciones en contrato antes de compararlo como garantía equivalente. |
+
+### Lectura comercial actualizada
+
+- **No existe un precio único comparable.** En esta muestra conviven flujos sencillos desde 300 €, auditorías pagadas, paquetes iniciales cercanos a 1.000–1.500 €, implantaciones de varios miles y mantenimiento de 100–800 €/mes. El alcance, IVA, software, soporte y responsabilidad sobre fallos cambian la comparación.
+- **La oferta de VARINO no puede venderse como la más barata.** El Automation Sprint de 950–1.900 € se solapa con el pack de 990 € de La Bahía y queda por debajo de varios Starter desde 1.500 €. Hay que definir claramente el límite de un proceso, integraciones, casos de prueba, formación y qué se paga aparte; de lo contrario, el precio bajo puede parecer incompleto.
+- **Diagnóstico gratis y pagado coexisten.** Conviene mantener una primera conversación breve sin coste para filtrar encaje y vender el Diagnóstico CAIO pagado solo como entregable concreto (informe, mapa, priorización y presupuesto), sin llamarlo gratuito ni duplicar la llamada.
+- **El mantenimiento de 149 €/mes ya no es diferencial por precio.** La Bahía publica el mismo punto de entrada, Chronomatic 200 €/mes y LaudeMMedia 100–800 €/mes. VARINO debe defenderlo con horas incluidas, horario, prioridad, severidad, exclusiones y costes externos; no con “mantenimiento incluido” ambiguo.
+- **Propiedad y continuidad son parte del producto.** Cuenta a nombre del cliente, exportación, documentación, credenciales fuera del código, sustitución manual y tratamiento de errores aparecen como argumentos de confianza. No son exclusivos de VARINO: la diferencia solo se acredita con contrato y una entrega real.
+- **No copiar retornos comerciales.** Algunas páginas afirman ROI o ahorro típico sin publicar metodología verificable. VARINO debe mostrar fórmulas como hipótesis del cliente, medir línea base y publicar resultados propios únicamente con evidencia y autorización.
+
+## Oportunidades de búsqueda orgánica (sin volúmenes)
+
+La revisión observó páginas posicionadas o indexables para intención de precio, diagnóstico y comparación; eso no permite inferir tráfico, dificultad ni conversiones. No se dispone aquí de Search Console, Keyword Planner ni métricas propias. Tratar estos términos como hipótesis para validar, no como demanda demostrada:
+
+| Intención | Clúster a validar | Destino útil de VARINO |
+|---|---|---|
+| Comercial: precio | “cuánto cuesta automatizar una empresa”, “precio automatización n8n”, “mantenimiento n8n empresa” | `/precios/`, `/planes/` y una guía de presupuesto con costes externos, IVA y exclusiones claros. |
+| Comercial: proveedor/servicio | “consultoría automatización procesos”, “agencia n8n”, “automatización con IA para pymes” | Página del Automation Sprint y página de capacidades, con alcance, pruebas, propiedad y proceso reales. |
+| Comparativa | “n8n vs Make vs Zapier” | Comparativa basada en volumen, alojamiento, integraciones, mantenimiento y coste total; actualizar versiones/precios antes de indexar. |
+| Caso de uso | “automatizar [proceso] con n8n” (por ejemplo, formulario → CRM, extracción documental con aprobación humana) | Recurso explicativo/demo etiquetado como hipotético, sin resultados de clientes inventados. |
+
+**Regla de publicación:** la rama permanece en prelanzamiento/noindex y la web pública actual todavía tiene problemas de privacidad y contenido antiguo. No solicitar indexación, crear páginas masivas por sector ni dirigir tráfico pagado hasta desplegar y volver a verificar la versión aprobada. Priorizar pocas páginas originales y útiles; añadir sectores solo cuando exista contenido específico, controles y casos autorizados. La ausencia de datos de búsqueda no justifica afirmar que un clúster es rentable.
+
+## Fuentes añadidas
+
+- [AUVORA — precios](https://automatizacionprocesos.es/precios), consulta 26-09-2026.
+- [LaudeMMedia — costes de automatización 2026](https://www.laudemmedia.com/cuanto-cuesta-automatizar-una-empresa/), consulta 26-09-2026.
+- [La Bahía Digital — automatizaciones](https://labahiadigital.es/automatizaciones/), consulta 26-09-2026.
+- [Chronomatic — agencia de automatización](https://chronomatic.es/agencia/automatizacion-procesos/), consulta 26-09-2026.
