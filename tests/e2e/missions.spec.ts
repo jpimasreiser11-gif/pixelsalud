@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
 
-// Respuesta del servidor local en desarrollo. La forma es la que devuelve
-// guide-engine, con un modelo que existe de verdad en Ollama.
+// Respuesta simulada del servidor local en desarrollo: incluye la etiqueta del
+// modelo que el servidor solo devuelve tras confirmar que Ollama respondió.
 const guideResponse = {
+  model: "qwen3:14b",
   reply: "Entiendo: quieres ordenar un proceso sensible sin perder el control.",
   nextQuestion: "¿Quién debe aprobar el resultado antes de enviarlo?",
   stage: "architecture",
@@ -22,9 +23,27 @@ test("la guía responde y convierte la conversación en arquitectura", async ({ 
   await expect(page.getByText(/quieres ordenar un proceso sensible/i)).toBeVisible();
   await expect(page.getByText(/quién debe aprobar/i)).toBeVisible();
   await expect(guide.locator("[data-service]")).toHaveText("IA privada");
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Modelo local · qwen3:14b");
   await expect(guide.getByText("50.5")).toBeVisible();
   await expect(guide.getByText(/32 GB de memoria unificada/i)).toBeVisible();
   await expect(guide.getByRole("link", { name: /Ver IA privada/i })).toHaveAttribute("href", "/servicios/ia-privada/");
+});
+
+test("la guía no afirma que Ollama funciona si el endpoint responde sin modelo", async ({ page }) => {
+  await page.route("**/api/guide", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ ...guideResponse, model: null }),
+  }));
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
+
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Modelo local: se comprueba al responder");
+  await answer.fill("Somos una clínica y queremos ordenar documentos sensibles");
+  await answer.press("Enter");
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía base · sin modelo local");
+  await expect(guide.locator(".ai-message--assistant").last()).toContainText(/Entiendo:/i);
 });
 
 // La web publicada es estática: no existe /api/guide. Esta prueba simula esa
@@ -39,7 +58,8 @@ test("la guía sigue funcionando sin servidor, como en la web publicada", async 
   await answer.fill("Tenemos una clínica dental y perdemos citas");
   await answer.press("Enter");
   await expect(guide.locator("[data-service]")).toHaveText("IA privada");
-  await expect(guide.locator("[data-guide-status]")).toContainText(/navegador/i);
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía base · conexión local no disponible");
+  await expect(guide.locator("[data-guide-status]")).not.toContainText(/modelo local activo/i);
 
   await answer.fill("Se nos pierden las solicitudes que llegan por WhatsApp");
   await answer.press("Enter");

@@ -134,7 +134,8 @@ test("la guía razona en el navegador sin ninguna llamada de red", async ({ page
   await caja.fill("Tenemos una clínica dental en Valencia");
   await caja.press("Enter");
   await esperar();
-  await expect(guide.locator("[data-guide-status]")).toContainText(/navegador/i);
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía interactiva en navegador");
+  await expect(guide.locator("[data-guide-status]")).not.toContainText(/modelo local activo/i);
 
   await caja.fill("Perdemos citas porque las peticiones llegan por WhatsApp y teléfono");
   await caja.press("Enter");
