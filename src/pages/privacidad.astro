@@ -39,6 +39,7 @@ import { SITE } from "../config";
         <p>En {SITE.name} tratamos la información que nos facilitan las personas interesadas con las siguientes finalidades exclusivas:</p>
         <ul class="mt-2 space-y-1.5 list-disc pl-5">
           <li><strong>Gestión de consultas y solicitudes:</strong> Atender peticiones recibidas por los formularios, chat y agenda, y preparar una respuesta o propuesta solicitada.</li>
+          <li><strong>Comunicaciones comerciales opcionales:</strong> Solo si la persona marca una casilla separada, no premarcada, para recibir novedades, consejos y ofertas. No es necesaria para responder a una solicitud.</li>
           <li><strong>Ejecución de Servicios Contratados:</strong> Desarrollar, desplegar y mantener los proyectos de automatización, software e inteligencia artificial acordados con clientes.</li>
          <li><strong>Cumplimiento de Obligaciones Legales:</strong> Facturación, contabilidad y cumplimiento fiscal exigible.</li>
           <li><strong>Medición básica:</strong> La versión actual puede remitir al backend la ruta visitada, el dominio de referencia y el idioma del navegador; no usa identificadores publicitarios.</li>
@@ -52,7 +53,7 @@ import { SITE } from "../config";
         <ul class="mt-2 space-y-1.5 list-disc pl-5">
           <li><strong>Medidas precontractuales o ejecución de contrato (Art. 6.1.b RGPD):</strong> Para responder a una solicitud iniciada por la persona interesada, preparar una propuesta y prestar los servicios contratados.</li>
           <li><strong>Cumplimiento Legal (Art. 6.1.c RGPD):</strong> Obligaciones fiscales y contables derivadas de la relación mercantil.</li>
-          <li><strong>Consentimiento (Art. 6.1.a RGPD):</strong> Solo para finalidades adicionales que realmente lo requieran, como comunicaciones comerciales, mediante una aceptación separada y revocable. Esta versión no las realiza.</li>
+          <li><strong>Consentimiento (Art. 6.1.a RGPD):</strong> Para comunicaciones comerciales, únicamente mediante una casilla opcional, separada y revocable. La solicitud del servicio no depende de marcarla. La automatización de estos mensajes permanece desactivada hasta verificar el registro de la elección, la baja y la lista de supresión.</li>
         </ul>
       </div>
 
@@ -92,7 +93,8 @@ import { SITE } from "../config";
 
       <div>
         <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">7. Funcionamiento de esta versión</h2>
-        <p>El chat envía el mensaje y un historial limitado al endpoint de n8n para generar una respuesta con Ollama. El formulario de contacto transmite los datos facilitados al CRM y puede activar un aviso operativo. La agenda transmite fecha, hora y datos de contacto para comprobar disponibilidad y, si se confirma, crear una invitación. La analítica envía ruta, dominio de referencia e idioma. En esta rama, el historial del chat y los datos del formulario no se guardan en el almacenamiento del navegador; la preferencia de tema sí se guarda allí. Los registros técnicos de los proveedores pueden incluir datos de conexión como la dirección IP. No se debe introducir información sensible ni datos de terceros en el asistente.</p>
+        <p>En esta rama previa al lanzamiento, el backend está deshabilitado: el asistente IA, el alta al CRM, las reservas y la analítica no transmiten datos a n8n. El formulario de contacto solo prepara o copia un briefing en el dispositivo. La preferencia de tema se guarda localmente. La versión pública observada puede diferir de esta rama; no uses el sitio publicado para enviar datos hasta que se desplieguen y verifiquen las correcciones.</p>
+        <p class="mt-3">Si en el futuro se activa el checkbox opcional de comunicaciones comerciales, se registrarán la elección, fecha y versión del formulario junto al lead. Gmail y el CRM solo podrán iniciar mensajes promocionales tras validar consentimiento, bajas y supresión en el sistema real. Los logs de proveedores pueden incluir metadatos técnicos como IP. No introduzcas información sensible ni datos personales de terceros en el asistente.</p>
       </div>
 
     </div>

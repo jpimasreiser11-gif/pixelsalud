@@ -153,6 +153,13 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
             </p>
           )}
 
+          {BACKEND_LEAD && (
+            <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+              <input type="checkbox" name="marketing_consent" value="true" class="mt-0.5 shrink-0" />
+              <span>Opcional: quiero recibir por email novedades, consejos y ofertas de VARINO. Puedo darme de baja cuando quiera. No es necesario para responder a esta solicitud.</span>
+            </label>
+          )}
+
           <p class="text-[11px] text-[#6e6e73] dark:text-[#a1a1a6] text-center" aria-live="polite" data-form-status>
             No incluyas información confidencial o datos personales de terceros.
           </p>
@@ -182,12 +189,16 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
       function abrirMailto() {
         var destinatario = form.getAttribute("data-email") || "";
         var asunto = "Consulta de Proyecto: " + val("negocio");
+        var marketing = form.querySelector('[name="marketing_consent"]');
+        var marketingLine = marketing && marketing.checked
+          ? "\n\nQuiero recibir por email novedades, consejos y ofertas de VARINO. Puedo darme de baja cuando quiera."
+          : "";
         var cuerpo =
           "Nombre: " + val("nombre") + "\n" +
           "Email: " + val("email") + "\n" +
           "Empresa: " + val("negocio") + "\n" +
           "Servicio: " + val("servicio") + "\n\n" +
-          "Mensaje: " + val("mensaje");
+          "Mensaje: " + val("mensaje") + marketingLine;
         window.location.href = "mailto:" + destinatario + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(cuerpo);
       }
       form.addEventListener("submit", function (ev) {
@@ -208,6 +219,7 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
             fuente: "form-contacto",
             pagina: location.pathname,
             consentimiento: true,
+            marketing_consent: form.querySelector('[name="marketing_consent"]')?.checked === true,
             mensaje: val("mensaje"),
           };
           fetch(lead, {
@@ -224,7 +236,11 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
           }).catch(function () { abrirMailto(); });
         } else {
           // Sin backend: copiar/preparar un correo no lo envía automáticamente.
-          navigator.clipboard.writeText("Nombre: " + val("nombre") + "\nEmail: " + email + "\nEmpresa: " + val("negocio") + "\n\n" + val("mensaje"))
+          var marketing = form.querySelector('[name="marketing_consent"]');
+          var marketingLine = marketing && marketing.checked
+            ? "\n\nQuiero recibir por email novedades, consejos y ofertas de VARINO. Puedo darme de baja cuando quiera."
+            : "";
+          navigator.clipboard.writeText("Nombre: " + val("nombre") + "\nEmail: " + email + "\nEmpresa: " + val("negocio") + "\n\n" + val("mensaje") + marketingLine)
             .then(function () { if (statusEl) statusEl.textContent = "Briefing copiado."; })
             .catch(function () { abrirMailto(); });
         }

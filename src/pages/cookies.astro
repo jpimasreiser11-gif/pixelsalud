@@ -18,10 +18,9 @@ import { SITE } from "../config";
         <h2 class="text-lg font-semibold text-[#1d1d1f] dark:text-white">Qué utiliza esta versión</h2>
         <p class="mt-2">
           Esta rama no escribe cookies ni instala identificadores publicitarios. Guarda la preferencia de tema claro u oscuro en
-          <code>localStorage</code> con la clave <code>varino_theme</code>. El chat y los formularios envían datos al backend de VARINO
-          cuando está disponible; el texto del chat y los datos de contacto ya no se guardan en el almacenamiento del navegador en
-          esta versión. Las visitas envían ruta, dominio de referencia e idioma a la analítica propia. La petición también puede ser
-          tratada técnicamente por el alojamiento y el túnel de conexión. No equivale a una analítica anónima solo por no usar cookies.
+          <code>localStorage</code> con la clave <code>varino_theme</code>. En el estado actual del código, el backend está deshabilitado:
+          chat, formularios, agenda y analítica no envían datos a n8n. El formulario de contacto puede preparar o copiar un briefing
+          en el dispositivo. No equivale a una analítica anónima solo por no usar cookies.
         </p>
       </div>
       <div>
@@ -39,9 +38,10 @@ import { SITE } from "../config";
   <section class="mx-auto max-w-4xl px-6 pb-20">
     <h2 class="text-base font-semibold text-[#1d1d1f] dark:text-white mb-2">Medición de visitas</h2>
     <p class="text-sm leading-7 text-[#6e6e73] dark:text-[#a1a1a6]">
-      La analítica transmite ruta, dominio de referencia e idioma al backend; el servidor y los proveedores de red pueden tratar
-      metadatos técnicos como la dirección IP. Aún no se ha verificado una evaluación documentada de base jurídica, retención y
-      alcance de proveedores. Por tanto, esta página no concluye que no haga falta consentimiento o banner.
+      La analítica está desconectada en esta rama. Si se activa en una futura publicación, podría transmitir ruta, dominio de referencia
+      e idioma; el servidor y los proveedores de red podrían tratar metadatos técnicos como la dirección IP. Aún no se ha verificado
+      una evaluación documentada de base jurídica, retención y alcance de proveedores. Por tanto, esta página no concluye que no haga
+      falta consentimiento o banner.
     </p>
   </section>
 

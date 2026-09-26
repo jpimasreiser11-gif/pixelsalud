@@ -318,7 +318,7 @@ const CHAT = BACKEND_CHAT;
           headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
           body: JSON.stringify({
             nombre: nombre, email: email, whatsapp: whatsapp, empresa: "", interes: "chat",
-            fuente: "chat_widget", pagina: location.pathname, consentimiento: true,
+            fuente: "chat_widget", pagina: location.pathname, consentimiento: true, marketing_consent: false,
             mensaje: "Chat: " + (last || "").slice(0, 600), conversationId: convId,
             website: f.querySelector('[name="website"]').value
           })
