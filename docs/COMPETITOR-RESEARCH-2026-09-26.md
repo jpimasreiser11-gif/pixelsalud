@@ -13,6 +13,24 @@ Revisión de páginas públicas de agencias españolas de automatización e IA. 
 | [MERIDIAN Data & IA](https://meridiandata.es/precios-consultoria-datos-ia) | Automatización n8n desde 1.500 €; sprint desde 2.500 €; RAG desde 5.000 € | Precio cerrado tras diagnóstico; publica alcance y plazos orientativos por tipo de proyecto; precios sin IVA. |
 | [RoviDev](https://rovidev.com/servicios/automatizacion-procesos-n8n-make-zapier/) | En la página de servicio: flujo básico 250–900 €, sistema con varios flujos 990–3.900 €, back-office con IA 5.000–12.000 € y operación mensual 200–500 €. Su guía separada publica 1.500–4.000 € para un flujo típico y 4.500–8.000 € para paquetes de 3–5 flujos. | Destaca producción, logs, alertas, documentación, formación y acceso del cliente a su instancia. Los precios de la página de servicio y la guía no coinciden exactamente; evitar comparar una cifra aislada. |
 
+## Patrones visibles de oferta (no son datos de conversión)
+
+- **Entrada de baja fricción:** diagnóstico breve o valoración sin compromiso, formulario/agenda y propuesta escrita. MERIDIAN publica una llamada de 20 minutos y presupuesto en 48–72 h; RoviDev anuncia viabilidad en 24–48 h; ChenAI usa diagnóstico gratuito y precio fijo acordado antes de empezar.
+- **Venta por alcance y resultado:** las páginas describen un proceso (auditar → construir → probar → entregar) y no solo “n8n” o “IA”. Las ofertas de mayor confianza detallan manejo de errores, alertas, documentación y formación.
+- **Escalera de valor:** flujo puntual, paquete multi-flujo/IA y operación mensual aparecen repetidamente. Las cuotas recurrentes se explican aparte de la implantación; el nivel de soporte y los límites varían bastante.
+- **Captación por contenido:** guías de precios, comparativas de herramientas, ejemplos y páginas de servicios por caso de uso crean caminos desde una búsqueda concreta hasta el diagnóstico. Que una página use este embudo no demuestra cuántos leads o ventas consigue.
+- **Evidencia no auditada:** testimonios, reseñas, ahorros, porcentajes de ROI y cifras de clientes que aparecen en webs de competidores son declaraciones de cada proveedor; no hay datos públicos independientes de conversión, retención o rentabilidad que permitan afirmar qué “les funciona”. MERIDIAN, por ejemplo, publica porcentajes de ahorro como marketing propio; no se deben reutilizar como benchmark probado.
+- **Consistencia de precios:** RoviDev muestra en su página de servicio 250–900 € para un flujo básico y 990–3.900 € para sistemas con varios flujos, mientras su guía separada habla de 1.500–4.000 € por flujo típico y 4.500–8.000 € para packs. La diferencia puede reflejar alcances distintos, pero la página no permite normalizarlos con seguridad. Presentar los importes como publicados, no como una tarifa comparable homogénea.
+
+## Recomendación de posicionamiento para VARINO
+
+- Mantener el Automation Sprint de **950–1.900 €** como alcance acotado de un proceso. Está por debajo de varios paquetes estándar publicados desde 1.500 €, pero por encima de algunos flujos básicos anunciados desde 250–900 €: no llamarlo “el más barato” ni “por debajo de todo el mercado”.
+- El Sistema de crecimiento (**2.500–6.000 €**) se solapa con packs multi-flujo; venderlo con límites de integraciones, aprobaciones humanas y criterios de aceptación escritos.
+- IA privada (**desde 5.500 €**) queda cerca de las entradas RAG publicadas desde 4.500–5.000 €. Diferenciarla solo por entregables que realmente se prueben —evaluación, permisos, despliegue acordado y documentación—, no por promesas de privacidad absoluta o resultados automáticos.
+- Care (**149 €/mes**) queda por debajo de mantenimientos públicos desde 200–250 €/mes. Con una hora incluida, mostrar con claridad la cobertura, exclusiones, horario y SLA; no prometer vigilancia 24/7 si no existe operación real.
+- Mantener el IVA visible, separar licencias/infraestructura y calcular márgenes con horas reales. El simulador debe etiquetar ahorros como hipótesis del usuario, nunca como resultado típico de VARINO.
+- No publicar clientes, reseñas, métricas, ahorros o “casos reales” de VARINO hasta tener evidencia y consentimiento. La prueba de competencia sirve para diseñar el paquete, no para imitar sus afirmaciones.
+
 ## Lecturas útiles para VARINO
 
 - La muestra no tiene un “precio de mercado” único: un competidor publica 250–900 € para un flujo muy básico, varios proveedores sitúan proyectos estándar en 1.500–2.500 €, y las soluciones multi-flujo/IA suben desde ~4.500 €. El Automation Sprint (950–1.900 €) de VARINO queda en el tramo bajo/medio; describirlo como oferta acotada, no como rebaja general frente a todo el mercado.
