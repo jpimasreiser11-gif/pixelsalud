@@ -38,6 +38,8 @@ jobs:
           path: ./dist
 
   deploy:
+    # A manual dispatch may target a feature branch; publish only the production branch.
+    if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
