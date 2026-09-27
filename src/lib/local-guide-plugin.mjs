@@ -136,22 +136,29 @@ async function selectModel() {
   }
 }
 
+export function buildModelRequest(model, messages, profile) {
+  return {
+    model,
+    stream: false,
+    // El motor determinista decide servicio, pregunta y presupuesto; el modelo
+    // solo redacta y extrae campos, así que no necesita razonamiento extendido.
+    think: false,
+    format: responseSchema,
+    keep_alive: "30m",
+    options: { temperature: 0.2, top_p: 0.85, repeat_penalty: 1.1, num_ctx: 16384 },
+    messages: [
+      { role: "system", content: `${systemPrompt}\n\nMEMORIA VERIFICADA DEL CLIENTE:\n${JSON.stringify(profile)}\n\nPREGUNTAS QUE HARÁ EL SISTEMA (no las repitas):\n${DISCOVERY_QUESTIONS.map((item) => item.question).join(" ")}` },
+      ...messages,
+    ],
+  };
+}
+
 async function askModel(model, messages, profile) {
   const response = await fetch(`${OLLAMA_URL}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     signal: AbortSignal.timeout(90_000),
-    body: JSON.stringify({
-      model,
-      stream: false,
-      format: responseSchema,
-      keep_alive: "30m",
-      options: { temperature: 0.2, top_p: 0.85, repeat_penalty: 1.1, num_ctx: 16384 },
-      messages: [
-        { role: "system", content: `${systemPrompt}\n\nMEMORIA VERIFICADA DEL CLIENTE:\n${JSON.stringify(profile)}\n\nPREGUNTAS QUE HARÁ EL SISTEMA (no las repitas):\n${DISCOVERY_QUESTIONS.map((item) => item.question).join(" ")}` },
-        ...messages,
-      ],
-    }),
+    body: JSON.stringify(buildModelRequest(model, messages, profile)),
   });
   if (!response.ok) throw new Error(`ollama_${response.status}`);
   const payload = await response.json();

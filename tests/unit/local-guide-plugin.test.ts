@@ -1,11 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { allowedOrigin, chooseModel, sanitizeMessages } from "../../src/lib/local-guide-plugin.mjs";
+import { allowedOrigin, buildModelRequest, chooseModel, sanitizeMessages } from "../../src/lib/local-guide-plugin.mjs";
 
 describe("protecciones del asistente local", () => {
   it("prefiere Qwen 3.8 cuando está instalado y respeta una preferencia explícita válida", () => {
     const installed = ["qwen3:14b", "llama3:8b", "qwen3.8:latest"];
     expect(chooseModel(installed)).toBe("qwen3.8:latest");
     expect(chooseModel(installed, "llama3:8b")).toBe("llama3:8b");
+  });
+
+  it("limita la guía al modo sin razonamiento extendido y mantiene el contexto estructurado", () => {
+    const request = buildModelRequest("qwen3.8:latest", [{ role: "user", content: "Somos una asesoría" }], { business: "asesoría" });
+    expect(request.think).toBe(false);
+    expect(request.options.num_ctx).toBe(16_384);
+    expect(request.messages.at(-1)).toEqual({ role: "user", content: "Somos una asesoría" });
+    expect(request.messages[0].content).toContain("no las repitas");
   });
 
   it("solo acepta el origen local en un host de bucle local y requiere Origin", () => {
