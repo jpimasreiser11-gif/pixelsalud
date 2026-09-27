@@ -34,7 +34,9 @@ const htmlFiles = collectHtml(dist);
 for (const file of htmlFiles) {
   const html = fs.readFileSync(file, "utf8");
   const route = `/${path.relative(dist, file).split(path.sep).join("/")}`.replace(/\/index\.html$/, "/");
-  const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.trim() ?? "";
+  const title = (html.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? "")
+    .replaceAll("&amp;", "&")
+    .trim();
   const tags = metaTags(html);
   const description = attribute(findMeta(tags, "name", "description"), "content");
   const robots = attribute(findMeta(tags, "name", "robots"), "content").toLowerCase();
@@ -44,6 +46,8 @@ for (const file of htmlFiles) {
   const h1Count = [...html.matchAll(/<h1\b/gi)].length;
 
   if (!title) errors.push(`${route}: falta <title>`);
+  if (title.length > 60) errors.push(`${route}: el title supera 60 caracteres (${title.length})`);
+  if ((title.match(/\bVARINO\b/gi) ?? []).length > 1) errors.push(`${route}: la marca aparece repetida en el title`);
   if (route === previewRoute) {
     if (!robots.includes("noindex")) errors.push(`${route}: la previsualización debe ser noindex`);
     continue;
