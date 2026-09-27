@@ -14,9 +14,10 @@
     "cf:local": "wrangler pages dev dist --local",
     "security:headers": "node scripts/check-security-headers.mjs",
     "csp:check": "node scripts/check-csp-compatibility.mjs",
+    "deploy-gate:check": "node scripts/check-deploy-gate.mjs",
     "claims:check": "node scripts/check-claims.mjs",
     "launch:check": "node scripts/check-launch-readiness.mjs",
-    "readiness": "npm run build && npm run scripts:syntax && npm run links:check && npm run csp:check"
+    "readiness": "npm run build && npm run scripts:syntax && npm run links:check && npm run csp:check && npm run deploy-gate:check"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

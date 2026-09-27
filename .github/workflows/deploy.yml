@@ -30,6 +30,9 @@ jobs:
         run: npm ci
       - name: Build and gates
         run: npm run readiness
+      - name: Require launch approval before production deploy
+        if: github.ref == 'refs/heads/main'
+        run: npm run launch:check
       - name: Stamp deployed commit
         run: printf '%s\n' "$GITHUB_SHA" > dist/version.txt
       - name: Upload Pages artifact
