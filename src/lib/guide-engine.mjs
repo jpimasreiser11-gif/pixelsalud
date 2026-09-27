@@ -8,8 +8,6 @@
 
 import { calculateEstimate, recommendHardware } from "./quote-engine.mjs";
 
-export const TEXT_FIELDS = ["business", "sector", "problem", "process", "tools", "volume", "channels", "approvals", "goal"];
-
 // El chat de demostración nunca necesita datos de contacto o credenciales.
 // Se bloquean antes de añadir el mensaje al historial o enviarlo al modelo.
 const PRIVATE_DATA_PATTERNS = [
@@ -85,46 +83,12 @@ export function normalizeProfile(candidate = {}) {
   };
 }
 
-// El modelo puede devolver campos vacíos, inventados o "no". Lo ya confirmado
-// por el visitante manda siempre.
-export function mergeProfile(previous = {}, candidate = {}) {
-  const known = normalizeProfile(previous || {});
-  const proposed = normalizeProfile(candidate || {});
-  const merged = { ...known };
-  for (const field of TEXT_FIELDS) {
-    if (known[field]) continue;
-    const value = proposed[field];
-    if (value && !/^(no|n\/a|na|ninguno|desconocido|unknown|null)$/i.test(value)) merged[field] = value;
-  }
-  for (const field of ["integrations", "workflows", "users"]) {
-    if (!previous?.[field] && candidate?.[field]) merged[field] = proposed[field];
-  }
-  if (!previous?.complexity && candidate?.complexity) merged.complexity = proposed.complexity;
-  if (!previous?.sensitivity && candidate?.sensitivity) merged.sensitivity = proposed.sensitivity;
-  merged.customUi = Boolean(previous?.customUi) || proposed.customUi;
-  merged.dataMigration = Boolean(previous?.dataMigration) || proposed.dataMigration;
-  return merged;
-}
-
 export const isGreeting = (text) => GREETING.test(String(text ?? "").trim());
 
 const lastOf = (messages, role) => [...(messages || [])].reverse().find((message) => message?.role === role)?.content || "";
 
-// El modelo pequeño, si se le deja, rellena de una vez los nueve campos a
-// partir de una sola frase: inventa volúmenes, herramientas y objetivos que el
-// visitante nunca dijo. Cuando hay una pregunta en curso, la respuesta literal
-// del visitante manda y el modelo no aporta datos; solo en un mensaje libre
-// inicial se acepta que identifique negocio y problema.
-const FREEFORM_MODEL_FIELDS = ["business", "problem"];
-
-export function scopeModelProfile(modelProfile, askedField) {
-  if (!modelProfile || askedField) return null;
-  const scoped = {};
-  for (const field of FREEFORM_MODEL_FIELDS) {
-    if (modelProfile[field]) scoped[field] = modelProfile[field];
-  }
-  return scoped;
-}
+// No se aceptan campos estructurados del modelo: puede rellenar datos que el
+// visitante no ha dicho. El motor deriva el perfil solo del texto del visitante.
 
 // El sector se deduce con una tabla propia. El modelo pequeño inventa
 // etiquetas inexistentes ("Dentología") que luego se muestran al visitante.
@@ -238,13 +202,16 @@ function initialFreeformFacts(profile, answer) {
 export function applyLastAnswer(profile, messages = []) {
   const answer = clampText(lastOf(messages, "user"), 500);
   const asked = fieldFromQuestion(lastOf(messages, "assistant"));
+  const userAnswers = messages.filter((message) => message?.role === "user");
+  const firstSubstantiveAnswer = userAnswers.slice(0, -1).every((message) => isGreeting(message?.content));
   let filledField = "";
   if (answer) {
     if (asked) {
       profile[asked] = answer;
       filledField = asked;
-    } else if (messages.filter((message) => message?.role === "user").length === 1 && !lastOf(messages, "assistant")) {
-      // En un primer mensaje libre, interpreta solo negocio/sector y problema.
+    } else if (firstSubstantiveAnswer && !isGreeting(answer)) {
+      // En el primer mensaje sustantivo, incluso si antes hubo solo un saludo,
+      // interpreta negocio/sector y problema sin atribuir detalles no dichos.
       // No conviertas palabras como “teléfono” o “tiempo” en canal/objetivo:
       // el usuario puede estar describiendo el problema, no respondiendo esos
       // campos, y preguntar luego el sector repetiría algo ya explicado.
@@ -361,12 +328,15 @@ export function hardwareFor(profile, documentCount = 0) {
   });
 }
 
-export function welcomeCopy(messages) {
+export function welcomeCopy(messages, profile = {}) {
   const greeting = isGreeting(lastOf(messages, "user"));
+  const hasContext = Boolean(profile.business || profile.problem);
   return greeting
     ? {
-        reply: "Hola, soy VARINO Guide. Te haré unas preguntas cortas y, con tus respuestas, dibujaré el sistema y un rango de horas y precio.",
-        nextQuestion: DISCOVERY_QUESTIONS[0].question,
+        reply: hasContext
+          ? "¡Hola! Sigo aquí y conservo el contexto que ya compartiste."
+          : "¡Hola! Claro, estoy aquí.",
+        nextQuestion: "",
       }
     : {
         reply: "Anotado. Lo incorporo al diagnóstico antes de proponer una arquitectura.",
@@ -374,15 +344,14 @@ export function welcomeCopy(messages) {
       };
 }
 
-// Punto de entrada único. `modelProfile` y `modelReply` son opcionales: sin
-// modelo el resultado sigue siendo completo y verificable.
-export function advise({ messages = [], profile: previousProfile = {}, modelProfile = null, modelReply = "", documentCount = 0 } = {}) {
+// Punto de entrada único. El perfil y el presupuesto salen de respuestas del
+// visitante y reglas verificables; el modelo solo puede redactar la respuesta.
+export function advise({ messages = [], profile: previousProfile = {}, modelReply = "", documentCount = 0 } = {}) {
   const known = normalizeProfile(previousProfile);
-  const firstTurn = messages.filter((message) => message.role === "user").length <= 1;
-  const greetingOnly = firstTurn && isGreeting(lastOf(messages, "user")) && !known.business && !known.problem;
+  const greetingOnly = isGreeting(lastOf(messages, "user"));
 
   if (greetingOnly) {
-    const copy = welcomeCopy(messages);
+    const copy = welcomeCopy(messages, known);
     return {
       reply: copy.reply,
       nextQuestion: copy.nextQuestion,
@@ -395,11 +364,9 @@ export function advise({ messages = [], profile: previousProfile = {}, modelProf
     };
   }
 
-  // Se acota lo que el modelo puede aportar antes de mezclarlo: solo el campo
-  // que se preguntó. Después, el alcance numérico se deduce del texto real.
-  const askedField = fieldFromQuestion(lastOf(messages, "assistant"));
-  const merged = mergeProfile(known, scopeModelProfile(modelProfile, askedField));
-  const { profile, filledField } = applyLastAnswer(merged, messages);
+  // El modelo nunca escribe campos del perfil: solo la respuesta literal del
+  // visitante y el motor determinista pueden cambiar alcance o presupuesto.
+  const { profile, filledField } = applyLastAnswer(known, messages);
   profile.sector = deriveSector(profile);
   // El sector puede revelar sensibilidad que no estaba en la frase literal.
   if (SENSITIVE.test(profile.sector)) profile.sensitivity = "high";

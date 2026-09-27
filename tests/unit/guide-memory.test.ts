@@ -1,13 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { advise, applyLastAnswer, cleanReply, consultativeReply, mergeProfile, nextUsefulQuestion, normalizeProfile, recommendService } from "../../src/lib/guide-engine.mjs";
+import { advise, applyLastAnswer, cleanReply, consultativeReply, nextUsefulQuestion, normalizeProfile, recommendService } from "../../src/lib/guide-engine.mjs";
 
 describe("motor de VARINO Guide", () => {
-  it("conserva respuestas anteriores aunque el modelo devuelva campos vacíos", () => {
-    const profile = mergeProfile({ business: "Clínica Norte", problem: "Citas manuales" }, { business: "", problem: "no" });
-    expect(profile.business).toBe("Clínica Norte");
-    expect(profile.problem).toBe("Citas manuales");
-  });
-
   it("asigna la respuesta al campo que pedía la última pregunta", () => {
     const { profile, filledField } = applyLastAnswer(normalizeProfile({ business: "Clínica", problem: "Citas" }), [
       { role: "assistant", content: "¿Cómo realizáis ahora ese proceso, desde que empieza hasta que termina?" },
@@ -42,11 +36,43 @@ describe("motor de VARINO Guide", () => {
     expect(reply).not.toContain("Sistema de crecimiento");
   });
 
-  it("responde al saludo sin inventar presupuesto", () => {
+  it("responde al saludo sin repetir la pregunta inicial ni inventar presupuesto", () => {
     const result = advise({ messages: [{ role: "user", content: "hola" }] });
     expect(result.stage).toBe("welcome");
     expect(result.estimate).toBeNull();
-    expect(result.nextQuestion).toMatch(/a qué se dedica/i);
+    expect(result.reply).toMatch(/^¡Hola!/i);
+    expect(result.nextQuestion).toBe("");
+  });
+
+  it("extrae negocio y problema del primer mensaje sustantivo después de un saludo", () => {
+    const result = advise({
+      messages: [
+        { role: "user", content: "hola" },
+        { role: "assistant", content: "¡Hola! Claro, estoy aquí." },
+        { role: "user", content: "Tengo una clínica dental y perdemos tiempo confirmando citas por teléfono." },
+      ],
+    });
+
+    expect(result.profile.business).toBe("clínica dental");
+    expect(result.profile.sector).toBe("clínicas dentales");
+    expect(result.profile.problem).toBe("perdemos tiempo confirmando citas por teléfono");
+    expect(result.nextQuestion).toMatch(/cómo realizáis ahora ese proceso/i);
+    expect(result.nextQuestion).not.toMatch(/a qué se dedica|sector/i);
+  });
+
+  it("un saludo intermedio conserva el perfil y no repite la pregunta pendiente", () => {
+    const result = advise({
+      messages: [
+        { role: "assistant", content: "¿Qué tarea, problema o cuello de botella quieres mejorar primero?" },
+        { role: "user", content: "hola" },
+      ],
+      profile: { business: "clínica dental", problem: "confirmación de citas" },
+    });
+
+    expect(result.profile.business).toBe("clínica dental");
+    expect(result.profile.problem).toBe("confirmación de citas");
+    expect(result.nextQuestion).toBe("");
+    expect(result.reply).toMatch(/conservo el contexto/i);
   });
 
   it("extrae negocio y problema de un primer mensaje libre sin repetir el sector", () => {
@@ -67,17 +93,19 @@ describe("motor de VARINO Guide", () => {
     expect(result.nextQuestion).not.toMatch(/a qué se dedica|sector/i);
   });
 
-  it("completa el problema con reglas propias si el modelo solo reconoce el negocio", () => {
+  it("ignora las afirmaciones del modelo al calcular el perfil y el presupuesto", () => {
     const result = advise({
       messages: [{
         role: "user",
         content: "Hola, tengo una clínica pequeña y perdemos tiempo confirmando citas por teléfono.",
       }],
-      modelProfile: { business: "clínica pequeña", problem: "" },
+      modelReply: "Gestionas 500 citas diarias y ya usáis Salesforce con un equipo de 20 personas.",
     });
 
+    expect(result.profile.business).toBe("clínica pequeña");
     expect(result.profile.problem).toBe("perdemos tiempo confirmando citas por teléfono");
     expect(result.profile.channels).toBe("");
+    expect(result.profile.users).toBe(1);
     expect(result.nextQuestion).toMatch(/cómo realizáis ahora ese proceso/i);
   });
 

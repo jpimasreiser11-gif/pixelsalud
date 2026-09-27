@@ -9,11 +9,20 @@ describe("protecciones del asistente local", () => {
   });
 
   it("limita la guía al modo sin razonamiento extendido y mantiene el contexto estructurado", () => {
-    const request = buildModelRequest("qwen3.8:latest", [{ role: "user", content: "Somos una asesoría" }], { business: "asesoría" });
+    const messages = [
+      { role: "user", content: "Somos una asesoría" },
+      { role: "assistant", content: "¿Qué tarea quieres mejorar?" },
+      { role: "user", content: "Perdemos tiempo preparando presupuestos" },
+    ];
+    const request = buildModelRequest("qwen3.8:latest", messages, { business: "asesoría" });
     expect(request.think).toBe(false);
     expect(request.options.num_ctx).toBe(16_384);
-    expect(request.messages.at(-1)).toEqual({ role: "user", content: "Somos una asesoría" });
+    expect(request.messages.slice(-messages.length)).toEqual(messages);
     expect(request.messages[0].content).toContain("no las repitas");
+    expect(request.messages[0].content).toContain('solo un objeto JSON con la propiedad "reply"');
+    expect(request.format.required).toEqual(["reply"]);
+    expect(Object.keys(request.format.properties)).toEqual(["reply"]);
+    expect(request.format.properties).not.toHaveProperty("profile");
   });
 
   it("solo acepta el origen local en un host de bucle local y requiere Origin", () => {

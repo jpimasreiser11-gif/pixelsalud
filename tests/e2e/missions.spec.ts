@@ -102,6 +102,26 @@ test("un primer mensaje libre reconoce el sector y el problema sin pedirlos otra
   await expect(guide.locator("[data-guide-status]")).toHaveText("Guía base · conexión local no disponible");
 });
 
+test("el saludo no repite la pregunta inicial y el mensaje siguiente conserva negocio y problema", async ({ page }) => {
+  await page.route("**/api/guide", (route) => route.abort());
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
+  const assistantMessages = guide.locator(".ai-message--assistant");
+
+  await answer.fill("hola");
+  await answer.press("Enter");
+  await expect(assistantMessages.last()).toContainText(/hola/i);
+  await expect(assistantMessages.last()).not.toContainText("¿");
+
+  await answer.fill("Tengo una clínica dental y perdemos tiempo confirmando citas por teléfono.");
+  await answer.press("Enter");
+  await expect(assistantMessages.last()).toContainText(/cómo realizáis ahora ese proceso/i);
+  await expect(assistantMessages.last()).not.toContainText(/a qué se dedica tu empresa/i);
+  await expect(guide.locator("[data-preview-kicker]")).toContainText(/clínicas dentales/i);
+  await expect(guide.locator("[data-preview-title]")).toContainText(/confirmando citas/i);
+});
+
 test("conserva el contexto durante todo el diagnóstico y no repite preguntas", async ({ page }) => {
   await page.route("**/api/guide", (route) => route.abort());
   await page.goto("/experiencia/");
@@ -119,6 +139,7 @@ test("conserva el contexto durante todo el diagnóstico y no repite preguntas", 
   };
 
   await send("hola");
+  await expect(assistantMessages.last()).not.toContainText("¿");
   for (const message of [
     "Somos una clínica dental pequeña",
     "Se nos pierden citas entre llamadas y WhatsApp",
@@ -134,7 +155,7 @@ test("conserva el contexto durante todo el diagnóstico y no repite preguntas", 
 
   const turns = await assistantMessages.allInnerTexts();
   const questions = turns.flatMap((turn) => turn.match(/¿[^?]+\?/g) || []);
-  expect(questions.length).toBe(9);
+  expect(questions.length).toBe(8);
   expect(new Set(questions).size).toBe(questions.length);
   await expect(guide.locator("[data-guide-stage]")).toHaveText("ESTIMACIÓN");
   await expect(guide.locator("[data-service]")).toHaveText("IA privada");
