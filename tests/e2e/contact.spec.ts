@@ -17,7 +17,7 @@ test("contacto no afirma recibir datos si el backend está desconectado", async 
     if (request.url().includes("/webhook/lead")) webhookRequests += 1;
   });
   await page.goto("/contacto/");
-  const submit = page.getByRole("button", { name: /copiar briefing/i });
+  const submit = page.getByRole("button", { name: /preparar correo/i });
   const form = page.locator("#form-contacto");
   await expect(submit).toBeEnabled();
   await expect(page.getByText(/envío automático está desconectado/i)).toBeVisible();
@@ -28,8 +28,18 @@ test("contacto no afirma recibir datos si el backend está desconectado", async 
   await page.getByLabel("Nombre completo").fill("Cliente de prueba");
   await form.getByLabel("Email", { exact: true }).fill("prueba@example.com");
   await page.getByLabel("Empresa / organización").fill("Clínica Norte");
+  await page.getByLabel("Sitio web o software").fill("https://clinicanorte.example");
   await page.getByLabel("Detalles del proyecto").fill("Automatizar la entrada de citas con aprobación humana.");
   await submit.click();
+  await expect(page.locator("[data-form-status]")).toContainText(/no se ha enviado ni guardado/i);
+  const draftLink = page.getByRole("link", { name: /abrir borrador en tu correo/i });
+  await expect(draftLink).toBeVisible();
+  const draftHref = await draftLink.getAttribute("href");
+  expect(draftHref).toContain("mailto:varinoagency@gmail.com");
+  expect(draftHref).toContain(encodeURIComponent("prueba@example.com"));
+  expect(draftHref).toContain(encodeURIComponent("https://clinicanorte.example"));
+
+  await page.getByRole("button", { name: /copiar briefing/i }).click();
   await expect(page.locator("[data-form-status]")).toContainText(/briefing copiado/i);
   expect(await page.evaluate(() => (window as unknown as { __briefingCopy?: string }).__briefingCopy)).toContain("prueba@example.com");
   expect(webhookRequests).toBe(0);
