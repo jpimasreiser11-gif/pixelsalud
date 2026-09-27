@@ -16,7 +16,7 @@ const filas = [
     <h1 class="display-title mt-4 max-w-4xl">n8n, Zapier o Make.</h1>
     <p class="mt-6 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">No hay una herramienta mejor para todo. Esto es lo que cambia de verdad, con supuestos claros y sin promesas de ahorro inventadas.</p>
   </section>
-  <section class="mx-auto max-w-6xl overflow-x-auto px-6 pb-16">
+  <section class="mx-auto max-w-6xl overflow-x-auto px-6 pb-16" tabindex="0" aria-label="Comparativa de n8n, Zapier y Make">
     <table class="w-full min-w-[720px] border-collapse text-sm">
       <thead><tr class="border-b border-black/10 text-left dark:border-white/10"><th class="py-3 pr-4">Criterio</th><th class="px-3 py-3">n8n</th><th class="px-3 py-3">Zapier</th><th class="px-3 py-3">Make</th></tr></thead>
       <tbody>{filas.map((f) => (<tr class="border-b border-black/5 dark:border-white/5"><td class="py-3 pr-4 text-[#6e6e73] dark:text-[#a1a1a6]">{f.c}</td><td class="px-3 py-3">{f.n8n}</td><td class="px-3 py-3">{f.z}</td><td class="px-3 py-3">{f.m}</td></tr>))}</tbody>

@@ -25,7 +25,7 @@ import { BASE, SITE, BACKEND } from "../config";
       <div class="rounded-3xl border border-black/10 bg-[#f7f7f5] p-6 dark:border-white/10 dark:bg-[#111318] sm:p-8">
         <h2 class="font-semibold text-lg">1 · Elige un hueco</h2>
         <p class="text-xs text-[#6e6e73] dark:text-[#a1a1a6] mt-1" data-slot-status aria-live="polite">Consultando la agenda real…</p>
-        <div class="mt-4 grid gap-3" data-slots role="list" aria-live="polite"></div>
+        <div class="mt-4 grid gap-3" data-slots role="region" aria-label="Horarios disponibles" aria-live="polite"></div>
         <button type="button" class="mt-4 text-xs text-[#0071e3] hover:underline" data-refresh>↻ Volver a consultar</button>
       </div>
 

@@ -83,7 +83,7 @@ body {
 }
 
 .display-title span {
-  color: #86868b;
+  color: #6e6e73;
 }
 
 .dark .display-title {
@@ -92,6 +92,28 @@ body {
 
 .dark .display-title span {
   color: #6e6e73;
+}
+
+/* Mantén las utilidades de color legibles sobre las superficies de cada tema. */
+[class~="text-[#0071e3]"] { color: #0058b6; }
+.dark [class~="text-[#0071e3]"] { color: #2997ff; }
+[class~="text-[#2997ff]"] { color: #0058b6; }
+.dark [class~="text-[#2997ff]"] { color: #2997ff; }
+[class~="text-[#86868b]"] { color: #6e6e73; }
+.dark [class~="text-[#86868b]"],
+.dark [class~="text-[#6e6e73]"] { color: #a1a1a6; }
+.dark [class~="text-[#655cff]"] { color: #9b95ff; }
+.dark [class~="text-[#005bb5]"] { color: #a1caff; }
+.dark [class~="text-[#3a3a3c]"] { color: #d1d1d6; }
+
+:is(
+  [class~="bg-[#0a0d14]"],
+  [class~="bg-[#080b12]"],
+  [class~="bg-[#0b0d12]"],
+  [class~="bg-[#111318]"],
+  [class~="bg-[#111c2b]"]
+) .eyebrow {
+  color: #a1a1a6;
 }
 
 .button-primary,
@@ -244,6 +266,10 @@ body {
   text-transform: uppercase;
 }
 
+.dark .service-tag,
+.dark .details-label,
+.dark .service-meta span { color: #a1a1a6; }
+
 .service-copy h2 {
   margin-top: 0.65rem;
   font-size: clamp(2.2rem, 5vw, 4rem);
@@ -358,6 +384,8 @@ body {
   font-weight: 650;
 }
 
+.dark .service-link { color: #2997ff; }
+
 .method-grid {
   display: grid;
   gap: 1px;
@@ -387,6 +415,8 @@ body {
   font-size: 0.75rem;
   font-weight: 700;
 }
+
+.dark .method-grid span { color: #2997ff; }
 
 .method-grid h3 {
   margin-top: 3.5rem;
@@ -521,8 +551,8 @@ body {
 .dark .ai-guide__promise > span { color: #eeeef2; }
 .ai-guide__promise i { width: .5rem; height: .5rem; border-radius: 999px; background: #34c759; box-shadow: 0 0 0 5px rgb(52 199 89 / .14); }
 .ai-studio { display: grid; gap: .8rem; margin-top: clamp(2rem, 5vw, 4.5rem); }
-.ai-chat, .ai-preview { min-width: 0; overflow: hidden; border: 1px solid rgb(17 19 24 / .09); border-radius: 1.7rem; background: rgb(255 255 255 / .82); }
-.dark .ai-chat, .dark .ai-preview { border-color: rgb(255 255 255 / .1); background: rgb(15 17 23 / .86); }
+.ai-chat, .ai-preview { min-width: 0; overflow: hidden; border: 1px solid rgb(17 19 24 / .09); border-radius: 1.7rem; background: rgb(255 255 255 / .82); color: #1d1d1f; }
+.dark .ai-chat, .dark .ai-preview { border-color: rgb(255 255 255 / .1); background: rgb(15 17 23 / .86); color: #f5f5f7; }
 .ai-chat { display: flex; min-height: 42rem; flex-direction: column; }
 .ai-chat__topbar { display: flex; align-items: center; gap: .75rem; min-height: 4.8rem; padding: 1rem 1.1rem; border-bottom: 1px solid rgb(17 19 24 / .07); }
 .dark .ai-chat__topbar { border-color: rgb(255 255 255 / .08); }

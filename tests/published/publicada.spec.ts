@@ -6,6 +6,81 @@ import { expect, test } from "@playwright/test";
 // aun así habría llegado roto al visitante, porque la CSP del HTML publicado
 // bloquea los scripts incrustados y en producción no existe /api/guide.
 
+const rutasPublicas = [
+  "/",
+  "/auditoria/",
+  "/automation-sprint/",
+  "/aviso-legal/",
+  "/casos/",
+  "/contacto/",
+  "/cookies/",
+  "/demos/",
+  "/dpa/",
+  "/experiencia/",
+  "/garantias/",
+  "/metodo/",
+  "/n8n-vs-zapier-make/",
+  "/planes/",
+  "/precios/",
+  "/privacidad/",
+  "/recursos/",
+  "/recursos/ia-local-datos-sensibles/",
+  "/recursos/presupuesto-automatizacion/",
+  "/recursos/solicitudes-citas-whatsapp/",
+  "/reservar/",
+  "/sectores/",
+  "/sectores/clinicas/",
+  "/sectores/estetica/",
+  "/sectores/fertilidad/",
+  "/sectores/inmobiliarias/",
+  "/sectores/legal/",
+  "/sectores/oftalmologia/",
+  "/sectores/traumatologia/",
+  "/sectores/veterinarias/",
+  "/seguridad/",
+  "/servicios/",
+  "/servicios/automation-sprint/",
+  "/servicios/ia-privada/",
+  "/servicios/sistema-crecimiento/",
+  "/sobre/",
+];
+
+test("todas las páginas públicas publicadas están libres de fallos críticos de accesibilidad", async ({ page }) => {
+  test.setTimeout(180_000);
+  const hallazgos: string[] = [];
+  await page.emulateMedia({ reducedMotion: "reduce" });
+
+  for (const colorScheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme });
+    for (const ruta of rutasPublicas) {
+      const respuesta = await page.goto(ruta);
+      if (respuesta?.status() !== 200) {
+        hallazgos.push(`${colorScheme} ${ruta}: HTTP ${respuesta?.status() ?? "sin respuesta"}`);
+        continue;
+      }
+
+      await page.waitForFunction(
+        (temaOscuro) => document.documentElement.classList.contains("dark") === temaOscuro,
+        colorScheme === "dark",
+      );
+      await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
+      await page.waitForTimeout(50);
+
+      const resultado = await new AxeBuilder({ page }).analyze();
+      for (const incidencia of resultado.violations.filter((item) => ["serious", "critical"].includes(item.impact || ""))) {
+        const nodos = incidencia.nodes.slice(0, 2).map((node) => {
+          const contraste = node.failureSummary?.match(/insufficient color contrast of ([\d.]+) \(foreground color: ([^,]+), background color: ([^)]+)\)/);
+          const colores = contraste ? `${contraste[1]} ${contraste[2]}/${contraste[3]}` : "";
+          return `${node.target.join(", ")} ${colores}`;
+        }).join("; ");
+        hallazgos.push(`${colorScheme} ${ruta}: ${incidencia.impact} ${incidencia.id} (${nodos})`);
+      }
+    }
+  }
+
+  expect(hallazgos, "fallos graves o críticos en el HTML publicado:\n" + hallazgos.join("\n")).toEqual([]);
+});
+
 test("el HTML publicado trae su propia política de contenido", async ({ page }) => {
   await page.goto("experiencia/");
   const csp = await page.locator('meta[http-equiv="content-security-policy" i]').getAttribute("content");
