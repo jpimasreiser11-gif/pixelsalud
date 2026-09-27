@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { BASE, SITE, hasContactChannel } from "../config";
+import { BACKEND_CHAT, BASE, SITE, hasContactChannel } from "../config";
 import Logo from "../components/Logo.astro";
 import AiChat from "../components/AiChat.astro";
 import Analytics from "../components/Analytics.astro";
@@ -142,7 +142,26 @@ const schema = SITE.launchReady && SITE.url && SITE.legalOwner ? JSON.stringify(
           >
             Plantear un proyecto
           </a>
-          <div class="flex items-center md:hidden">
+          <div class="flex items-center gap-2 md:hidden">
+            {BACKEND_CHAT ? (
+              <button
+                type="button"
+                data-open-chat
+                aria-controls="aichat-panel"
+                aria-expanded="false"
+                class="rounded-lg border border-black/10 dark:border-[#424245] px-2.5 py-1 text-xs font-semibold text-[#0071e3] dark:text-[#72b7ff]"
+              >
+                Guía
+              </button>
+            ) : (
+              <a
+                href={`${BASE}/#guia-varino`}
+                aria-label="Abrir guía interactiva"
+                class="rounded-lg border border-black/10 dark:border-[#424245] px-2.5 py-1 text-xs font-semibold text-[#0071e3] dark:text-[#72b7ff]"
+              >
+                Guía
+              </a>
+            )}
             <button
               id="menu-btn"
               type="button"

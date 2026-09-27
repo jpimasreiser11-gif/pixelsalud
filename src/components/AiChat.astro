@@ -4,48 +4,41 @@ const CHAT = BACKEND_CHAT;
 ---
 <!-- Asistente IA de VARINO. Envía mensajes al backend de la agencia si está disponible;
      el historial y los datos de contacto no se persisten en el navegador. -->
+{CHAT ? (
 <section
   class="ai-chat-widget"
   data-aichat
   data-chat={BACKEND_CHAT}
   data-lead={BACKEND_LEAD}
   data-origin={BACKEND.origin}
-  aria-label={CHAT ? "Asistente VARINO AI" : "Guía VARINO"}
+  aria-label="Asistente VARINO AI"
 >
-  <button type="button" class="aichat-launcher" data-aichat-open aria-expanded="false">
-    <span aria-hidden="true">◉</span> {CHAT ? "VARINO AI" : "Guía VARINO"}
+  <button type="button" class="aichat-launcher" data-aichat-open aria-controls="aichat-panel" aria-expanded="false">
+    <span aria-hidden="true">◉</span> VARINO AI
   </button>
 
   <div class="aichat-backdrop" data-aichat-backdrop hidden></div>
 
-  <div class="aichat-panel" hidden>
+  <div id="aichat-panel" class="aichat-panel" role="dialog" aria-modal="true" aria-labelledby="aichat-title" hidden>
     <header class="aichat-head">
       <div>
-        <strong>{CHAT ? "VARINO AI" : "Guía VARINO"}</strong>
-        <small>{CHAT ? "Asistente conectado" : "Experiencia interactiva · modo local"}</small>
+        <strong id="aichat-title">VARINO AI</strong>
+        <small>Asistente conectado</small>
       </div>
       <button type="button" class="aichat-close" data-aichat-close aria-label="Cerrar">✕</button>
     </header>
 
     <div class="aichat-msgs" data-aichat-msgs aria-live="polite">
-      {!CHAT && (
-        <div class="aichat-offline" data-aichat-offline role="status">
-          <p><strong>La IA conversacional no está conectada.</strong> Esta ventana no enviará ni guardará tus mensajes; no quiero fingir respuestas.</p>
-          <a class="button-primary" href={`${BASE}/experiencia/`}>Explorar la experiencia interactiva →</a>
-          <a class="aichat-offline-link" href={`${BASE}/precios/`}>Consultar servicios y precios</a>
-          <a class="aichat-offline-link" href={`${BASE}/contacto/`}>Contactar con VARINO</a>
-        </div>
-      )}
     </div>
 
-    {CHAT && <form class="aichat-composer" data-aichat-form>
+    <form class="aichat-composer" data-aichat-form>
       <label class="sr-only" for="aichat-input">Escribe tu mensaje</label>
       <textarea id="aichat-input" data-aichat-input rows="1" maxlength="1200" placeholder="Pregunta por servicios, precios o cómo empezar…" required></textarea>
       <button type="submit" aria-label="Enviar">↑</button>
-    </form>}
+    </form>
 
     <!-- Captura con consentimiento -->
-    {CHAT && <div class="aichat-capture" data-aichat-capture hidden>
+    <div class="aichat-capture" data-aichat-capture hidden>
       <form data-aichat-lead>
         <input type="hidden" name="website" value="" aria-hidden="true" tabindex="-1" autocomplete="off" />
         <p class="aichat-capture-title">¿Quieres que el equipo de VARINO te contacte?</p>
@@ -62,16 +55,19 @@ const CHAT = BACKEND_CHAT;
         <button type="submit" class="aichat-send">Enviar y que me contacten →</button>
         <p class="aichat-status" data-aichat-lead-status aria-live="polite"></p>
       </form>
-    </div>}
+    </div>
 
     <p class="aichat-legal">
-      {CHAT
-        ? `Asistente con IA de ${SITE.name}. El mensaje se envía al servidor de la agencia para generar una respuesta; no guardamos una copia del chat en este navegador. No compartas datos sensibles ni de terceros.`
-        : `El asistente de IA está desconectado. La experiencia interactiva funciona en este navegador; no envía ni conserva mensajes.`}
+      {`Asistente con IA de ${SITE.name}. El mensaje se envía al servidor de la agencia para generar una respuesta; no guardamos una copia del chat en este navegador. No compartas datos sensibles ni de terceros.`}
       <a href={`${"/privacidad/"}`} target="_blank" rel="noopener">Privacidad</a>
     </p>
   </div>
 </section>
+) : (
+  <a class="aichat-guide-entry" href={`${BASE}/#guia-varino`} aria-label="Explorar la guía interactiva de VARINO">
+    <span aria-hidden="true">◉</span> Explorar guía
+  </a>
+)}
 
 <style is:global>
   .ai-chat-widget {
@@ -85,6 +81,15 @@ const CHAT = BACKEND_CHAT;
     box-shadow: 0 10px 30px rgb(0 0 0 / .18); transition: transform .15s ease, background .2s;
   }
   .aichat-launcher:hover { background: #0077ed; }
+  .aichat-guide-entry {
+    position: fixed; right: 18px; bottom: 18px; z-index: 70;
+    display: inline-flex; align-items: center; gap: .5rem;
+    border-radius: 999px; padding: .7rem 1.1rem;
+    background: #0071e3; color: #fff; font-size: .8rem; font-weight: 600;
+    text-decoration: none; box-shadow: 0 10px 30px rgb(0 0 0 / .18);
+    transition: transform .15s ease, background .2s;
+  }
+  .aichat-guide-entry:hover { background: #0077ed; }
   .aichat-backdrop {
     position: fixed; inset: 0; z-index: 69; background: rgba(15, 15, 20, .25);
   }
@@ -105,9 +110,6 @@ const CHAT = BACKEND_CHAT;
   .aichat-close, .aichat-composer button { background: none; border: 0; cursor: pointer; color: var(--muted); font-size: .95rem; }
   .aichat-close { padding: .3rem .5rem; }
   .aichat-msgs { flex: 1; min-height: 0; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .45rem; }
-  .aichat-offline { margin: auto 0; display: grid; gap: .8rem; max-width: 21rem; font-size: .84rem; line-height: 1.55; }
-  .aichat-offline p { margin: 0; }
-  .aichat-offline-link { width: fit-content; color: var(--ac); text-decoration: underline; text-underline-offset: .2em; }
   .aichat-row { display: flex; flex-direction: column; }
   .aichat-row.user { align-items: flex-end; }
   .aichat-row.bot { align-items: flex-start; }
@@ -143,6 +145,9 @@ const CHAT = BACKEND_CHAT;
   .aichat-status { min-height: 1em; margin: .35rem 0 0; color: var(--muted); font-size: .72rem; }
   .aichat-legal { margin: 0; padding: .55rem .9rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .66rem; line-height: 1.45; }
   .aichat-panel[hidden] { display: none; }
+  @media (max-width: 767px) {
+    .aichat-guide-entry, .ai-chat-widget > .aichat-launcher { display: none; }
+  }
 </style>
 
 <script>
@@ -160,6 +165,9 @@ const CHAT = BACKEND_CHAT;
     var leadForm = root.querySelector("[data-aichat-lead]");
     var leadStatus = root.querySelector("[data-aichat-lead-status]");
     var backdrop = root.querySelector("[data-aichat-backdrop]");
+    var closeButton = root.querySelector("[data-aichat-close]");
+    var lastOpener = launcher;
+    var inertSiblings = [];
 
     var msgs = [];
     var sending = false;
@@ -184,12 +192,27 @@ const CHAT = BACKEND_CHAT;
     }
     function save(role, content) { msgs.push({ role: role, content: content }); persist(); }
 
-    function openPanel() {
+    function setBackgroundInert(inert) {
+      if (inert) {
+        inertSiblings = Array.from(document.body.children)
+          .filter(function (child) { return child !== root; })
+          .map(function (child) { return { node: child, wasInert: child.inert }; });
+        inertSiblings.forEach(function (item) { item.node.inert = true; });
+      } else {
+        inertSiblings.forEach(function (item) { item.node.inert = item.wasInert; });
+        inertSiblings = [];
+      }
+    }
+
+    function openPanel(opener) {
       if (!panel.hidden) return;
+      lastOpener = opener || launcher;
       panel.hidden = false;
       if (backdrop) backdrop.hidden = false;
+      setBackgroundInert(true);
       launcher.hidden = true;
       launcher.setAttribute("aria-expanded", "true");
+      lastOpener.setAttribute("aria-expanded", "true");
       if (CHAT) {
         msgsEl.replaceChildren();
         if (!msgs.length) {
@@ -199,25 +222,39 @@ const CHAT = BACKEND_CHAT;
         }
       }
       if (input) input.focus();
+      else closeButton.focus();
     }
     function closePanel() {
       panel.hidden = true;
       if (backdrop) backdrop.hidden = true;
+      setBackgroundInert(false);
       launcher.hidden = false;
       launcher.setAttribute("aria-expanded", "false");
-      launcher.focus();
+      if (lastOpener) lastOpener.setAttribute("aria-expanded", "false");
+      if (lastOpener && lastOpener.isConnected) lastOpener.focus();
+      else launcher.focus();
     }
-    launcher.addEventListener("click", function () { if (panel.hidden) openPanel(); else closePanel(); });
-    root.querySelector("[data-aichat-close]").addEventListener("click", closePanel);
+    launcher.addEventListener("click", function () { if (panel.hidden) openPanel(launcher); else closePanel(); });
+    closeButton.addEventListener("click", closePanel);
     if (backdrop) backdrop.addEventListener("click", closePanel);
+    panel.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") { ev.preventDefault(); closePanel(); return; }
+      if (ev.key !== "Tab") return;
+      var focusable = Array.from(panel.querySelectorAll('a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+        .filter(function (element) { return element.getClientRects().length > 0; });
+      if (!focusable.length) { ev.preventDefault(); closeButton.focus(); return; }
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+      else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+    });
     // Cualquier botón [data-open-chat] (p. ej. en la portada) abre el asistente
     var openers = document.querySelectorAll("[data-open-chat]");
     for (var oi = 0; oi < openers.length; oi++) {
-      openers[oi].addEventListener("click", function () { openPanel(); });
+      openers[oi].addEventListener("click", function () { openPanel(this); });
     }
 
-    // The public deployment intentionally has no AI or lead backend connected.
-    // Keep the honest local experience visible and stop before attaching send handlers.
+    // Defensa adicional: sin endpoint no se habilita envío ni captura de leads.
     if (!CHAT) return;
 
     function respuestaSinConexion() {

@@ -10,17 +10,17 @@ const hasLocalGuideApi = import.meta.env.DEV;
 <section class:list={["ai-guide", { "ai-guide--compact": compact }]} data-ai-guide data-base={BASE} data-local-guide-api={String(hasLocalGuideApi)}>
   <div class="ai-guide__heading">
     <div>
-      <p class="eyebrow">Consultoría inteligente</p>
-      <h2>Diseñemos tu sistema juntos.</h2>
+      <p class="eyebrow">Definición guiada</p>
+      <h2>De una tarea repetitiva a un sistema claro.</h2>
     </div>
-    <p class="ai-guide__promise"><span><i></i>Análisis privado y guiado</span>Habla con la guía como con un consultor. Irá entendiendo tu negocio, dibujando la solución y calculando un rango orientativo según alcance y mínimos del catálogo.</p>
+    <p class="ai-guide__promise"><span><i></i>{hasLocalGuideApi ? "Modelo local · entorno de desarrollo" : "Procesado en este navegador"}</span>Responde unas preguntas para delimitar el proceso. La guía organiza lo que indiques, muestra un flujo y calcula un rango orientativo; una persona confirma el alcance antes de cualquier propuesta.</p>
   </div>
 
   <div class="ai-studio">
-    <article class="ai-chat" aria-label="Conversación con VARINO Guide">
+    <article class="ai-chat" aria-label="Guía de proyecto VARINO">
       <header class="ai-chat__topbar">
         <div class="ai-orb" aria-hidden="true"><span></span></div>
-        <div><strong>VARINO Guide</strong><small>Arquitecto de automatización e IA</small></div>
+        <div><strong>VARINO Guide</strong><small>Guía de alcance y estimación</small></div>
         <span class="ai-chat__local" data-guide-status>{hasLocalGuideApi ? "Modelo local: se comprueba al responder" : "Guía interactiva en navegador"}</span>
       </header>
       <div class="ai-chat__messages" data-guide-messages aria-live="polite">
