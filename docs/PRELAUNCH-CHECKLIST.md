@@ -38,6 +38,14 @@ buscadores puedan leer esa etiqueta; no lo bloquees como sustituto de `noindex`.
   `ops/security-audit.json`; no marques aprobada una auditoría pendiente.
 - Comprueba la web completa en escritorio y móvil, la accesibilidad, enlaces,
   formularios, agenda, baja y cabeceras del alojamiento final.
+- Después de publicar una versión aprobada, ejecuta
+  `VARINO_EXPECTED_VERSION=<SHA publicado> npm run production:smoke`. Este
+  control hace solo peticiones GET y comprueba páginas clave, SHA publicado,
+  CSP, ausencia del túnel/webhooks directos, claims antiguos, metadatos
+  sociales, estado de indexación y recursos. Un `readiness` local verde no
+  sustituye esta verificación de producción. Antes del lanzamiento, debe pasar
+  en modo `noindex`; después, ejecuta el mismo control desde la versión con
+  `launchReady = true` para exigir sitemap e indexación.
 
 ## Habilitar indexación
 
