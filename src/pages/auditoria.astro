@@ -88,10 +88,13 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
   </section>
 
   <script>
+    import { clearLeadSubmissionId, getLeadSubmissionId } from "../lib/lead-idempotency.mjs";
+
     (function () {
       var form = document.getElementById("form-auditoria");
       if (!form) return;
       var statusEl = form.querySelector("[data-form-status]");
+      var sendingLead = false;
       function val(n) { var el = form.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ""; }
       var params = new URLSearchParams(location.search);
       var sectorParam = params.get("sector");
@@ -118,8 +121,9 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
         link.hidden = false;
         return true;
       }
-      form.addEventListener("submit", function (ev) {
+      form.addEventListener("submit", async function (ev) {
         ev.preventDefault();
+        if (sendingLead) return;
         var nombre = val("nombre"), email = val("email"), whatsapp = val("whatsapp");
         if (!email && !whatsapp) { if (statusEl) statusEl.textContent = "Indica un email o un WhatsApp para poder contactarte."; return; }
         var lead = form.getAttribute("data-lead");
@@ -131,19 +135,33 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
         }
         var consentEl = form.querySelector('[name="consentimiento"]');
         if (!consentEl || !consentEl.checked) { if (statusEl) statusEl.textContent = "Necesitamos tu consentimiento para contactarte y guardar esta solicitud."; return; }
+        sendingLead = true;
+        var submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton) submitButton.disabled = true;
+        var payload = {
+          nombre: nombre, email: email, whatsapp: whatsapp, empresa: val("empresa"),
+          interes: val("interes") || "otro", fuente: "form-auditoria",
+          pagina: location.pathname, consentimiento: true,
+          marketing_consent: form.querySelector('[name="marketing_consent"]')?.checked === true,
+          mensaje: ["Ha solicitado una llamada de encaje gratuita desde /auditoria.", "Sector: " + val("sector"), "Proceso: " + val("proceso")].join("\n")
+        };
+        var submissionId = await getLeadSubmissionId("auditoria", payload);
+        if (!submissionId) {
+          sendingLead = false;
+          if (submitButton) submitButton.disabled = false;
+          if (statusEl) statusEl.textContent = "No se pudo preparar un identificador seguro para el envío. No se han guardado tus datos; prueba en otro navegador o utiliza el correo.";
+          return;
+        }
         if (statusEl) statusEl.textContent = "Enviando…";
         fetch(lead, {
           method: "POST",
           headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-          body: JSON.stringify({
-            nombre: nombre, email: email, whatsapp: whatsapp, empresa: val("empresa"),
-            interes: val("interes") || "otro", fuente: "form-auditoria",
-            pagina: location.pathname, consentimiento: true,
-            marketing_consent: form.querySelector('[name="marketing_consent"]')?.checked === true,
-            mensaje: ["Ha solicitado una llamada de encaje gratuita desde /auditoria.", "Sector: " + val("sector"), "Proceso: " + val("proceso")].join("\n")
-          })
-        }).then(function (r) { return r.json(); }).then(function (d) {
-          if (d && d.ok) { if (statusEl) statusEl.textContent = "✓ Solicitud recibida. El equipo revisará la información."; form.reset(); }
+          body: JSON.stringify(Object.assign({ submissionId: submissionId }, payload))
+        }).then(function (r) {
+          if (!r.ok) throw new Error("lead_request_failed");
+          return r.json();
+        }).then(function (d) {
+          if (d && d.ok) { clearLeadSubmissionId("auditoria"); if (statusEl) statusEl.textContent = "✓ Solicitud recibida. El equipo revisará la información."; form.reset(); }
           else {
             var hasDraft = prepararCorreo();
             if (statusEl) statusEl.textContent = hasDraft ? "No se pudo confirmar la recepción. Revisa el borrador; no se ha enviado desde esta página." : "No se pudo confirmar la recepción. Copia el resumen y escríbenos por correo.";
@@ -151,6 +169,9 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
         }).catch(function () {
           var hasDraft = prepararCorreo();
           if (statusEl) statusEl.textContent = hasDraft ? "Sin conexión. Revisa el borrador; no se ha enviado desde esta página." : "Sin conexión. Copia el resumen y escríbenos por correo.";
+        }).finally(function () {
+          sendingLead = false;
+          if (submitButton) submitButton.disabled = false;
         });
       });
       var copyButton = form.querySelector("[data-copy-briefing]");

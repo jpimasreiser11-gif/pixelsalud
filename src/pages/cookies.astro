@@ -22,6 +22,11 @@ import { SITE } from "../config";
           chat, formularios, agenda y analítica no envían datos a n8n. El formulario de contacto puede preparar o copiar un briefing
           en el dispositivo. No equivale a una analítica anónima solo por no usar cookies.
         </p>
+        <p class="mt-2">
+          Si se conecta la recepción de formularios, se conserva en <code>sessionStorage</code> un nonce aleatorio temporal por formulario
+          para reconocer un reintento idéntico y evitar duplicados. No se guardan ahí los campos ni el contenido del formulario; el nonce
+          se elimina al confirmar el envío o al cerrar la pestaña. Es almacenamiento técnico y no se usa para publicidad o analítica.
+        </p>
       </div>
       <div>
         <h2 class="text-lg font-semibold text-[#1d1d1f] dark:text-white">Cómo eliminar la preferencia</h2>

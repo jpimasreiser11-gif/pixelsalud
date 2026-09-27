@@ -151,6 +151,8 @@ const CHAT = BACKEND_CHAT;
 </style>
 
 <script>
+  import { clearLeadSubmissionId, getLeadSubmissionId } from "../lib/lead-idempotency.mjs";
+
   (function () {
     var root = document.querySelector("[data-aichat]");
     if (!root) return;
@@ -171,6 +173,7 @@ const CHAT = BACKEND_CHAT;
 
     var msgs = [];
     var sending = false;
+    var sendingLead = false;
     var convId = "";
     function persist() { msgs = msgs.slice(-48); }
 
@@ -319,6 +322,7 @@ const CHAT = BACKEND_CHAT;
 
     leadForm.addEventListener("submit", async function (ev) {
       ev.preventDefault();
+      if (sendingLead) return;
       var f = leadForm;
       function val(n) { var el = f.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ""; }
       var consent = f.querySelector('[name="consentimiento"]').checked;
@@ -347,6 +351,22 @@ const CHAT = BACKEND_CHAT;
         mostrarCanales("El formulario no está conectado; no hemos recibido ni guardado tus datos. Escríbenos por");
         return;
       }
+      sendingLead = true;
+      var submitButton = leadForm.querySelector('button[type="submit"]');
+      if (submitButton) submitButton.disabled = true;
+      var leadPayload = {
+        nombre: nombre, email: email, whatsapp: whatsapp, empresa: "", interes: "chat",
+        fuente: "chat_widget", pagina: location.pathname, consentimiento: true, marketing_consent: false,
+        mensaje: "Chat: " + (last || "").slice(0, 600), conversationId: convId,
+        website: f.querySelector('[name="website"]').value
+      };
+      var submissionId = await getLeadSubmissionId("chat", leadPayload);
+      if (!submissionId) {
+        sendingLead = false;
+        if (submitButton) submitButton.disabled = false;
+        leadStatus.textContent = "No se pudo preparar un identificador seguro para el envío. No se han guardado tus datos; inténtalo desde otro navegador o escríbenos por correo.";
+        return;
+      }
       leadStatus.textContent = "Enviando la solicitud al equipo…";
       var cLead = new AbortController();
       var tLead = setTimeout(function () { cLead.abort(); }, 15000);
@@ -355,22 +375,20 @@ const CHAT = BACKEND_CHAT;
           method: "POST",
           signal: cLead.signal,
           headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-          body: JSON.stringify({
-            nombre: nombre, email: email, whatsapp: whatsapp, empresa: "", interes: "chat",
-            fuente: "chat_widget", pagina: location.pathname, consentimiento: true, marketing_consent: false,
-            mensaje: "Chat: " + (last || "").slice(0, 600), conversationId: convId,
-            website: f.querySelector('[name="website"]').value
-          })
+          body: JSON.stringify(Object.assign({ submissionId: submissionId }, leadPayload))
         });
         if (!leadResponse.ok) throw new Error("lead_request_failed");
         var leadResult = await leadResponse.json();
         if (!leadResult || leadResult.ok !== true) throw new Error("lead_not_saved");
+        clearLeadSubmissionId("chat");
         leadStatus.textContent = "Solicitud recibida y registrada. El equipo revisará tu mensaje.";
         leadForm.reset();
       } catch (e2) {
         mostrarCanales("No se pudo confirmar el envío y no hemos guardado una copia en este navegador. Vuelve a intentarlo o contáctanos por");
       } finally {
         clearTimeout(tLead);
+        sendingLead = false;
+        if (submitButton) submitButton.disabled = false;
       }
     });
 

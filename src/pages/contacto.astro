@@ -190,11 +190,14 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
   </section>
 
   <script>
+    import { clearLeadSubmissionId, getLeadSubmissionId } from "../lib/lead-idempotency.mjs";
+
     (function () {
       var form = document.getElementById("form-contacto");
       if (!form) return;
       var lead = form.getAttribute("data-lead") || "";
       var statusEl = form.querySelector("[data-form-status]");
+      var sendingLead = false;
       function val(name) {
         var el = form.querySelector('[name="' + name + '"]');
         return el ? el.value.trim() : "";
@@ -225,15 +228,18 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
         draftLink.hidden = false;
         return true;
       }
-      form.addEventListener("submit", function (ev) {
+      form.addEventListener("submit", async function (ev) {
         ev.preventDefault();
+        if (sendingLead) return;
         var nombre = val("nombre");
         var email = val("email");
         var whatsapp = val("whatsapp");
         var consentEl = form.querySelector('[name="consentimiento"]');
         if (consentEl && !consentEl.checked) { if (statusEl) statusEl.textContent = "Confirma que VARINO puede tratar tus datos para responder a la solicitud."; return; }
         if (lead) {
-          if (statusEl) statusEl.textContent = "Enviando…";
+          sendingLead = true;
+          var submitButton = form.querySelector('button[type="submit"]');
+          if (submitButton) submitButton.disabled = true;
           var payload = {
             nombre: nombre,
             email: email,
@@ -246,12 +252,25 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
             marketing_consent: form.querySelector('[name="marketing_consent"]')?.checked === true,
             mensaje: val("mensaje"),
           };
+          var submissionId = await getLeadSubmissionId("contacto", payload);
+          if (!submissionId) {
+            sendingLead = false;
+            if (submitButton) submitButton.disabled = false;
+            if (statusEl) statusEl.textContent = "No se pudo preparar un identificador seguro para el envío. No se han guardado tus datos; prueba en otro navegador o utiliza el correo.";
+            return;
+          }
+          if (statusEl) statusEl.textContent = "Enviando…";
+          payload.submissionId = submissionId;
           fetch(lead, {
             method: "POST",
             headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
             body: JSON.stringify(payload),
-          }).then(function (r) { return r.json(); }).then(function (d) {
+          }).then(function (r) {
+            if (!r.ok) throw new Error("lead_request_failed");
+            return r.json();
+          }).then(function (d) {
             if (d && d.ok) {
+              clearLeadSubmissionId("contacto");
               if (statusEl) statusEl.textContent = "✓ Solicitud recibida. El equipo revisará la información.";
               form.reset();
             } else {
@@ -261,6 +280,9 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
           }).catch(function () {
             prepararMailto();
             if (statusEl) statusEl.textContent = "No se pudo confirmar la recepción. Si decides continuar, revisa el borrador de correo; no se ha enviado desde esta página.";
+          }).finally(function () {
+            sendingLead = false;
+            if (submitButton) submitButton.disabled = false;
           });
         } else {
           // Sin backend: el usuario revisa el borrador en su aplicación antes de enviarlo.

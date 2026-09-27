@@ -45,6 +45,48 @@ test("contacto no afirma recibir datos si el backend está desconectado", async 
   expect(webhookRequests).toBe(0);
 });
 
+test("el formulario conserva la clave en un reintento y la rota tras una recepción confirmada", async ({ page }) => {
+  const submissionIds: string[] = [];
+  await page.addInitScript(() => {
+    const original = Element.prototype.getAttribute;
+    Element.prototype.getAttribute = function (name: string) {
+      if (name === "data-lead" && this.id === "form-contacto") return `${location.origin}/__test/lead`;
+      return original.call(this, name);
+    };
+  });
+  await page.route("**/__test/lead", async (route) => {
+    const request = route.request().postDataJSON() as { submissionId: string };
+    submissionIds.push(request.submissionId);
+    if (submissionIds.length === 1) {
+      await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ ok: false }) });
+      return;
+    }
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, duplicate: true }) });
+  });
+
+  await page.goto("/contacto/");
+  const form = page.locator("#form-contacto");
+  const fillContact = async (email: string) => {
+    await form.getByLabel("Nombre completo").fill("Cliente de prueba");
+    await form.getByLabel("Empresa / organización").fill("Clínica Norte");
+    await form.getByLabel("Email", { exact: true }).fill(email);
+  };
+  await fillContact("prueba@example.com");
+  await form.locator('button[type="submit"]').click();
+  await expect(page.locator("[data-form-status]")).toContainText(/no se pudo confirmar la recepción/i);
+
+  await form.locator('button[type="submit"]').click();
+  await expect(page.locator("[data-form-status]")).toContainText(/solicitud recibida/i);
+  expect(submissionIds).toHaveLength(2);
+  expect(submissionIds[0]).toMatch(/^[0-9a-f]{64}$/i);
+  expect(submissionIds[1]).toBe(submissionIds[0]);
+
+  await fillContact("otra@example.com");
+  await form.locator('button[type="submit"]').click();
+  await expect.poll(() => submissionIds.length).toBe(3);
+  expect(submissionIds[2]).not.toBe(submissionIds[0]);
+});
+
 test("la reserva se presenta como no disponible si no hay agenda conectada", async ({ page }) => {
   const webhooks: string[] = [];
   page.on("request", (request) => {

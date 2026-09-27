@@ -39,6 +39,7 @@ import { SITE } from "../config";
         <p>En {SITE.name} tratamos la información que nos facilitan las personas interesadas con las siguientes finalidades exclusivas:</p>
         <ul class="mt-2 space-y-1.5 list-disc pl-5">
           <li><strong>Gestión de consultas y solicitudes:</strong> Atender peticiones recibidas por los formularios, chat y agenda, y preparar una respuesta o propuesta solicitada.</li>
+          <li><strong>Control de reintentos:</strong> Si se activa la recepción de formularios, la solicitud incluye una clave técnica opaca para reconocer reintentos y evitar altas duplicadas. La clave se asocia al registro del lead; el navegador conserva solo un nonce aleatorio temporal, no los campos del formulario.</li>
           <li><strong>Comunicaciones comerciales opcionales:</strong> Solo si la persona marca una casilla separada, no premarcada, para recibir novedades, consejos y ofertas. No es necesaria para responder a una solicitud.</li>
           <li><strong>Ejecución de Servicios Contratados:</strong> Desarrollar, desplegar y mantener los proyectos de automatización, software e inteligencia artificial acordados con clientes.</li>
          <li><strong>Cumplimiento de Obligaciones Legales:</strong> Facturación, contabilidad y cumplimiento fiscal exigible.</li>
