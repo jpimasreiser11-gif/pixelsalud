@@ -215,6 +215,17 @@ test("muestra límites claros en cada paquete antes de pedir contacto", async ({
   await expect(page.getByText("149 €/mes + IVA").first()).toBeVisible();
 });
 
+test("la guía de presupuesto separa hipótesis, precios publicados y resultados demostrados", async ({ page }) => {
+  await page.goto("recursos/presupuesto-automatizacion/");
+  const main = page.locator("main");
+  await expect(main).toContainText("No existe un porcentaje de contingencia que sirva para todos los proyectos");
+  await expect(main).toContainText("Automation Sprint, 950–1.900 € + IVA");
+  await expect(main).toContainText("plan Care desde 149 €/mes + IVA");
+  await expect(main).toContainText("una hipótesis, no un resultado demostrado");
+  await expect(main).not.toContainText(/15\s*[–-]\s*20\s*%/);
+  await expect(main).not.toContainText(/desde unos cientos de euros al mes/i);
+});
+
 test("el tema y el menú funcionan bajo la CSP publicada", async ({ page, isMobile }) => {
   const bloqueos: string[] = [];
   page.on("console", (msg) => {
