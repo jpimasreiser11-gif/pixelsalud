@@ -10,9 +10,11 @@ interface Props {
   title: string;
   description?: string;
   noindex?: boolean;
+  /** Hide the global chat and analytics on pages that should not collect or route visitor data. */
+  includeVisitorTools?: boolean;
 }
 
-const { title, description = SITE.description, noindex = false } = Astro.props;
+const { title, description = SITE.description, noindex = false, includeVisitorTools = true } = Astro.props;
 const shouldNoindex = noindex || !SITE.launchReady;
 const canonical = SITE.url ? new URL(Astro.url.pathname, SITE.url).href : "";
 const socialImage = SITE.url ? new URL(`${BASE}/og/varino-social.png`, SITE.url).href : "";
@@ -256,8 +258,8 @@ const schema = SITE.launchReady && SITE.url && SITE.legalOwner ? JSON.stringify(
       </div>
     </footer>
 
-    <AiChat />
-    <Analytics />
+    {includeVisitorTools && <AiChat />}
+    {includeVisitorTools && <Analytics />}
     <Reveal />
 
     <script>

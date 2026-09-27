@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 // Estas pruebas navegan el contenido de dist/ servido sin cabeceras, igual que
@@ -35,6 +36,34 @@ test("el HTML legal de prelanzamiento no contiene identidad ni permite contratar
   expect(text).not.toMatch(/\b\d{8}[A-Z]\b/i);
   expect(text).not.toMatch(/domicilio:\s*\S/i);
   expect(text).not.toMatch(/contratar servicios|contratación online está habilitada/i);
+});
+
+test("la landing de Automation Sprint no carga chat, analítica ni el túnel antiguo", async ({ page, baseURL }) => {
+  const propio = new URL(baseURL ?? "http://localhost:4456").origin;
+  const externos: string[] = [];
+  page.on("request", (request) => {
+    if (new URL(request.url()).origin !== propio) externos.push(request.url());
+  });
+
+  await page.goto("automation-sprint/");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Más control del proceso");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex,follow");
+  await expect(page.locator("[data-aichat]")).toHaveCount(0);
+  await expect(page.locator("[data-analytics]")).toHaveCount(0);
+  await expect(page.locator("form")).toHaveCount(0);
+  await expect(page.getByText(/esquema ilustrativo/i)).toBeVisible();
+  await expect(page.getByText(/no es un flujo instalado ni un caso de cliente/i)).toBeVisible();
+  await expect(page.locator("#alcance")).toContainText("950–1.900 €");
+  await expect(page.locator("#alcance")).toContainText("+ IVA");
+
+  const contactLink = page.getByRole("link", { name: /Cuéntanos qué proceso se repite/i }).first();
+  await expect(contactLink).toHaveAttribute("href", /^mailto:varinoagency@gmail\.com\?/);
+  const html = await page.locator("body").innerText();
+  expect(html).not.toContain("ngrok-free.dev");
+  expect(externos, "la landing no debe llamar servicios externos al cargar").toEqual([]);
+
+  const accesibilidad = await new AxeBuilder({ page }).analyze();
+  expect(accesibilidad.violations.filter((violation) => ["serious", "critical"].includes(violation.impact || ""))).toEqual([]);
 });
 
 test("la plantilla DPA permanece oculta hasta aprobación de identidad y seguridad", async ({ page }) => {
