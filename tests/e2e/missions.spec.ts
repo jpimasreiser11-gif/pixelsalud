@@ -72,6 +72,22 @@ test("la guía sigue funcionando sin servidor, como en la web publicada", async 
   await expect(guide.locator("[data-hardware]")).toContainText(/GB de memoria unificada/i);
 });
 
+test("un primer mensaje libre reconoce el sector y el problema sin pedirlos otra vez", async ({ page }) => {
+  await page.route("**/api/guide", (route) => route.abort());
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
+
+  await answer.fill("Hola, tengo una clínica pequeña y perdemos tiempo confirmando citas por teléfono.");
+  await answer.press("Enter");
+
+  await expect(guide.locator(".ai-message--assistant").last()).toContainText(/confirmando citas por teléfono/i);
+  await expect(guide.locator(".ai-message--assistant").last()).toContainText(/cómo realizáis ahora ese proceso/i);
+  await expect(guide.locator(".ai-message--assistant").last()).not.toContainText(/a qué se dedica tu empresa|qué sector/i);
+  await expect(guide.locator("[data-service]")).toHaveText("IA privada");
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía base · conexión local no disponible");
+});
+
 test("conserva el contexto durante todo el diagnóstico y no repite preguntas", async ({ page }) => {
   await page.route("**/api/guide", (route) => route.abort());
   await page.goto("/experiencia/");

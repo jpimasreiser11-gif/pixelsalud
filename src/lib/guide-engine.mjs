@@ -211,6 +211,23 @@ export function fieldFromQuestion(assistantText) {
   return "";
 }
 
+function initialFreeformFacts(profile, answer) {
+  const identity = answer.match(/\b(?:soy|somos|tengo|tenemos|dirijo|gestiono|llevo|trabajo en|estoy montando|montamos|me dedico a|nos dedicamos a)\s+(?:(?:una|un|el|la|mi|nuestro|nuestra)\s+)?([^,;.!?]+?)(?=\s+(?:y|pero|donde|en la que|en el que|porque|ya que)\b|[.;!?]|$)/i);
+  const business = clampText(identity?.[1]?.replace(/^(?:una|un|el|la|mi|nuestro|nuestra)\s+/i, ""), 160);
+  const sector = deriveSector({ business: answer, problem: "", process: "" });
+  const problemMatch = answer.match(/\b(?:perdemos|pierdo|tardamos|se nos va|se me va|nos cuesta|me cuesta|no (?:conseguimos|podemos|llegamos|contestamos|respondemos)|queremos mejorar|quiero mejorar|necesitamos mejorar|necesito mejorar|queremos automatizar|quiero automatizar|necesitamos automatizar|necesito automatizar|me gustaría automatizar|nos gustaría automatizar|tenemos (?:un )?problema(?:s)?|hay un problema|problema con)\b[^.!?;]*/i);
+
+  if (!profile.business) {
+    if (business) profile.business = business;
+    else if (sector && problemMatch) profile.business = sector;
+    else if (!problemMatch) profile.business = clampText(answer, 160);
+  }
+  if (!profile.sector && sector) profile.sector = sector;
+  if (!profile.problem && problemMatch) profile.problem = clampText(problemMatch[0], 300);
+
+  return problemMatch ? "problem" : profile.business ? "business" : "";
+}
+
 // Registra la última respuesta del visitante. Devuelve el campo rellenado
 // para que la respuesta visible pueda reconocer exactamente ese dato.
 //
@@ -226,6 +243,12 @@ export function applyLastAnswer(profile, messages = []) {
     if (asked) {
       profile[asked] = answer;
       filledField = asked;
+    } else if (messages.filter((message) => message?.role === "user").length === 1 && !lastOf(messages, "assistant")) {
+      // En un primer mensaje libre, interpreta solo negocio/sector y problema.
+      // No conviertas palabras como “teléfono” o “tiempo” en canal/objetivo:
+      // el usuario puede estar describiendo el problema, no respondiendo esos
+      // campos, y preguntar luego el sector repetiría algo ya explicado.
+      filledField = initialFreeformFacts(profile, answer);
     } else {
       // Mensaje libre: sin pregunta previa se deduce por pistas y, si no hay
       // ninguna, ocupa el primer hueco pendiente.

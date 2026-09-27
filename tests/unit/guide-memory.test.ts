@@ -49,6 +49,38 @@ describe("motor de VARINO Guide", () => {
     expect(result.nextQuestion).toMatch(/a qué se dedica/i);
   });
 
+  it("extrae negocio y problema de un primer mensaje libre sin repetir el sector", () => {
+    const result = advise({
+      messages: [{
+        role: "user",
+        content: "Hola, tengo una clínica pequeña y perdemos tiempo confirmando citas por teléfono.",
+      }],
+    });
+
+    expect(result.profile.business).toBe("clínica pequeña");
+    expect(result.profile.sector).toBe("salud");
+    expect(result.profile.problem).toBe("perdemos tiempo confirmando citas por teléfono");
+    expect(result.profile.channels).toBe("");
+    expect(result.profile.goal).toBe("");
+    expect(result.filledField).toBe("problem");
+    expect(result.nextQuestion).toMatch(/cómo realizáis ahora ese proceso/i);
+    expect(result.nextQuestion).not.toMatch(/a qué se dedica|sector/i);
+  });
+
+  it("completa el problema con reglas propias si el modelo solo reconoce el negocio", () => {
+    const result = advise({
+      messages: [{
+        role: "user",
+        content: "Hola, tengo una clínica pequeña y perdemos tiempo confirmando citas por teléfono.",
+      }],
+      modelProfile: { business: "clínica pequeña", problem: "" },
+    });
+
+    expect(result.profile.problem).toBe("perdemos tiempo confirmando citas por teléfono");
+    expect(result.profile.channels).toBe("");
+    expect(result.nextQuestion).toMatch(/cómo realizáis ahora ese proceso/i);
+  });
+
   it("produce presupuesto y hardware coherentes sin modelo de lenguaje", () => {
     const result = advise({
       messages: [
