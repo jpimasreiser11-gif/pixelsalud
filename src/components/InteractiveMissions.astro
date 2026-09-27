@@ -71,7 +71,7 @@ const hasLocalGuideApi = import.meta.env.DEV;
 </section>
 
 <script>
-  import { advise } from "../lib/guide-engine.mjs";
+  import { advise, containsPrivateData } from "../lib/guide-engine.mjs";
 
   const stageNames = { welcome: "BIENVENIDA", discovery: "DESCUBRIMIENTO", process: "PROCESO", requirements: "REQUISITOS", architecture: "ARQUITECTURA", estimate: "ESTIMACIÓN" };
   const activeNodes = { welcome: 1, discovery: 1, process: 2, requirements: 3, architecture: 4, estimate: 4 };
@@ -154,10 +154,39 @@ const hasLocalGuideApi = import.meta.env.DEV;
       updatePreview(result);
     };
 
+    const resetGuide = (message = "Empezamos de nuevo. Cuéntame a qué se dedica tu empresa y qué quieres mejorar.") => {
+      conversation = [];
+      profile = {};
+      messages.replaceChildren();
+      appendMessage(message, "assistant");
+      budget.hidden = true;
+      setText("[data-guide-stage]", "DESCUBRIMIENTO");
+      setText("[data-preview-kicker]", "Sistema en definición");
+      setText("[data-preview-title]", "Tu necesidad, convertida en una arquitectura clara.");
+      setText("[data-preview-caption]", "La visualización cambiará mientras la guía comprende tu proceso, controles y objetivo.");
+      setText('[data-node="input"]', "Por descubrir");
+      setText('[data-node="logic"]', "Análisis guiado");
+      setText('[data-node="control"]', "Aprobación humana");
+      setText('[data-node="output"]', "Objetivo medible");
+      root.querySelectorAll(".ai-blueprint article").forEach((card, index) => card.classList.toggle("is-active", index === 0));
+      setText("[data-service]", "Diagnóstico y arquitectura");
+      setText("[data-reason]", "Primero entendemos el proceso. Después decidimos qué automatizar y qué debe seguir bajo aprobación humana.");
+      setText("[data-service-link-label]", "Revisar mi caso con VARINO");
+      const link = root.querySelector("[data-service-link]");
+      if (link) link.href = `${base}/contacto/`;
+      setText("[data-hardware]", "La infraestructura se dimensionará cuando conozcamos usuarios, datos y concurrencia.");
+      status.textContent = idleStatus;
+    };
+
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       const text = input.value.trim();
       if (!text || submit.disabled) return;
+      if (containsPrivateData([...conversation.map((message) => message.content), text].join("\n"))) {
+        input.value = "";
+        resetGuide("Por privacidad, no he enviado esa información al modelo y he reiniciado el diagnóstico. Continúa con una descripción general, sin datos de contacto ni secretos.");
+        return;
+      }
       appendMessage(text, "user");
       conversation.push({ role: "user", content: text });
       conversation = conversation.slice(-36);
@@ -205,12 +234,7 @@ const hasLocalGuideApi = import.meta.env.DEV;
     });
 
     root.querySelector("[data-guide-reset]").addEventListener("click", () => {
-      conversation = [];
-      profile = {};
-      messages.innerHTML = "";
-      appendMessage("Empezamos de nuevo. Cuéntame a qué se dedica tu empresa y qué quieres mejorar.", "assistant");
-      budget.hidden = true;
-      status.textContent = idleStatus;
+      resetGuide();
       input.focus();
     });
   });

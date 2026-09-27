@@ -37,18 +37,26 @@ describe("motor de presupuesto", () => {
   it("nombra un modelo local que existe y dimensiona con margen", () => {
     const hardware = recommendHardware({ modelSize: "large", users: 20, concurrency: 3, sensitivity: "high" });
     expect(hardware.model).toBe("qwen3:14b");
-    expect(hardware.unifiedMemoryGb).toBeGreaterThanOrEqual(32);
+    expect(hardware.unifiedMemoryGb).toBeGreaterThanOrEqual(48);
     expect(hardware.unifiedMemoryGb).toBeGreaterThan(hardware.modelWeightsGb);
     expect(hardware.backupStorageGb).toBeGreaterThanOrEqual(hardware.freeStorageGb * 2);
     expect(hardware.headroom).toContain("30%");
     expect(hardware.profile).not.toContain("27B");
   });
 
+  it("incluye Qwen 3.8 27,3B y reserva memoria para el sistema y el contexto", () => {
+    const hardware = recommendHardware({ modelSize: "27b", users: 3, concurrency: 1, sensitivity: "high" });
+    expect(hardware.model).toBe("qwen3.8:latest");
+    expect(hardware.modelWeightsGb).toBe(17);
+    expect(hardware.unifiedMemoryGb).toBe(64);
+    expect(hardware.profile).toContain("27,3B Q4_K_M");
+  });
+
   it("sube de nivel cuando la carga lo exige y nunca baja del pedido", () => {
     const piloto = recommendHardware({ modelSize: "small", users: 1, concurrency: 1 });
     const cargado = recommendHardware({ modelSize: "small", users: 80, concurrency: 8 });
     expect(piloto.modelSize).toBe("small");
-    expect(cargado.modelSize).toBe("xlarge");
+    expect(cargado.modelSize).toBe("xxlarge");
     expect(cargado.unifiedMemoryGb).toBeGreaterThan(piloto.unifiedMemoryGb);
   });
 });

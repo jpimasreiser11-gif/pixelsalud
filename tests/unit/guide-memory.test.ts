@@ -82,9 +82,9 @@ describe("motor de VARINO Guide", () => {
     });
     expect(result.service.slug).toBe("ia-privada");
     expect(result.profile.localAi).toBe(true);
-    expect(result.hardware.model).toMatch(/^qwen3:/);
-    // Un caso pequeño no debe pedir un equipo de 64 GB, pero sí memoria
-    // suficiente para el modelo y su contexto.
+    expect(result.hardware.model).toMatch(/^qwen3(?::|\.8:)/);
+    // El caso avanzado de IA privada usa el perfil Qwen 27B y conserva margen
+    // para contexto, sistema operativo y concurrencia.
     expect(result.hardware.unifiedMemoryGb).toBeGreaterThan(result.hardware.modelWeightsGb * 2);
   });
 

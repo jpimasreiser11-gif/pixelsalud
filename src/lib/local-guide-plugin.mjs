@@ -4,7 +4,7 @@
 // guide-engine, el mismo módulo que usa el navegador en la web publicada.
 // Así la conversación no cambia de criterio según dónde se ejecute.
 
-import { advise, DISCOVERY_QUESTIONS, normalizeProfile, welcomeCopy } from "./guide-engine.mjs";
+import { advise, containsPrivateData, DISCOVERY_QUESTIONS, normalizeProfile, welcomeCopy } from "./guide-engine.mjs";
 
 const MAX_BODY_BYTES = 96_000;
 const MAX_MESSAGES = 40;
@@ -88,13 +88,28 @@ function sanitizeMessages(value) {
     if (!message || !["user", "assistant"].includes(message.role) || typeof message.content !== "string") throw new Error("invalid_message");
     const content = message.content.replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, MAX_MESSAGE_CHARS);
     if (!content) throw new Error("empty_message");
+    if (containsPrivateData(content)) throw new Error("personal_data_blocked");
     return { role: message.role, content };
   });
 }
 
+function chooseModel(available, preferred = "") {
+  if (preferred && available.includes(preferred)) return preferred;
+  return (
+    available.find((name) => /^qwen3\.8(?::|$)/i.test(name)) ||
+    available.find((name) => /^qwen3/i.test(name)) ||
+    available.find((name) => /^qwen/i.test(name)) ||
+    available.find((name) => /^(gemma|llama|mistral|phi)/i.test(name)) ||
+    available[0] ||
+    null
+  );
+}
+
 function allowedOrigin(req) {
   const origin = req.headers.origin || "";
-  return !origin || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+  const host = req.headers.host || "";
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
+    && /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host);
 }
 
 function withinRateLimit(req) {
@@ -115,14 +130,7 @@ async function selectModel() {
     if (!response.ok) return null;
     const data = await response.json();
     const available = (data.models || []).map((model) => model.name);
-    if (preferred && available.includes(preferred)) return preferred;
-    return (
-      available.find((name) => /^qwen3/.test(name)) ||
-      available.find((name) => /^qwen/.test(name)) ||
-      available.find((name) => /^(gemma|llama|mistral|phi)/.test(name)) ||
-      available[0] ||
-      null
-    );
+    return chooseModel(available, preferred);
   } catch {
     return null;
   }
@@ -185,7 +193,7 @@ export function createLocalGuidePlugin() {
         } catch (error) {
           const status = error.message === "payload_too_large"
             ? 413
-            : ["invalid_json", "messages_required", "invalid_message", "empty_message"].includes(error.message)
+              : ["invalid_json", "messages_required", "invalid_message", "empty_message", "personal_data_blocked"].includes(error.message)
               ? 400
               : 500;
           send(res, status, { error: error.message || "guide_error" });
@@ -195,4 +203,4 @@ export function createLocalGuidePlugin() {
   };
 }
 
-export { advise, welcomeCopy };
+export { advise, allowedOrigin, chooseModel, sanitizeMessages, welcomeCopy };

@@ -10,6 +10,22 @@ import { calculateEstimate, recommendHardware } from "./quote-engine.mjs";
 
 export const TEXT_FIELDS = ["business", "sector", "problem", "process", "tools", "volume", "channels", "approvals", "goal"];
 
+// El chat de demostración nunca necesita datos de contacto o credenciales.
+// Se bloquean antes de añadir el mensaje al historial o enviarlo al modelo.
+const PRIVATE_DATA_PATTERNS = [
+  /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i,
+  /(?<!\d)(?:\+?34[ .-]?)?[6789]\d{2}(?:(?:[ .-]?\d{3}[ .-]?\d{3})|(?:[ .-]?\d{2}){3})(?!\d)/,
+  /\b\d{8}[A-HJ-NP-TV-Z]\b/i,
+  /\b[XYZ]\d{7}[A-HJ-NP-TV-Z]\b/i,
+  /\bES\d{22}\b/i,
+  /\b(?:api[_ -]?key|password|contrase(?:ñ|n)a|token)\s*[:=]|\bbearer\s+[A-Z0-9._~-]{12,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\b(?:sk-[A-Z0-9_-]{16,}|gh[pousr]_[A-Z0-9]{20,}|xox[baprs]-[A-Z0-9-]{10,})/i,
+];
+
+export function containsPrivateData(value) {
+  const text = String(value || "");
+  return PRIVATE_DATA_PATTERNS.some((pattern) => pattern.test(text));
+}
+
 // Cada pregunta declara el campo que rellena. Así la respuesta del visitante
 // aterriza en el campo correcto sin adivinar por expresiones regulares.
 export const DISCOVERY_QUESTIONS = [
@@ -313,7 +329,7 @@ export function hardwareFor(profile, documentCount = 0) {
   // no necesita el mismo equipo que diez usuarios con datos sensibles, y
   // prometer 64 GB a todo el mundo infla el presupuesto sin motivo.
   const heavy = (profile.sensitivity === "high" && profile.users > 5) || profile.users > 10 || profile.complexity === "advanced";
-  const modelSize = heavy ? "large" : profile.users > 3 || profile.sensitivity === "high" ? "medium" : "small";
+  const modelSize = heavy ? "xlarge" : profile.users > 3 || profile.sensitivity === "high" ? "medium" : "small";
   return recommendHardware({
     ...profile,
     modelSize,

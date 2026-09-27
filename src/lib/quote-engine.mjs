@@ -53,21 +53,20 @@ export function calculateEstimate(raw = {}) {
   const maintenanceMonthly = roundMoney(maintenanceHours * QUOTE_POLICY.hourlyRate);
   return { input, lineItems, baseHours, contingencyHours, quotedHours, range, maintenanceHours, maintenanceMonthly, policy: QUOTE_POLICY };
 }
-// Perfiles de hardware para IA privada.
-//
-// Los modelos y sus pesos están verificados contra el registro público de
-// Ollama (septiembre 2026). No se nombra "Qwen 27B": ese tamaño no existe en
-// la familia Qwen 3 y prometerlo en un presupuesto es un error de cara al
-// cliente. La memoria se calcula sobre el peso real del modelo dejando margen
-// para contexto, sistema operativo y el resto del sistema.
+// Perfiles orientativos de hardware para IA privada.
+// Qwen 3.8:latest se verificó localmente con `ollama show` el 2026-09-27:
+// 27,3B parámetros, Q4_K_M y 17 GB en el registro local. Las cifras son una
+// preselección conservadora; antes de comprar hay que medir contexto, carga y
+// concurrencia reales con los datos del cliente.
 export const MODEL_TIERS = Object.freeze({
   small: { model: "qwen3:4b", weightsGb: 2.6, memoryGb: 16, storageGb: 80, label: "Piloto local (Qwen3 4B)" },
   medium: { model: "qwen3:8b", weightsGb: 5.2, memoryGb: 24, storageGb: 120, label: "Equipo pequeño (Qwen3 8B)" },
   large: { model: "qwen3:14b", weightsGb: 9.3, memoryGb: 32, storageGb: 180, label: "Producción (Qwen3 14B)" },
-  xlarge: { model: "qwen3:32b", weightsGb: 20.2, memoryGb: 64, storageGb: 300, label: "Alta exigencia (Qwen3 32B)" },
+  xlarge: { model: "qwen3.8:latest", weightsGb: 17, memoryGb: 64, storageGb: 300, label: "IA exigente (Qwen 3.8 · 27,3B Q4_K_M)" },
+  xxlarge: { model: "qwen3:32b", weightsGb: 20.2, memoryGb: 64, storageGb: 400, label: "Alta concurrencia (Qwen3 32B)" },
 });
 
-const TIER_ALIASES = { small: "small", "4b": "small", "8b": "medium", medium: "medium", "14b": "large", large: "large", "32b": "xlarge", xlarge: "xlarge" };
+const TIER_ALIASES = { small: "small", "4b": "small", "8b": "medium", medium: "medium", "14b": "large", large: "large", "27b": "xlarge", xlarge: "xlarge", "32b": "xxlarge", xxlarge: "xxlarge" };
 
 export function recommendHardware(raw = {}) {
   const users = clamp(raw.users, 1, 250);
@@ -78,15 +77,19 @@ export function recommendHardware(raw = {}) {
   const requested = TIER_ALIASES[raw.modelSize] || "medium";
   // La concurrencia y el número de usuarios pueden exigir un nivel superior al
   // pedido: se sube, nunca se baja, para no quedarse corto en producción.
-  const order = ["small", "medium", "large", "xlarge"];
-  const byLoad = concurrency > 6 || users > 60 ? "xlarge" : concurrency > 2 || users > 15 ? "large" : requested;
+  const order = ["small", "medium", "large", "xlarge", "xxlarge"];
+  const byLoad = concurrency > 6 || users > 60 ? "xxlarge" : concurrency > 2 || users > 15 ? "large" : requested;
   const tierKey = order[Math.max(order.indexOf(requested), order.indexOf(byLoad))];
   const tier = MODEL_TIERS[tierKey];
 
-  // Cada petición concurrente añade contexto en memoria; se redondea al alza
-  // y se contrasta con el mínimo del perfil.
-  const concurrencyMemory = Math.ceil(tier.weightsGb + tier.weightsGb * 0.35 * concurrency + 8);
-  const unifiedMemoryGb = Math.max(tier.memoryGb, concurrencyMemory);
+  // Estima peso + 35% por petición concurrente + SO/servicios; divide por 0,7
+  // para reservar un 30% teórico. Redondea a capacidades habituales y siempre
+  // exige una prueba de carga antes de convertirlo en especificación final.
+  const workingMemoryGb = tier.weightsGb * (1 + 0.35 * concurrency) + 8;
+  const neededMemoryGb = Math.max(tier.memoryGb, workingMemoryGb / 0.7);
+  const memoryOptions = [16, 24, 32, 48, 64, 96, 128, 192, 256];
+  const unifiedMemoryGb = memoryOptions.find((capacity) => capacity >= neededMemoryGb)
+    || Math.ceil(neededMemoryGb / 64) * 64;
   const freeStorageGb = tier.storageGb + Math.ceil(documentCount / 10000) * 20;
 
   return {
