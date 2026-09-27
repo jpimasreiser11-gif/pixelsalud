@@ -10,6 +10,14 @@ export const QUOTE_POLICY = Object.freeze({
   validityDays: 15,
 });
 
+// Keep the interactive estimate aligned with the publicly published packages.
+// Larger scopes are still estimated, but clearly routed to a custom proposal.
+export const SERVICE_QUOTE_LIMITS = Object.freeze({
+  "automation-sprint": { floor: 950, ceiling: 1900, workflows: 1, integrations: 1 },
+  "sistema-crecimiento": { floor: 2500, ceiling: 6000, workflows: 3, integrations: 4 },
+  "ia-privada": { floor: 5500, ceiling: null, workflows: 3, integrations: 3 },
+});
+
 export function calculateEstimate(raw = {}) {
   const input = {
     integrations: clamp(raw.integrations, 1, 12),
@@ -20,6 +28,7 @@ export function calculateEstimate(raw = {}) {
     localAi: raw.localAi !== false,
     customUi: Boolean(raw.customUi),
     dataMigration: Boolean(raw.dataMigration),
+    service: Object.hasOwn(SERVICE_QUOTE_LIMITS, raw.service) ? raw.service : "",
   };
   // Calibrado contra los rangos comerciales publicados en config.ts y el plan
   // de negocio (ops/PLAN-0-A-10K.md): un sprint típico ronda los 1.200–1.900 €,
@@ -48,10 +57,24 @@ export function calculateEstimate(raw = {}) {
   const contingencyHours = roundHours(baseHours * QUOTE_POLICY.contingencyRate);
   const quotedHours = baseHours + contingencyHours;
   const price = roundMoney(quotedHours * QUOTE_POLICY.hourlyRate);
-  const range = { min: roundMoney(price * 0.9), max: roundMoney(price * 1.15) };
+  const limits = input.service ? SERVICE_QUOTE_LIMITS[input.service] : null;
+  const range = {
+    min: Math.max(limits?.floor || 0, roundMoney(price * 0.9)),
+    max: Math.max(limits?.floor || 0, roundMoney(price * 1.15)),
+  };
+  range.max = Math.max(range.min, range.max);
+  const exceedsPackage = Boolean(limits && (
+    input.workflows > limits.workflows
+    || input.integrations > limits.integrations
+    || (limits.ceiling != null && range.max > limits.ceiling)
+  ));
   const maintenanceHours = Math.max(4, Math.ceil((input.workflows * 1.25 + input.integrations + riskHours / 3) / 2) * 2);
   const maintenanceMonthly = roundMoney(maintenanceHours * QUOTE_POLICY.hourlyRate);
-  return { input, lineItems, baseHours, contingencyHours, quotedHours, range, maintenanceHours, maintenanceMonthly, policy: QUOTE_POLICY };
+  return {
+    input, lineItems, baseHours, contingencyHours, quotedHours, range,
+    maintenanceHours, maintenanceMonthly, policy: QUOTE_POLICY,
+    exceedsPackage,
+  };
 }
 // Perfiles orientativos de hardware para IA privada.
 // Qwen 3.8:latest se verificó localmente con `ollama show` el 2026-09-27:

@@ -25,8 +25,22 @@ test("la guía responde y convierte la conversación en arquitectura", async ({ 
   await expect(guide.locator("[data-service]")).toHaveText("IA privada");
   await expect(guide.locator("[data-guide-status]")).toHaveText("Modelo local · qwen3.8:latest");
   await expect(guide.getByText("50.5")).toBeVisible();
+  await expect(guide.locator("[data-budget-note]")).toContainText(/mínimo publicado del servicio/i);
   await expect(guide.getByText(/64 GB de memoria unificada/i)).toBeVisible();
   await expect(guide.getByRole("link", { name: /Ver IA privada/i })).toHaveAttribute("href", "/servicios/ia-privada/");
+});
+
+test("la guía avisa cuando el cálculo rebasa el paquete publicado", async ({ page }) => {
+  const oversized = {
+    ...guideResponse,
+    estimate: { ...guideResponse.estimate, exceedsPackage: true },
+  };
+  await page.route("**/api/guide", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(oversized) }));
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  await guide.getByLabel("Escribe tu mensaje").fill("Somos una clínica y queremos ordenar documentos sensibles");
+  await guide.getByLabel("Escribe tu mensaje").press("Enter");
+  await expect(guide.locator("[data-budget-note]")).toContainText(/supera los límites del paquete publicado/i);
 });
 
 test("la guía no afirma que Ollama funciona si el endpoint responde sin modelo", async ({ page }) => {

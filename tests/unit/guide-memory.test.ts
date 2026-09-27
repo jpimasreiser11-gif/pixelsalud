@@ -114,6 +114,7 @@ describe("motor de VARINO Guide", () => {
     });
     expect(result.service.slug).toBe("ia-privada");
     expect(result.profile.localAi).toBe(true);
+    expect(result.estimate.range.min).toBeGreaterThanOrEqual(5500);
     expect(result.hardware.model).toMatch(/^qwen3(?::|\.8:)/);
     // El caso avanzado de IA privada usa el perfil Qwen 27B y conserva margen
     // para contexto, sistema operativo y concurrencia.

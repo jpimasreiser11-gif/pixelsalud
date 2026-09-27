@@ -416,7 +416,7 @@ export function advise({ messages = [], profile: previousProfile = {}, modelProf
     nextQuestion: nextUsefulQuestion(profile),
     stage,
     profile,
-    estimate: quoteReady ? calculateEstimate(profile) : null,
+    estimate: quoteReady ? calculateEstimate({ ...profile, service: service.slug }) : null,
     hardware: quoteReady && profile.localAi ? hardwareFor(profile, documentCount) : null,
     service,
     filledField,

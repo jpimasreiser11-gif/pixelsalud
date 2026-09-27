@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateEstimate, QUOTE_POLICY, recommendHardware } from "../../src/lib/quote-engine.mjs";
+import { calculateEstimate, QUOTE_POLICY, recommendHardware, SERVICE_QUOTE_LIMITS } from "../../src/lib/quote-engine.mjs";
 
 describe("motor de presupuesto", () => {
   it("añade un margen visible y no incluye IVA", () => {
@@ -14,17 +14,37 @@ describe("motor de presupuesto", () => {
     // Los rangos de config.ts son el compromiso comercial público
     // (ops/PLAN-0-A-10K.md). Si el motor se descalibra y vuelve a presupuestar
     // 22.000 € a una clínica de tres personas, esta prueba lo detiene.
-    const sprint = calculateEstimate({ integrations: 2, workflows: 1, users: 2, complexity: "standard", sensitivity: "medium", localAi: false });
+    const sprint = calculateEstimate({ integrations: 2, workflows: 1, users: 2, complexity: "standard", sensitivity: "medium", localAi: false, service: "automation-sprint" });
     expect(sprint.range.min).toBeGreaterThanOrEqual(900);
     expect(sprint.range.max).toBeLessThanOrEqual(2400);
 
-    const crecimiento = calculateEstimate({ integrations: 3, workflows: 2, users: 4, complexity: "standard", sensitivity: "high", localAi: false });
+    const crecimiento = calculateEstimate({ integrations: 3, workflows: 2, users: 4, complexity: "standard", sensitivity: "high", localAi: false, service: "sistema-crecimiento" });
     expect(crecimiento.range.min).toBeGreaterThanOrEqual(2500);
     expect(crecimiento.range.max).toBeLessThanOrEqual(4500);
 
-    const iaPrivada = calculateEstimate({ integrations: 5, workflows: 3, users: 3, complexity: "advanced", sensitivity: "high", localAi: true });
-    expect(iaPrivada.range.min).toBeGreaterThanOrEqual(4500);
+    const iaPrivada = calculateEstimate({ integrations: 5, workflows: 3, users: 3, complexity: "advanced", sensitivity: "high", localAi: true, service: "ia-privada" });
+    expect(iaPrivada.range.min).toBeGreaterThanOrEqual(5500);
     expect(iaPrivada.range.max).toBeLessThanOrEqual(12000);
+  });
+
+  it("never estimates below the published minimum and flags out-of-package scope", () => {
+    const smallPrivateAi = calculateEstimate({
+      integrations: 1, workflows: 1, users: 3, complexity: "simple",
+      sensitivity: "medium", localAi: true, service: "ia-privada",
+    });
+    expect(smallPrivateAi.range.min).toBeGreaterThanOrEqual(SERVICE_QUOTE_LIMITS["ia-privada"].floor);
+
+    const oneFlowSprint = calculateEstimate({
+      integrations: 1, workflows: 1, users: 2, complexity: "simple",
+      sensitivity: "low", localAi: false, service: "automation-sprint",
+    });
+    expect(oneFlowSprint.exceedsPackage).toBe(false);
+
+    const oversizedSprint = calculateEstimate({
+      integrations: 2, workflows: 2, users: 2, complexity: "standard",
+      sensitivity: "medium", localAi: false, service: "automation-sprint",
+    });
+    expect(oversizedSprint.exceedsPackage).toBe(true);
   });
 
   it("incrementa horas cuando aumenta el alcance", () => {

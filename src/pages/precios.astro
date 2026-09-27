@@ -11,7 +11,7 @@ import { BASE, MAINTENANCE_PLANS, SERVICES, SITE } from "../config";
       <div class="sm:text-right"><strong class="block text-2xl">290 € + IVA</strong><a class="button-primary mt-4" href={`${BASE}/auditoria/`}>Ver diagnóstico</a></div>
     </article>
   </section>
-  <section data-reveal class="mx-auto grid max-w-6xl gap-5 px-6 pb-24 lg:grid-cols-3">{SERVICES.map((service) => <article class="rounded-3xl border border-black/8 p-7 dark:border-white/10"><p class="text-xs font-bold text-[#655cff]">{service.tag}</p><h2 class="mt-7 text-3xl font-semibold tracking-[-0.04em]">{service.name}</h2><strong class="mt-3 block text-xl">{service.range}</strong><p class="mt-4 min-h-24 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{service.summary}</p><ul class="mt-6 space-y-3 text-sm">{service.deliverables.map((item) => <li class="border-t border-black/8 pt-3 dark:border-white/10">{item}</li>)}</ul><p class="mt-6 text-xs leading-5 text-[#6e6e73]">Rango indicativo, no oferta contractual.</p></article>)}</section>
+  <section data-reveal class="mx-auto grid max-w-6xl gap-5 px-6 pb-24 lg:grid-cols-3">{SERVICES.map((service) => <article class="rounded-3xl border border-black/8 p-7 dark:border-white/10"><p class="text-xs font-bold text-[#655cff]">{service.tag}</p><h2 class="mt-7 text-3xl font-semibold tracking-[-0.04em]">{service.name}</h2><strong class="mt-3 block text-xl">{service.range}</strong><p class="mt-4 min-h-24 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{service.summary}</p><p class="mt-5 rounded-xl bg-[#f7f7f5] p-4 text-xs leading-5 text-[#505056] dark:bg-[#111318] dark:text-[#c4c4cc]"><strong>Alcance incluido:</strong> {service.scope}</p><p class="mt-6 text-xs leading-5 text-[#6e6e73]">Rango orientativo, no oferta contractual. Si el caso supera estos límites, se presupuesta por separado.</p></article>)}</section>
   <section class="mx-auto max-w-6xl px-6 pb-6">
     <div class="rounded-2xl border border-black/8 bg-[#f7f7f5] p-5 text-sm leading-6 text-[#6e6e73] dark:border-white/10 dark:bg-[#111318] dark:text-[#a1a1a6]">
       <strong class="text-[#1d1d1f] dark:text-[#f5f5f7]">Cómo se paga.</strong> Sin IVA oculto: los rangos no incluyen IVA ni licencias de terceros. Antes de construir firmamos un presupuesto cerrado con alcance y exclusiones; si el alcance cambia, lo acordamos por escrito antes de seguir. El Diagnóstico CAIO (290 €) se descuenta si contratas la implementación propuesta.
@@ -23,7 +23,7 @@ import { BASE, MAINTENANCE_PLANS, SERVICES, SITE } from "../config";
       {SERVICES.map((service) => (
         <article class="rounded-3xl border border-black/8 p-6 dark:border-white/10">
           <h3 class="text-xl font-semibold">{service.name}</h3>
-          <p class="mt-3 text-xs font-bold text-[#0071e3]">Incluye</p>
+          <p class="mt-3 text-xs font-bold text-[#0071e3]">Entregables</p>
           <ul class="mt-2 space-y-2 text-sm">{service.deliverables.map((i) => <li>· {i}</li>)}</ul>
           <p class="mt-5 text-xs font-bold text-[#6e6e73] dark:text-[#a1a1a6]">No incluye</p>
           <ul class="mt-2 space-y-2 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">{service.exclusions.map((i) => <li>— {i}</li>)}</ul>

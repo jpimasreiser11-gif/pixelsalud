@@ -13,7 +13,7 @@ const hasLocalGuideApi = import.meta.env.DEV;
       <p class="eyebrow">Consultoría inteligente</p>
       <h2>Diseñemos tu sistema juntos.</h2>
     </div>
-    <p class="ai-guide__promise"><span><i></i>Análisis privado y guiado</span>Habla con la guía como con un consultor. Irá entendiendo tu negocio, dibujando la solución y calculando un rango basado en trabajo real.</p>
+    <p class="ai-guide__promise"><span><i></i>Análisis privado y guiado</span>Habla con la guía como con un consultor. Irá entendiendo tu negocio, dibujando la solución y calculando un rango orientativo según alcance y mínimos del catálogo.</p>
   </div>
 
   <div class="ai-studio">
@@ -58,6 +58,7 @@ const hasLocalGuideApi = import.meta.env.DEV;
           <p><strong data-budget-range>—</strong><small>rango sin IVA</small></p>
           <p><strong data-budget-monthly>—</strong><small>mantenimiento orientativo</small></p>
         </div>
+        <p class="ai-budget__note" data-budget-note>Estimación inicial, sin IVA; puede aplicar el mínimo publicado del servicio. El precio contractual se confirma por escrito.</p>
         <p data-hardware>La infraestructura se dimensionará cuando conozcamos usuarios, datos y concurrencia.</p>
       </div>
       <div class="ai-insight">
@@ -143,6 +144,9 @@ const hasLocalGuideApi = import.meta.env.DEV;
         setText("[data-budget-hours]", String(data.estimate.quotedHours));
         setText("[data-budget-range]", `${money.format(data.estimate.range.min)}–${money.format(data.estimate.range.max)}`);
         setText("[data-budget-monthly]", `${money.format(data.estimate.maintenanceMonthly)}/mes`);
+        setText("[data-budget-note]", data.estimate.exceedsPackage
+          ? "El caso supera los límites del paquete publicado; este cálculo es orientativo y requiere una propuesta personalizada."
+          : "Estimación inicial, sin IVA; puede aplicar el mínimo publicado del servicio. El precio contractual y los criterios de aceptación se confirman por escrito.");
       }
       if (data.hardware) setText("[data-hardware]", `${data.hardware.profile}: ${data.hardware.unifiedMemoryGb} GB de memoria unificada, ${data.hardware.freeStorageGb} GB libres y ${data.hardware.headroom}.`);
     };
@@ -160,6 +164,7 @@ const hasLocalGuideApi = import.meta.env.DEV;
       messages.replaceChildren();
       appendMessage(message, "assistant");
       budget.hidden = true;
+      setText("[data-budget-note]", "Estimación inicial, sin IVA; puede aplicar el mínimo publicado del servicio. El precio contractual se confirma por escrito.");
       setText("[data-guide-stage]", "DESCUBRIMIENTO");
       setText("[data-preview-kicker]", "Sistema en definición");
       setText("[data-preview-title]", "Tu necesidad, convertida en una arquitectura clara.");

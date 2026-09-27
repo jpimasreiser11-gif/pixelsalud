@@ -31,6 +31,11 @@ describe("VARINO configuration", () => {
       "690 €/mes",
       "Desde 1.190 €/mes",
     ]);
+    expect(SERVICES.map((service) => service.scope)).toEqual([
+      expect.stringContaining("1 proceso, 1 flujo de trabajo y 1 integración estándar"),
+      expect.stringContaining("hasta 3 flujos conectados y 4 integraciones estándar"),
+      expect.stringContaining("1 caso de uso y asistente, hasta 3 flujos y 3 integraciones"),
+    ]);
   });
 
   it("does not send visitor data to an unverified public tunnel", () => {

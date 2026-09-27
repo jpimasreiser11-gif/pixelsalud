@@ -94,6 +94,15 @@ test("distingue la llamada gratuita del Diagnóstico CAIO de pago", async ({ pag
   await expect(page.getByRole("button", { name: /Solicitar llamada gratuita/i })).toBeVisible();
 });
 
+test("muestra límites claros en cada paquete antes de pedir contacto", async ({ page }) => {
+  await page.goto("precios/");
+  const main = page.locator("main");
+  await expect(main).toContainText("1 proceso, 1 flujo de trabajo y 1 integración estándar");
+  await expect(main).toContainText("hasta 3 flujos conectados y 4 integraciones estándar");
+  await expect(main).toContainText("1 caso de uso y asistente, hasta 3 flujos y 3 integraciones");
+  await expect(main).toContainText("Si el caso supera estos límites, se presupuesta por separado.");
+});
+
 test("el tema y el menú funcionan bajo la CSP publicada", async ({ page, isMobile }) => {
   const bloqueos: string[] = [];
   page.on("console", (msg) => {

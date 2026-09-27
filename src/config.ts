@@ -64,6 +64,8 @@ export const SERVICES = [
       "Mapeamos, construimos y probamos una automatización acotada, con observabilidad, recuperación y transferencia.",
     range: "950–1.900 €",
     precio: "950–1.900 €",
+    scope:
+      "1 proceso, 1 flujo de trabajo y 1 integración estándar. Flujos adicionales, sistemas legacy, migración de datos o IA local requieren una propuesta a medida.",
     outcome: "Un proceso crítico automatizado",
     resultado: "Un proceso crítico automatizado",
     deliverables: [
@@ -96,6 +98,8 @@ export const SERVICES = [
       "Conectamos la entrada de oportunidades, su cualificación y el trabajo comercial manteniendo las decisiones en manos del equipo.",
     range: "2.500–6.000 €",
     precio: "2.500–6.000 €",
+    scope:
+      "1 recorrido de captación y seguimiento, hasta 3 flujos conectados y 4 integraciones estándar. Los mensajes externos quedan sujetos a aprobación humana.",
     outcome: "Captación, seguimiento y operaciones conectadas",
     resultado: "Captación, seguimiento y operaciones conectadas",
     deliverables: [
@@ -128,6 +132,8 @@ export const SERVICES = [
       "Diseñamos asistentes, búsqueda documental y flujos locales o privados con permisos, evaluación y trazabilidad.",
     range: "Desde 5.500 €",
     precio: "Desde 5.500 €",
+    scope:
+      "1 caso de uso y asistente, hasta 3 flujos y 3 integraciones; corpus, permisos y entorno se concretan en el diagnóstico. Hardware, licencias y operación del modelo se cotizan aparte.",
     outcome: "Conocimiento y modelos bajo control",
     resultado: "Conocimiento y modelos bajo control",
     deliverables: [
