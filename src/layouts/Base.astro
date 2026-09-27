@@ -15,6 +15,7 @@ interface Props {
 const { title, description = SITE.description, noindex = false } = Astro.props;
 const shouldNoindex = noindex || !SITE.launchReady;
 const canonical = SITE.url ? new URL(Astro.url.pathname, SITE.url).href : "";
+const socialImage = SITE.url ? new URL(`${BASE}/og/varino-social.png`, SITE.url).href : "";
 const isSectorPage = Astro.url.pathname.replace(/\/+$/, "").startsWith(`${BASE}/sectores`);
 
 const nav = [
@@ -56,6 +57,16 @@ const schema = SITE.launchReady && SITE.url && SITE.legalOwner ? JSON.stringify(
     <meta property="og:type" content="website" />
     {canonical && <meta property="og:url" content={canonical} />}
     <meta property="og:locale" content="es_ES" />
+    {socialImage && <meta property="og:image" content={socialImage} />}
+    {socialImage && <meta property="og:image:type" content="image/png" />}
+    {socialImage && <meta property="og:image:width" content="1200" />}
+    {socialImage && <meta property="og:image:height" content="630" />}
+    {socialImage && <meta property="og:image:alt" content="VARINO — automatización e IA alrededor de procesos reales" />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} — ${SITE.name}`} />
+    <meta name="twitter:description" content={description} />
+    {socialImage && <meta name="twitter:image" content={socialImage} />}
+    {socialImage && <meta name="twitter:image:alt" content="VARINO — automatización e IA alrededor de procesos reales" />}
     {schema && <script type="application/ld+json" set:html={schema} />}
     <script>
       (function () {

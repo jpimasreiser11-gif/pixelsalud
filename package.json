@@ -17,7 +17,8 @@
     "deploy-gate:check": "node scripts/check-deploy-gate.mjs",
     "claims:check": "node scripts/check-claims.mjs",
     "launch:check": "node scripts/check-launch-readiness.mjs",
-    "readiness": "npm run build && npm run scripts:syntax && npm run links:check && npm run csp:check && npm run deploy-gate:check"
+    "seo:check": "node scripts/check-seo.mjs",
+    "readiness": "npm run build && npm run seo:check && npm run scripts:syntax && npm run links:check && npm run csp:check && npm run deploy-gate:check"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
