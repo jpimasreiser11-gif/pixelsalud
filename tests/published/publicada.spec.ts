@@ -53,8 +53,7 @@ test("la landing de Automation Sprint no carga chat, analítica ni el túnel ant
   await expect(page.locator("form")).toHaveCount(0);
   await expect(page.getByText(/esquema ilustrativo/i)).toBeVisible();
   await expect(page.getByText(/no es un flujo instalado ni un caso de cliente/i)).toBeVisible();
-  await expect(page.locator("#alcance")).toContainText("950–1.900 €");
-  await expect(page.locator("#alcance")).toContainText("+ IVA");
+  await expect(page.locator("#alcance")).toContainText("950–1.900 € + IVA");
 
   const contactLink = page.getByRole("link", { name: /Cuéntanos qué proceso se repite/i }).first();
   await expect(contactLink).toHaveAttribute("href", /^mailto:varinoagency@gmail\.com\?/);
@@ -130,6 +129,15 @@ test("muestra límites claros en cada paquete antes de pedir contacto", async ({
   await expect(main).toContainText("hasta 3 flujos conectados y 4 integraciones estándar");
   await expect(main).toContainText("1 caso de uso y asistente, hasta 3 flujos y 3 integraciones");
   await expect(main).toContainText("Si el caso supera estos límites, se presupuesta por separado.");
+  await expect(main).toContainText("950–1.900 € + IVA");
+  await expect(main).toContainText("2.500–6.000 € + IVA");
+  await expect(main).toContainText("Desde 5.500 € + IVA");
+
+  await page.goto("planes/");
+  await expect(page.getByText(/contratación y cobro online desactivados/i)).toBeVisible();
+  const planes = (await page.locator("body").innerText()).toLowerCase();
+  expect(planes).not.toMatch(/factura automática|stripe/);
+  await expect(page.getByText("149 €/mes + IVA").first()).toBeVisible();
 });
 
 test("el tema y el menú funcionan bajo la CSP publicada", async ({ page, isMobile }) => {
@@ -250,6 +258,9 @@ test("el laboratorio publica tres demos n8n descargables y seguras", async ({ pa
 
   await page.goto("demos/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Te enseñamos cómo se comporta");
+  await expect(page.locator("#clinica")).toContainText("IA privada · Desde 5.500 € + IVA");
+  await expect(page.locator("#crecimiento")).toContainText("Sistema de crecimiento · 2.500–6.000 € + IVA");
+  await expect(page.locator("#operaciones")).toContainText("Automation Sprint · 950–1.900 € + IVA");
 
   const descargas = page.getByRole("link", { name: "Descargar flujo n8n" });
   await expect(descargas).toHaveCount(3);

@@ -21,15 +21,15 @@ describe("VARINO configuration", () => {
 
   it("publishes the approved offer ranges", () => {
     expect(SERVICES.map((service) => service.range)).toEqual([
-      "950–1.900 €",
-      "2.500–6.000 €",
-      "Desde 5.500 €",
+      "950–1.900 € + IVA",
+      "2.500–6.000 € + IVA",
+      "Desde 5.500 € + IVA",
     ]);
     expect(MAINTENANCE_PLANS.map((plan) => plan.monthly)).toEqual([
-      "149 €/mes",
-      "349 €/mes",
-      "690 €/mes",
-      "Desde 1.190 €/mes",
+      "149 €/mes + IVA",
+      "349 €/mes + IVA",
+      "690 €/mes + IVA",
+      "Desde 1.190 €/mes + IVA",
     ]);
     expect(SERVICES.map((service) => service.scope)).toEqual([
       expect.stringContaining("1 proceso, 1 flujo de trabajo y 1 integración estándar"),

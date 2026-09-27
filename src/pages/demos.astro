@@ -1,6 +1,8 @@
 ---
 import Base from "../layouts/Base.astro";
-import { BASE } from "../config";
+import { BASE, SERVICES } from "../config";
+
+const servicePrice = (id: string) => SERVICES.find((service) => service.id === id)?.range ?? "Consultar alcance";
 
 const cases = [
   {
@@ -13,7 +15,7 @@ const cases = [
     control: "El flujo no confirma citas ni envía mensajes. Recepción decide qué hacer.",
     output: "Cola estructurada, estado y trazabilidad para cada solicitud.",
     service: "IA privada",
-    price: "4.500–12.000 €+",
+    price: servicePrice("private-ai"),
     file: `${BASE}/demos/clinica-intake.n8n.json`,
   },
   {
@@ -26,7 +28,7 @@ const cases = [
     control: "No compra bases de datos, no puntúa personas y no contacta sin aprobación.",
     output: "Bandeja priorizada y borrador de siguiente acción para el comercial.",
     service: "Sistema de crecimiento",
-    price: "2.500–4.500 €",
+    price: servicePrice("growth-system"),
     file: `${BASE}/demos/leads-seguimiento.n8n.json`,
   },
   {
@@ -39,7 +41,7 @@ const cases = [
     control: "Cada excepción conserva una recuperación manual; no se modifica ningún sistema externo.",
     output: "Caso enrutable, observable y preparado para aprobación.",
     service: "Automation Sprint",
-    price: "950–1.500 €",
+    price: servicePrice("automation-sprint"),
     file: `${BASE}/demos/operaciones-bandeja.n8n.json`,
   },
 ];

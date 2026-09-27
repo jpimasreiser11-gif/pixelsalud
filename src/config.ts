@@ -62,8 +62,8 @@ export const SERVICES = [
       "Mapeamos, construimos y probamos una automatización acotada, con observabilidad, recuperación y transferencia.",
     descripcion:
       "Mapeamos, construimos y probamos una automatización acotada, con observabilidad, recuperación y transferencia.",
-    range: "950–1.900 €",
-    precio: "950–1.900 €",
+    range: "950–1.900 € + IVA",
+    precio: "950–1.900 € + IVA",
     scope:
       "1 proceso, 1 flujo de trabajo y 1 integración estándar. Flujos adicionales, sistemas legacy, migración de datos o IA local requieren una propuesta a medida.",
     outcome: "Un proceso crítico automatizado",
@@ -96,8 +96,8 @@ export const SERVICES = [
       "Conectamos la entrada de oportunidades, su cualificación y el trabajo comercial manteniendo las decisiones en manos del equipo.",
     descripcion:
       "Conectamos la entrada de oportunidades, su cualificación y el trabajo comercial manteniendo las decisiones en manos del equipo.",
-    range: "2.500–6.000 €",
-    precio: "2.500–6.000 €",
+    range: "2.500–6.000 € + IVA",
+    precio: "2.500–6.000 € + IVA",
     scope:
       "1 recorrido de captación y seguimiento, hasta 3 flujos conectados y 4 integraciones estándar. Los mensajes externos quedan sujetos a aprobación humana.",
     outcome: "Captación, seguimiento y operaciones conectadas",
@@ -130,8 +130,8 @@ export const SERVICES = [
       "Diseñamos asistentes, búsqueda documental y flujos locales o privados con permisos, evaluación y trazabilidad.",
     descripcion:
       "Diseñamos asistentes, búsqueda documental y flujos locales o privados con permisos, evaluación y trazabilidad.",
-    range: "Desde 5.500 €",
-    precio: "Desde 5.500 €",
+    range: "Desde 5.500 € + IVA",
+    precio: "Desde 5.500 € + IVA",
     scope:
       "1 caso de uso y asistente, hasta 3 flujos y 3 integraciones; corpus, permisos y entorno se concretan en el diagnóstico. Hardware, licencias y operación del modelo se cotizan aparte.",
     outcome: "Conocimiento y modelos bajo control",
@@ -203,7 +203,7 @@ export const MAINTENANCE_PLANS = [
   {
     id: "care",
     name: "Care",
-    monthly: "149 €/mes",
+    monthly: "149 €/mes + IVA",
     horas: 1,
     sla: "48 h laborables",
     setup: "190 €",
@@ -219,7 +219,7 @@ export const MAINTENANCE_PLANS = [
   {
     id: "managed",
     name: "Managed",
-    monthly: "349 €/mes",
+    monthly: "349 €/mes + IVA",
     horas: 3,
     sla: "24 h laborables",
     setup: "0 €",
@@ -236,7 +236,7 @@ export const MAINTENANCE_PLANS = [
   {
     id: "optimize",
     name: "Optimize",
-    monthly: "690 €/mes",
+    monthly: "690 €/mes + IVA",
     horas: 8,
     sla: "8 h laborables",
     setup: "0 €",
@@ -252,7 +252,7 @@ export const MAINTENANCE_PLANS = [
   {
     id: "private-ai-ops",
     name: "Private AI Ops",
-    monthly: "Desde 1.190 €/mes",
+    monthly: "Desde 1.190 €/mes + IVA",
     horas: 12,
     sla: "8 h laborables",
     setup: "0 €",
@@ -270,11 +270,11 @@ export const MAINTENANCE_PLANS = [
 
 // Reglas comerciales de las mensualidades (explícitas para que no haya sorpresas).
 export const PLAN_RULES = {
-  permanencia: "Sin permanencia. Con 12 meses de compromiso, −15 % en la cuota.",
-  anual: "Pago anual: 2 meses gratis (pagas 10 cuotas).",
-  horasExtra: "Horas extra: 85 €/hora; bono de 10 horas con −10 %.",
-  setup: "Alta técnica: 190 € en Care; sin coste en Managed, Optimize y Private AI Ops.",
-  iva: "Todos los precios son sin IVA (21 %).",
+  permanencia: "Modalidad mensual sin permanencia. El −15 % requiere un compromiso de 12 meses, documentado en la propuesta.",
+  anual: "Prepago anual: 10 cuotas por adelantado (equivale a 2 meses gratis); no acumulable al descuento por compromiso.",
+  horasExtra: "Horas extra: 85 €/hora + IVA; bono de 10 horas con −10 %.",
+  setup: "Alta técnica: 190 € + IVA en Care; sin coste en Managed, Optimize y Private AI Ops.",
+  iva: "Los precios publicados son importes sin IVA; el IVA aplicable y el total se desglosan antes de aceptar.",
   sla: "Atención de 9:00 a 18:00 (Europe/Madrid) en días laborables.",
 } as const;
 
