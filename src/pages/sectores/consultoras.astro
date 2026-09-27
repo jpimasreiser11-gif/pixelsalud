@@ -1,0 +1,155 @@
+---
+import Base from "../../layouts/Base.astro";
+import InteractiveMissions from "../../components/InteractiveMissions.astro";
+import { BASE, MAINTENANCE_PLANS, SERVICES } from "../../config";
+
+const sprint = SERVICES.find((service) => service.id === "automation-sprint")!;
+const growth = SERVICES.find((service) => service.id === "growth-system")!;
+const care = MAINTENANCE_PLANS.find((plan) => plan.id === "care")!;
+
+const stages = [
+  ["Entrada", "Registrar cada solicitud con su canal y los datos mínimos necesarios."],
+  ["CRM", "Comprobar duplicados y asignar una tarea al responsable adecuado."],
+  ["Preparación", "Organizar contexto o crear un borrador; no enviar propuestas por cuenta propia."],
+  ["Revisión", "Una persona valida alcance, precio y cualquier mensaje al prospecto."],
+  ["Onboarding", "Tras la aceptación, preparar tareas internas y una lista de información pendiente."],
+];
+
+const faqs = [
+  ["¿Qué procesos suele tener sentido revisar primero?", "Entrada de oportunidades, actualización del CRM, preparación de propuestas, coordinación del onboarding e informes internos. Primero comprobamos volumen, excepciones, responsables y herramientas; no automatizamos un paso solo porque sea posible."],
+  ["¿La IA envía propuestas o contacta prospectos automáticamente?", "No. En el alcance publicado, los borradores y las comunicaciones externas quedan sujetos a aprobación humana. No usamos listas compradas ni activamos captación automática de terceros."],
+  ["¿Cuánto tiempo o dinero puede ahorrar?", "No damos una cifra antes de medir una línea base. El volumen, el tiempo por tarea, las excepciones y los costes externos cambian el resultado. Una estimación inicial no es un ahorro observado ni una garantía."],
+  ["¿Qué ocurre con la información que introduzco en la guía?", "La guía pública organiza el texto en este navegador y no lo envía al backend de VARINO. Aun así, no introduzcas nombres, emails, documentos, secretos ni información de clientes; describe el proceso de forma general."],
+];
+---
+
+<Base
+  title="Automatización para consultoras B2B — VARINO"
+  description="Ideas de automatización para consultoras: CRM, propuestas y onboarding con alcance publicado, revisión humana y sin promesas de ahorro inventadas."
+>
+  <section class="mx-auto max-w-6xl px-6 pb-14 pt-20 sm:pb-20 sm:pt-28">
+    <p class="eyebrow">Consultoras y servicios profesionales B2B</p>
+    <h1 class="display-title mt-5 max-w-5xl">Automatización para consultoras.<br /><span>Con criterio en cada paso.</span></h1>
+    <p class="mt-7 max-w-3xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">Conecta la entrada de oportunidades, el CRM, la preparación de propuestas y el onboarding sin ceder el control comercial. Empezamos por un proceso repetitivo, definimos sus límites y medimos antes de hablar de ahorro.</p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="#flujo" class="button-primary">Explorar el flujo ilustrativo →</a>
+      <a href={`${BASE}/experiencia/`} class="button-secondary">Delimitar mi proceso</a>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-6 pb-10" aria-labelledby="escenario-title">
+    <div role="note" class="rounded-2xl border border-amber-500/25 bg-amber-50 p-5 text-sm leading-6 text-amber-950 dark:bg-amber-950/30 dark:text-amber-100">
+      <strong id="escenario-title">Escenario de diseño, no caso de cliente.</strong>
+      No publicamos aún resultados ni testimonios de clientes. El recorrido de abajo es una hipótesis para evaluar; no está conectado a un CRM ni desplegado para una consultora.
+    </div>
+  </section>
+
+  <section id="flujo" class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+    <div class="section-heading">
+      <div><p class="eyebrow">Un recorrido que se puede acotar</p><h2>De la primera solicitud<br />a un onboarding ordenado.</h2></div>
+      <p>El sistema solo se diseña después de confirmar canales, permisos, datos y excepciones con el equipo responsable.</p>
+    </div>
+    <ol class="mt-10 grid gap-3 md:grid-cols-2 lg:grid-cols-5">
+      {stages.map(([title, description], index) => (
+        <li class="rounded-2xl border border-black/8 bg-[#f7f7f5] p-5 dark:border-white/10 dark:bg-[#111318]">
+          <span class="text-xs font-bold text-[#0071e3] dark:text-[#72b7ff]">0{index + 1}</span>
+          <h3 class="mt-4 text-base font-semibold">{title}</h3>
+          <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{description}</p>
+        </li>
+      ))}
+    </ol>
+    <div class="mt-6 grid gap-4 sm:grid-cols-3">
+      {[
+        ["Menos duplicados", "Validar entradas y registrar el origen antes de crear una tarea."],
+        ["Propuestas bajo control", "La automatización puede ordenar contexto; el equipo decide qué ofrecer y a qué precio."],
+        ["Seguimiento trazable", "Registrar responsable, próximo paso y estado, sin enviar mensajes externos automáticamente."],
+      ].map(([title, description]) => (
+        <article class="rounded-2xl border border-black/8 p-5 dark:border-white/10">
+          <h3 class="font-semibold">{title}</h3>
+          <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{description}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="border-y border-black/6 bg-[#f7f7f5] dark:border-white/10 dark:bg-[#0a0d14]">
+    <div class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+      <div class="section-heading">
+        <div><p class="eyebrow">Antes de construir</p><h2>El control sigue en tu equipo.</h2></div>
+        <p>Definimos permisos, calidad de datos, responsables y cómo recuperar el trabajo manual si una integración falla.</p>
+      </div>
+      <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+        {[
+          "No se descartan prospectos ni se toman decisiones comerciales de forma automática.",
+          "No se envían emails, propuestas ni seguimientos externos sin aprobación de una persona.",
+          "No se cargan documentos, datos personales o secretos en la guía pública ni en demos.",
+          "Las conexiones a CRM, correo y otras herramientas requieren autorización y credenciales del cliente.",
+          "El alcance, los criterios de aceptación, los costes externos y el IVA se acuerdan por escrito.",
+          "Las cifras de tiempo o ahorro solo se publican después de medirlas y obtener permiso para compartirlas.",
+        ].map((item) => <li class="rounded-xl border border-black/8 bg-white p-4 text-sm leading-6 dark:border-white/10 dark:bg-[#111318]">{item}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-6 py-16 sm:py-20" aria-labelledby="precios-title">
+    <div class="section-heading">
+      <div><p class="eyebrow">Rangos publicados</p><h2 id="precios-title">Empieza por el alcance,<br />no por una promesa de ROI.</h2></div>
+      <p>Los rangos son orientativos. La propuesta final especifica entregables, dependencias, exclusiones e impuestos antes de que aceptes.</p>
+    </div>
+    <div class="mt-8 grid gap-4 lg:grid-cols-3">
+      {[sprint, growth].map((service) => (
+        <article class="rounded-3xl border border-black/8 bg-[#f7f7f5] p-6 dark:border-white/10 dark:bg-[#111318]">
+          <p class="text-xs font-bold text-[#584ee8] dark:text-[#9b95ff]">{service.tag}</p>
+          <h3 class="mt-4 text-xl font-semibold">{service.name}</h3>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{service.scope}</p>
+          <strong class="mt-6 block">{service.range}</strong>
+          <a class="service-link" href={`${BASE}/servicios/${service.id === "growth-system" ? "sistema-crecimiento" : service.id}/`}>Consultar entregables y límites <span aria-hidden="true">→</span></a>
+        </article>
+      ))}
+      <article class="rounded-3xl border border-black/8 bg-[#f7f7f5] p-6 dark:border-white/10 dark:bg-[#111318]">
+        <p class="text-xs font-bold text-[#584ee8] dark:text-[#9b95ff]">Mantenimiento opcional</p>
+        <h3 class="mt-4 text-xl font-semibold">Plan {care.name}</h3>
+        <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{care.includes.join(" · ")}</p>
+        <strong class="mt-6 block">{care.monthly}</strong>
+        <a class="service-link" href={`${BASE}/planes/`}>Ver comparador de planes <span aria-hidden="true">→</span></a>
+      </article>
+    </div>
+    <p class="mt-5 text-xs leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">No incluye licencias, hardware ni consumos de proveedores salvo que aparezcan expresamente en la propuesta. El mantenimiento es opcional y se acuerda con sus límites y tiempos de respuesta.</p>
+  </section>
+
+  <section class="border-y border-black/6 bg-[#f7f7f5] dark:border-white/10 dark:bg-[#0a0d14]">
+    <div class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+      <div class="section-heading"><div><p class="eyebrow">Define el caso</p><h2>Una estimación no sustituye<br />a entender el proceso.</h2></div><p>La guía organiza tus respuestas y calcula un rango inicial en este navegador. No conecta herramientas ni guarda una solicitud comercial.</p></div>
+      <div class="mt-10 rounded-3xl bg-[#080b12] p-5 text-white sm:p-9">
+        <InteractiveMissions compact={true} />
+      </div>
+      <p class="mt-5 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">Describe el proceso de forma general. No introduzcas clientes, nombres, emails, datos sensibles, credenciales o documentos.</p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-4xl px-6 py-16 sm:py-20" aria-labelledby="faq-title">
+    <p class="eyebrow">Preguntas frecuentes</p>
+    <h2 id="faq-title" class="mt-3 text-3xl font-semibold tracking-[-0.04em]">Lo importante, antes de empezar.</h2>
+    <div class="mt-6 divide-y divide-black/10 dark:divide-white/10">
+      {faqs.map(([question, answer]) => (
+        <details class="group py-5">
+          <summary class="cursor-pointer list-none pr-8 font-semibold marker:hidden">{question}<span class="float-right text-[#0071e3]" aria-hidden="true">+</span></summary>
+          <p class="mt-3 max-w-3xl text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{answer}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-6 pb-20">
+    <div class="rounded-3xl border border-black/8 p-7 dark:border-white/10 sm:p-10">
+      <p class="eyebrow">Siguiente paso</p>
+      <h2 class="mt-3 text-3xl font-semibold tracking-[-0.04em]">Revisamos el proceso antes de automatizar.</h2>
+      <p class="mt-4 max-w-2xl text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">Una persona confirma viabilidad y alcance. Si el caso no encaja o todavía no tiene sentido automatizarlo, lo diremos con claridad.</p>
+      <div class="mt-7 flex flex-wrap gap-3">
+        <a class="button-primary" href={`${BASE}/contacto/`}>Plantear un caso →</a>
+        <a class="button-secondary" href={`${BASE}/demos/#crecimiento`}>Explorar la demo técnica</a>
+        <a class="button-secondary" href={`${BASE}/recursos/presupuesto-automatizacion/`}>Cómo se estima un proyecto</a>
+      </div>
+    </div>
+  </section>
+</Base>

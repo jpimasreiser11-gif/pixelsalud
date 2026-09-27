@@ -30,6 +30,7 @@ const rutasPublicas = [
   "/reservar/",
   "/sectores/",
   "/sectores/clinicas/",
+  "/sectores/consultoras/",
   "/sectores/estetica/",
   "/sectores/fertilidad/",
   "/sectores/inmobiliarias/",
@@ -148,11 +149,27 @@ test("la plantilla DPA permanece oculta hasta aprobación de identidad y segurid
 });
 
 test("las páginas sectoriales se presentan como propuestas, no como proyectos implantados", async ({ page }) => {
-  for (const path of ["sectores/", "sectores/clinicas/", "sectores/veterinarias/"]) {
+  for (const path of ["sectores/", "sectores/clinicas/", "sectores/consultoras/", "sectores/veterinarias/"]) {
     await page.goto(path);
-    await expect(page.locator('main [role="note"]:not(aside)')).toContainText(/ejemplo de diseño, no un sistema implantado/i);
+    await expect(page.locator('main [role="note"]:not(aside)')).toContainText(/(ejemplo de diseño, no un sistema implantado|escenario de diseño, no caso de cliente)/i);
     await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(0);
   }
+});
+
+test("la landing B2B explica alcance, precio y aprobaciones sin atribuir resultados a clientes", async ({ page }) => {
+  await page.goto("sectores/consultoras/");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Automatización para consultoras");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex,follow");
+  await expect(page.getByText(/Escenario de diseño, no caso de cliente/i)).toBeVisible();
+  await expect(page.locator("main")).toContainText("2.500–6.000 € + IVA");
+  await expect(page.locator("main")).toContainText("149 €/mes + IVA");
+  await expect(page.locator("main")).toContainText(/sin enviar mensajes externos automáticamente/i);
+  await expect(page.locator("main")).toContainText(/no damos una cifra antes de medir una línea base/i);
+  await expect(page.locator("[data-ai-guide]")).toBeVisible();
+  await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(0);
+
+  const violations = await new AxeBuilder({ page }).analyze();
+  expect(violations.violations.filter((violation) => ["serious", "critical"].includes(violation.impact || ""))).toEqual([]);
 });
 
 test("las páginas sectoriales no prometen métricas inventadas ni decisiones clínicas o financieras automatizadas", async ({ page }) => {
