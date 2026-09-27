@@ -57,6 +57,40 @@ test("la reserva se presenta como no disponible si no hay agenda conectada", asy
   expect(webhooks).toEqual([]);
 });
 
+test("la llamada de encaje desde una página sectorial prepara un correo sin guardar ni enviar datos", async ({ page }) => {
+  let webhookRequests = 0;
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: (text: string) => { (window as unknown as { __briefingCopy: string }).__briefingCopy = text; return Promise.resolve(); } },
+    });
+  });
+  page.on("request", (request) => { if (request.url().includes("/webhook/")) webhookRequests += 1; });
+  await page.goto("/sectores/inmobiliarias/");
+  await page.getByRole("link", { name: /pedir una llamada de encaje/i }).click();
+  await expect(page).toHaveURL(/\/auditoria\/\?sector=Inmobiliarias&interes=automation-sprint/);
+  const form = page.locator("#form-auditoria");
+  await expect(form.getByLabel("Sector (opcional)")).toHaveValue("Inmobiliarias");
+  await expect(form.getByLabel("¿Qué te interesa?")).toHaveValue("automation-sprint");
+  await expect(form.getByLabel(/acepto que VARINO guarde/i)).toHaveCount(0);
+  await form.getByLabel("Nombre").fill("Persona de prueba");
+  await form.getByLabel("Email").fill("test@example.com");
+  await form.getByLabel("Empresa (opcional)").fill("Inmuebles Demo");
+  await form.getByLabel(/qué proceso te gustaría mejorar/i).fill("Organizar solicitudes de visita con revisión humana.");
+  await form.getByRole("button", { name: /preparar correo/i }).click();
+  await expect(page.locator("[data-form-status]")).toContainText(/no se ha enviado ni guardado/i);
+  const draft = page.locator("#auditoria-mailto");
+  await expect(draft).toBeVisible();
+  const href = await draft.getAttribute("href");
+  expect(href).toContain("mailto:varinoagency@gmail.com");
+  expect(href).toContain(encodeURIComponent("Inmuebles Demo"));
+  expect(href).toContain(encodeURIComponent("Organizar solicitudes de visita con revisión humana."));
+  await form.getByRole("button", { name: /copiar resumen/i }).click();
+  await expect(page.locator("[data-form-status]")).toContainText(/resumen copiado/i);
+  expect(await page.evaluate(() => (window as unknown as { __briefingCopy?: string }).__briefingCopy)).toContain("Inmobiliarias");
+  expect(webhookRequests).toBe(0);
+});
+
 test("el aviso legal oculta los datos identificativos durante el prelanzamiento", async ({ page }) => {
   await page.goto("/aviso-legal/");
   await expect(page.getByRole("status")).toContainText(/información de prelanzamiento/i);

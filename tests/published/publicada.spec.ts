@@ -119,7 +119,7 @@ test("distingue la llamada gratuita del Diagnóstico CAIO de pago", async ({ pag
   await page.goto("auditoria/");
   await expect(page.getByText(/llamada de encaje no tiene coste y no incluye informe ni entregable/i)).toBeVisible();
   await expect(page.getByText(/Diagnóstico CAIO cuesta 290 € \+ IVA/i)).toBeVisible();
-  await expect(page.getByRole("button", { name: /Solicitar llamada gratuita/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Preparar correo/i })).toBeVisible();
 });
 
 test("muestra límites claros en cada paquete antes de pedir contacto", async ({ page }) => {
