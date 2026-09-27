@@ -5,7 +5,7 @@ test("la portada empieza limpia y sin la antigua entrada de scroll", async ({ pa
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /Menos trabajo repetitivo/i })).toBeVisible();
   await expect(page.locator("[data-scroll-world]")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: /Diseñemos tu sistema juntos/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /De una tarea repetitiva a un sistema claro/i })).toBeVisible();
   await expect(page.getByText("ESCENARIO DEMOSTRATIVO").first()).toBeVisible();
   await expect(page.getByText(/No representan clientes ni resultados inventados/i)).toBeVisible();
 });
