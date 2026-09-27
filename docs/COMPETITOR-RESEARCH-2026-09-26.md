@@ -110,3 +110,24 @@ La revisión observó páginas posicionadas o indexables para intención de prec
 - [LaudeMMedia — costes de automatización 2026](https://www.laudemmedia.com/cuanto-cuesta-automatizar-una-empresa/), consulta 26-09-2026.
 - [La Bahía Digital — automatizaciones](https://labahiadigital.es/automatizaciones/), consulta 26-09-2026.
 - [Chronomatic — agencia de automatización](https://chronomatic.es/agencia/automatizacion-procesos/), consulta 26-09-2026.
+
+## Revalidación en páginas propias — 27 septiembre 2026
+
+Comprobé hoy las páginas comerciales enlazadas abajo. Son tarifas declaradas por los propios proveedores, no precios de ventas cerradas ni prueba independiente de clientes, ROI o calidad de entrega.
+
+| Proveedor | Publicación observada hoy | Implicación para comparar |
+|---|---|---|
+| [Automation Marketing](https://automationmarketing.es/) | Implantación desde 2.500 €; una sección anuncia 100 €/h con 12 meses de mantenimiento y otra separa soporte de 250 €/mes (hasta 7 nodos), 400 €/mes (8–25) y +100 €/mes por flujo adicional. El proyecto de implantación también anuncia seis meses de soporte gratuito. | Las condiciones de soporte varían entre secciones de la página; no reducir la comparación a un único precio y confirmar el alcance contractual. |
+| [APM·IA](https://www.apmia.es/) | Automatización desde 1.490 €, web con IA desde 1.490 €, chatbot desde 990 € + 59 €/mes, agente desde 2.900 € + 149 €/mes y cuotas generales de 149/349/690 €/mes. La página muestra IVA del 21 %; Business indica compromiso de seis meses y respuesta anunciada en 8 h laborables. | Catálogo amplio, IVA visible, proceso por fases y distinción explícita entre proyectos propios y ejemplos ilustrativos. Sus métricas, clientes y disponibilidad siguen siendo afirmaciones del proveedor. |
+| [ChenAI](https://chenai.es/precios) | Flujo puntual desde 1.500 €, agente RAG/proyecto medio desde 4.500 €, soporte publicado de 30/60 días, pago 50/50 y precios sin IVA. | Diagnóstico gratuito más precio fijo antes de empezar; referencia útil de alcance, hitos y límites para un paquete de entrada. |
+| [MERIDIAN](https://meridiandata.es/precios-consultoria-datos-ia) | Automatización n8n desde 1.500 € (1–4 semanas), sprint desde 2.500 € (2 semanas), RAG desde 5.000 €; indica precios sin IVA y diagnóstico gratuito de 20 minutos. | Hace comparables los entregables y plazos por categoría; son orientativos hasta la propuesta. |
+| [La Bahía Digital](https://labahiadigital.es/automatizaciones/) | Pack desde 990 € para tres flujos; n8n autohospedado desde 2.890 €; mantenimiento opcional desde 149 €/mes. Excluye suscripciones de terceros y servidor/hardware propio. | Compite directamente con la cuota de entrada de VARINO; comparar procesos, pruebas, recuperación, formación, alojamiento y costes externos, no solo precio. |
+| [Chronomatic](https://chronomatic.es/agencia/automatizacion-procesos/) | Puesta en marcha por 800–2.500 €, mantenimiento opcional de 200 €/mes, auditoría de 140 € descontable y primer flujo anunciado en dos semanas; declara que los flujos quedan en la cuenta del cliente y son exportables. | Refuerza que propiedad, salida sin lock-in y continuidad operativa son parte de la oferta. No se ha auditado el contrato. |
+
+### Decisión comercial para VARINO
+
+- El Automation Sprint de 950–1.900 € se solapa con el pack de tres flujos de La Bahía desde 990 € y queda por encima de su suelo. Mantenerlo solo si la ficha deja muy claro que es **un proceso**, con mapa, pruebas, observabilidad, recuperación manual, documentación y límites; no sugerir equivalencia de volumen.
+- Care (149 €/mes, una hora y respuesta anunciada en 48 h laborables) está en el mismo punto de precio que La Bahía y por debajo del mantenimiento de Chronomatic. El precio por sí solo no diferencia: mostrar horas, cobertura, ventana de respuesta, exclusiones, alta y costes externos antes de contratar.
+- La primera conversación gratuita de 20–30 minutos aparece en varios competidores; VARINO ya separa esa llamada de encaje del Diagnóstico CAIO escrito de 290 € + IVA. Mantener esa separación visible para que no parezca que el informe completo es gratuito.
+- Las fichas que reducen incertidumbre explican alcance, pruebas, formación, soporte y titularidad de los flujos. VARINO debe describirlos como entregables verificables, no prometer ahorros, proyectos o resultados que todavía no tiene.
+- La revisión no aporta volúmenes de búsqueda, conversiones ni CAC. Las páginas de precios y la comparativa n8n/Make/Zapier son hipótesis para contenido orgánico, no evidencia suficiente para comprar tráfico. El sitio sigue sin habilitar indexación o paid media hasta que pase su gate de lanzamiento.
