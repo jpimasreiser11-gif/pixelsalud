@@ -226,6 +226,23 @@ test("la guía de presupuesto separa hipótesis, precios publicados y resultados
   await expect(main).not.toContainText(/desde unos cientos de euros al mes/i);
 });
 
+test("la comparativa de herramientas explica unidades de uso y licencia de n8n sin claims absolutos", async ({ page }) => {
+  await page.goto("n8n-vs-zapier-make/");
+  const main = page.locator("main");
+  await expect(main).toContainText("ejecuciones completas del workflow");
+  await expect(main).toContainText("créditos por acciones de módulos");
+  await expect(main).toContainText("acciones que se completan correctamente");
+  await expect(main).toContainText("requiere una licencia Enterprise");
+  await expect(main).toContainText("no necesita una licencia comercial por prestar esa consultoría");
+  await expect(main).toContainText("no demuestra por sí solo cumplimiento legal");
+  await expect(main).toContainText("no conviene anunciarlo simplemente como “open source”");
+  await expect(main).not.toContainText(/atado a la plataforma|limitada en planes bajos/i);
+  await expect(main.getByRole("link", { name: "n8n: opciones de licencia para cada uso" })).toHaveAttribute(
+    "href",
+    "https://support.n8n.io/article/can-i-use-your-license-for-my-use-case",
+  );
+});
+
 test("el tema y el menú funcionan bajo la CSP publicada", async ({ page, isMobile }) => {
   const bloqueos: string[] = [];
   page.on("console", (msg) => {
