@@ -176,14 +176,14 @@ export const CAPACIDADES = [
   {
     id: "migracion",
     titulo: "Migración desde Zapier o Make",
-    desc: "Trasladamos tus automatizaciones a n8n propio para bajar el coste por operación y ganar control.",
-    ejemplo: "De 20 'zaps' sueltos a flujos observables y documentados.",
+    desc: "Comparamos coste total, mantenimiento y requisitos antes de proponer una migración. Si n8n no compensa para tu caso, recomendamos mantener la herramienta actual.",
+    ejemplo: "Evaluación con volumen, integraciones, operación y costes externos acordados.",
   },
   {
     id: "privado",
     titulo: "IA y n8n privados",
-    desc: "Datos y flujos bajo tu control: n8n en tu servidor y modelos locales o privados, sin depender de un proveedor.",
-    ejemplo: "Automatización de datos sensibles sin salir de tu entorno.",
+    desc: "Diseñamos n8n y modelos locales o privados según el nivel de control requerido. Documentamos qué datos procesa cada componente, los proveedores externos y las responsabilidades operativas.",
+    ejemplo: "Arquitectura con flujos de datos, permisos, copias y proveedores identificados.",
   },
   {
     id: "mantenimiento",
