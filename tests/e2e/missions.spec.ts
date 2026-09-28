@@ -8,7 +8,7 @@ const guideResponse = {
   nextQuestion: "¿Quién debe aprobar el resultado antes de enviarlo?",
   stage: "architecture",
   profile: { business: "Clínica", sector: "salud", problem: "Ordenar documentos sensibles", channels: "Formulario web", approvals: "Dirección", goal: "Reducir tiempos", integrations: 2, workflows: 2, users: 8, complexity: "standard", sensitivity: "high", customUi: true, dataMigration: false, localAi: true },
-  estimate: { quotedHours: 50.5, range: { min: 3600, max: 4550 }, maintenanceMonthly: 650 },
+  estimate: { quotedHours: 50.5, range: { min: 3600, max: 4550 }, maintenanceHours: 6 },
   hardware: { profile: "IA exigente (Qwen 3.8 · 27,3B Q4_K_M)", model: "qwen3.8:latest", unifiedMemoryGb: 64, freeStorageGb: 300, headroom: "30% libre tras las pruebas" },
   service: { name: "IA privada", slug: "ia-privada" },
 };
@@ -25,7 +25,10 @@ test("la guía responde y convierte la conversación en arquitectura", async ({ 
   await expect(guide.locator("[data-service]")).toHaveText("IA privada");
   await expect(guide.locator("[data-guide-status]")).toHaveText("Modelo local · qwen3.8:latest");
   await expect(guide.getByText("50.5")).toBeVisible();
-  await expect(guide.locator("[data-budget-note]")).toContainText(/mínimo publicado del servicio/i);
+  await expect(guide.locator("[data-maintenance-hours]")).toHaveText("6 h/mes");
+  await expect(guide.locator("[data-budget-monthly]")).toHaveCount(0);
+  await expect(guide.locator("[data-budget-note]")).toContainText(/mantenimiento es opcional/i);
+  await expect(guide.getByRole("link", { name: /Consultar planes mensuales/i })).toHaveAttribute("href", "/planes/");
   await expect(guide.getByText(/64 GB de memoria unificada/i)).toBeVisible();
   await expect(guide.getByRole("link", { name: /Ver IA privada/i })).toHaveAttribute("href", "/servicios/ia-privada/");
 });

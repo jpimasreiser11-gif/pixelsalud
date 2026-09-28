@@ -56,9 +56,10 @@ const hasLocalGuideApi = import.meta.env.DEV;
         <div class="ai-budget__grid">
           <p><strong data-budget-hours>—</strong><small>horas con margen</small></p>
           <p><strong data-budget-range>—</strong><small>rango sin IVA</small></p>
-          <p><strong data-budget-monthly>—</strong><small>mantenimiento orientativo</small></p>
+          <p><strong data-maintenance-hours>—</strong><small>horas de operación estimadas</small></p>
         </div>
-        <p class="ai-budget__note" data-budget-note>Estimación inicial, sin IVA; puede aplicar el mínimo publicado del servicio. El precio contractual se confirma por escrito.</p>
+        <p class="ai-budget__note" data-budget-note>Rango orientativo sin IVA. Las horas de operación no son una cuota: el mantenimiento es opcional y se contrata con uno de los planes publicados.</p>
+        <a class="mt-3 inline-flex text-xs font-semibold text-[#0071e3] underline-offset-4 hover:underline" href={`${BASE}/planes/`}>Consultar planes mensuales →</a>
         <p data-hardware>La infraestructura se dimensionará cuando conozcamos usuarios, datos y concurrencia.</p>
       </div>
       <div class="ai-insight">
@@ -143,10 +144,10 @@ const hasLocalGuideApi = import.meta.env.DEV;
         budget.hidden = false;
         setText("[data-budget-hours]", String(data.estimate.quotedHours));
         setText("[data-budget-range]", `${money.format(data.estimate.range.min)}–${money.format(data.estimate.range.max)}`);
-        setText("[data-budget-monthly]", `${money.format(data.estimate.maintenanceMonthly)}/mes`);
+        setText("[data-maintenance-hours]", `${data.estimate.maintenanceHours} h/mes`);
         setText("[data-budget-note]", data.estimate.exceedsPackage
-          ? "El caso supera los límites del paquete publicado; este cálculo es orientativo y requiere una propuesta personalizada."
-          : "Estimación inicial, sin IVA; puede aplicar el mínimo publicado del servicio. El precio contractual y los criterios de aceptación se confirman por escrito.");
+          ? "El caso supera los límites del paquete publicado y requiere propuesta personalizada. Las horas de operación son una estimación, no una cuota; el mantenimiento es opcional y se contrata aparte."
+          : "Rango del proyecto orientativo y sin IVA. Las horas de operación no son una cuota: el mantenimiento es opcional y se contrata con uno de los planes publicados.");
       }
       if (data.hardware) setText("[data-hardware]", `${data.hardware.profile}: ${data.hardware.unifiedMemoryGb} GB de memoria unificada, ${data.hardware.freeStorageGb} GB libres y ${data.hardware.headroom}.`);
     };
@@ -164,7 +165,7 @@ const hasLocalGuideApi = import.meta.env.DEV;
       messages.replaceChildren();
       appendMessage(message, "assistant");
       budget.hidden = true;
-      setText("[data-budget-note]", "Estimación inicial, sin IVA; puede aplicar el mínimo publicado del servicio. El precio contractual se confirma por escrito.");
+      setText("[data-budget-note]", "Rango orientativo sin IVA. Las horas de operación no son una cuota: el mantenimiento es opcional y se contrata con uno de los planes publicados.");
       setText("[data-guide-stage]", "DESCUBRIMIENTO");
       setText("[data-preview-kicker]", "Sistema en definición");
       setText("[data-preview-title]", "Tu necesidad, convertida en una arquitectura clara.");

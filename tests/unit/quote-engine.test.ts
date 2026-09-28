@@ -51,7 +51,7 @@ describe("motor de presupuesto", () => {
     const small = calculateEstimate({ integrations: 1, workflows: 1, complexity: "simple", localAi: false });
     const advanced = calculateEstimate({ integrations: 7, workflows: 9, complexity: "advanced", localAi: true, customUi: true, dataMigration: true });
     expect(advanced.quotedHours).toBeGreaterThan(small.quotedHours);
-    expect(advanced.maintenanceMonthly).toBeGreaterThan(small.maintenanceMonthly);
+    expect(advanced.maintenanceHours).toBeGreaterThan(small.maintenanceHours);
   });
 
   it("nombra un modelo local que existe y dimensiona con margen", () => {

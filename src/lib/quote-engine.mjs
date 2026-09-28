@@ -68,11 +68,12 @@ export function calculateEstimate(raw = {}) {
     || input.integrations > limits.integrations
     || (limits.ceiling != null && range.max > limits.ceiling)
   ));
+  // Orienta sobre carga de operación, no sobre una cuota: los precios y
+  // límites mensuales pertenecen a los planes comerciales publicados.
   const maintenanceHours = Math.max(4, Math.ceil((input.workflows * 1.25 + input.integrations + riskHours / 3) / 2) * 2);
-  const maintenanceMonthly = roundMoney(maintenanceHours * QUOTE_POLICY.hourlyRate);
   return {
     input, lineItems, baseHours, contingencyHours, quotedHours, range,
-    maintenanceHours, maintenanceMonthly, policy: QUOTE_POLICY,
+    maintenanceHours, policy: QUOTE_POLICY,
     exceedsPackage,
   };
 }
