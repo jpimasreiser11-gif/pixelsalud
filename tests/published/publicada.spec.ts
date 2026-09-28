@@ -227,6 +227,13 @@ test("muestra límites claros en cada paquete antes de pedir contacto", async ({
 
   await page.goto("planes/");
   await expect(page.getByText(/contratación y cobro online desactivados/i)).toBeVisible();
+  const licenseDetails = page.locator("details").filter({ hasText: "¿De quién son los flujos y dónde se ejecutan?" });
+  await licenseDetails.locator("summary").click();
+  await expect(licenseDetails).toContainText(/por defecto, se ejecutan en una instancia e infraestructura bajo tu control/i);
+  await expect(page.getByRole("link", { name: "guía oficial de licencias de n8n" })).toHaveAttribute(
+    "href",
+    "https://support.n8n.io/article/can-i-use-your-license-for-my-use-case",
+  );
   const planes = (await page.locator("body").innerText()).toLowerCase();
   expect(planes).not.toMatch(/factura automática|stripe/);
   await expect(page.getByText("149 €/mes + IVA").first()).toBeVisible();

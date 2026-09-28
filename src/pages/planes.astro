@@ -118,7 +118,7 @@ const hayPago = Object.values(STRIPE_LINKS).some(Boolean);
         ["¿El mantenimiento es obligatorio?", "No. Recibes la documentación y la formación del proyecto igualmente. El plan es para quien quiere que otro vigile, arregle y mejore el sistema."],
         ["¿Qué no incluye?", "Desarrollo de nuevos procesos fuera del alcance del plan, licencias y consumos de terceros (APIs, servidores), y cambios de alcance: eso se presupuesta aparte antes de hacerlo."],
         ["¿Cómo se paga?", "La contratación y el cobro online están desactivados. Antes de aceptar recibirás por escrito el alcance, la base imponible, el IVA aplicable, el total, la forma de pago y las condiciones de facturación. No se activa ningún cargo recurrente sin aceptación expresa."],
-        ["¿De quién son los flujos?", "Tuyos. Trabajamos sobre n8n (propio o en tu servidor) y te entregamos los flujos exportables y documentados, sin lock-in."],
+        ["¿De quién son los flujos y dónde se ejecutan?", "Los flujos exportables son tuyos. Por defecto, se ejecutan en una instancia e infraestructura bajo tu control; tú contratas la licencia y el hosting. La guía de n8n señala que alojar workflows y credenciales de clientes en una instancia de agencia requiere licencia Enterprise. VARINO solo ofrecerá ese modelo después de confirmar la licencia y su coste por escrito."],
       ].map(([q, a]) => (
         <details class="group rounded-2xl border border-black/8 p-5 dark:border-white/10">
           <summary class="cursor-pointer font-semibold list-none">{q}</summary>
@@ -126,6 +126,9 @@ const hayPago = Object.values(STRIPE_LINKS).some(Boolean);
         </details>
       ))}
     </div>
+    <p class="mt-6 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+      Consulta la <a class="underline hover:text-[#0071e3]" href="https://support.n8n.io/article/can-i-use-your-license-for-my-use-case" target="_blank" rel="noopener noreferrer">guía oficial de licencias de n8n</a> para distinguir consultoría en una instancia propia del cliente de un servicio alojado por VARINO.
+    </p>
   </section>
 
   <Cta titulo="¿No sabes qué plan te encaja?" texto="En una llamada de 30 minutos vemos qué necesita tu sistema y te decimos el plan mínimo suficiente (o si no necesitas ninguno)." />
