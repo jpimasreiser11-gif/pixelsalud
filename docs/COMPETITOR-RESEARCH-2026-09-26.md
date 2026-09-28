@@ -252,3 +252,22 @@ Lectura directa de páginas de oferta en España el 28-09-2026. Los precios, cif
 - Una lección de conversión que sí es observable en las páginas es la legibilidad de compra: caso de uso → alcance → implantación → cuota → costes/condiciones → siguiente paso. No se puede afirmar que esa estructura convierta mejor sin analítica comparable.
 - Antes de elevar precios, medir horas de preventa, construcción, pruebas, soporte e incidencias en los primeros proyectos; la investigación pública no determina margen de VARINO ni disposición real a pagar.
 - Las métricas comerciales de proveedores (número de clientes, porcentaje de tickets resueltos, ahorros, ROI y plazos) quedan atribuidas a sus propios sitios. No reutilizarlas en la web, anuncios o mensajes de VARINO como benchmarks verificados.
+
+## Comprobación de páginas oficiales — 28 septiembre 2026
+
+Relectura directa de cuatro ofertas activas. Se recogen precios y condiciones publicados por cada proveedor; no se han comprobado contratos, disponibilidad, ventas, calidad de implantación ni resultados.
+
+| Proveedor | Oferta y precio que publica | Lectura para comparar |
+|---|---|---|
+| [OlgaDev · automatización n8n](https://olgadev.com/automatizacion-n8n-empresas/) | Esencial 290 € + 79 €/mes; Profesional 490 € + 149 €/mes; Premium 890 € + 249 €/mes. Indica costes externos de Meta/modelos aparte. | Muy buena claridad para pyme: canal y alcance por nivel, implantación y recurrencia separadas, costes de terceros explicitados, y derivación humana para quejas/casos atípicos. Sus afirmaciones de uso de Ada/n8n son propias, no una auditoría externa. |
+| [SIMBAI · automatizaciones](https://simbai.es/servicio-automatizaciones) | Básica 125 €, Avanzada 250 €, Suite 450 €; publica 24–48 h, pruebas, documentación y 30 días de soporte en Suite; mantenimiento opcional 30 €/2 meses. | Referencia de precio muy bajo y alcance anunciado limitado por nodos/integraciones. No comparar el precio de Suite directamente con una implantación gestionada con seguridad, recuperación, cumplimiento y operación continuada; la página no aclara IVA en el bloque de precios consultado. |
+| [Aizora · automatización con IA](https://aizora.es/automatizacion-de-procesos/) | Starter 1.190 € + 147 €/mes; Crecimiento 2.490 € + 279 €/mes; Full IA 4.490 € + 449 €/mes. En Full IA anuncia gasto de Ads aparte. | Empaqueta un flujo, luego 3–5 flujos con scoring/alertas, y finalmente funnel/ads/reporting. Hace visible la cuota recurrente; sus porcentajes de reducción de ausencias y otros resultados de la página son afirmaciones del proveedor, no datos independientes. |
+| [Hack'celeration · agencia n8n](https://www.hackceleration.com/es/agencia/n8n) | Desde 2.000 € y auditoría gratuita de 60 min; dice entregar 3–5 flujos, documentación y formación. La misma página presenta varios horizontes (1 semana–6 meses, 2–3 semanas de construcción y 4–6 semanas hasta operación), por lo que el plazo depende del alcance y no es un único SLA. | Posiciona propiedad/transferencia y autonomía del equipo junto al coste de migración. Sus contadores de clientes, proyectos y reseñas siguen siendo declaraciones del proveedor, no resultados auditados aquí. |
+
+### Decisiones para VARINO
+
+- La dispersión actual va desde automatizaciones muy pequeñas anunciadas por 125–450 € hasta proyectos escalonados desde 1.190–2.490 € y agencias n8n desde 2.000 €. No existe un precio homogéneo: publicar el alcance, número de sistemas, pruebas, recuperación y soporte antes de comparar importes.
+- Conservar el Automation Sprint de 950–1.900 € solo si su frontera es verificable: un proceso acotado, integraciones/límites explícitos, aceptación, pruebas, recuperación, documentación y transferencia. Si el alcance real coincide con un flujo pequeño, ofrecer una opción reducida en vez de prometer trabajo de producción al precio de entrada.
+- Convertir la recurrencia en cobertura concreta: mantenimiento preventivo, revisión de ejecuciones, actualizaciones, horas incluidas, horario/plazo de respuesta, costes externos y exclusiones. No vender “todo automático” ni 24/7 si no hay operación que lo respalde.
+- Para suplir la falta de casos propios verificables, enseñar una demo sintética marcada como simulación: ruta normal, excepción que requiere revisión humana y traza de errores/recuperación. No inventar clientes ni resultados.
+- La oportunidad competitiva defendible no es el menor precio: es que un cliente pueda saber qué compra, cómo se acepta, qué ocurre si falla, quién mantiene el sistema y cómo se lo lleva al terminar.
