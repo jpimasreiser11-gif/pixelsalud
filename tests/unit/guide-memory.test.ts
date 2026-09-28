@@ -211,4 +211,79 @@ describe("motor de VARINO Guide", () => {
     expect(second.nextQuestion).not.toBe(first.nextQuestion);
     expect(second.profile.business).toContain("taller");
   });
+
+  it("no confunde los canales con el proceso y reformula la pregunta pendiente", () => {
+    const result = advise({
+      profile: { business: "clínica dental", problem: "confirmar citas" },
+      messages: [
+        { role: "assistant", content: "¿Cómo realizáis ahora ese proceso, desde que empieza hasta que termina?" },
+        { role: "user", content: "Las solicitudes entran por formulario y WhatsApp." },
+      ],
+      modelReply: "Ya tengo el proceso. La opción más coherente es IA privada para gestionar los datos sensibles.",
+    });
+
+    expect(result.profile.channels).toMatch(/WhatsApp/);
+    expect(result.profile.channels).toMatch(/web\/formulario/);
+    expect(result.profile.process).toBe("");
+    expect(result.filledField).toBe("channels");
+    expect(result.nextQuestion).toMatch(/paso a paso|quién hace qué/i);
+    expect(result.nextQuestion).not.toBe("¿Cómo realizáis ahora ese proceso, desde que empieza hasta que termina?");
+    expect(result.reply).not.toMatch(/IA privada|opción más coherente/i);
+    expect(result.estimate).toBeNull();
+  });
+
+  it("conserva el problema aunque la respuesta también mencione los canales", () => {
+    const first = advise({ messages: [{ role: "user", content: "Tenemos una clínica dental en Valencia" }] });
+    const result = advise({
+      profile: first.profile,
+      messages: [
+        { role: "assistant", content: first.nextQuestion },
+        { role: "user", content: "Perdemos citas porque las peticiones llegan por WhatsApp y teléfono." },
+      ],
+    });
+
+    expect(result.profile.problem).toMatch(/perdemos citas/i);
+    expect(result.profile.channels).toMatch(/WhatsApp.*teléfono|teléfono.*WhatsApp/i);
+    expect(result.filledField).toBe("problem");
+    expect(result.nextQuestion).toMatch(/cómo realizáis ahora ese proceso/i);
+  });
+
+  it("reconoce el proceso manual y mantiene separado el sistema usado", () => {
+    const result = advise({
+      profile: { business: "clínica dental", problem: "confirmar citas", channels: "WhatsApp, web/formulario" },
+      messages: [
+        { role: "assistant", content: "¿Qué ocurre hoy, paso a paso, desde que llega una solicitud hasta que queda resuelta?" },
+        { role: "user", content: "Recepción copia los datos en Excel y confirma cada cita a mano." },
+      ],
+    });
+
+    expect(result.profile.process).toContain("copia los datos en Excel");
+    expect(result.profile.tools).toContain("Excel");
+    expect(result.profile.channels).toMatch(/WhatsApp/);
+    expect(result.filledField).toBe("process");
+    // Excel ya quedó registrado como herramienta a partir de esta misma frase.
+    expect(result.nextQuestion).toMatch(/volumen|cuántos casos/i);
+  });
+
+  it("no guarda una respuesta sobre control humano y objetivo como volumen", () => {
+    const result = advise({
+      profile: {
+        business: "clínica dental",
+        problem: "confirmar citas",
+        process: "Recepción confirma cada cita a mano.",
+        tools: "Excel",
+        channels: "WhatsApp",
+      },
+      messages: [
+        { role: "assistant", content: "¿Qué volumen aproximado gestionáis al día o al mes?" },
+        { role: "user", content: "La responsable debe revisar cada envío; queremos responder más rápido." },
+      ],
+    });
+
+    expect(result.profile.volume).toBe("");
+    expect(result.profile.approvals).toMatch(/responsable debe revisar/i);
+    expect(result.profile.goal).toMatch(/queremos responder más rápido/i);
+    expect(result.filledField).toBe("approvals");
+    expect(result.nextQuestion).toMatch(/cuántos casos|decenas o cientos/i);
+  });
 });

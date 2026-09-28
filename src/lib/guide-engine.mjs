@@ -50,6 +50,36 @@ const FIELD_HINTS = {
   goal: /reduc|aument|ahorr|mejorar|objetivo|hora|tiempo|por ciento|%|menos|más/i,
 };
 
+// Si una respuesta aclara otro dato distinto del que acabábamos de preguntar,
+// guardamos el hecho explícito y dejamos pendiente la pregunta original. La
+// variante evita que la interfaz parezca repetirla palabra por palabra.
+const FOLLOW_UP_QUESTIONS = {
+  process: [
+    "¿Qué ocurre hoy, paso a paso, desde que llega una solicitud hasta que queda resuelta?",
+    "¿Quién hace qué actualmente cuando empieza este proceso y cómo lo termina?",
+  ],
+  tools: [
+    "¿En qué aplicaciones, hojas o sistemas trabaja el equipo para hacer esos pasos?",
+    "¿Qué programas abre o actualiza la persona que gestiona este proceso?",
+  ],
+  channels: [
+    "¿De dónde llegan normalmente esas solicitudes: teléfono, mensajería, web u otro canal?",
+    "¿Por qué vías os contactan o recibís la información que luego procesáis?",
+  ],
+  volume: [
+    "Para dimensionarlo, ¿cuántos casos o solicitudes atendéis en un día o en un mes normal?",
+    "¿Hablamos de unos pocos casos, decenas o cientos por semana/mes? Si sabes la cifra, mejor.",
+  ],
+  approvals: [
+    "¿Qué paso debe revisar o autorizar una persona antes de que el sistema actúe?",
+    "¿Qué acciones no debería ejecutar la automatización sin visto bueno humano?",
+  ],
+  goal: [
+    "¿Qué cambio concreto os gustaría medir después de implantarlo?",
+    "¿Cómo sabréis, con un indicador observable, que la solución ha funcionado?",
+  ],
+};
+
 // Extracción auxiliar de hechos literales. Solo rellena campos vacíos con
 // vocabulario conocido; no interpreta la respuesta del modelo ni convierte
 // cualquier mención de una herramienta/canal en un hecho.
@@ -111,17 +141,27 @@ function explicitGoal(answer) {
   return "";
 }
 
+function explicitProblem(answer) {
+  const match = answer.match(/\b(?:perdemos|pierdo|tardamos|se nos va|se me va|se pierden|se nos pierden|nos cuesta|me cuesta|no (?:conseguimos|podemos|llegamos|contestamos|respondemos)|queremos mejorar|quiero mejorar|necesitamos mejorar|necesito mejorar|queremos automatizar|quiero automatizar|necesitamos automatizar|necesito automatizar|me gustar[ií]a automatizar|nos gustar[ií]a automatizar|tenemos (?:un )?problema(?:s)?|hay un problema|problema con)\b[^.!?;]*/i);
+  return match ? clampText(match[0], 300) : "";
+}
+
 function explicitApproval(answer) {
   const sentences = answer.split(/(?<=[.!?;])\s+/);
   return clampText(sentences.find((sentence) =>
     /\b(?:aprobaci[oó]n|aprob(?:ar|aci[oó]n)|autoriza(?:ci[oó]n|r)|revisi[oó]n humana|supervisi[oó]n humana)\b/i.test(sentence)
+    || /\b(?:responsable|encargad[oa]|gerencia|direcci[oó]n|persona|alguien)\b[^.!?;]{0,100}\b(?:debe|tiene que|ha de|revisa|revisar|valida|validar|aprueba|aprobar|autoriza|autorizar|supervisa|supervisar)\b/i.test(sentence)
     || /\b(?:solo|[uú]nicamente)\b[^.!?;]*(?:nunca|no debe|no puede|no enviar|no env[ií]e)\b/i.test(sentence),
   ) || "", 250);
 }
 
 function explicitProcess(answer) {
   const sentence = answer.split(/(?<=[.!?;])\s+/).find((part) =>
-    /\b(?:entra|entran|llega|llegan|recibimos|reciben)\b[^.!?;]*\b(?:registramos|registran|anotamos|apuntamos|copiamos|guardamos)\b[^.!?;]*\b(?:respondemos|responden|revisamos|revisan|enviamos|env[ií]an)\b/i.test(part),
+    /\b(?:entra|entran|llega|llegan|recibimos|reciben)\b[^.!?;]*\b(?:registramos|registran|anotamos|apuntamos|copiamos|guardamos)\b[^.!?;]*\b(?:respondemos|responden|revisamos|revisan|enviamos|env[ií]an)\b/i.test(part)
+    || /\b(?:entra|entran|llega|llegan|recibimos|reciben)\b[^.!?;]*\b(?:registramos|registran|anotamos|apuntamos|copiamos|guardamos|apunta|anota|copia|registra)\b/i.test(part)
+    || /\b(?:copia|copian|copiamos|traslada|pasa|apunta|anota|registra|guarda)\b[^.!?;]*\b(?:excel|hoja|crm|sistema|registro|agenda)\b[^.!?;]*\b(?:confirma|responde|revisa|env[ií]a|contacta|actualiza)\b/i.test(part)
+    || /\b(?:recepci[oó]n|administraci[oó]n|equipo|persona|alguien)\b[^.!?;]*\b(?:copia|copian|copiamos|traslada|pasa|apunta|anota|registra|guarda)\b[^.!?;]*\b(?:excel|hoja|crm|sistema|registro|agenda)\b[^.!?;]*\b(?:confirma|responde|revisa|env[ií]a|contacta|actualiza)\b/i.test(part)
+    || /\b(?:primero|despu[eé]s|luego|al final)\b[^.!?;]*\b(?:copia|copian|traslada|pasa|apunta|anota|registra|guarda|confirma|responde|revisa|env[ií]a|actualiza)\b/i.test(part),
   );
   return clampText(sentence || "", 500);
 }
@@ -146,7 +186,20 @@ function addExplicitFacts(profile, answer) {
   if (!profile.volume) profile.volume = explicitVolume(answer);
   if (!profile.approvals) profile.approvals = explicitApproval(answer);
   if (!profile.goal) profile.goal = explicitGoal(answer);
+  if (!profile.problem) profile.problem = explicitProblem(answer);
   if (!profile.process) profile.process = explicitProcess(answer);
+}
+
+function explicitFacts(answer) {
+  return {
+    process: explicitProcess(answer),
+    problem: Boolean(explicitProblem(answer)),
+    tools: explicitToolMentions(answer).length > 0,
+    channels: explicitChannels(answer).length > 0,
+    volume: Boolean(explicitVolume(answer)),
+    approvals: Boolean(explicitApproval(answer)),
+    goal: Boolean(explicitGoal(answer)),
+  };
 }
 
 const SENSITIVE = /salud|clínic|clinic|médic|medic|paciente|dental|psicolog|abogad|jurídic|financ|contab|nómina|nomina|dni|historial|confidencial|sensible|expedient/i;
@@ -265,12 +318,12 @@ export function fieldFromQuestion(assistantText) {
   if (exact) return exact.field;
   if (/a qué se dedica|tipo de negocio|tu empresa|tu negocio|sector/.test(text)) return "business";
   if (/problema|mejorar primero|cuello de botella|tarea.*repetitiv/.test(text)) return "problem";
-  if (/cómo.*proceso|cómo lo hac|paso a paso|desde que empieza/.test(text)) return "process";
-  if (/herramienta|programa|software|integraci/.test(text)) return "tools";
-  if (/canal|por dónde|cómo llega/.test(text)) return "channels";
-  if (/volumen|cuánt/.test(text)) return "volume";
-  if (/aprob|autoriza|decisión human/.test(text)) return "approvals";
-  if (/resultado medible|objetivo|cómo medir|éxito/.test(text)) return "goal";
+  if (/cómo.*proceso|cómo lo hac|paso a paso|desde que empieza|paso a paso.*solicitud|quién hace qué|qué ocurre hoy/.test(text)) return "process";
+  if (/herramienta|programa|software|integraci|aplicaciones|qué programas/.test(text)) return "tools";
+  if (/canal|por dónde|cómo llega|de dónde llegan|por qué vías/.test(text)) return "channels";
+  if (/volumen|cuánt|cuántos casos|decenas o cientos/.test(text)) return "volume";
+  if (/aprob|autoriza|decisión human|revisar o autorizar|visto bueno/.test(text)) return "approvals";
+  if (/resultado medible|objetivo|cómo medir|éxito|cambio concreto|indicador observable/.test(text)) return "goal";
   return "";
 }
 
@@ -278,7 +331,7 @@ function initialFreeformFacts(profile, answer) {
   const identity = answer.match(/\b(?:soy|somos|tengo|tenemos|dirijo|gestiono|llevo|trabajo en|estoy montando|montamos|me dedico a|nos dedicamos a)\s+(?:(?:una|un|el|la|mi|nuestro|nuestra)\s+)?([^,;.!?]+?)(?=\s+(?:y|pero|donde|en la que|en el que|porque|ya que)\b|[.;!?]|$)/i);
   const business = clampText(identity?.[1]?.replace(/^(?:una|un|el|la|mi|nuestro|nuestra)\s+/i, ""), 160);
   const sector = deriveSector({ business: answer, problem: "", process: "" });
-  const problemMatch = answer.match(/\b(?:perdemos|pierdo|tardamos|se nos va|se me va|nos cuesta|me cuesta|no (?:conseguimos|podemos|llegamos|contestamos|respondemos)|queremos mejorar|quiero mejorar|necesitamos mejorar|necesito mejorar|queremos automatizar|quiero automatizar|necesitamos automatizar|necesito automatizar|me gustaría automatizar|nos gustaría automatizar|tenemos (?:un )?problema(?:s)?|hay un problema|problema con)\b[^.!?;]*/i);
+  const problemMatch = explicitProblem(answer);
 
   if (!profile.business) {
     if (business) profile.business = business;
@@ -286,7 +339,7 @@ function initialFreeformFacts(profile, answer) {
     else if (!problemMatch) profile.business = clampText(answer, 160);
   }
   if (!profile.sector && sector) profile.sector = sector;
-  if (!profile.problem && problemMatch) profile.problem = clampText(problemMatch[0], 300);
+  if (!profile.problem && problemMatch) profile.problem = problemMatch;
 
   return problemMatch ? "problem" : profile.business ? "business" : "";
 }
@@ -306,8 +359,17 @@ export function applyLastAnswer(profile, messages = []) {
   let filledField = "";
   if (answer) {
     if (asked) {
-      profile[asked] = answer;
-      filledField = asked;
+      const facts = explicitFacts(answer);
+      const hasOtherStrongFact = Object.entries(facts).some(([field, detected]) => detected && field !== asked);
+      // El campo preguntado conserva prioridad si la persona también da una
+      // respuesta reconocible para él. Si solo menciona otro dato concreto,
+      // no desplazamos el texto entero a un campo incorrecto.
+      if (facts[asked] || !hasOtherStrongFact) {
+        profile[asked] = answer;
+        filledField = asked;
+      } else {
+        filledField = Object.keys(facts).find((field) => facts[field]) || "";
+      }
     } else if (firstSubstantiveAnswer && !isGreeting(answer)) {
       // En el primer mensaje sustantivo, incluso si antes hubo solo un saludo,
       // interpreta negocio/sector y problema sin atribuir detalles no dichos.
@@ -339,8 +401,16 @@ export function applyLastAnswer(profile, messages = []) {
   return { profile, filledField };
 }
 
-export function nextUsefulQuestion(profile) {
-  return DISCOVERY_QUESTIONS.find(({ field }) => !profile[field])?.question || CLOSING_QUESTION;
+export function nextUsefulQuestion(profile, lastAskedField = "", lastQuestion = "") {
+  const pending = DISCOVERY_QUESTIONS.find(({ field }) => !profile[field]);
+  if (!pending) return CLOSING_QUESTION;
+  if (pending.field === lastAskedField) {
+    const alternatives = FOLLOW_UP_QUESTIONS[pending.field] || [];
+    const priorVariant = alternatives.findIndex((question) => question === lastQuestion);
+    const nextVariant = priorVariant < 0 ? 0 : (priorVariant + 1) % alternatives.length;
+    return alternatives[nextVariant] || pending.question;
+  }
+  return pending.question;
 }
 
 export function stageFor(profile) {
@@ -414,11 +484,12 @@ function processRecap(profile) {
 
 // Una respuesta del modelo sirve si aporta algo. Si es genérica, se descarta:
 // más vale una frase concreta escrita por el motor que un halago vacío.
-function isWeak(reply, service) {
+function isWeak(reply, service, allowRecommendation = true) {
   if (reply.length < 72) return true;
   if (/^(gracias|entiendo|perfecto|claro|genial|estupendo)\b/i.test(reply)) return true;
   if (/varino (puede|podría|te puede|os puede)/i.test(reply)) return true;
   if (/lo incorporo|tomo nota|buena pregunta/i.test(reply)) return true;
+  if (!allowRecommendation && /automation sprint|sistema de crecimiento|ia privada|opci[oó]n m[aá]s coherente|te recomiendo|recomiendo|te propongo|presupuesto estimado/i.test(reply)) return true;
   // El modelo pequeño a veces recomienda un servicio distinto al calculado.
   const others = ["Automation Sprint", "Sistema de crecimiento", "IA privada"].filter((name) => name !== service.name);
   return others.some((name) => new RegExp(name, "i").test(reply));
@@ -426,7 +497,8 @@ function isWeak(reply, service) {
 
 export function consultativeReply({ profile, filledField, modelReply, service }) {
   const cleaned = cleanReply(modelReply);
-  if (cleaned && !isWeak(cleaned, service)) return cleaned;
+  const recommendationReady = Boolean(profile.business && profile.problem && profile.process);
+  if (cleaned && !isWeak(cleaned, service, recommendationReady)) return cleaned;
   const value = filledField ? clampText(profile[filledField], 180) : "";
   const acknowledgement = value && ACKNOWLEDGEMENT[filledField]
     ? ACKNOWLEDGEMENT[filledField](value)
@@ -500,9 +572,10 @@ export function advise({ messages = [], profile: previousProfile = {}, modelRepl
   profile.localAi = service.slug === "ia-privada";
   const stage = stageFor(profile);
   const quoteReady = Boolean(profile.problem && (profile.business || profile.sector) && profile.process);
+  const lastAssistantQuestion = lastOf(messages, "assistant");
   return {
     reply: consultativeReply({ profile, filledField, modelReply, service }),
-    nextQuestion: nextUsefulQuestion(profile),
+    nextQuestion: nextUsefulQuestion(profile, fieldFromQuestion(lastAssistantQuestion), lastAssistantQuestion),
     stage,
     profile,
     estimate: quoteReady ? calculateEstimate({ ...profile, service: service.slug }) : null,
