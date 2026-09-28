@@ -489,6 +489,10 @@ function isWeak(reply, service, allowRecommendation = true) {
   if (/^(gracias|entiendo|perfecto|claro|genial|estupendo)\b/i.test(reply)) return true;
   if (/varino (puede|podría|te puede|os puede)/i.test(reply)) return true;
   if (/lo incorporo|tomo nota|buena pregunta/i.test(reply)) return true;
+  // El modelo no debe convertir una hipótesis en una prestación ni en un
+  // resultado cuantitativo: el alcance solo se diseña después de validar el
+  // proceso, y los ahorros nunca se presuponen.
+  if (/\b(?:recordatorios?|notificaciones?|seguimiento autom[aá]tico|liberar\w*|ahorrar\w*|reducir\w*|aumentar\w*|incrementar\w*|garantizar\w*)\b/i.test(reply)) return true;
   if (!allowRecommendation && /automation sprint|sistema de crecimiento|ia privada|opci[oó]n m[aá]s coherente|te recomiendo|recomiendo|te propongo|presupuesto estimado/i.test(reply)) return true;
   // El modelo pequeño a veces recomienda un servicio distinto al calculado.
   const others = ["Automation Sprint", "Sistema de crecimiento", "IA privada"].filter((name) => name !== service.name);
@@ -499,7 +503,7 @@ export function consultativeReply({ profile, filledField, modelReply, service })
   const cleaned = cleanReply(modelReply);
   const recommendationReady = Boolean(profile.business && profile.problem && profile.process);
   if (cleaned && !isWeak(cleaned, service, recommendationReady)) return cleaned;
-  const value = filledField ? clampText(profile[filledField], 180) : "";
+  const value = filledField ? clampText(profile[filledField], 180).replace(/[.!?;,\s]+$/, "") : "";
   const acknowledgement = value && ACKNOWLEDGEMENT[filledField]
     ? ACKNOWLEDGEMENT[filledField](value)
     : "Anotado, lo incorporo al mapa del sistema.";

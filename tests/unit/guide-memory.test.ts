@@ -286,4 +286,24 @@ describe("motor de VARINO Guide", () => {
     expect(result.filledField).toBe("approvals");
     expect(result.nextQuestion).toMatch(/cuántos casos|decenas o cientos/i);
   });
+
+  it("descarta prestaciones y ahorros que el modelo añade sin evidencia", () => {
+    const profile = normalizeProfile({
+      business: "clínica dental",
+      problem: "confirmar citas",
+      process: "Recepción copia solicitudes a Excel y confirma manualmente.",
+      volume: "120 citas al mes.",
+      sensitivity: "high",
+    });
+    const reply = consultativeReply({
+      profile,
+      filledField: "volume",
+      modelReply: "Con ese volumen, los recordatorios automáticos por WhatsApp liberarán a recepción y reducirán el trabajo manual.",
+      service: recommendService(profile),
+    });
+
+    expect(reply).toContain("120 citas al mes");
+    expect(reply).not.toContain("..");
+    expect(reply).not.toMatch(/recordatorios|liberarán|reducirán/i);
+  });
 });
