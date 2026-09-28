@@ -9,9 +9,9 @@ de lanzamiento.
 - El sitio está construido con Astro 7 y genera salida `static` (38 páginas en
   el build local). El workflow de publicación de
   `.github/workflows/deploy.yml` despliega a GitHub Pages.
-- No hay rutas API de aplicación, autenticación, sesiones, base de datos,
-  migraciones, cola de jobs ni aislamiento por workspace. `wrangler` aparece
-  como herramienta local, pero no hay configuración D1/Functions en la rama.
+- No hay API de aplicación, autenticación, sesiones, base conectada, cola de
+  jobs ni controles de tenant en runtime. Esta fase añade una migración D1 y
+  configuración local; todavía no hay Pages Functions ni base remota enlazada.
 - El backend de la web permanece desactivado (`BACKEND.enabled = false`). El
   formulario no confirma que se almacenen solicitudes; la guía publicada usa
   lógica local del navegador. El plugin Ollama existente solo corre en el
@@ -21,22 +21,26 @@ de lanzamiento.
 - En la auditoría, la PR #14 (apilada sobre otra rama) no tenía checks de GitHub:
   CI solo atendía PRs cuyo destino era `main`. Esta fase amplía el trigger a
   todas las PRs para que las ramas apiladas también reciban la verificación.
-- n8n local responde, pero la revisión de su base encontró 17 workflows, 0
-  activos, 0 credenciales y 0 ejecuciones. La consola continúa en configuración
-  inicial; no se demostró ninguna automatización de clientes.
+- n8n local respondió correctamente en `/healthz`. El último inventario del
+  runbook privado registró 16 workflows inactivos, sin credenciales ni
+  ejecuciones; ese inventario no se repitió en este bloque. No se demostró una
+  automatización operativa de clientes.
 - La identidad legal y las aprobaciones de lanzamiento siguen incompletas.
   `npm run launch:check` falla deliberadamente por marca, titular, NIF,
   domicilio y aprobaciones legal/seguridad ausentes.
 
 ## Pruebas repetidas
 
-En la base de la PR #14, antes de los cambios del planificador:
+Verificación reejecutada en esta fase:
 
-- `npm run test:unit`: 45/45.
+- `npm run test:unit`: 52/52.
 - `npm run readiness`: build estático, SEO, scripts, enlaces, CSP y gate de
-  publicación correctos.
+  publicación correctos (38 páginas).
 - `npm run test:e2e`: 225 pasadas, 1 omitida, escritorio/móvil y pruebas de
   accesibilidad.
+- `npm run test:d1`: migración local, aislamiento por workspace, unicidad de
+  idempotencia e integridad de claves foráneas correctos.
+- `npm audit --audit-level=moderate`: 0 vulnerabilidades.
 
 La rama de base `audit/legal-and-growth-20260926` obtuvo además 39/39 unitarias
 y 225 pasadas, 1 omitida. Estas pruebas locales no prueban publicación ni
@@ -56,7 +60,7 @@ No fusionar ni desplegar para “arreglar” esto automáticamente: la rama actu
 mantiene intencionalmente el gate de lanzamiento. Hay que revisar la PR, después
 publicar solo con la aprobación correspondiente y repetir el smoke público.
 
-## Tramo implementado en esta fase
+## Planificador local ya existente
 
 El nuevo `POST /api/autopilot/plan` es middleware **solo de `astro dev`**:
 
@@ -80,20 +84,36 @@ que pasó el contrato; la respuesta confirmó `executable: false` y
 `persisted: false`. El build estático no contiene la ruta del API local ni la
 dirección de Ollama. Ningún workflow n8n se activó.
 
+## Nueva fase completada: núcleo D1 local
+
+Se añadió `migrations/0001_autopilot_core.sql` con users, workspaces,
+miembros/roles, sesiones que solo almacenan hash, automatizaciones,
+versiones, aprobaciones, ejecuciones y auditoría. Las relaciones de escrituras
+incluyen `workspace_id` en sus claves foráneas; las ejecuciones tienen una clave
+de idempotencia única por workspace. El test usa exclusivamente un D1 temporal
+local, comprueba que un miembro de otro workspace no pueda crear una
+automatización y elimina su directorio temporal al terminar.
+
+Esto es un esquema validado, no autenticación ni almacenamiento conectado a la
+web. No se creó una base remota, no se guardaron leads y no hay endpoints que
+permitan a un usuario leer o escribir esos datos. El estado detallado está en
+[`autopilot-phase-1-d1-core.md`](./autopilot-phase-1-d1-core.md).
+
 ## Orden de construcción
 
-1. Cerrar y verificar la deriva pública de la PR #13 sin saltarse el gate legal.
-2. Elegir el runtime dinámico y comprobar la cuenta/hosting; GitHub Pages por sí
-   solo no puede alojar la API y los jobs del SaaS. La propuesta previa menciona
-   Cloudflare Pages Functions + D1, pero no está configurada ni desplegada.
-3. Añadir autenticación gestionada, workspaces y migraciones con pruebas de
-   acceso cruzado antes de guardar planes de usuarios.
-4. Persistir drafts versionados y auditoría; crear aprobaciones y límites de
-   coste antes de cualquier escritura externa.
-5. Probar una sola integración de solo lectura en staging con autorización
-   OAuth explícita; mantener n8n y las credenciales bajo control del cliente o
-   confirmar por escrito la licencia aplicable antes de ofrecer hosting
-   compartido.
+1. Revisar la PR #13 y corregir la deriva pública. No desplegar hasta superar el
+   gate legal y de seguridad.
+2. Mantener el sitio público actual sin cambios de hosting. Cloudflare Pages
+   Functions + D1 queda como runtime candidato para el SaaS y se ha probado
+   localmente; GitHub Pages sirve archivos estáticos y no ejecuta la API.
+3. Implementar autenticación real y autorización por workspace; probar login,
+   revocación de sesión y accesos cruzados antes de conectar el esquema al API.
+4. Añadir API autenticada para crear y versionar borradores, registro de
+   auditoría y aprobaciones. No activar ejecución todavía.
+5. Probar una integración de solo lectura con consentimiento OAuth en staging.
+   No alojar workflows/credenciales de clientes en el n8n compartido hasta tener
+   licencia de proveedor confirmada; su guía indica Enterprise o Embed para esos
+   modelos de producto.
 6. Solo después completar ejecución durable, recuperación, billing, analítica,
    exportación/borrado y controles de operación.
 
