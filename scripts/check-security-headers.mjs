@@ -24,4 +24,4 @@ if (failures.length) {
   console.error(`Security header check failed: ${failures.join(", ")}`);
   process.exit(1);
 }
-console.log("✓ security headers en verde");
+console.log("✓ configuración de cabeceras en public/_headers correcta (configuración local; no demuestra entrega del hosting)");

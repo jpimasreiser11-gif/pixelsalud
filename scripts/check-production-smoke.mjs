@@ -32,6 +32,22 @@ const routes = [
 ];
 const errors = [];
 const htmlByRoute = new Map();
+const missingHeaders = new Map();
+
+const requiredResponseHeaders = [
+  ["Strict-Transport-Security", (value) => /max-age=31536000/i.test(value) && /includeSubDomains/i.test(value)],
+  ["Content-Security-Policy", (value) => [
+    /(?:^|;)\s*default-src\s+'self'(?:\s|;|$)/i,
+    /(?:^|;)\s*object-src\s+'none'(?:\s|;|$)/i,
+    /(?:^|;)\s*frame-ancestors\s+'none'(?:\s|;|$)/i,
+  ].every((pattern) => pattern.test(value))],
+  ["X-Content-Type-Options", (value) => /^nosniff$/i.test(value.trim())],
+  ["X-Frame-Options", (value) => /^DENY$/i.test(value.trim())],
+  ["Referrer-Policy", (value) => /^strict-origin-when-cross-origin$/i.test(value.trim())],
+  ["Permissions-Policy", (value) => ["camera=()", "microphone=()", "geolocation=()"]
+    .every((directive) => value.toLowerCase().includes(directive))],
+  ["Cross-Origin-Opener-Policy", (value) => /^same-origin$/i.test(value.trim())],
+];
 
 function attribute(tag, name) {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -67,6 +83,20 @@ for (const route of routes) {
     }
     htmlByRoute.set(route, html);
 
+    // Verify what the public HTTPS origin actually delivers, not only the
+    // hosting-specific config file. A meta CSP is checked below, but cannot
+    // replace CSP frame-ancestors or transport/security response headers.
+    if (origin.protocol === "https:") {
+      for (const [name, accepts] of requiredResponseHeaders) {
+        const value = response.headers.get(name);
+        if (!value || !accepts(value)) {
+          const routesMissing = missingHeaders.get(name) ?? [];
+          routesMissing.push(route);
+          missingHeaders.set(name, routesMissing);
+        }
+      }
+    }
+
     const canonicalTag = [...html.matchAll(/<link\b[^>]*>/gi)]
       .map((match) => match[0])
       .find((tag) => attribute(tag, "rel") === "canonical");
@@ -100,6 +130,10 @@ for (const route of routes) {
   } catch (error) {
     errors.push(`${route}: ${error.message}`);
   }
+}
+
+for (const [name, routesMissing] of missingHeaders) {
+  errors.push(`cabecera HTTP ${name} ausente o débil en ${routesMissing.length}/${routes.length} páginas HTML`);
 }
 
 const home = htmlByRoute.get("/") ?? "";
@@ -165,5 +199,5 @@ if (errors.length) {
   for (const error of errors) console.error(`- ${error}`);
   process.exitCode = 1;
 } else {
-  console.log(`Production smoke OK: ${routes.length} páginas, origen, versión, CSP, contenido, indexación y recursos comprobados.`);
+  console.log(`Production smoke OK: ${routes.length} páginas, origen, versión, cabeceras HTTP, CSP, contenido, indexación y recursos comprobados.`);
 }
