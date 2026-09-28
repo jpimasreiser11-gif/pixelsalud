@@ -284,7 +284,7 @@ const CHAT = BACKEND_CHAT;
           var res = await fetch(CHAT, {
             method: "POST",
             signal: ctrl.signal,
-            headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: text, history: history, conversationId: convId, pagina: location.pathname })
           });
           clearTimeout(t);
@@ -374,7 +374,7 @@ const CHAT = BACKEND_CHAT;
         var leadResponse = await fetch(LEAD, {
           method: "POST",
           signal: cLead.signal,
-          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(Object.assign({ submissionId: submissionId }, leadPayload))
         });
         if (!leadResponse.ok) throw new Error("lead_request_failed");

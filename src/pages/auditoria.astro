@@ -155,7 +155,7 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
         if (statusEl) statusEl.textContent = "Enviando…";
         fetch(lead, {
           method: "POST",
-          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(Object.assign({ submissionId: submissionId }, payload))
         }).then(function (r) {
           if (!r.ok) throw new Error("lead_request_failed");

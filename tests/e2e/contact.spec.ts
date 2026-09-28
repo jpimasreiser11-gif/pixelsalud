@@ -141,3 +141,17 @@ test("el aviso legal oculta los datos identificativos durante el prelanzamiento"
   expect(text).not.toMatch(/\b\d{8}[A-Z]\b/i);
   expect(text).not.toMatch(/domicilio:\s*\S/i);
 });
+
+test("la política describe el estado real de backend y analítica en prelanzamiento", async ({ page }) => {
+  const unsafeRequests: string[] = [];
+  page.on("request", (request) => {
+    if (/\/webhook\/|ngrok|:11434/i.test(request.url())) unsafeRequests.push(request.url());
+  });
+  await page.goto("/privacidad/");
+  const policy = page.locator("main");
+  await expect(policy).toContainText(/la analítica web está desactivada/i);
+  await expect(policy).toContainText(/el backend de esta rama está deshabilitado/i);
+  const text = await policy.innerText();
+  expect(text).not.toMatch(/ngrok/i);
+  expect(unsafeRequests).toEqual([]);
+});

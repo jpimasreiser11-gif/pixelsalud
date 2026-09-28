@@ -43,7 +43,7 @@ import { SITE } from "../config";
           <li><strong>Comunicaciones comerciales opcionales:</strong> Solo si la persona marca una casilla separada, no premarcada, para recibir novedades, consejos y ofertas. No es necesaria para responder a una solicitud.</li>
           <li><strong>Ejecución de Servicios Contratados:</strong> Desarrollar, desplegar y mantener los proyectos de automatización, software e inteligencia artificial acordados con clientes.</li>
          <li><strong>Cumplimiento de Obligaciones Legales:</strong> Facturación, contabilidad y cumplimiento fiscal exigible.</li>
-          <li><strong>Medición básica:</strong> La versión actual puede remitir al backend la ruta visitada, el dominio de referencia y el idioma del navegador; no usa identificadores publicitarios.</li>
+          <li><strong>Medición básica:</strong> En esta rama de prelanzamiento la analítica web está desactivada. Si se activa, se informará previamente de los datos enviados, el proveedor, la finalidad y la base jurídica.</li>
         </ul>
       </div>
 
@@ -70,12 +70,11 @@ import { SITE } from "../config";
         <p>Según la función solicitada y solo cuando el backend esté operativo, los datos pueden pasar por:</p>
         <ul class="mt-2 space-y-1.5 list-disc pl-5">
           <li><strong>GitHub Pages:</strong> publicación y alojamiento de esta web.</li>
-          <li><strong>ngrok:</strong> túnel HTTPS que comunica el navegador con el n8n autoalojado; no significa que el recorrido sea exclusivamente local.</li>
           <li><strong>n8n y Ollama:</strong> automatización y generación de respuestas con el modelo configurado localmente.</li>
           <li><strong>Google Sheets, Gmail y Google Calendar:</strong> CRM, correo e invitaciones de agenda cuando el flujo correspondiente se ejecuta.</li>
           <li><strong>Telegram:</strong> avisos operativos al responsable, si el flujo correspondiente los genera.</li>
         </ul>
-        <p class="mt-2">Falta confirmar los roles contractuales, regiones de tratamiento, transferencias internacionales aplicables, acuerdos de encargo y configuración de retención de cada proveedor. Esta lista describe integraciones presentes en los flujos; no afirma que todas se activen para cada visitante.</p>
+        <p class="mt-2">El backend de esta rama está deshabilitado y el staging no tiene credenciales conectadas: estos servicios no reciben datos desde esta web. Antes de habilitar un proxy o backend público habrá que confirmar su proveedor, región, roles contractuales, transferencias, acuerdos de encargo y retención; actualizar esta información antes de recopilar datos.</p>
       </div>
 
       <!-- Derechos -->

@@ -15,7 +15,7 @@ import { BACKEND_EVENT } from "../config";
       try {
         fetch(ep, {
           method: "POST",
-          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             path: location.pathname,
             referrer: document.referrer ? new URL(document.referrer).hostname : "",
