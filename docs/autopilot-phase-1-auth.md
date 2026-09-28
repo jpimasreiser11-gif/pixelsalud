@@ -18,11 +18,16 @@ de Gmail. La web pública sigue siendo estática.
 - El primer workspace y su membresía `OWNER` se crean en un lote D1 y generan
   un evento de auditoría. La operación tolera el reintento si la primera
   respuesta se pierde.
-- `/app/` muestra únicamente el estado real de cuenta/workspace. No presenta
-  automatizaciones, estadísticas, integraciones ni conexiones inexistentes.
+- `/app/` muestra el estado real de la cuenta/workspace y, si se ejecuta con
+  Pages Functions + D1 locales, permite guardar y volver a ver un borrador
+  manual de resumen mediante `GET/POST /api/automations`. El borrador no puede
+  ejecutarse y no implica que existan integraciones.
 
 Google confirma identidad en esta fase: todavía no se solicitan permisos de
 Gmail, Drive, Calendar ni Sheets. El sistema tampoco ejecuta workflows.
+Los borradores se aíslan por workspace, limitan frecuencia y rechazan patrones
+conocidos de datos personales/secretos. No existe aún exportación, borrado ni
+retención automática; no se deben guardar datos reales de clientes.
 
 ## Desarrollo local
 
@@ -51,8 +56,9 @@ explica que el acceso no está configurado. No se simula un login.
   completar la pantalla de consentimiento y verificar las restricciones de
   marca/dominio de Google.
 - Revisar límites antiabuso/rate limiting, recuperación/exportación/borrado,
-  accesibilidad y aviso de privacidad con responsable legal antes de admitir
-  usuarios externos.
+  retención, accesibilidad y aviso de privacidad con responsable legal antes
+  de admitir usuarios externos. El límite de 15 escrituras/minuto del endpoint
+  de borradores no sustituye una política integral antiabuso.
 - El dominio público sigue en GitHub Pages estático: allí estas funciones no
   se ejecutan. Esta implementación no cambia hosting, DNS, GitHub Pages ni la
   publicación.

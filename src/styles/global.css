@@ -106,6 +106,10 @@ body {
 .dark [class~="text-[#005bb5]"] { color: #a1caff; }
 .dark [class~="text-[#3a3a3c]"] { color: #d1d1d6; }
 
+.site-footer a { color: #6e6e73; }
+.dark .site-footer a { color: #a1a1a6; }
+.dark .site-footer a:hover { color: #f5f5f7; }
+
 :is(
   [class~="bg-[#0a0d14]"],
   [class~="bg-[#080b12]"],

@@ -95,6 +95,11 @@ try {
     const sessionId = randomUUID();
     const otherUserId = randomUUID();
     const otherWorkspaceId = randomUUID();
+    const otherSessionId = randomUUID();
+    const otherSessionToken = randomBytes(32).toString("base64url");
+    const otherTokenHash = createHash("sha256").update(otherSessionToken).digest("hex");
+    const otherAutomationId = randomUUID();
+    const otherVersionId = randomUUID();
     const now = Math.floor(Date.now() / 1000);
     const sql = `INSERT INTO users (id, email, google_subject, email_verified_at, status, created_at, updated_at)
       VALUES ('${userId}', 'auth-test@example.test', 'google-sub-auth-test', ${now}, 'active', ${now}, ${now});
@@ -102,10 +107,16 @@ try {
       VALUES ('${otherUserId}', 'other-auth-test@example.test', 'google-sub-other-test', ${now}, 'active', ${now}, ${now});
       INSERT INTO sessions (id, user_id, token_hash, issued_at, expires_at)
       VALUES ('${sessionId}', '${userId}', '${tokenHash}', ${now}, ${now + 3600});
+      INSERT INTO sessions (id, user_id, token_hash, issued_at, expires_at)
+      VALUES ('${otherSessionId}', '${otherUserId}', '${otherTokenHash}', ${now}, ${now + 3600});
       INSERT INTO workspaces (id, name, slug, status, created_at, updated_at)
       VALUES ('${otherWorkspaceId}', 'Other tenant', 'other-tenant-test', 'active', ${now}, ${now});
       INSERT INTO workspace_members (workspace_id, user_id, role, status, created_at, updated_at)
-      VALUES ('${otherWorkspaceId}', '${otherUserId}', 'OWNER', 'active', ${now}, ${now});`;
+      VALUES ('${otherWorkspaceId}', '${otherUserId}', 'OWNER', 'active', ${now}, ${now});
+      INSERT INTO automations (id, workspace_id, name, objective, status, autonomy, created_by_user_id, created_at, updated_at)
+      VALUES ('${otherAutomationId}', '${otherWorkspaceId}', 'B confidential draft', 'Private fixture for tenant isolation.', 'draft', 'safe', '${otherUserId}', ${now}, ${now});
+      INSERT INTO automation_versions (id, workspace_id, automation_id, version_number, plan_json, risk_level, approval_required, created_by_user_id, created_at)
+      VALUES ('${otherVersionId}', '${otherWorkspaceId}', '${otherAutomationId}', 1, '{"schemaVersion":1,"name":"B confidential draft","objective":"Private fixture for tenant isolation.","trigger":{"kind":"manual"},"requiredIntegrations":[],"steps":[{"id":"resumir-texto","kind":"summarize","instruction":"Summarize only fixture text for workspace B."}]}', 'low', 0, '${otherUserId}', ${now});`;
     runWrangler(["d1", "execute", "VARINO_DB", ...localOnly, "--command", sql]);
     const cookie = `varino_session=${sessionToken}`;
 
@@ -116,6 +127,18 @@ try {
     assert.equal(identity.user.email, "auth-test@example.test");
     assert.deepEqual(identity.workspaces, []);
     assert.ok(!JSON.stringify(identity).includes("Other tenant"), "la sesión A no debe leer el workspace B");
+
+    const noSessionAutomationList = await fetch(`${baseUrl}/api/automations`);
+    assert.equal(noSessionAutomationList.status, 401);
+    const otherCookie = `varino_session=${otherSessionToken}`;
+    const otherTenantList = await fetch(`${baseUrl}/api/automations`, { headers: { cookie: otherCookie } });
+    assert.equal(otherTenantList.status, 200);
+    const otherTenantDrafts = await otherTenantList.json();
+    assert.equal(otherTenantDrafts.automations.length, 1);
+    assert.equal(otherTenantDrafts.automations[0].name, "B confidential draft");
+    const missingWorkspaceList = await fetch(`${baseUrl}/api/automations?workspaceId=${otherWorkspaceId}`, { headers: { cookie } });
+    assert.equal(missingWorkspaceList.status, 409);
+    assert.ok(!(await missingWorkspaceList.text()).includes("B confidential draft"));
 
     const createWorkspace = (name, origin = baseUrl) => fetch(`${baseUrl}/api/workspaces`, {
       method: "POST",
@@ -147,6 +170,80 @@ try {
     assert.equal(workspaceSession.workspaces.length, 1);
     assert.equal(workspaceSession.workspaces[0].role, "OWNER");
 
+    const automationUrl = `${baseUrl}/api/automations`;
+    const safePlan = {
+      schemaVersion: 1,
+      name: "Resumen manual de solicitudes",
+      objective: "Preparar un resumen manual de solicitudes entrantes para revisión del equipo.",
+      trigger: { kind: "manual" },
+      requiredIntegrations: [],
+      steps: [{ id: "resumir-solicitudes", kind: "summarize", instruction: "Resume solo el texto que la persona aporte manualmente; no lo envíes ni modifiques datos." }],
+    };
+    const postDraft = (plan, key = randomUUID(), origin = baseUrl, headers = {}) => fetch(automationUrl, {
+      method: "POST",
+      headers: { cookie, origin, "content-type": "application/json", "idempotency-key": key, ...headers },
+      body: JSON.stringify({ plan }),
+    });
+    assert.equal((await postDraft(safePlan, randomUUID(), "https://attacker.invalid")).status, 403);
+    assert.equal((await fetch(automationUrl, { method: "POST", headers: { cookie, origin: baseUrl, "content-type": "text/plain" }, body: "{}" })).status, 415);
+    assert.equal((await postDraft({ ...safePlan, extra: "workspace_id" })).status, 400);
+    assert.equal((await postDraft({ ...safePlan, objective: "Contacta a maria@example.test" })).status, 400);
+    assert.equal((await postDraft(safePlan, "")).status, 400, "la creación debe exigir clave de idempotencia");
+
+    const draftKey = randomUUID();
+    const createdDraftResponse = await postDraft(safePlan, draftKey);
+    assert.equal(createdDraftResponse.status, 201);
+    const createdDraft = await createdDraftResponse.json();
+    assert.equal(createdDraft.created, true);
+    assert.equal(createdDraft.automation.status, "draft");
+    assert.equal(createdDraft.automation.riskLevel, "low");
+    assert.equal(createdDraft.automation.approvalRequired, false);
+    assert.equal(createdDraft.automation.executable, false);
+    assert.deepEqual(createdDraft.automation.plan, safePlan);
+
+    const duplicateDraftResponse = await postDraft(safePlan, draftKey);
+    assert.equal(duplicateDraftResponse.status, 200);
+    const duplicateDraft = await duplicateDraftResponse.json();
+    assert.equal(duplicateDraft.created, false);
+    assert.equal(duplicateDraft.automation.id, createdDraft.automation.id);
+
+    const conflictingPlan = { ...safePlan, objective: "Preparar un resumen diferente para revisión del equipo." };
+    assert.equal((await postDraft(conflictingPlan, draftKey)).status, 409, "una clave repetida no puede cambiar el contenido");
+
+    const highRiskPlan = {
+      schemaVersion: 1,
+      name: "Respuesta pendiente de aprobación",
+      objective: "Preparar un borrador de respuesta comercial para que el propietario lo revise.",
+      trigger: { kind: "manual" },
+      requiredIntegrations: ["gmail"],
+      steps: [{ id: "preparar-respuesta", kind: "send_email", integration: "gmail", recipientMode: "workspace_contact", instruction: "Solo proponer el texto; no enviarlo sin aprobación humana." }],
+    };
+    const highRiskResponse = await postDraft(highRiskPlan, randomUUID());
+    assert.equal(highRiskResponse.status, 201);
+    const highRiskDraft = await highRiskResponse.json();
+    assert.equal(highRiskDraft.automation.riskLevel, "high");
+    assert.equal(highRiskDraft.automation.approvalRequired, true);
+    assert.equal(highRiskDraft.automation.executable, false);
+
+    const isolatedListResponse = await fetch(`${automationUrl}?workspaceId=${otherWorkspaceId}`, { headers: { cookie } });
+    assert.equal(isolatedListResponse.status, 200);
+    const isolatedList = await isolatedListResponse.json();
+    assert.equal(isolatedList.automations.length, 2);
+    assert.ok(!JSON.stringify(isolatedList).includes("B confidential draft"));
+
+    const invalidPlan = { plan: { ...safePlan, steps: [{ id: "execute-shell", kind: "shell", instruction: "Run an arbitrary shell command." }] } };
+    const rateStatuses = [];
+    for (let index = 0; index < 16; index += 1) {
+      const response = await fetch(automationUrl, {
+        method: "POST",
+        headers: { cookie: otherCookie, origin: baseUrl, "content-type": "application/json" },
+        body: JSON.stringify(invalidPlan),
+      });
+      rateStatuses.push(response.status);
+    }
+    assert.deepEqual(rateStatuses.slice(0, 15), Array(15).fill(400));
+    assert.equal(rateStatuses[15], 429, "el límite por usuario debe frenar escrituras repetidas");
+
     const logout = await fetch(`${baseUrl}/api/auth/logout`, {
       method: "POST",
       headers: { cookie, origin: baseUrl, "content-type": "application/json" },
@@ -159,10 +256,20 @@ try {
 
     const integrity = runWrangler([
       "d1", "execute", "VARINO_DB", ...localOnly, "--json", "--command",
-      `SELECT (SELECT count(*) FROM workspaces WHERE id IN (SELECT workspace_id FROM workspace_members WHERE user_id = '${userId}')) AS workspaces, (SELECT count(*) FROM audit_events WHERE actor_user_id = '${userId}' AND action = 'workspace.created') AS audit_events, (SELECT count(*) FROM sessions WHERE id = '${sessionId}' AND revoked_at IS NOT NULL) AS revoked_sessions, (SELECT count(*) FROM sessions WHERE token_hash = '${tokenHash}') AS hashed_sessions, (SELECT count(*) FROM pragma_foreign_key_check) AS fk_errors;`,
+      `SELECT (SELECT count(*) FROM workspaces WHERE id IN (SELECT workspace_id FROM workspace_members WHERE user_id = '${userId}')) AS workspaces, (SELECT count(*) FROM automations WHERE workspace_id IN (SELECT workspace_id FROM workspace_members WHERE user_id = '${userId}')) AS owner_drafts, (SELECT count(*) FROM automation_versions WHERE automation_id IN (SELECT id FROM automations WHERE workspace_id IN (SELECT workspace_id FROM workspace_members WHERE user_id = '${userId}'))) AS owner_versions, (SELECT count(*) FROM approvals WHERE workspace_id IN (SELECT workspace_id FROM workspace_members WHERE user_id = '${userId}')) AS owner_approvals, (SELECT count(*) FROM workflow_runs WHERE workspace_id IN (SELECT workspace_id FROM workspace_members WHERE user_id = '${userId}')) AS owner_runs, (SELECT count(*) FROM audit_events WHERE actor_user_id = '${userId}' AND action = 'workspace.created') AS workspace_audits, (SELECT count(*) FROM audit_events WHERE actor_user_id = '${userId}' AND action = 'automation.draft.created') AS draft_audits, (SELECT count(*) FROM sessions WHERE id = '${sessionId}' AND revoked_at IS NOT NULL) AS revoked_sessions, (SELECT count(*) FROM sessions WHERE token_hash = '${tokenHash}') AS hashed_sessions, (SELECT request_count FROM api_rate_limits WHERE user_id = '${otherUserId}' AND action = 'automation.draft.create') AS rate_count, (SELECT count(*) FROM pragma_foreign_key_check) AS fk_errors;`,
     ]);
     const checks = JSON.parse(integrity)[0].results[0];
-    assert.deepEqual(checks, { workspaces: 1, audit_events: 1, revoked_sessions: 1, hashed_sessions: 1, fk_errors: 0 });
+    assert.equal(checks.workspaces, 1);
+    assert.equal(checks.owner_drafts, 2);
+    assert.equal(checks.owner_versions, 2);
+    assert.equal(checks.owner_approvals, 0);
+    assert.equal(checks.owner_runs, 0);
+    assert.equal(checks.workspace_audits, 1);
+    assert.equal(checks.draft_audits, 2);
+    assert.equal(checks.revoked_sessions, 1);
+    assert.equal(checks.hashed_sessions, 1);
+    assert.equal(checks.rate_count, 15);
+    assert.equal(checks.fk_errors, 0);
   } finally {
     server.kill("SIGTERM");
     await Promise.race([
@@ -172,7 +279,7 @@ try {
     if (server.exitCode === null) server.kill("SIGKILL");
   }
 
-  process.stdout.write("Pages Functions local: auth fail-closed, session hash, workspace/idempotencia, CSRF y logout/revocación OK.\n");
+  process.stdout.write("Pages Functions local: auth, workspace, borradores tenant-isolados, idempotencia, PII guard, rate limit, no-ejecución y logout OK.\n");
 } finally {
   rmSync(persistence, { recursive: true, force: true });
 }

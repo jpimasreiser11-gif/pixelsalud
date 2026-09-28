@@ -33,8 +33,29 @@ import Base from "../../layouts/Base.astro";
           <div id="workspace-list-view" class="mt-8" hidden>
             <h3 class="text-lg font-semibold">Tus espacios</h3>
             <ul id="workspace-list" class="mt-3 grid gap-2"></ul>
-            <p class="mt-4 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">La gestión de varios espacios y miembros llegará en una fase posterior; aquí no se muestran estadísticas ni automatizaciones que todavía no estén conectadas.</p>
+            <p class="mt-4 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Puedes guardar borradores revisables. Aún no hay ejecuciones, estadísticas ni integraciones conectadas.</p>
           </div>
+          <section id="automation-panel" class="mt-8 border-t border-black/10 pt-7 dark:border-white/10" aria-labelledby="automation-title" hidden>
+            <h3 id="automation-title" class="text-lg font-semibold">Prepara un borrador seguro</h3>
+            <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">En esta fase solo guardamos una propuesta manual de resumen. No lee tus cuentas, no envía mensajes y no ejecuta cambios.</p>
+            <form id="automation-form" class="mt-5 grid gap-4">
+              <div>
+                <label for="automation-name" class="block text-sm font-semibold">Nombre del borrador</label>
+                <input id="automation-name" name="name" required minlength="3" maxlength="80" autocomplete="off" class="mt-2 min-h-12 w-full rounded-xl border border-black/15 bg-white px-4 text-sm outline-none focus:border-[#0071e3] focus:ring-2 focus:ring-[#0071e3]/20 dark:border-white/15 dark:bg-black" />
+              </div>
+              <div>
+                <label for="automation-objective" class="block text-sm font-semibold">¿Qué quieres resumir manualmente?</label>
+                <textarea id="automation-objective" name="objective" required minlength="8" maxlength="400" rows="3" class="mt-2 w-full rounded-xl border border-black/15 bg-white px-4 py-3 text-sm outline-none focus:border-[#0071e3] focus:ring-2 focus:ring-[#0071e3]/20 dark:border-white/15 dark:bg-black"></textarea>
+                <p class="mt-2 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">No incluyas datos personales, contraseñas, claves ni información de clientes. El borrador se guardará en este espacio.</p>
+              </div>
+              <div id="automation-status" class="rounded-xl border border-black/10 px-4 py-3 text-sm dark:border-white/10" role="status" aria-live="polite" hidden></div>
+              <button id="save-automation" type="submit" class="button-primary justify-self-start">Guardar borrador</button>
+            </form>
+            <div id="automation-list-view" class="mt-7" hidden>
+              <h4 class="text-sm font-semibold">Borradores guardados</h4>
+              <ul id="automation-list" class="mt-3 grid gap-2"></ul>
+            </div>
+          </section>
           <form id="workspace-form" class="mt-8" hidden>
             <label for="workspace-name" class="block text-sm font-semibold">¿Cómo se llama tu empresa o equipo?</label>
             <p class="mt-1 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Este será tu primer espacio. Puedes cambiar el nombre más adelante.</p>
@@ -51,7 +72,7 @@ import Base from "../../layouts/Base.astro";
         <ol class="mt-7 grid gap-5">
           <li class="flex gap-4"><span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0071e3]/10 text-xs font-bold text-[#0071e3]">1</span><div><h3 class="text-sm font-semibold">Identidad verificada</h3><p class="mt-1 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Google confirma la cuenta; Varino guarda un identificador y el correo verificado.</p></div></li>
           <li class="flex gap-4"><span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0071e3]/10 text-xs font-bold text-[#0071e3]">2</span><div><h3 class="text-sm font-semibold">Espacio propio</h3><p class="mt-1 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Tu primer workspace se crea en el servidor y quedas como propietario.</p></div></li>
-          <li class="flex gap-4"><span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0071e3]/10 text-xs font-bold text-[#0071e3]">3</span><div><h3 class="text-sm font-semibold">Automatizaciones, después</h3><p class="mt-1 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">No hay ejecuciones ni conexiones externas activas en esta fase.</p></div></li>
+          <li class="flex gap-4"><span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0071e3]/10 text-xs font-bold text-[#0071e3]">3</span><div><h3 class="text-sm font-semibold">Borrador revisable</h3><p class="mt-1 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Un plan validado queda guardado como borrador; no se ejecuta ni conecta servicios.</p></div></li>
         </ol>
       </aside>
     </div>
@@ -67,8 +88,17 @@ import Base from "../../layouts/Base.astro";
     const workspaceForm = document.querySelector("#workspace-form");
     const workspaceName = document.querySelector("#workspace-name");
     const createWorkspace = document.querySelector("#create-workspace");
+    const automationPanel = document.querySelector("#automation-panel");
+    const automationForm = document.querySelector("#automation-form");
+    const automationName = document.querySelector("#automation-name");
+    const automationObjective = document.querySelector("#automation-objective");
+    const saveAutomation = document.querySelector("#save-automation");
+    const automationStatus = document.querySelector("#automation-status");
+    const automationListView = document.querySelector("#automation-list-view");
+    const automationList = document.querySelector("#automation-list");
     const signInButton = document.querySelector("#google-sign-in");
     const signOutButton = document.querySelector("#sign-out");
+    let pendingDraftSubmission = null;
 
     const messages = {
       success: "Has iniciado sesión. A continuación puedes crear tu espacio de trabajo.",
@@ -80,6 +110,43 @@ import Base from "../../layouts/Base.astro";
       if (!statusBox) return;
       statusBox.textContent = message;
       statusBox.hidden = false;
+    }
+
+    function announceAutomation(message) {
+      if (!automationStatus) return;
+      automationStatus.textContent = message;
+      automationStatus.hidden = false;
+    }
+
+    function renderAutomations(items) {
+      if (!automationList || !automationListView) return;
+      automationList.replaceChildren(...items.map((automation) => {
+        const item = document.createElement("li");
+        item.className = "rounded-xl border border-black/10 bg-white px-4 py-3 dark:border-white/10 dark:bg-black";
+        const title = document.createElement("strong");
+        title.className = "block text-sm";
+        title.textContent = automation.name;
+        const summary = document.createElement("span");
+        summary.className = "mt-1 block text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]";
+        summary.textContent = `Borrador · versión ${automation.version} · ${automation.riskLevel} · no ejecutable`;
+        item.append(title, summary);
+        return item;
+      }));
+      automationListView.hidden = items.length === 0;
+    }
+
+    async function loadAutomations() {
+      if (!automationPanel) return;
+      automationPanel.hidden = false;
+      try {
+        const response = await fetch("/api/automations?limit=50", { credentials: "same-origin", cache: "no-store" });
+        if (!response.ok) throw new Error("draft list unavailable");
+        const result = await response.json();
+        if (!Array.isArray(result.automations)) throw new Error("invalid draft list");
+        renderAutomations(result.automations);
+      } catch {
+        announceAutomation("El almacenamiento de borradores no está disponible en este entorno. No se ha confirmado ningún guardado.");
+      }
     }
 
     async function loadSession() {
@@ -108,7 +175,9 @@ import Base from "../../layouts/Base.astro";
               return item;
             }));
           }
+          void loadAutomations();
         } else if (workspaceForm) {
+          if (automationPanel) automationPanel.hidden = true;
           workspaceForm.hidden = false;
           if (workspaceListView) workspaceListView.hidden = true;
         }
@@ -170,6 +239,56 @@ import Base from "../../layouts/Base.astro";
         announce("No se pudo crear el espacio. Revisa el nombre e inténtalo de nuevo.");
       } finally {
         createWorkspace.disabled = false;
+      }
+    });
+
+    automationForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!automationName || !automationObjective || !saveAutomation) return;
+      const plan = {
+        schemaVersion: 1,
+        name: automationName.value.trim(),
+        objective: automationObjective.value.trim(),
+        trigger: { kind: "manual" },
+        requiredIntegrations: [],
+        steps: [{
+          id: "resumen-manual",
+          kind: "summarize",
+          instruction: "Resume únicamente el texto que una persona aporte manualmente; no consultes cuentas, no envíes mensajes y no modifiques datos.",
+        }],
+      };
+      const body = JSON.stringify({ plan });
+      if (!pendingDraftSubmission || pendingDraftSubmission.body !== body) {
+        pendingDraftSubmission = { body, key: crypto.randomUUID() };
+      }
+      saveAutomation.disabled = true;
+      try {
+        const response = await fetch("/api/automations", {
+          method: "POST",
+          credentials: "same-origin",
+          cache: "no-store",
+          headers: { "content-type": "application/json", "idempotency-key": pendingDraftSubmission.key },
+          body,
+        });
+        const result = await response.json();
+        if (response.status === 400 && result.error === "private_data_blocked") {
+          announceAutomation("Quita del texto cualquier dato personal o secreto y vuelve a intentarlo.");
+          return;
+        }
+        if (response.status === 429) {
+          announceAutomation("Has alcanzado el límite temporal de borradores. Espera un minuto antes de volver a intentarlo.");
+          return;
+        }
+        if (!response.ok || !result.automation) throw new Error("draft save failed");
+        pendingDraftSubmission = null;
+        announceAutomation(result.created === false
+          ? "El borrador ya estaba guardado; el reintento no creó una copia. No se ha ejecutado."
+          : "Borrador guardado correctamente. No se ha ejecutado ni conectado a ningún servicio.");
+        await loadAutomations();
+      } catch {
+        announceAutomation("No se pudo confirmar el guardado. Puedes reintentar; el mismo envío no creará una copia.");
+      } finally {
+        saveAutomation.disabled = false;
       }
     });
 

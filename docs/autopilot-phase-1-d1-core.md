@@ -29,6 +29,17 @@ clientes.
   sesión opaca con solo el hash en D1, revocación y creación del primer
   workspace con rol `OWNER`; su detalle está en
   [`autopilot-phase-1-auth.md`](./autopilot-phase-1-auth.md).
+- La migración `0003_automation_draft_safety.sql` añade hashes de clave y
+  contenido para idempotencia y una cuota D1 de 15 intentos de borrador por
+  usuario/minuto. `POST /api/automations` valida el contrato, bloquea patrones
+  conocidos de datos privados, deriva riesgo en servidor y guarda borrador,
+  versión y evento de auditoría en un lote. `GET` devuelve solo el workspace
+  de la sesión. Ninguna ruta ejecuta el plan ni crea una aprobación.
+- `/app/` ofrece un borrador manual de resumen, lista los borradores guardados
+  y declara expresamente que no consulta cuentas ni ejecuta acciones.
+- La prueba de runtime aislado comprueba sesión, roles, aislamiento entre
+  tenants, origen, esquema estricto, PII, idempotencia, riesgo derivado, cuota,
+  ausencia de ejecuciones e integridad D1.
 
 ## Límites actuales
 
@@ -40,6 +51,9 @@ clientes.
   login de demostración.
 - No hay credenciales OAuth, ejecución de workflow, tareas programadas ni
   acceso a Gmail/Drive/Calendar/Sheets.
+- No existe todavía borrado/exportación de borradores ni política automática
+  de retención; la detección de PII es una defensa adicional, no autorización
+  para almacenar datos reales o admitir clientes.
 - El despliegue existente sigue siendo GitHub Pages y continúa sirviendo el
   sitio estático. La configuración Wrangler no cambia DNS, hosting ni la
   publicación.
@@ -65,7 +79,10 @@ puede seguir utilizándose para procesos internos y pruebas aisladas.
 
 ## Siguiente bloque
 
-Implementar autenticación y sesión segura, vinculadas a `users` y `workspaces`,
-con pruebas de login, revocación y aislamiento. Antes de conectar staging hacen
-falta un proveedor de identidad configurado y un runtime de preview; los
-secretos no se guardarán en Git ni en el cliente.
+Antes de staging: completar revisión de seguridad del API, añadir exportación,
+borrado y retención, y configurar un runtime de preview con D1 aislado. La
+implementación de identidad y sesión ya está descrita en
+[`autopilot-phase-1-auth.md`](./autopilot-phase-1-auth.md); aún no hay proveedor
+configurado ni acceso en producción. Después, validar una integración de solo
+lectura con permisos explícitos. Mantener envíos, escritura externa, n8n activo
+y pagos deshabilitados mientras falten autorización y pruebas E2E.
