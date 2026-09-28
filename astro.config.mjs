@@ -1,6 +1,7 @@
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import { createLocalGuidePlugin } from "./src/lib/local-guide-plugin.mjs";
+import { createLocalAutopilotPlugin } from "./src/lib/autopilot/local-planner-plugin.mjs";
 import sitemap from "@astrojs/sitemap";
 import { launchReady } from "./src/lib/launch-config.mjs";
 
@@ -52,7 +53,7 @@ export default defineConfig({
   integrations: launchReady ? [sitemap()] : [],
   security: { csp: { directives: CSP_DIRECTIVES } },
   vite: {
-    plugins: [tailwindcss(), createLocalGuidePlugin()],
+    plugins: [tailwindcss(), createLocalGuidePlugin(), createLocalAutopilotPlugin()],
     // Sin esto, Astro incrusta los scripts pequeños dentro del HTML. La CSP no
     // admite scripts en línea, así que el tema, el menú móvil y el formulario
     // de contacto quedaban muertos en la web publicada aunque funcionaran en

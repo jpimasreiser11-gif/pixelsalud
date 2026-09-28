@@ -7,6 +7,12 @@ un motor de ejecución: no guarda planes, no autentica usuarios, no conecta
 cuentas, no llama a n8n y no ejecuta acciones. `executable: false` es deliberado
 hasta que exista una API autenticada y un ejecutor con aislamiento y auditoría.
 
+El planificador de desarrollo `POST /api/autopilot/plan` usa Ollama/Qwen solo
+desde el servidor Astro local. Está disponible exclusivamente en `astro dev`,
+rechaza datos personales, limita tamaño y frecuencia, valida cada propuesta
+contra este contrato y devuelve `persisted: false` y `executable: false`. No
+forma parte de la salida estática ni debe conectarse desde la web pública.
+
 ## Contrato
 
 `src/lib/autopilot/plan-contract.mjs` acepta objetos estrictos versionados con
