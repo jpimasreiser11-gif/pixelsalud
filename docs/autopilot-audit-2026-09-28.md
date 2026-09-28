@@ -9,9 +9,10 @@ de lanzamiento.
 - El sitio está construido con Astro 7 y genera salida `static` (38 páginas en
   el build local). El workflow de publicación de
   `.github/workflows/deploy.yml` despliega a GitHub Pages.
-- No hay API de aplicación, autenticación, sesiones, base conectada, cola de
-  jobs ni controles de tenant en runtime. Esta fase añade una migración D1 y
-  configuración local; todavía no hay Pages Functions ni base remota enlazada.
+- La API de identidad/workspace y la pantalla `/app/` se han añadido en esta
+  rama para Pages Functions + D1 local. No hay cliente OAuth configurado, D1
+  remoto ni despliegue de estas funciones; la API no está disponible en la web
+  pública de GitHub Pages.
 - El backend de la web permanece desactivado (`BACKEND.enabled = false`). El
   formulario no confirma que se almacenen solicitudes; la guía publicada usa
   lógica local del navegador. El plugin Ollama existente solo corre en el
@@ -29,7 +30,7 @@ de lanzamiento.
   `npm run launch:check` falla deliberadamente por marca, titular, NIF,
   domicilio y aprobaciones legal/seguridad ausentes.
 
-## Pruebas repetidas
+## Pruebas repetidas (baseline 28-09-2026)
 
 Verificación reejecutada en esta fase:
 
@@ -45,6 +46,23 @@ Verificación reejecutada en esta fase:
 La rama de base `audit/legal-and-growth-20260926` obtuvo además 39/39 unitarias
 y 225 pasadas, 1 omitida. Estas pruebas locales no prueban publicación ni
 integración SaaS.
+
+## Verificación local de identidad (29-09-2026)
+
+- `npm run functions:typecheck` y `npm run functions:build`: correctos.
+- `npm run test:unit`: 56/56; incluye state cifrado, PKCE, validación de ID
+  token, origen y atributos de cookie.
+- `npm run test:d1`: migraciones y restricciones locales correctas.
+- `npm run test:auth-runtime`: sesión, D1, aislamiento de dos tenants, creación
+  concurrente/idempotente de workspace, rechazo de origen/campos manipulados,
+  logout y revocación correctos con datos sintéticos.
+- `npm run test:e2e`: 229 pasadas, 1 omitida; `/app/` comprobada en escritorio
+  y móvil y sin hallazgos axe serios/críticos.
+- `npm audit --audit-level=moderate`: 0 vulnerabilidades.
+
+Estas pruebas demuestran solo el runtime local. El login real con Google sigue
+pendiente de credenciales OAuth de desarrollo y el sitio público permanece en
+GitHub Pages estático.
 
 ## Deriva de producción: bloqueador prioritario
 
@@ -84,7 +102,7 @@ que pasó el contrato; la respuesta confirmó `executable: false` y
 `persisted: false`. El build estático no contiene la ruta del API local ni la
 dirección de Ollama. Ningún workflow n8n se activó.
 
-## Nueva fase completada: núcleo D1 local
+## Fase completada: núcleo D1 local
 
 Se añadió `migrations/0001_autopilot_core.sql` con users, workspaces,
 miembros/roles, sesiones que solo almacenan hash, automatizaciones,
@@ -99,6 +117,21 @@ web. No se creó una base remota, no se guardaron leads y no hay endpoints que
 permitan a un usuario leer o escribir esos datos. El estado detallado está en
 [`autopilot-phase-1-d1-core.md`](./autopilot-phase-1-d1-core.md).
 
+## Fase implementada: login OIDC y primer workspace (local)
+
+Se añadieron Pages Functions para inicio/callback de Google OIDC, consulta de
+sesión, logout y creación del primer workspace. El login pide solo identidad,
+correo y perfil; usa state firmado, nonce, PKCE S256, validación del JWT y
+sesiones opacas cuyo hash se almacena en D1. La página `/app/` no inventa
+conexiones ni métricas. Las pruebas usan claves y cuentas sintéticas.
+
+La función requiere `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`,
+`OAUTH_STATE_SECRET` y `APP_BASE_URL`. Ningún valor real está configurado; por
+tanto no se ha probado un consentimiento Google real. Las rutas solo se
+integrarán cuando Pages Functions y D1 se desplieguen; la versión live sigue
+siendo estática. El detalle está en
+[`autopilot-phase-1-auth.md`](./autopilot-phase-1-auth.md).
+
 ## Orden de construcción
 
 1. Revisar la PR #13 y corregir la deriva pública. No desplegar hasta superar el
@@ -106,8 +139,8 @@ permitan a un usuario leer o escribir esos datos. El estado detallado está en
 2. Mantener el sitio público actual sin cambios de hosting. Cloudflare Pages
    Functions + D1 queda como runtime candidato para el SaaS y se ha probado
    localmente; GitHub Pages sirve archivos estáticos y no ejecuta la API.
-3. Implementar autenticación real y autorización por workspace; probar login,
-   revocación de sesión y accesos cruzados antes de conectar el esquema al API.
+3. Configurar el cliente OAuth de desarrollo y comprobar login, revocación de
+   sesión y creación de workspace en runtime Pages local.
 4. Añadir API autenticada para crear y versionar borradores, registro de
    auditoría y aprobaciones. No activar ejecución todavía.
 5. Probar una integración de solo lectura con consentimiento OAuth en staging.

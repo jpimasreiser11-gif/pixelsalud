@@ -1,9 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const DEV_URL = "http://localhost:4321";
+const DEV_URL = process.env.PLAYWRIGHT_DEV_URL || "http://localhost:4321";
+const DEV_HOST = new URL(DEV_URL).hostname;
+const DEV_PORT = new URL(DEV_URL).port || "4321";
 // Puerto propio para el build estático: no puede compartirlo con el servidor de
 // desarrollo porque las dos pruebas corren a la vez.
-const PUBLISHED_URL = "http://localhost:4456/";
+const PUBLISHED_URL = process.env.PLAYWRIGHT_PUBLISHED_URL || "http://localhost:4456/";
+const PUBLISHED_PORT = new URL(PUBLISHED_URL).port || "80";
 
 export default defineConfig({
   testDir: "tests",
@@ -15,7 +18,7 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: "npm run dev",
+      command: `ASTRO_DEV_BACKGROUND=false npx astro dev --host ${DEV_HOST} --port ${DEV_PORT} --ignore-lock`,
       // Comprobar la URL real, no solo el puerto: así detecta el servidor
       // existente exactamente por donde luego navegan las pruebas.
       url: `${DEV_URL}/`,
@@ -26,7 +29,7 @@ export default defineConfig({
       // El artefacto publicado, servido como lo sirve GitHub Pages: sin
       // cabeceras de seguridad. `astro preview` sí las manda, y eso escondía
       // que en producción la única CSP es el <meta> del HTML.
-      command: "GITHUB_ACTIONS=true npm run build && node scripts/serve-dist.mjs --port 4456",
+      command: `GITHUB_ACTIONS=true npm run build && node scripts/serve-dist.mjs --port ${PUBLISHED_PORT}`,
       url: PUBLISHED_URL,
       reuseExistingServer: true,
       timeout: 120_000,

@@ -1,7 +1,8 @@
 # Autopilot — fase 1: núcleo D1
 
-Estado: esquema preparado y probado únicamente en almacenamiento local temporal.
-No está conectado a la web publicada ni contiene datos de clientes.
+Estado: núcleo D1 y primera API de identidad/workspace implementados para
+ejecución local. No está conectado a la web publicada ni contiene datos de
+clientes.
 
 ## Entregado
 
@@ -23,12 +24,20 @@ No está conectado a la web publicada ni contiene datos de clientes.
   flujo válido, intenta escrituras entre tenants y duplicadas, comprueba
   propietario activo, inmutabilidad de auditoría y
   `pragma_foreign_key_check`, y elimina solo el directorio temporal que creó.
+- La migración `0002_google_identity.sql` asocia el usuario a un `sub` OIDC
+  estable y único. Los handlers de Pages Functions implementan login Google,
+  sesión opaca con solo el hash en D1, revocación y creación del primer
+  workspace con rol `OWNER`; su detalle está en
+  [`autopilot-phase-1-auth.md`](./autopilot-phase-1-auth.md).
 
 ## Límites actuales
 
-- No hay Pages Functions, login, API de workspace ni frontend SaaS.
+- No hay credenciales OAuth, instancia D1 remota, despliegue de Pages Functions
+  ni usuarios externos. La API y la pantalla `/app/` solo se pueden validar en
+  el runtime local configurado.
 - El D1 remoto no existe/no se ha enlazado; ningún comando remoto se ha usado.
-- La tabla `sessions` no implica que haya autenticación implementada.
+- Sin secretos de Google, la autenticación falla cerrada; no existe un modo de
+  login de demostración.
 - No hay credenciales OAuth, ejecución de workflow, tareas programadas ni
   acceso a Gmail/Drive/Calendar/Sheets.
 - El despliegue existente sigue siendo GitHub Pages y continúa sirviendo el

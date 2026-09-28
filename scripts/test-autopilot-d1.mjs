@@ -39,6 +39,9 @@ try {
     "--command",
     `INSERT INTO users (id, email, created_at, updated_at)
        VALUES ('user-a', 'owner@example.test', 1, 1);
+     UPDATE users SET google_subject = 'google-sub-a', email_verified_at = 1 WHERE id = 'user-a';
+     INSERT INTO sessions (id, user_id, token_hash, issued_at, expires_at)
+       VALUES ('session-a', 'user-a', '${"a".repeat(64)}', 1, 1000);
      INSERT INTO workspaces (id, name, slug, created_at, updated_at)
        VALUES ('workspace-a', 'Workspace A', 'workspace-a', 1, 1),
               ('workspace-b', 'Workspace B', 'workspace-b', 1, 1);
@@ -102,7 +105,7 @@ try {
   const integrity = execute([
     "d1", "execute", "VARINO_DB", ...localOnly, "--json",
     "--command",
-    "SELECT (SELECT count(*) FROM automations) AS automation_count, (SELECT count(*) FROM workflow_runs) AS run_count, (SELECT count(*) FROM approvals WHERE status = 'approved' AND resolved_by_user_id IS NOT NULL) AS resolved_approval_count, (SELECT count(*) FROM audit_events) AS audit_count, (SELECT count(*) FROM pragma_foreign_key_check) AS fk_errors;",
+    "SELECT (SELECT count(*) FROM automations) AS automation_count, (SELECT count(*) FROM workflow_runs) AS run_count, (SELECT count(*) FROM approvals WHERE status = 'approved' AND resolved_by_user_id IS NOT NULL) AS resolved_approval_count, (SELECT count(*) FROM audit_events) AS audit_count, (SELECT count(*) FROM sessions WHERE user_id = 'user-a' AND revoked_at IS NULL) AS live_session_count, (SELECT count(*) FROM users WHERE google_subject = 'google-sub-a' AND email_verified_at IS NOT NULL) AS google_identity_count, (SELECT count(*) FROM pragma_foreign_key_check) AS fk_errors;",
   ]);
   const parsed = JSON.parse(integrity.trim());
   const text = JSON.stringify(parsed);
@@ -110,6 +113,8 @@ try {
   assert.match(text, /"run_count":1/);
   assert.match(text, /"resolved_approval_count":1/);
   assert.match(text, /"audit_count":1/);
+  assert.match(text, /"live_session_count":1/);
+  assert.match(text, /"google_identity_count":1/);
   assert.match(text, /"fk_errors":0/);
 
   process.stdout.write("D1 local: migración, claves tenant, idempotencia e integridad OK.\n");
