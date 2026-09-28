@@ -60,6 +60,55 @@ describe("motor de VARINO Guide", () => {
     expect(result.nextQuestion).not.toMatch(/a qué se dedica|sector/i);
   });
 
+  it("guarda herramientas, volumen, canal y objetivo explícitos del primer mensaje", () => {
+    const result = advise({
+      messages: [{
+        role: "user",
+        content: "Quiero automatizar la recepción de correos de una asesoría pequeña; usamos Gmail y una hoja de cálculo. Recibimos unos 30 al día y quiero que no se pierda ninguno.",
+      }],
+    });
+
+    expect(result.profile.business).toMatch(/asesor[ií]a/i);
+    expect(result.profile.tools).toMatch(/Gmail/i);
+    expect(result.profile.tools).toMatch(/hoja de c[aá]lculo/i);
+    expect(result.profile.channels).toMatch(/correo electr[oó]nico/i);
+    expect(result.profile.volume).toMatch(/30 al d[ií]a/i);
+    expect(result.profile.goal).toMatch(/no se pierda ninguno/i);
+    expect(result.profile.process).toBe("");
+    expect(result.profile.approvals).toBe("");
+    expect(result.nextQuestion).toMatch(/c[oó]mo realiz[aá]is ahora ese proceso/i);
+  });
+
+  it("extrae datos adicionales explícitos mientras conserva la respuesta al proceso", () => {
+    const first = advise({
+      messages: [
+        { role: "user", content: "Quiero automatizar la recepción de correos de una asesoría pequeña; usamos Gmail y una hoja de cálculo. Recibimos unos 30 al día y quiero que no se pierda ninguno." },
+      ],
+    });
+    const result = advise({
+      profile: first.profile,
+      messages: [
+        { role: "assistant", content: first.nextQuestion },
+        { role: "user", content: "Los correos entran por Gmail, registramos cada solicitud en Google Sheets y respondemos manualmente. Son unos 30 al día; la IA solo puede clasificar, nunca enviar respuestas. Queremos que no se pierda ninguno." },
+      ],
+    });
+
+    expect(result.filledField).toBe("process");
+    expect(result.profile.process).toContain("registramos cada solicitud en Google Sheets");
+    expect(result.profile.tools).toMatch(/Gmail/i);
+    expect(result.profile.tools).toMatch(/Google Sheets/i);
+    expect(result.profile.tools).not.toMatch(/hoja de c[aá]lculo/i);
+    expect(result.profile.channels).toMatch(/correo electr[oó]nico/i);
+    expect(result.profile.volume).toMatch(/30 al d[ií]a/i);
+    expect(result.profile.approvals).toMatch(/nunca enviar respuestas/i);
+    expect(result.profile.goal).toMatch(/no se pierda ninguno/i);
+    expect(result.reply).toMatch(/herramientas:.*Gmail.*Google Sheets/i);
+    expect(result.reply).toMatch(/volumen:.*30 al d[ií]a/i);
+    expect(result.reply).toMatch(/control humano:.*nunca enviar respuestas/i);
+    expect(result.reply).not.toContain("Quere.");
+    expect(result.nextQuestion).toMatch(/propuesta revisada/i);
+  });
+
   it("un saludo intermedio conserva el perfil y no repite la pregunta pendiente", () => {
     const result = advise({
       messages: [

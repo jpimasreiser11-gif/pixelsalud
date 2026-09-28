@@ -50,6 +50,105 @@ const FIELD_HINTS = {
   goal: /reduc|aument|ahorr|mejorar|objetivo|hora|tiempo|por ciento|%|menos|más/i,
 };
 
+// Extracción auxiliar de hechos literales. Solo rellena campos vacíos con
+// vocabulario conocido; no interpreta la respuesta del modelo ni convierte
+// cualquier mención de una herramienta/canal en un hecho.
+const TOOL_MENTIONS = [
+  [/\bgoogle\s+sheets\b/i, "Google Sheets"],
+  [/\bhojas? de c[áa]lculo\b/i, "hoja de cálculo"],
+  [/\bexcel\b/i, "Excel"],
+  [/\bgmail\b/i, "Gmail"],
+  [/\boutlook\b/i, "Outlook"],
+  [/\bn8n\b/i, "n8n"],
+  [/\bzapier\b/i, "Zapier"],
+  [/\bmake(?:\.com)?\b/i, "Make"],
+  [/\bhubspot\b/i, "HubSpot"],
+  [/\bsalesforce\b/i, "Salesforce"],
+  [/\bpipedrive\b/i, "Pipedrive"],
+  [/\bodoo\b/i, "Odoo"],
+  [/\bsage\b/i, "Sage"],
+  [/\bnotion\b/i, "Notion"],
+  [/\bairtable\b/i, "Airtable"],
+  [/\btrello\b/i, "Trello"],
+  [/\basana\b/i, "Asana"],
+  [/\b(?:un\s+)?CRM\b/i, "CRM"],
+  [/\b(?:un\s+)?ERP\b/i, "ERP"],
+];
+
+const INBOUND_CONTEXT = /recib|recepci[oó]n|entrada|entran?|llegan?|llega|canal(?:es)?|bandeja|formulario de entrada/i;
+
+function explicitToolMentions(answer) {
+  return TOOL_MENTIONS.filter(([pattern]) => pattern.test(answer)).map(([, name]) => name);
+}
+
+function explicitChannels(answer) {
+  if (!INBOUND_CONTEXT.test(answer)) return [];
+  const channels = [];
+  if (/gmail|outlook|e-?mail|correo/i.test(answer)) channels.push("correo electrónico");
+  if (/whatsapp/i.test(answer)) channels.push("WhatsApp");
+  if (/formulario|sitio web|página web|web/i.test(answer)) channels.push("web/formulario");
+  if (/tel[eé]fono|llamada/i.test(answer)) channels.push("teléfono");
+  if (/instagram|facebook|linkedin|redes sociales/i.test(answer)) channels.push("redes sociales");
+  if (/chat/i.test(answer)) channels.push("chat");
+  return [...new Set(channels)];
+}
+
+function explicitVolume(answer) {
+  const match = answer.match(/\b(?:(?:unos?|unas?|aproximadamente|aprox\.?|alrededor de|cerca de)\s*)?\d[\d.,]*\s*(?:correos?|emails?|e-mails?|solicitudes?|mensajes?|leads?|reservas?|citas?|facturas?|casos?|pedidos?)?\s*(?:al\s+d[ií]a|por\s+d[ií]a|diari[oa]s?|a\s+la\s+semana|por\s+semana|semanal(?:es)?|al\s+mes|por\s+mes|mensuales?)\b/i);
+  return match ? clampText(match[0], 160) : "";
+}
+
+function explicitGoal(answer) {
+  const patterns = [
+    /\bque\s+no\s+se\s+pierdan?\s+(?:ning[uú]n\w*|nada|ninguno|ninguna)[^.!?;]*/i,
+    /\b(?:quiero|queremos|necesito|necesitamos|el objetivo es|la meta es|buscamos)\s+(?:que\s+)?(?:reducir|disminuir|aumentar|incrementar|ahorrar|eliminar|evitar|mejorar|responder|contestar|clasificar)\b[^.!?;]*/i,
+    /\b(?:para no perder|evitar perder)\s+(?:ning[uú]n\w*|nada|ninguno|ninguna)[^.!?;]*/i,
+  ];
+  for (const pattern of patterns) {
+    const match = answer.match(pattern);
+    if (match) return clampText(match[0], 250);
+  }
+  return "";
+}
+
+function explicitApproval(answer) {
+  const sentences = answer.split(/(?<=[.!?;])\s+/);
+  return clampText(sentences.find((sentence) =>
+    /\b(?:aprobaci[oó]n|aprob(?:ar|aci[oó]n)|autoriza(?:ci[oó]n|r)|revisi[oó]n humana|supervisi[oó]n humana)\b/i.test(sentence)
+    || /\b(?:solo|[uú]nicamente)\b[^.!?;]*(?:nunca|no debe|no puede|no enviar|no env[ií]e)\b/i.test(sentence),
+  ) || "", 250);
+}
+
+function explicitProcess(answer) {
+  const sentence = answer.split(/(?<=[.!?;])\s+/).find((part) =>
+    /\b(?:entra|entran|llega|llegan|recibimos|reciben)\b[^.!?;]*\b(?:registramos|registran|anotamos|apuntamos|copiamos|guardamos)\b[^.!?;]*\b(?:respondemos|responden|revisamos|revisan|enviamos|env[ií]an)\b/i.test(part),
+  );
+  return clampText(sentence || "", 500);
+}
+
+function mergeExplicitMentions(existing, mentions, { spreadsheetSpecificity = false } = {}) {
+  const values = String(existing || "").split(/\s*[,;]\s*/).map((value) => value.trim()).filter(Boolean);
+  for (const mention of mentions) {
+    if (values.some((value) => explicitToolMentions(value).includes(mention) || value.toLowerCase() === mention.toLowerCase())) continue;
+    if (spreadsheetSpecificity && mention === "Google Sheets") {
+      const genericIndex = values.findIndex((value) => /^hojas? de c[áa]lculo$/i.test(value));
+      if (genericIndex >= 0) values.splice(genericIndex, 1);
+    }
+    if (spreadsheetSpecificity && mention === "hoja de cálculo" && values.some((value) => explicitToolMentions(value).includes("Google Sheets"))) continue;
+    values.push(mention);
+  }
+  return values.join(", ");
+}
+
+function addExplicitFacts(profile, answer) {
+  profile.tools = mergeExplicitMentions(profile.tools, explicitToolMentions(answer), { spreadsheetSpecificity: true });
+  profile.channels = mergeExplicitMentions(profile.channels, explicitChannels(answer));
+  if (!profile.volume) profile.volume = explicitVolume(answer);
+  if (!profile.approvals) profile.approvals = explicitApproval(answer);
+  if (!profile.goal) profile.goal = explicitGoal(answer);
+  if (!profile.process) profile.process = explicitProcess(answer);
+}
+
 const SENSITIVE = /salud|clínic|clinic|médic|medic|paciente|dental|psicolog|abogad|jurídic|financ|contab|nómina|nomina|dni|historial|confidencial|sensible|expedient/i;
 const GROWTH = /venta|lead|comercial|cliente potencial|captación|captacion|marketing|reserva|presupuesto|cotiza|oportunidad|seguimiento/i;
 const KNOWLEDGE = /document|conocimiento|manual|expedient|contrato|informe|archivo|buscador|consulta interna/i;
@@ -217,12 +316,13 @@ export function applyLastAnswer(profile, messages = []) {
       // campos, y preguntar luego el sector repetiría algo ya explicado.
       filledField = initialFreeformFacts(profile, answer);
     } else {
-      // Mensaje libre: sin pregunta previa se deduce por pistas y, si no hay
-      // ninguna, ocupa el primer hueco pendiente.
+      // Mensaje libre: asigna la respuesta completa a un único campo principal
+      // y extrae aparte solo los demás hechos explícitos y reconocibles.
       for (const [field, hint] of Object.entries(FIELD_HINTS)) {
         if (!profile[field] && hint.test(answer)) {
           profile[field] = answer;
-          filledField = filledField || field;
+          filledField = field;
+          break;
         }
       }
       if (!filledField) {
@@ -233,6 +333,7 @@ export function applyLastAnswer(profile, messages = []) {
         }
       }
     }
+    addExplicitFacts(profile, answer);
   }
   if (SENSITIVE.test(`${profile.sector} ${profile.business} ${profile.problem} ${answer}`)) profile.sensitivity = "high";
   return { profile, filledField };
@@ -283,13 +384,33 @@ const ACKNOWLEDGEMENT = {
   business: (value) => `Anotado el contexto: ${value}.`,
   sector: (value) => `Anotado el sector: ${value}.`,
   problem: (value) => `Entiendo el punto de fricción: ${value}.`,
-  process: (value) => `Ya tengo el proceso actual: ${value}.`,
+  process: () => "Ya tengo el proceso actual.",
   tools: (value) => `Tendré en cuenta las herramientas actuales: ${value}.`,
   volume: (value) => `Tomo como referencia este volumen: ${value}.`,
   channels: (value) => `La entrada quedaría conectada desde ${value}.`,
   approvals: (value) => `Mantendremos bajo aprobación humana: ${value}.`,
   goal: (value) => `Usaremos como criterio de éxito: ${value}.`,
 };
+
+function clipAtWord(value, max) {
+  const text = clampText(value, max + 1);
+  if (text.length <= max) return text;
+  const prefix = text.slice(0, max - 1);
+  const boundary = prefix.lastIndexOf(" ");
+  return `${prefix.slice(0, boundary > max * 0.6 ? boundary : max - 1).trimEnd()}…`;
+}
+
+function processRecap(profile) {
+  const recapValue = (value, max) => clipAtWord(value, max).replace(/[.!?;,\s]+$/, "");
+  const facts = [
+    profile.tools && `herramientas: ${recapValue(profile.tools, 55)}`,
+    profile.channels && `entrada: ${recapValue(profile.channels, 35)}`,
+    profile.volume && `volumen: ${recapValue(profile.volume, 30)}`,
+    profile.approvals && `control humano: ${recapValue(profile.approvals, 65)}`,
+    profile.goal && `objetivo: ${recapValue(profile.goal, 45)}`,
+  ].filter(Boolean);
+  return facts.length ? `El mapa ya incluye ${facts.join("; ")}.` : "";
+}
 
 // Una respuesta del modelo sirve si aporta algo. Si es genérica, se descarta:
 // más vale una frase concreta escrita por el motor que un halago vacío.
@@ -311,7 +432,8 @@ export function consultativeReply({ profile, filledField, modelReply, service })
     ? ACKNOWLEDGEMENT[filledField](value)
     : "Anotado, lo incorporo al mapa del sistema.";
   if (!(profile.business && profile.problem && profile.process)) return acknowledgement;
-  return `${acknowledgement} ${RATIONALE[service.slug]}`;
+  const recap = filledField === "process" ? processRecap(profile) : "";
+  return `${acknowledgement} ${recap} ${RATIONALE[service.slug]}`.replace(/\s+/g, " ").trim();
 }
 
 export function hardwareFor(profile, documentCount = 0) {
