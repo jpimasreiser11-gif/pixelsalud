@@ -37,7 +37,7 @@ const CHAT = BACKEND_CHAT;
       <button type="submit" aria-label="Enviar">↑</button>
     </form>
 
-    <!-- Captura con consentimiento -->
+    <!-- Captura con confirmación de lectura del aviso; el opt-in comercial es independiente. -->
     <div class="aichat-capture" data-aichat-capture hidden>
       <form data-aichat-lead>
         <input type="hidden" name="website" value="" aria-hidden="true" tabindex="-1" autocomplete="off" />
@@ -48,8 +48,8 @@ const CHAT = BACKEND_CHAT;
         <input id="aichat-email" name="email" type="email" placeholder="Email (o WhatsApp abajo)" />
         <label class="sr-only" for="aichat-whatsapp">WhatsApp</label>
         <input id="aichat-whatsapp" name="whatsapp" type="tel" placeholder="WhatsApp (opcional)" />
-        <label class="aichat-consent">
-          <input type="checkbox" name="consentimiento" value="true" required />
+        <label class="aichat-privacy-notice">
+          <input type="checkbox" name="privacy_acknowledged" value="true" required />
           <span>He leído la <a href={`${"/privacidad/"}`} target="_blank" rel="noopener">información de privacidad</a>. Usaremos estos datos para tramitar esta solicitud; no es una suscripción comercial.</span>
         </label>
         <button type="submit" class="aichat-send">Enviar y que me contacten →</button>
@@ -139,8 +139,8 @@ const CHAT = BACKEND_CHAT;
     border: 1px solid var(--line); border-radius: 9px; padding: .45rem .6rem; font: inherit; font-size: .8rem;
     background: transparent; color: var(--text);
   }
-  .aichat-consent { display: flex; gap: .5rem; align-items: flex-start; color: var(--muted); font-size: .7rem; line-height: 1.4; margin: .4rem 0; }
-  .aichat-consent a, .aichat-legal a, .aichat-capture a { color: var(--ac); }
+  .aichat-privacy-notice { display: flex; gap: .5rem; align-items: flex-start; color: var(--muted); font-size: .7rem; line-height: 1.4; margin: .4rem 0; }
+  .aichat-privacy-notice a, .aichat-legal a, .aichat-capture a { color: var(--ac); }
   .aichat-send { width: 100%; background: var(--ac); color: #fff; border: 0; border-radius: 999px; padding: .55rem; font-weight: 600; cursor: pointer; font-size: .78rem; }
   .aichat-status { min-height: 1em; margin: .35rem 0 0; color: var(--muted); font-size: .72rem; }
   .aichat-legal { margin: 0; padding: .55rem .9rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .66rem; line-height: 1.45; }
@@ -325,10 +325,10 @@ const CHAT = BACKEND_CHAT;
       if (sendingLead) return;
       var f = leadForm;
       function val(n) { var el = f.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ""; }
-      var consent = f.querySelector('[name="consentimiento"]').checked;
+      var privacyAcknowledged = f.querySelector('[name="privacy_acknowledged"]').checked;
       var nombre = val("nombre"), email = val("email"), whatsapp = val("whatsapp");
       var last = msgs[msgs.length - 1] ? msgs[msgs.length - 1].content : "";
-      if (!consent || !nombre) return;
+      if (!privacyAcknowledged || !nombre) return;
       if (!email && !whatsapp) {
         leadStatus.textContent = "Indica al menos un email o un WhatsApp para poder contactarte.";
         return;
@@ -356,7 +356,7 @@ const CHAT = BACKEND_CHAT;
       if (submitButton) submitButton.disabled = true;
       var leadPayload = {
         nombre: nombre, email: email, whatsapp: whatsapp, empresa: "", interes: "chat",
-        fuente: "chat_widget", pagina: location.pathname, consentimiento: true, marketing_consent: false,
+        fuente: "chat_widget", pagina: location.pathname, privacy_acknowledged: true, marketing_consent: false,
         mensaje: "Chat: " + (last || "").slice(0, 600), conversationId: convId,
         website: f.querySelector('[name="website"]').value
       };

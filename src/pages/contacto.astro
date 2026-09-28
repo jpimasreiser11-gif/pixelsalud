@@ -165,8 +165,8 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
 
           {BACKEND_LEAD ? (
             <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
-              <input type="checkbox" name="consentimiento" required class="mt-0.5 shrink-0" />
-              <span>Acepto que VARINO trate estos datos para responder a mi solicitud, según la <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">información de privacidad</a>.</span>
+              <input type="checkbox" name="privacy_acknowledged" required class="mt-0.5 shrink-0" />
+              <span>He leído la <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">información de privacidad</a>. Usaremos estos datos para responder a esta solicitud; no es una suscripción comercial.</span>
             </label>
           ) : (
             <p class="text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
@@ -234,8 +234,8 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
         var nombre = val("nombre");
         var email = val("email");
         var whatsapp = val("whatsapp");
-        var consentEl = form.querySelector('[name="consentimiento"]');
-        if (consentEl && !consentEl.checked) { if (statusEl) statusEl.textContent = "Confirma que VARINO puede tratar tus datos para responder a la solicitud."; return; }
+        var privacyEl = form.querySelector('[name="privacy_acknowledged"]');
+        if (lead && (!privacyEl || !privacyEl.checked)) { if (statusEl) statusEl.textContent = "Confirma que has leído la información de privacidad para continuar."; return; }
         if (lead) {
           sendingLead = true;
           var submitButton = form.querySelector('button[type="submit"]');
@@ -248,7 +248,7 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
             interes: servicioAI(val("servicio")),
             fuente: "form-contacto",
             pagina: location.pathname,
-            consentimiento: true,
+            privacy_acknowledged: privacyEl ? privacyEl.checked : false,
             marketing_consent: form.querySelector('[name="marketing_consent"]')?.checked === true,
             mensaje: val("mensaje"),
           };

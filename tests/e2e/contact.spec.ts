@@ -47,6 +47,7 @@ test("contacto no afirma recibir datos si el backend está desconectado", async 
 
 test("el formulario conserva la clave en un reintento y la rota tras una recepción confirmada", async ({ page }) => {
   const submissionIds: string[] = [];
+  const payloads: Array<Record<string, unknown>> = [];
   await page.addInitScript(() => {
     const original = Element.prototype.getAttribute;
     Element.prototype.getAttribute = function (name: string) {
@@ -55,7 +56,8 @@ test("el formulario conserva la clave en un reintento y la rota tras una recepci
     };
   });
   await page.route("**/__test/lead", async (route) => {
-    const request = route.request().postDataJSON() as { submissionId: string };
+    const request = route.request().postDataJSON() as { submissionId: string } & Record<string, unknown>;
+    payloads.push(request);
     submissionIds.push(request.submissionId);
     if (submissionIds.length === 1) {
       await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ ok: false }) });
@@ -66,12 +68,24 @@ test("el formulario conserva la clave en un reintento y la rota tras una recepci
 
   await page.goto("/contacto/");
   const form = page.locator("#form-contacto");
+  await form.evaluate((element) => {
+    const label = document.createElement("label");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.name = "privacy_acknowledged";
+    checkbox.required = true;
+    label.append(checkbox, document.createTextNode(" He leído la información de privacidad"));
+    element.append(label);
+  });
   const fillContact = async (email: string) => {
     await form.getByLabel("Nombre completo").fill("Cliente de prueba");
     await form.getByLabel("Empresa / organización").fill("Clínica Norte");
     await form.getByLabel("Email", { exact: true }).fill(email);
   };
   await fillContact("prueba@example.com");
+  await form.locator('button[type="submit"]').click();
+  expect(submissionIds).toHaveLength(0);
+  await form.locator('[name="privacy_acknowledged"]').check();
   await form.locator('button[type="submit"]').click();
   await expect(page.locator("[data-form-status]")).toContainText(/no se pudo confirmar la recepción/i);
 
@@ -80,8 +94,10 @@ test("el formulario conserva la clave en un reintento y la rota tras una recepci
   expect(submissionIds).toHaveLength(2);
   expect(submissionIds[0]).toMatch(/^[0-9a-f]{64}$/i);
   expect(submissionIds[1]).toBe(submissionIds[0]);
+  expect(payloads.every((payload) => payload.privacy_acknowledged === true && !("consentimiento" in payload))).toBe(true);
 
   await fillContact("otra@example.com");
+  await form.locator('[name="privacy_acknowledged"]').check();
   await form.locator('button[type="submit"]').click();
   await expect.poll(() => submissionIds.length).toBe(3);
   expect(submissionIds[2]).not.toBe(submissionIds[0]);

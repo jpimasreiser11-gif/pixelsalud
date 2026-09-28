@@ -55,7 +55,7 @@ import { BASE, SITE, BACKEND } from "../config";
         </div>
 
         <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
-          <input type="checkbox" name="consentimiento" required class="mt-0.5 shrink-0" />
+          <input type="checkbox" name="privacy_acknowledged" required class="mt-0.5 shrink-0" />
           <span>He leído la <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">información de privacidad</a>. Usaremos estos datos para tramitar esta solicitud; no es una suscripción comercial.</span>
         </label>
 
@@ -244,7 +244,7 @@ import { BASE, SITE, BACKEND } from "../config";
         function val(n) { var el = form.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ""; }
         var nombre = val("nombre"), email = val("email"), whatsapp = val("whatsapp");
         var fecha = val("fecha"), hora = val("hora"), mensaje = val("mensaje");
-        if (!form.querySelector('[name="consentimiento"]').checked) {
+        if (!form.querySelector('[name="privacy_acknowledged"]').checked) {
           formStatus.textContent = "Confirma que has leído la información de privacidad para continuar.";
           return;
         }
