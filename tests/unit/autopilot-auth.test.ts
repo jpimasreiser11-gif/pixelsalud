@@ -22,10 +22,12 @@ describe("base segura de identidad para Autopilot", () => {
     const now = Math.floor(Date.now() / 1000);
     const state = { state: "s".repeat(43), nonce: "n".repeat(43), codeVerifier: "v".repeat(64) };
     const encrypted = await sealOAuthState(state, secret, now);
+    const tamperedParts = encrypted.split(".");
+    tamperedParts[4] = `${tamperedParts[4][0] === "A" ? "B" : "A"}${tamperedParts[4].slice(1)}`;
 
     expect(await openOAuthState(encrypted, state.state, secret, now + 1)).toEqual(state);
     await expect(openOAuthState(encrypted, "x".repeat(43), secret, now + 1)).rejects.toThrow();
-    await expect(openOAuthState(`${encrypted.slice(0, -1)}x`, state.state, secret, now + 1)).rejects.toThrow();
+    await expect(openOAuthState(tamperedParts.join("."), state.state, secret, now + 1)).rejects.toThrow();
     await expect(openOAuthState(encrypted, state.state, secret, now + 601)).rejects.toThrow();
   });
 

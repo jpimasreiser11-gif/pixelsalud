@@ -136,7 +136,7 @@ try {
       createWorkspace("Equipo Autopilot B"),
     ]);
     const workspaceResults = await Promise.all(simultaneous.map(async (response) => ({ status: response.status, body: await response.json() })));
-    assert.ok(workspaceResults.every((item) => item.status === 200 || item.status === 201));
+    assert.ok(workspaceResults.every((item) => item.status === 200 || item.status === 201), JSON.stringify(workspaceResults));
     const workspaceIds = new Set(workspaceResults.map((item) => item.body.workspace.id));
     assert.equal(workspaceIds.size, 1, "dos inicializaciones concurrentes no deben crear workspaces duplicados");
     assert.ok(workspaceResults.some((item) => item.body.created === true));
