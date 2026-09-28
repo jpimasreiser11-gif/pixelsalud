@@ -237,6 +237,9 @@ test("muestra límites claros en cada paquete antes de pedir contacto", async ({
   const planes = (await page.locator("body").innerText()).toLowerCase();
   expect(planes).not.toMatch(/factura automática|stripe/);
   await expect(page.getByText("149 €/mes + IVA").first()).toBeVisible();
+  await expect(page.locator("main")).toContainText("Primera respuesta objetivo");
+  await expect(page.locator("main")).toContainText("No son plazos de resolución ni atención 24/7");
+  await expect(page.locator("main")).toContainText("h de trabajo incluidas/mes");
 });
 
 test("la guía de presupuesto separa hipótesis, precios publicados y resultados demostrados", async ({ page }) => {

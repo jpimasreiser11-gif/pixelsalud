@@ -275,7 +275,9 @@ export const PLAN_RULES = {
   horasExtra: "Horas extra: 85 €/hora + IVA; bono de 10 horas con −10 %.",
   setup: "Alta técnica: 190 € + IVA en Care; sin coste en Managed, Optimize y Private AI Ops.",
   iva: "Los precios publicados son importes sin IVA; el IVA aplicable y el total se desglosan antes de aceptar.",
-  sla: "Atención de 9:00 a 18:00 (Europe/Madrid) en días laborables.",
+  sla: "Atención de 9:00 a 18:00 (Europe/Madrid), en días laborables.",
+  slaDefinition:
+    "Los tiempos publicados son objetivos de primera respuesta —confirmar la recepción y comunicar el siguiente paso— dentro del horario de atención. No son plazos de resolución ni atención 24/7; el SLA vinculante y sus exclusiones se concretan en la propuesta aceptada.",
 } as const;
 
 // Compatibilidad temporal con la página de precios actual.
