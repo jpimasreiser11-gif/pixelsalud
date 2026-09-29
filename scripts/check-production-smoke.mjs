@@ -17,6 +17,7 @@ try {
 }
 
 const base = origin.origin;
+const isLocalOrigin = ["localhost", "127.0.0.1", "[::1]"].includes(origin.hostname);
 const routes = [
   "/",
   "/servicios/",
@@ -146,17 +147,29 @@ const obsoleteClaims = [
   /0\s*€ en costes ocultos/i,
   /datos\s*100\s*% privados bajo RGPD/i,
 ];
-if (obsoleteClaims.some((claim) => claim.test(home))) {
+const disclosedBaselineCard = /<div\b(?=[^>]*\bclass="calc-result-card")[^>]*>\s*<span\b[^>]*>Coste anual de referencia<\/span>\s*<strong\b(?=[^>]*\bid="calc-res-coste")[^>]*>[^<]*<\/strong>\s*<small\b[^>]*>no equivale a ahorro potencial<\/small>\s*<\/div>/i;
+const hasClearlyDisclosedBaseline = disclosedBaselineCard.test(home) &&
+  /Las cifras iniciales son solo un ejemplo editable: no proceden de mediciones de VARINO ni de clientes\./i.test(home);
+const homeForClaimScan = hasClearlyDisclosedBaseline
+  ? home.replace(disclosedBaselineCard, "")
+  : home;
+if (obsoleteClaims.some((claim) => claim.test(homeForClaimScan))) {
   errors.push("/: conserva afirmaciones antiguas de ROI, ahorro, plazo, licencias o privacidad no verificadas");
 }
 
 try {
   const versionResponse = await get("/version.txt");
   const deployedVersion = (await versionResponse.text()).trim();
-  if (versionResponse.status !== 200 || !/^[a-f0-9]{40}$/i.test(deployedVersion)) {
+  if (isLocalOrigin) {
+    if (versionResponse.status === 200 && /^[a-f0-9]{40}$/i.test(deployedVersion)) {
+      console.log(`SHA de preview local: ${deployedVersion}`);
+    } else {
+      console.log("Preview local: se omite /version.txt; el SHA se estampa en el despliegue.");
+    }
+  } else if (versionResponse.status !== 200 || !/^[a-f0-9]{40}$/i.test(deployedVersion)) {
     errors.push("/version.txt: falta el SHA de 40 caracteres estampado por el despliegue");
   } else {
-    console.log(`Versión observada en producción: ${deployedVersion}`);
+    console.log(`Versión observada: ${deployedVersion}`);
     const expectedVersion = process.env.VARINO_EXPECTED_VERSION?.trim();
     if (expectedVersion && deployedVersion.toLowerCase() !== expectedVersion.toLowerCase()) {
       errors.push(`/version.txt: producción sirve ${deployedVersion}, se esperaba ${expectedVersion}`);
