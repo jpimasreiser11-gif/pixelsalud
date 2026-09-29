@@ -39,9 +39,29 @@ describe("motor de VARINO Guide", () => {
   it("responde al saludo sin repetir la pregunta inicial ni inventar presupuesto", () => {
     const result = advise({ messages: [{ role: "user", content: "hola" }] });
     expect(result.stage).toBe("welcome");
+    expect(result.replySource).toBe("rules");
     expect(result.estimate).toBeNull();
     expect(result.reply).toMatch(/^¡Hola!/i);
     expect(result.nextQuestion).toBe("");
+  });
+
+  it("marca como modelo solo una redacción útil que realmente aparece en la respuesta", () => {
+    const modelReply = "El proceso que describes está claro: una persona copia las solicitudes en Excel y redacta cada respuesta manualmente. La revisión final del equipo puede seguir siendo el punto de aprobación.";
+    const result = advise({
+      profile: {
+        business: "asesoría",
+        problem: "el registro manual de solicitudes",
+        process: "Una persona copia solicitudes en Excel y responde a mano.",
+      },
+      messages: [
+        { role: "assistant", content: "¿Qué herramientas intervienen?" },
+        { role: "user", content: "Usamos Excel y una persona revisa cada respuesta." },
+      ],
+      modelReply,
+    });
+
+    expect(result.reply).toBe(modelReply);
+    expect(result.replySource).toBe("model");
   });
 
   it("extrae negocio y problema del primer mensaje sustantivo después de un saludo", () => {

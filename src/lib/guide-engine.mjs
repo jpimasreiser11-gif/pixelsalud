@@ -499,17 +499,28 @@ function isWeak(reply, service, allowRecommendation = true) {
   return others.some((name) => new RegExp(name, "i").test(reply));
 }
 
-export function consultativeReply({ profile, filledField, modelReply, service }) {
+function consultativeResponse({ profile, filledField, modelReply, service }) {
   const cleaned = cleanReply(modelReply);
   const recommendationReady = Boolean(profile.business && profile.problem && profile.process);
-  if (cleaned && !isWeak(cleaned, service, recommendationReady)) return cleaned;
+  if (cleaned && !isWeak(cleaned, service, recommendationReady)) {
+    return { reply: cleaned, source: "model" };
+  }
   const value = filledField ? clampText(profile[filledField], 180).replace(/[.!?;,\s]+$/, "") : "";
   const acknowledgement = value && ACKNOWLEDGEMENT[filledField]
     ? ACKNOWLEDGEMENT[filledField](value)
     : "Anotado, lo incorporo al mapa del sistema.";
-  if (!(profile.business && profile.problem && profile.process)) return acknowledgement;
+  if (!(profile.business && profile.problem && profile.process)) {
+    return { reply: acknowledgement, source: "rules" };
+  }
   const recap = filledField === "process" ? processRecap(profile) : "";
-  return `${acknowledgement} ${recap} ${RATIONALE[service.slug]}`.replace(/\s+/g, " ").trim();
+  return {
+    reply: `${acknowledgement} ${recap} ${RATIONALE[service.slug]}`.replace(/\s+/g, " ").trim(),
+    source: "rules",
+  };
+}
+
+export function consultativeReply(options) {
+  return consultativeResponse(options).reply;
 }
 
 export function hardwareFor(profile, documentCount = 0) {
@@ -552,6 +563,7 @@ export function advise({ messages = [], profile: previousProfile = {}, modelRepl
     const copy = welcomeCopy(messages, known);
     return {
       reply: copy.reply,
+      replySource: "rules",
       nextQuestion: copy.nextQuestion,
       stage: "welcome",
       profile: known,
@@ -577,8 +589,10 @@ export function advise({ messages = [], profile: previousProfile = {}, modelRepl
   const stage = stageFor(profile);
   const quoteReady = Boolean(profile.problem && (profile.business || profile.sector) && profile.process);
   const lastAssistantQuestion = lastOf(messages, "assistant");
+  const response = consultativeResponse({ profile, filledField, modelReply, service });
   return {
-    reply: consultativeReply({ profile, filledField, modelReply, service }),
+    reply: response.reply,
+    replySource: response.source,
     nextQuestion: nextUsefulQuestion(profile, fieldFromQuestion(lastAssistantQuestion), lastAssistantQuestion),
     stage,
     profile,

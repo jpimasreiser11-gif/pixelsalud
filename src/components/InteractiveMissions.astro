@@ -215,9 +215,11 @@ const hasLocalGuideApi = import.meta.env.DEV;
             const data = await response.json();
             if (response.ok && data.profile) {
               result = data;
-              statusLabel = data.model && !data.modelError
+              statusLabel = data.replySource === "model" && data.model
                 ? `Modelo local · ${data.model}`
-                : "Guía base · sin modelo local";
+                : data.stage === "welcome"
+                  ? "Respuesta instantánea · sin inferencia"
+                  : "Guía base · respuesta por reglas";
             }
           } catch {
             statusLabel = "Guía base · conexión local no disponible";
