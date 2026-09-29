@@ -127,6 +127,22 @@ test("un primer mensaje libre reconoce el sector y el problema sin pedirlos otra
   await expect(guide.locator("[data-guide-status]")).toHaveText("Guía base · conexión local no disponible");
 });
 
+test("un primer mensaje que ya incluye la tarea y el proceso avanza a la siguiente pregunta", async ({ page }) => {
+  await page.route("**/api/guide", (route) => route.abort());
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
+
+  await answer.fill("Caso ficticio: una tienda de bicicletas recibe consultas de stock por email. Una persona copia cada solicitud a una hoja y comprueba existencias antes de responder. Queremos clasificar las consultas y preparar respuestas para revisión humana, sin envío automático.");
+  await answer.press("Enter");
+
+  const response = guide.locator(".ai-message--assistant").last();
+  await expect(response).toContainText(/qu[eé] herramientas o programas intervienen actualmente/i);
+  await expect(response).not.toContainText(/qu[eé] tarea, problema o cuello de botella quieres mejorar primero/i);
+  await expect(guide.locator("[data-preview-kicker]")).toContainText(/comercio y ecommerce/i);
+  await expect(guide.locator("[data-preview-title]")).toContainText(/clasificar las consultas/i);
+});
+
 test("el saludo no repite la pregunta inicial y el mensaje siguiente conserva negocio y problema", async ({ page }) => {
   await page.route("**/api/guide", (route) => route.abort());
   await page.goto("/experiencia/");

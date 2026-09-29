@@ -99,6 +99,21 @@ describe("motor de VARINO Guide", () => {
     expect(result.nextQuestion).toMatch(/c[oó]mo realiz[aá]is ahora ese proceso/i);
   });
 
+  it("no vuelve a preguntar por el problema si ya describieron una tarea y su objetivo", () => {
+    const result = advise({
+      messages: [{
+        role: "user",
+        content: "Caso ficticio: una tienda de bicicletas recibe consultas de stock por email. Una persona copia cada solicitud a una hoja y comprueba existencias antes de responder. Queremos clasificar las consultas y preparar respuestas para revisión humana, sin envío automático.",
+      }],
+      modelReply: "Entendido, puedo ayudarte a ordenar esas consultas y preparar borradores para revisión humana.",
+    });
+
+    expect(result.profile.sector).toBe("comercio y ecommerce");
+    expect(result.profile.problem).toMatch(/clasificar las consultas/i);
+    expect(result.profile.process).toMatch(/copia cada solicitud/i);
+    expect(result.nextQuestion).not.toMatch(/qu[eé] tarea, problema o cuello de botella/i);
+  });
+
   it("extrae datos adicionales explícitos mientras conserva la respuesta al proceso", () => {
     const first = advise({
       messages: [

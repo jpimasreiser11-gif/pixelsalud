@@ -142,7 +142,7 @@ function explicitGoal(answer) {
 }
 
 function explicitProblem(answer) {
-  const match = answer.match(/\b(?:perdemos|pierdo|tardamos|se nos va|se me va|se pierden|se nos pierden|nos cuesta|me cuesta|no (?:conseguimos|podemos|llegamos|contestamos|respondemos)|queremos mejorar|quiero mejorar|necesitamos mejorar|necesito mejorar|queremos automatizar|quiero automatizar|necesitamos automatizar|necesito automatizar|me gustar[ií]a automatizar|nos gustar[ií]a automatizar|tenemos (?:un )?problema(?:s)?|hay un problema|problema con)\b[^.!?;]*/i);
+  const match = answer.match(/\b(?:perdemos|pierdo|tardamos|se nos va|se me va|se pierden|se nos pierden|nos cuesta|me cuesta|no (?:conseguimos|podemos|llegamos|contestamos|respondemos)|(?:queremos|quiero|necesitamos|necesito|buscamos|me gustar[ií]a|nos gustar[ií]a)\s+(?:mejorar|clasificar|ordenar|organizar|gestionar|centralizar|registrar|digitalizar|automatizar|reducir|disminuir|aumentar|ahorrar|eliminar|evitar)|tenemos (?:un )?problema(?:s)?|hay un problema|problema con)\b[^.!?;]*/i);
   return match ? clampText(match[0], 300) : "";
 }
 
@@ -159,8 +159,8 @@ function explicitProcess(answer) {
   const sentence = answer.split(/(?<=[.!?;])\s+/).find((part) =>
     /\b(?:entra|entran|llega|llegan|recibimos|reciben)\b[^.!?;]*\b(?:registramos|registran|anotamos|apuntamos|copiamos|guardamos)\b[^.!?;]*\b(?:respondemos|responden|revisamos|revisan|enviamos|env[ií]an)\b/i.test(part)
     || /\b(?:entra|entran|llega|llegan|recibimos|reciben)\b[^.!?;]*\b(?:registramos|registran|anotamos|apuntamos|copiamos|guardamos|apunta|anota|copia|registra)\b/i.test(part)
-    || /\b(?:copia|copian|copiamos|traslada|pasa|apunta|anota|registra|guarda)\b[^.!?;]*\b(?:excel|hoja|crm|sistema|registro|agenda)\b[^.!?;]*\b(?:confirma|responde|revisa|env[ií]a|contacta|actualiza)\b/i.test(part)
-    || /\b(?:recepci[oó]n|administraci[oó]n|equipo|persona|alguien)\b[^.!?;]*\b(?:copia|copian|copiamos|traslada|pasa|apunta|anota|registra|guarda)\b[^.!?;]*\b(?:excel|hoja|crm|sistema|registro|agenda)\b[^.!?;]*\b(?:confirma|responde|revisa|env[ií]a|contacta|actualiza)\b/i.test(part)
+    || /\b(?:copia|copian|copiamos|traslada|pasa|apunta|anota|registra|guarda)\b[^.!?;]*\b(?:excel|hoja|crm|sistema|registro|agenda)\b[^.!?;]*\b(?:comprueba|comprueban|compruebo|comprobar|verifica|verifican|verificar|valida|validan|validar|confirma|responde|revisa|env[ií]a|contacta|actualiza)\b/i.test(part)
+    || /\b(?:recepci[oó]n|administraci[oó]n|equipo|persona|alguien)\b[^.!?;]*\b(?:copia|copian|copiamos|traslada|pasa|apunta|anota|registra|guarda)\b[^.!?;]*\b(?:excel|hoja|crm|sistema|registro|agenda)\b[^.!?;]*\b(?:comprueba|comprueban|compruebo|comprobar|verifica|verifican|verificar|valida|validan|validar|confirma|responde|revisa|env[ií]a|contacta|actualiza)\b/i.test(part)
     || /\b(?:primero|despu[eé]s|luego|al final)\b[^.!?;]*\b(?:copia|copian|traslada|pasa|apunta|anota|registra|guarda|confirma|responde|revisa|env[ií]a|actualiza)\b/i.test(part),
   );
   return clampText(sentence || "", 500);
