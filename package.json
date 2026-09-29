@@ -39,5 +39,11 @@
     "jsdom": "30.0.1",
     "vitest": "4.1.11",
     "wrangler": "4.131.0"
+  },
+  "overrides": {
+    "undici": "8.10.2",
+    "miniflare": {
+      "undici": "7.29.1"
+    }
   }
 }
