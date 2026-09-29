@@ -64,9 +64,9 @@ describe("motor de presupuesto", () => {
     expect(hardware.profile).not.toContain("27B");
   });
 
-  it("incluye Qwen 3.8 27,3B y reserva memoria para el sistema y el contexto", () => {
+  it("incluye Qwen 3.6 27,3B y reserva memoria para el sistema y el contexto", () => {
     const hardware = recommendHardware({ modelSize: "27b", users: 3, concurrency: 1, sensitivity: "high" });
-    expect(hardware.model).toBe("qwen3.8:latest");
+    expect(hardware.model).toBe("qwen3.6:27b");
     expect(hardware.modelWeightsGb).toBe(17);
     expect(hardware.unifiedMemoryGb).toBe(64);
     expect(hardware.profile).toContain("27,3B Q4_K_M");

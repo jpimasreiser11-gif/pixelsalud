@@ -19,10 +19,12 @@ export default defineConfig({
   webServer: [
     {
       command: `ASTRO_DEV_BACKGROUND=false npx astro dev --host ${DEV_HOST} --port ${DEV_PORT} --ignore-lock`,
-      // Comprobar la URL real, no solo el puerto: así detecta el servidor
-      // existente exactamente por donde luego navegan las pruebas.
+      // Comprobar la URL real, no solo el puerto, antes de ejecutar pruebas.
       url: `${DEV_URL}/`,
-      reuseExistingServer: true,
+      // No reutilizar servidores de otro checkout: pueden servir una build
+      // antigua y producir fallos engañosos o falsos verdes. La reutilización
+      // solo se habilita expresamente para el mismo checkout.
+      reuseExistingServer: process.env.PLAYWRIGHT_REUSE_EXISTING_SERVER === "true",
       timeout: 60_000,
     },
     {
@@ -31,7 +33,7 @@ export default defineConfig({
       // que en producción la única CSP es el <meta> del HTML.
       command: `GITHUB_ACTIONS=true npm run build && node scripts/serve-dist.mjs --port ${PUBLISHED_PORT}`,
       url: PUBLISHED_URL,
-      reuseExistingServer: true,
+      reuseExistingServer: process.env.PLAYWRIGHT_REUSE_EXISTING_SERVER === "true",
       timeout: 120_000,
     },
   ],

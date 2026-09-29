@@ -63,3 +63,22 @@ Canales a priorizar mientras tanto: solicitudes entrantes con expectativa de res
 - `VARINO · 3 unsub (desactivado)` solo tiene ejecución manual y un aviso Telegram marcado “sin endpoint”; por tanto, no es un flujo de baja accesible para un destinatario. No activar nurture mientras esa baja no esté implementada y probada.
 - Búsqueda de Gmail limitada a los últimos 7 días: no aparecen solicitudes cualificadas de servicios VARINO; los dos resultados son una respuesta automática de recepción a una consulta personal y una respuesta sobre una propuesta de colaboración estudiantil, no compras de servicios. No se envió ningún correo.
 - Ads Manager sigue devolviendo cero cuentas accesibles. No hay anuncio, campaña ni gasto creado.
+
+### Revalidación de consentimiento y cuenta publicitaria — 29-09-2026
+
+- Lectura mínima de metadatos de consentimiento del CRM: las pestañas `Leads`
+  y `Prospectos` no contienen filas con consentimiento de marketing. No hay
+  destinatarios verificados para una secuencia promocional por Gmail; no enviar
+  publicidad en frío ni inferir consentimiento a partir de una dirección
+  publicada.
+- Ads Manager devuelve cero cuentas accesibles. No se puede crear un anuncio
+  dentro de una cuenta que VARINO no tiene conectada desde esta sesión; tampoco
+  se aprobó presupuesto. El borrador de anuncio de arriba sigue siendo solo una
+  propuesta textual.
+- Contraste directo de la página oficial de [SIMBAI](https://simbai.es/servicio-automatizaciones):
+  publica una automatización básica por 125 €, una avanzada por 250 €, una
+  suite por 450 € y mantenimiento opcional de 30 € cada dos meses. Son tarifas
+  anunciadas por el propio proveedor, no un benchmark de ventas o calidad. La
+  diferencia de VARINO debe defenderse con alcance, pruebas, recuperación,
+  documentación, costes externos y soporte especificados, no con promesas de
+  ahorro ni con “más flujos” al menor precio.

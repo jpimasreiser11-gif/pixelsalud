@@ -78,7 +78,7 @@ export function calculateEstimate(raw = {}) {
   };
 }
 // Perfiles orientativos de hardware para IA privada.
-// Qwen 3.8:latest se verificó localmente con `ollama show` el 2026-09-27:
+// qwen3.6:27b se verificó localmente con `ollama show` el 2026-09-29:
 // 27,3B parámetros, Q4_K_M y 17 GB en el registro local. Las cifras son una
 // preselección conservadora; antes de comprar hay que medir contexto, carga y
 // concurrencia reales con los datos del cliente.
@@ -86,7 +86,7 @@ export const MODEL_TIERS = Object.freeze({
   small: { model: "qwen3:4b", weightsGb: 2.6, memoryGb: 16, storageGb: 80, label: "Piloto local (Qwen3 4B)" },
   medium: { model: "qwen3:8b", weightsGb: 5.2, memoryGb: 24, storageGb: 120, label: "Equipo pequeño (Qwen3 8B)" },
   large: { model: "qwen3:14b", weightsGb: 9.3, memoryGb: 32, storageGb: 180, label: "Producción (Qwen3 14B)" },
-  xlarge: { model: "qwen3.8:latest", weightsGb: 17, memoryGb: 64, storageGb: 300, label: "IA exigente (Qwen 3.8 · 27,3B Q4_K_M)" },
+  xlarge: { model: "qwen3.6:27b", weightsGb: 17, memoryGb: 64, storageGb: 300, label: "IA exigente (Qwen 3.6 · 27,3B Q4_K_M)" },
   xxlarge: { model: "qwen3:32b", weightsGb: 20.2, memoryGb: 64, storageGb: 400, label: "Alta concurrencia (Qwen3 32B)" },
 });
 

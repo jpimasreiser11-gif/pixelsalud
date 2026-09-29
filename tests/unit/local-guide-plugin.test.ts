@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { allowedOrigin, buildModelRequest, chooseModel, sanitizeMessages } from "../../src/lib/local-guide-plugin.mjs";
 
 describe("protecciones del asistente local", () => {
-  it("prefiere Qwen 3.8 cuando está instalado y respeta una preferencia explícita válida", () => {
-    const installed = ["qwen3:14b", "llama3:8b", "qwen3.8:latest"];
-    expect(chooseModel(installed)).toBe("qwen3.8:latest");
+  it("prefiere el Qwen 3.6 27B instalado y respeta una preferencia explícita válida", () => {
+    const installed = ["qwen3:14b", "llama3:8b", "qwen3.8:latest", "qwen3.6:27b"];
+    expect(chooseModel(installed)).toBe("qwen3.6:27b");
     expect(chooseModel(installed, "llama3:8b")).toBe("llama3:8b");
   });
 
@@ -14,7 +14,7 @@ describe("protecciones del asistente local", () => {
       { role: "assistant", content: "¿Qué tarea quieres mejorar?" },
       { role: "user", content: "Perdemos tiempo preparando presupuestos" },
     ];
-    const request = buildModelRequest("qwen3.8:latest", messages, { business: "asesoría" });
+    const request = buildModelRequest("qwen3.6:27b", messages, { business: "asesoría" });
     expect(request.think).toBe(false);
     expect(request.options.num_ctx).toBe(16_384);
     expect(request.messages.slice(-messages.length)).toEqual(messages);

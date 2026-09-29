@@ -73,6 +73,8 @@ function sanitizeMessages(value) {
 function chooseModel(available, preferred = "") {
   if (preferred && available.includes(preferred)) return preferred;
   return (
+    available.find((name) => /^qwen3\.6:27b(?:-|$)/i.test(name)) ||
+    available.find((name) => /^qwen3\.6(?::|$)/i.test(name)) ||
     available.find((name) => /^qwen3\.8(?::|$)/i.test(name)) ||
     available.find((name) => /^qwen3/i.test(name)) ||
     available.find((name) => /^qwen/i.test(name)) ||

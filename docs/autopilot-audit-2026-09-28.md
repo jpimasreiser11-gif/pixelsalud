@@ -154,6 +154,24 @@ Cada fase debe tener pruebas locales, staging aislado y un gate separado de
 publicación. Los mocks solo se permiten en tests; nunca se mostrarán como
 integraciones reales.
 
+## Reconciliación del modelo local — 29-09-2026
+
+- `ollama list` y `ollama show qwen3.6:27b` confirman el modelo instalado:
+  27,3B parámetros, Q4_K_M, 17 GB y contexto de 262.144 tokens en esta máquina.
+  El código de presupuesto, la guía y el planificador ahora prefieren ese tag;
+  Qwen 3.8 se conserva como alternativa compatible si está instalado.
+- Prueba HTTP local con petición sintética: el planificador devolvió un borrador
+  validado con `executable: false` y `persisted: false`. El origen externo fue
+  rechazado con 403 y el contenido que incluía una dirección de email se
+  bloqueó con 400 antes de invocar el modelo.
+- La suite E2E se ejecutó en puertos aislados del servidor Astro que ya estaba
+  abierto en otro checkout. Resultado: 233 pasadas y 1 omitida. El primer
+  intento usó por accidente ese servidor ajeno y dio 8 fallos por servir una
+  build antigua; Playwright ahora no reutiliza servidores existentes salvo
+  que se habilite explícitamente.
+- Esta comprobación es local. No conecta el planificador con n8n, Google o
+  Gmail, ni habilita login o ejecución para clientes.
+
 ## Revalidación de producción y n8n — 2026-09-29
 
 - El PR #14 sigue abierto sobre `audit/legal-and-growth-20260926`, sin cambios

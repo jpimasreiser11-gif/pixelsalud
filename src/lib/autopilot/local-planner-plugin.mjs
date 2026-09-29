@@ -113,7 +113,9 @@ async function selectLocalModel(fetchImpl, env) {
     const available = (data.models || []).map((model) => model.name).filter((name) => typeof name === "string");
     const preferred = env.VARINO_OLLAMA_MODEL;
     if (preferred) return available.includes(preferred) ? preferred : null;
-    return available.find((name) => /^qwen3\.8(?::|$)/i.test(name))
+    return available.find((name) => /^qwen3\.6:27b(?:-|$)/i.test(name))
+      || available.find((name) => /^qwen3\.6(?::|$)/i.test(name))
+      || available.find((name) => /^qwen3\.8(?::|$)/i.test(name))
       || available.find((name) => /^qwen3(?::|$)/i.test(name))
       || null;
   } catch {
