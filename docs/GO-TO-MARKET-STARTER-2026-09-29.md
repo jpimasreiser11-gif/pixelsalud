@@ -47,6 +47,6 @@ Canales a priorizar mientras tanto: solicitudes entrantes con expectativa de res
 ## Estado operativo que condiciona el plan
 
 - Sitio público: commit antiguo `d824d2cc8afb1d3711c943b94daa66230053567d`; sigue `noindex` y el smoke de producción registra 54 problemas. El gate local confirma pendientes de identidad legal, revisión de marca, aprobación legal y auditoría de seguridad. No desplegar ni comprar tráfico todavía.
-- n8n local: 17 workflows, 0 activos, 0 credenciales y 0 ejecuciones. El grafo documental pasó antes una prueba aislada con Qwen; en la revalidación posterior, Ollama no anuncia modelos instalados y el E2E del chat quedó sin ejecutar. Ninguno de esos grafos es un CRM ni un circuito de compra en producción.
+- n8n local: 17 workflows, 0 activos, 0 credenciales y 0 ejecuciones. El grafo documental pasó antes una prueba aislada con Qwen; en la revalidación Ollama estaba vacío, por lo que se inició la descarga de `qwen3.6:27b` y aún falta repetir el E2E del chat. Ninguno de esos grafos es un CRM ni un circuito de compra en producción.
 - Ads Manager: 0 cuentas accesibles. Gmail: no se identificaron solicitudes de servicio en la búsqueda reciente. CRM: 0 consentimientos de marketing.
 - Criterio de la siguiente fase: autorización de Google OAuth con permisos mínimos; identidad/datos legales y representante autorizado confirmados; backend público con dominio, autenticación, retención y consentimiento verificados; después pruebas sintéticas, revisión humana y solo entonces activación gradual.
