@@ -76,10 +76,11 @@ body {
 .display-title {
   margin-top: 0.8rem;
   color: #1d1d1f;
-  font-size: clamp(3.2rem, 8vw, 7.25rem);
+  font-size: clamp(3.1rem, 7.2vw, 6.75rem);
   font-weight: 650;
-  letter-spacing: -0.065em;
-  line-height: 0.94;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+  text-wrap: balance;
 }
 
 .display-title span {
