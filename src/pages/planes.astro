@@ -22,7 +22,7 @@ const hayPago = Object.values(STRIPE_LINKS).some(Boolean);
   title={`Planes mensuales — ${SITE.name}`}
   description="Planes de mantenimiento y operación para tus automatizaciones: qué incluye cada uno, tiempos de respuesta y precios claros."
 >
-  <section data-reveal class="mx-auto max-w-6xl px-6 pb-10 pt-24 sm:pt-32">
+  <section class="mx-auto max-w-6xl px-6 pb-10 pt-24 sm:pt-32">
     <p class="eyebrow">Planes mensuales</p>
     <h1 class="display-title mt-4 max-w-5xl">Tu sistema, atendido.<br /><span>Sin sorpresas.</span></h1>
     <p class="mt-6 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
@@ -38,7 +38,7 @@ const hayPago = Object.values(STRIPE_LINKS).some(Boolean);
 
   <!-- Tarjetas de planes -->
   <section class="mx-auto max-w-6xl px-6 pb-16">
-    <div data-reveal class="grid gap-5 lg:grid-cols-4">
+    <div class="grid gap-5 lg:grid-cols-4">
       {MAINTENANCE_PLANS.map((plan) => (
         <article class:list={["flex flex-col rounded-3xl border p-6", plan.destacado ? "border-[#0071e3] bg-[#0071e3]/5" : "border-black/8 dark:border-white/10"]}>
           <div class="flex items-center justify-between gap-2">

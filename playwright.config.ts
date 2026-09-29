@@ -1,6 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const DEV_URL = "http://localhost:4321";
+const devPort = Number(process.env.VARINO_E2E_PORT ?? "4321");
+if (!Number.isInteger(devPort) || devPort < 1024 || devPort > 65535) {
+  throw new Error("VARINO_E2E_PORT must be an integer between 1024 and 65535");
+}
+const DEV_URL = `http://localhost:${devPort}`;
 // Puerto propio para el build estático: no puede compartirlo con el servidor de
 // desarrollo porque las dos pruebas corren a la vez.
 const PUBLISHED_URL = "http://localhost:4456/";
@@ -15,7 +19,7 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: "npm run dev",
+      command: `npm run dev -- --port ${devPort}`,
       // Comprobar la URL real, no solo el puerto: así detecta el servidor
       // existente exactamente por donde luego navegan las pruebas.
       url: `${DEV_URL}/`,

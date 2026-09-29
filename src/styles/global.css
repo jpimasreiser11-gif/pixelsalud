@@ -135,7 +135,7 @@ body {
   padding: 0.7rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 650;
-  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+  transition: transform 140ms cubic-bezier(.2, .8, .2, 1), background-color 180ms ease, color 180ms ease;
 }
 
 .button-primary {
@@ -144,28 +144,15 @@ body {
   color: white;
 }
 
-.button-primary:hover {
-  background: #0077ed;
-  transform: translateY(-1px);
-}
-
 .button-secondary {
   display: inline-flex;
   background: #e8e8ed;
   color: #1d1d1f;
 }
 
-.button-secondary:hover {
-  background: #d2d2d7;
-}
-
 .dark .button-secondary {
   background: #1d1d1f;
   color: #f5f5f7;
-}
-
-.dark .button-secondary:hover {
-  background: #2c2c2e;
 }
 
 .service-hero {
@@ -586,8 +573,7 @@ body {
 .dark .ai-composer textarea { color: white; }
 .ai-composer textarea::placeholder { color: #85858b; }
 .ai-composer:focus-within { border-color: #655cff; box-shadow: 0 0 0 3px rgb(101 92 255 / .12); }
-.ai-composer button { display: grid; width: 2.65rem; height: 2.65rem; flex: 0 0 auto; place-items: center; border-radius: .85rem; background: #16171c; color: white; font-size: 1.25rem; transition: transform 160ms ease, background 160ms ease; }
-.ai-composer button:hover { transform: translateY(-2px); background: #5148e8; }
+.ai-composer button { display: grid; width: 2.65rem; height: 2.65rem; flex: 0 0 auto; place-items: center; border-radius: .85rem; background: #16171c; color: white; font-size: 1.25rem; transition: transform 120ms cubic-bezier(.2, .8, .2, 1), background-color 160ms ease; }
 .dark .ai-composer button { background: #655cff; }
 .ai-chat__privacy { display: flex; gap: .4rem; padding: .75rem 1.2rem 1rem; color: #77777d; font-size: .62rem; line-height: 1.45; }
 .ai-preview { display: flex; min-height: 42rem; flex-direction: column; }
@@ -641,38 +627,29 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .ai-chat__messages { scroll-behavior: auto; }
   .ai-composer button, .ai-blueprint article { transition: none; }
+  .button-primary, .button-secondary { transition: none; }
 }
 
-/* Motion (CSP-safe, sin dependencias). Respeta prefers-reduced-motion. */
-[data-reveal] {
-  opacity: 1;
-  transform: none;
-  transition: none;
-}
-html.has-reveal-motion [data-reveal] {
-  transform: translateY(16px);
-  transition: transform .7s cubic-bezier(.22, 1, .36, 1);
-  will-change: transform;
-}
-html.has-reveal-motion [data-reveal].is-visible {
-  transform: none;
-  will-change: auto;
+/* Desktop hover is deliberately subtle; touch gets feedback on press, not sticky hover. */
+@media (hover: hover) and (pointer: fine) {
+  .button-primary:hover { background-color: #0077ed; transform: translateY(-1px); }
+  .button-secondary:hover { background-color: #d2d2d7; transform: translateY(-1px); }
+  .dark .button-secondary:hover { background-color: #2c2c2e; }
+  .ai-composer button:hover { transform: translateY(-1px); background-color: #5148e8; }
 }
 
-.button-primary, .button-secondary {
-  transition: transform .15s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+.button-primary:active,
+.button-secondary:active,
+.ai-composer button:active {
+  transform: scale(.985);
+  transition-duration: 100ms;
 }
-.button-primary:hover, .button-secondary:hover { transform: translateY(-1px); }
-.button-primary:active, .button-secondary:active { transform: translateY(0) scale(.985); }
-
-@keyframes varino-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .55; transform: scale(.85); }
-}
-.live-dot { animation: varino-pulse 2.4s ease-in-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
-  .button-primary, .button-secondary { transition: none; }
-  .live-dot { animation: none; }
+  .button-primary:hover,
+  .button-secondary:hover,
+  .ai-composer button:hover,
+  .button-primary:active,
+  .button-secondary:active,
+  .ai-composer button:active { transform: none; }
 }
