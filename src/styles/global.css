@@ -1,10 +1,9 @@
 @import "tailwindcss";
-@import "@fontsource-variable/dm-sans";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: "DM Sans Variable", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --color-varino-indigo: #655cff;
   --color-varino-graphite: #111318;
   --color-varino-night: #0a0d14;
@@ -43,6 +42,7 @@ html {
 
 body {
   text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
 }
 
 :focus-visible {
