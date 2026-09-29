@@ -109,6 +109,13 @@ test("la reserva se presenta como no disponible si no hay agenda conectada", asy
     if (request.url().includes("/webhook/")) webhooks.push(request.url());
   });
   await page.goto("/reservar/");
+  await expect(page.getByRole("heading", { name: "Agenda online en preparación" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "1 · Elige un hueco" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Hablemos del proceso que quieres mejorar." })).toBeVisible();
+  await expect(page.getByRole("link", { name: /escríbenos por WhatsApp/i })).toHaveAttribute(
+    "href",
+    /Hola%2C%20me%20gustar%C3%ADa%20coordinar%20una%20llamada/,
+  );
   await expect(page.locator("[data-slot-status]")).toContainText(/no está disponible/i);
   await expect(page.locator("#app-reservar")).toHaveAttribute("data-avail", "");
   await expect(page.locator("#app-reservar")).toHaveAttribute("data-book", "");

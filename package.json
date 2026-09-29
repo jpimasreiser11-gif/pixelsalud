@@ -17,6 +17,7 @@
     "test:e2e:update": "playwright test --update-snapshots",
     "cf:local": "wrangler pages dev dist --local",
     "security:headers": "node scripts/check-security-headers.mjs",
+    "security:origin": "node scripts/check-origin-security-headers.mjs",
     "csp:check": "node scripts/check-csp-compatibility.mjs",
     "deploy-gate:check": "node scripts/check-deploy-gate.mjs",
     "claims:check": "node scripts/check-claims.mjs",
@@ -44,6 +45,7 @@
     "wrangler": "4.131.0"
   },
   "overrides": {
+    "undici": "8.10.2",
     "jsdom": {
       "undici": "8.10.2"
     },

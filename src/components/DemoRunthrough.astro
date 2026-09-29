@@ -1,0 +1,164 @@
+---
+interface Step {
+  name: string;
+  detail: string;
+}
+
+interface Props {
+  steps: Step[];
+  channel: string;
+  message: string;
+  requestId: string;
+}
+
+const { steps, channel, message, requestId } = Astro.props;
+---
+
+<section
+  class="demo-runthrough mx-auto max-w-6xl px-6 pb-24"
+  data-demo-runthrough
+  aria-labelledby="demo-runthrough-title"
+>
+  <div class="overflow-hidden rounded-[2rem] border border-black/8 bg-white dark:border-white/10 dark:bg-[#111318]">
+    <div class="grid lg:grid-cols-[.86fr_1.14fr]">
+      <div class="p-7 sm:p-10">
+        <p class="eyebrow">Recorrido visual · datos ficticios</p>
+        <h2 id="demo-runthrough-title" class="mt-4 text-3xl font-semibold tracking-[-.045em] sm:text-4xl">
+          Una solicitud entra.<br /><span class="text-[#0071e3] dark:text-[#2997ff]">Una persona decide.</span>
+        </h2>
+        <p class="mt-5 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+          Recorre los mismos nodos que aparecen en el flujo n8n descargable. Esta vista previa ocurre en tu navegador: no ejecuta n8n, no guarda información y no envía mensajes.
+        </p>
+
+        <div class="mt-8 rounded-2xl bg-[#f7f7f5] p-5 dark:bg-white/5">
+          <p class="text-[.65rem] font-bold tracking-[.14em] text-[#6e6e73] dark:text-[#a1a1a6]">ENTRADA SINTÉTICA DEL FLUJO</p>
+          <dl class="mt-4 space-y-3 text-sm">
+            <div class="flex flex-wrap justify-between gap-2"><dt class="text-[#6e6e73] dark:text-[#a1a1a6]">ID de prueba</dt><dd class="font-mono text-xs">{requestId}</dd></div>
+            <div class="flex flex-wrap justify-between gap-2"><dt class="text-[#6e6e73] dark:text-[#a1a1a6]">Canal ficticio</dt><dd class="font-medium">{channel}</dd></div>
+            <div><dt class="text-[#6e6e73] dark:text-[#a1a1a6]">Mensaje de ejemplo</dt><dd class="mt-1 font-medium">«{message}»</dd></div>
+          </dl>
+        </div>
+
+        <p class="mt-5 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+          El archivo n8n se entrega inactivo y sin credenciales. No contiene nombres, teléfonos, datos clínicos ni una cita real.
+        </p>
+      </div>
+
+      <div class="bg-[#0b0d12] p-7 text-white sm:p-10">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-[.65rem] font-bold tracking-[.14em] text-[#a1a1a6]">NODOS DEL WORKFLOW</p>
+          <span class="rounded-full border border-white/10 px-3 py-1 text-[.6rem] font-bold tracking-[.1em] text-[#c7c6d2]">INACTIVO · VISTA PREVIA</span>
+        </div>
+
+        <ol class="demo-runthrough__steps mt-6 space-y-3" aria-label="Pasos del flujo de demostración">
+          {steps.map((step, index) => (
+            <li
+              class="demo-runthrough__step grid grid-cols-[2.25rem_1fr] gap-3 rounded-2xl border border-white/10 bg-white/[.04] p-4"
+              data-demo-step
+            >
+              <span class="demo-runthrough__number grid size-9 place-items-center rounded-full border border-white/15 font-mono text-xs text-[#b9b4ff]">0{index + 1}</span>
+              <div>
+                <h3 class="text-sm font-semibold">{step.name}</h3>
+                <p class="mt-1 text-xs leading-5 text-[#a1a1a6]">{step.detail}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <div class="mt-6 rounded-2xl border border-[#9b95ff]/30 bg-[#9b95ff]/[.08] p-5">
+          <p class="text-[.62rem] font-bold tracking-[.14em] text-[#c7c3ff]">SALIDA PREVISTA EN EL EJEMPLO</p>
+          <p class="mt-3 text-sm font-semibold">Solicitud clasificada · pendiente de revisión humana</p>
+          <p class="mt-2 text-xs leading-5 text-[#c7c6d2]">La demo se detiene aquí. No confirma una cita ni contacta a nadie.</p>
+        </div>
+
+        <div class="mt-6 flex flex-col items-start gap-4 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <p data-demo-status role="status" aria-live="polite" aria-atomic="true" class="max-w-sm text-xs leading-5 text-[#a1a1a6]">
+            Vista previa detenida. No se ha ejecutado n8n ni se han enviado o guardado datos.
+          </p>
+          <button
+            type="button"
+            data-demo-run
+            class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-white px-5 py-2.5 text-xs font-semibold text-black transition hover:bg-[#e8e8ed] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9b95ff]"
+          >
+            Ver recorrido
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-demo-runthrough]");
+  const runButton = root?.querySelector<HTMLButtonElement>("[data-demo-run]");
+  const status = root?.querySelector<HTMLElement>("[data-demo-status]");
+  const steps = Array.from(root?.querySelectorAll<HTMLElement>("[data-demo-step]") ?? []);
+
+  if (runButton && status && steps.length) {
+    let timer = 0;
+
+    runButton.addEventListener("click", () => {
+      window.clearTimeout(timer);
+      runButton.disabled = true;
+      runButton.textContent = "Recorrido en curso…";
+
+      steps.forEach((step) => step.removeAttribute("aria-current"));
+
+      let activeIndex = 0;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const advance = () => {
+        const activeStep = steps[activeIndex];
+        if (!activeStep) return;
+
+        steps.forEach((step) => step.removeAttribute("aria-current"));
+        activeStep.setAttribute("aria-current", "step");
+        status.textContent = `Paso ${activeIndex + 1} de ${steps.length}: ${activeStep.querySelector("h3")?.textContent ?? "Proceso"}.`;
+        activeIndex += 1;
+
+        if (activeIndex < steps.length) {
+          timer = window.setTimeout(advance, reducedMotion ? 180 : 650);
+          return;
+        }
+
+        timer = window.setTimeout(() => {
+          runButton.disabled = false;
+          runButton.textContent = "Repetir recorrido";
+          status.textContent = "Vista previa completada: el caso queda pendiente de revisión humana. No se ejecutó n8n ni se guardaron o enviaron datos.";
+        }, reducedMotion ? 180 : 650);
+      };
+
+      advance();
+    });
+  }
+</script>
+
+<style>
+  .demo-runthrough__step {
+    transform: perspective(900px) translateZ(0);
+    transition: border-color 300ms ease, background-color 300ms ease, transform 300ms ease, box-shadow 300ms ease;
+  }
+
+  .demo-runthrough__step[aria-current="step"] {
+    border-color: rgb(155 149 255 / 65%);
+    background-color: rgb(155 149 255 / 12%);
+    box-shadow: 0 14px 36px rgb(0 0 0 / 24%);
+    transform: perspective(900px) translate3d(5px, -2px, 14px) rotateX(-1deg);
+  }
+
+  .demo-runthrough__step[aria-current="step"] .demo-runthrough__number {
+    border-color: rgb(155 149 255 / 75%);
+    background: rgb(155 149 255 / 18%);
+    color: white;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .demo-runthrough__step {
+      transition: none;
+    }
+
+    .demo-runthrough__step[aria-current="step"] {
+      transform: none;
+    }
+  }
+</style>
