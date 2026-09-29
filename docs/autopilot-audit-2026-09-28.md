@@ -153,3 +153,29 @@ siendo estática. El detalle está en
 Cada fase debe tener pruebas locales, staging aislado y un gate separado de
 publicación. Los mocks solo se permiten en tests; nunca se mostrarán como
 integraciones reales.
+
+## Revalidación de producción y n8n — 2026-09-29
+
+- El PR #14 sigue abierto sobre `audit/legal-and-growth-20260926`, sin cambios
+  locales pendientes y con estado de merge limpio. No se fusionó ni publicó.
+- `npm run production:smoke` volvió a consultar la web pública y observó el SHA
+  `d824d2cc8afb1d3711c943b94daa66230053567d`: 54 problemas en 11 páginas.
+  Persiste la discrepancia entre lo público y esta rama: endpoints locales/de
+  túnel en HTML, chat/analítica conectados pese al backend desactivado, recursos
+  OG ausentes, falta de `noindex` en páginas previas al lanzamiento, sitemap
+  prematuro, afirmaciones antiguas y 7 cabeceras HTTP ausentes en todas las
+  páginas revisadas. `/og/varino-social.png` responde 404.
+- `npm run launch:check` continúa bloqueando publicación por marca sin revisar,
+  titular/NIF/domicilio vacíos y aprobaciones legal y de seguridad ausentes.
+  No completar esos campos con datos inventados ni desplegar mientras falle el
+  gate.
+- Revisión read-only de n8n local: 17 flujos, 0 activos, 0 credenciales y 0
+  ejecuciones. Los 17 exports locales coinciden con el runtime en nombres y
+  conexiones; 16/17 también coinciden en nodos. El único delta son IDs internos
+  del flujo manual de semillas, sin diferencias de parámetros ni conexiones.
+  Pasaron 7 pruebas pytest de workflows, 9 de herramientas y 13 verificadores
+  offline de seguridad. No prueba integraciones ni producción.
+- No se hicieron POST, envíos, altas en CRM, llamadas a Google/Gmail/Calendar/
+  Telegram, cambios DNS, activaciones, fusiones ni despliegues. La conexión de
+  Sheets sigue esperando aprobación del propietario y posterior consentimiento
+  OAuth en Google.
