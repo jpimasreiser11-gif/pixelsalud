@@ -33,6 +33,9 @@ jobs:
       - name: Require launch approval before production deploy
         if: github.ref == 'refs/heads/main'
         run: npm run launch:check
+      - name: Verify public host security headers before production deploy
+        if: github.ref == 'refs/heads/main'
+        run: npm run security:origin
       - name: Stamp deployed commit
         run: printf '%s\n' "$GITHUB_SHA" > dist/version.txt
       - name: Upload Pages artifact

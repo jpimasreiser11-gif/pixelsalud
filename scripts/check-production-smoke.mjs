@@ -1,4 +1,5 @@
 import { launchReady } from "../src/lib/launch-config.mjs";
+import { missingResponseSecurityHeaders } from "../src/lib/response-security-headers.mjs";
 
 const originInput = process.env.VARINO_PUBLIC_ORIGIN ?? "https://varinoai.me";
 let origin;
@@ -33,21 +34,6 @@ const routes = [
 const errors = [];
 const htmlByRoute = new Map();
 const missingHeaders = new Map();
-
-const requiredResponseHeaders = [
-  ["Strict-Transport-Security", (value) => /max-age=31536000/i.test(value) && /includeSubDomains/i.test(value)],
-  ["Content-Security-Policy", (value) => [
-    /(?:^|;)\s*default-src\s+'self'(?:\s|;|$)/i,
-    /(?:^|;)\s*object-src\s+'none'(?:\s|;|$)/i,
-    /(?:^|;)\s*frame-ancestors\s+'none'(?:\s|;|$)/i,
-  ].every((pattern) => pattern.test(value))],
-  ["X-Content-Type-Options", (value) => /^nosniff$/i.test(value.trim())],
-  ["X-Frame-Options", (value) => /^DENY$/i.test(value.trim())],
-  ["Referrer-Policy", (value) => /^strict-origin-when-cross-origin$/i.test(value.trim())],
-  ["Permissions-Policy", (value) => ["camera=()", "microphone=()", "geolocation=()"]
-    .every((directive) => value.toLowerCase().includes(directive))],
-  ["Cross-Origin-Opener-Policy", (value) => /^same-origin$/i.test(value.trim())],
-];
 
 function attribute(tag, name) {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -87,13 +73,10 @@ for (const route of routes) {
     // hosting-specific config file. A meta CSP is checked below, but cannot
     // replace CSP frame-ancestors or transport/security response headers.
     if (origin.protocol === "https:") {
-      for (const [name, accepts] of requiredResponseHeaders) {
-        const value = response.headers.get(name);
-        if (!value || !accepts(value)) {
-          const routesMissing = missingHeaders.get(name) ?? [];
-          routesMissing.push(route);
-          missingHeaders.set(name, routesMissing);
-        }
+      for (const name of missingResponseSecurityHeaders(response.headers)) {
+        const routesMissing = missingHeaders.get(name) ?? [];
+        routesMissing.push(route);
+        missingHeaders.set(name, routesMissing);
       }
     }
 
