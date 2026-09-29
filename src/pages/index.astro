@@ -13,17 +13,64 @@ const DEMOS = [
 ---
 
 <Base title="Automatización e IA con control" description={SITE.description}>
-  <section data-reveal class="mx-auto max-w-6xl px-6 pb-16 pt-28 sm:pb-24 sm:pt-36">
-    <p class="eyebrow">Automatización e IA para empresas</p>
-    <h1 class="display-title mt-5 max-w-5xl">Menos trabajo repetitivo.<br /><span>Más control para crecer.</span></h1>
-    <p class="mt-7 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">Diseñamos sistemas que conectan procesos, datos e inteligencia artificial. {BACKEND_CHAT ? "Habla con VARINO AI para explorar qué proceso automatizar y cómo empezar." : "Explora la guía interactiva: delimita un proceso y consulta un rango orientativo, sin enviar tus mensajes."} También puedes reservar una llamada y lo vemos juntos.</p>
-    <div class="mt-9 flex flex-wrap items-center gap-3">
-      <a href="#guia-varino" class="button-primary">Explorar mi caso →</a>
-      <a href={`${BASE}/reservar/`} class="button-secondary">Reservar llamada · 30 min</a>
+  <section data-reveal class="hero-shell mx-auto max-w-6xl px-6 pb-16 pt-14 sm:pb-20 sm:pt-20">
+    <div class="grid items-center gap-12 lg:grid-cols-[1.04fr_.96fr] lg:gap-14">
+      <div class="hero-copy">
+        <p class="eyebrow">Automatización e IA para empresas</p>
+        <h1 class="display-title hero-title mt-5">Menos trabajo repetitivo.<br /><span>Más control para crecer.</span></h1>
+        <p class="mt-6 max-w-xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">Diseñamos sistemas que conectan procesos, datos e inteligencia artificial. {BACKEND_CHAT ? "Habla con VARINO AI para explorar qué proceso automatizar y cómo empezar." : "Explora la guía interactiva: delimita un proceso y consulta un rango orientativo, sin enviar tus mensajes."} También puedes reservar una llamada y lo vemos juntos.</p>
+        <div class="mt-8 flex flex-wrap items-center gap-3">
+          <a href="#guia-varino" class="button-primary">Explorar mi caso <span aria-hidden="true">→</span></a>
+          <a href={`${BASE}/reservar/`} class="button-secondary">Reservar llamada · 30 min</a>
+        </div>
+        <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">Automatizaciones desde <strong class="text-[#1d1d1f] dark:text-[#f5f5f7]">950 € + IVA</strong> · alcance e impuestos desglosados antes de aceptar.</p>
+      </div>
+
+      <figure class="hero-visual" aria-labelledby="hero-flow-title">
+        <div class="hero-visual__halo" aria-hidden="true"></div>
+        <div class="hero-board">
+          <div class="hero-board__top">
+            <div class="hero-board__mark" aria-hidden="true">V</div>
+            <div>
+              <p class="hero-board__eyebrow">RECORRIDO ILUSTRATIVO</p>
+              <h2 id="hero-flow-title" class="hero-board__title">Una tarea. Un flujo claro.</h2>
+            </div>
+            <span class="hero-board__badge">EJEMPLO</span>
+          </div>
+
+          <ol class="hero-flow" aria-label="Ejemplo de automatización con control humano">
+            <li class="hero-flow__step">
+              <span class="hero-flow__number">01</span>
+              <span class="hero-flow__copy"><span>Entrada</span><strong>Formulario y correo</strong></span>
+              <span class="hero-flow__icon" aria-hidden="true">↘</span>
+            </li>
+            <li class="hero-flow__step hero-flow__step--accent">
+              <span class="hero-flow__number">02</span>
+              <span class="hero-flow__copy"><span>Organización</span><strong>Reglas e IA asistida</strong></span>
+              <span class="hero-flow__icon" aria-hidden="true">✳</span>
+            </li>
+            <li class="hero-flow__step hero-flow__step--human">
+              <span class="hero-flow__number">03</span>
+              <span class="hero-flow__copy"><span>Decisión</span><strong>Revisión por tu equipo</strong></span>
+              <span class="hero-flow__icon" aria-hidden="true">✓</span>
+            </li>
+            <li class="hero-flow__step">
+              <span class="hero-flow__number">04</span>
+              <span class="hero-flow__copy"><span>Seguimiento</span><strong>CRM actualizado</strong></span>
+              <span class="hero-flow__icon" aria-hidden="true">↗</span>
+            </li>
+          </ol>
+
+          <figcaption class="hero-board__foot">
+            <span class="hero-board__foot-mark" aria-hidden="true">✓</span>
+            <span><strong>La IA prepara. Tu equipo decide.</strong><small>Sin datos de clientes ni sistema desplegado.</small></span>
+          </figcaption>
+        </div>
+      </figure>
     </div>
-    <p class="mt-4 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">Automatizaciones desde <strong class="text-[#1d1d1f] dark:text-[#f5f5f7]">950 € + IVA</strong> · alcance e impuestos desglosados antes de aceptar.</p>
+
     <h2 class="sr-only">Cómo empezamos</h2>
-    <div class="mt-12 grid max-w-3xl gap-3 sm:grid-cols-3">
+    <div class="hero-steps mt-12 grid gap-3 sm:grid-cols-3 lg:mt-10">
       {[
         ['1', 'Cuéntanos tu proceso', BACKEND_CHAT ? 'En la conversación con VARINO AI o en una llamada de 30 min.' : 'En la guía interactiva del navegador o en una llamada de 30 min.'],
         ['2', 'Recibe mapa y rango', 'Documentamos el proceso y cerramos alcance y precio.'],
@@ -121,3 +168,226 @@ const DEMOS = [
 
   <Cta titulo="Cuéntanos dónde se atasca el trabajo." texto="Puedes explorar tu caso sin identificarte. Una persona revisará alcance, seguridad y precio antes de cualquier implementación." />
 </Base>
+
+<style>
+  .hero-title {
+    max-width: 12ch;
+    font-size: clamp(3.15rem, 6.1vw, 5.85rem);
+    line-height: .98;
+    letter-spacing: -.067em;
+  }
+
+  .hero-visual {
+    position: relative;
+    isolation: isolate;
+    margin: 0;
+  }
+
+  .hero-visual__halo {
+    position: absolute;
+    z-index: -1;
+    inset: 8% 4% 4% 12%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgb(101 92 255 / .2), rgb(0 113 227 / .08) 45%, transparent 72%);
+    filter: blur(28px);
+  }
+
+  .hero-board {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / .12);
+    border-radius: 2rem;
+    padding: clamp(1rem, 2.4vw, 1.55rem);
+    color: #f5f5f7;
+    background:
+      radial-gradient(ellipse at 88% 0%, rgb(101 92 255 / .22), transparent 42%),
+      linear-gradient(145deg, #171923, #0d1018 62%, #11131b);
+    box-shadow: 0 32px 90px rgb(17 19 24 / .2), 0 2px 8px rgb(17 19 24 / .12), inset 0 1px rgb(255 255 255 / .1);
+    transform: perspective(1200px) rotateY(-3deg) rotateX(1.5deg);
+    transform-origin: center;
+    transition: transform 260ms cubic-bezier(.23, 1, .32, 1), box-shadow 260ms ease-out;
+  }
+
+  .hero-board::before {
+    position: absolute;
+    top: 0;
+    right: 9%;
+    left: 9%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / .35), transparent);
+    content: "";
+  }
+
+  .hero-board__top {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid rgb(255 255 255 / .1);
+  }
+
+  .hero-board__mark {
+    display: grid;
+    width: 2.8rem;
+    height: 2.8rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / .16);
+    border-radius: 1rem;
+    background: linear-gradient(145deg, #7168ff, #315bea);
+    box-shadow: 0 8px 24px rgb(63 89 255 / .28), inset 0 1px rgb(255 255 255 / .3);
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -.08em;
+  }
+
+  .hero-board__eyebrow {
+    color: #a9a3ff;
+    font-size: .58rem;
+    font-weight: 750;
+    letter-spacing: .15em;
+  }
+
+  .hero-board__title {
+    margin-top: .25rem;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 650;
+    letter-spacing: -.035em;
+  }
+
+  .hero-board__badge {
+    margin-left: auto;
+    border: 1px solid rgb(255 255 255 / .14);
+    border-radius: 999px;
+    padding: .4rem .62rem;
+    color: #d5d4ff;
+    background: rgb(255 255 255 / .06);
+    font-size: .55rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+  }
+
+  .hero-flow {
+    position: relative;
+    display: grid;
+    gap: .5rem;
+    margin: .95rem 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hero-flow::before {
+    position: absolute;
+    top: 2.1rem;
+    bottom: 2.1rem;
+    left: 1.25rem;
+    width: 1px;
+    background: linear-gradient(180deg, rgb(124 196 253 / .25), rgb(155 149 255 / .75), rgb(124 196 253 / .25));
+    content: "";
+  }
+
+  .hero-flow__step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.55rem minmax(0, 1fr) 2.1rem;
+    align-items: center;
+    gap: .75rem;
+    min-height: 3.9rem;
+    border: 1px solid rgb(255 255 255 / .1);
+    border-radius: 1.2rem;
+    padding: .6rem .85rem .6rem .6rem;
+    background: linear-gradient(110deg, rgb(255 255 255 / .08), rgb(255 255 255 / .035));
+    box-shadow: inset 0 1px rgb(255 255 255 / .045);
+  }
+
+  .hero-flow__number {
+    display: grid;
+    width: 2.55rem;
+    height: 2.55rem;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / .12);
+    border-radius: .85rem;
+    color: #c2c0ff;
+    background: #1c2030;
+    font-size: .65rem;
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero-flow__copy { display: grid; gap: .15rem; }
+  .hero-flow__copy > span { color: #a1a1a6; font-size: .67rem; }
+  .hero-flow__copy strong { color: #f5f5f7; font-size: .83rem; font-weight: 600; }
+
+  .hero-flow__icon {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border-radius: .7rem;
+    color: #a1caff;
+    background: rgb(0 113 227 / .12);
+    font-size: .92rem;
+  }
+
+  .hero-flow__step--accent {
+    border-color: rgb(155 149 255 / .28);
+    background: linear-gradient(110deg, rgb(101 92 255 / .18), rgb(255 255 255 / .035));
+  }
+
+  .hero-flow__step--accent .hero-flow__number,
+  .hero-flow__step--accent .hero-flow__icon {
+    color: #d4d1ff;
+    background: rgb(101 92 255 / .2);
+  }
+
+  .hero-flow__step--human {
+    border-color: rgb(124 196 253 / .24);
+    background: linear-gradient(110deg, rgb(0 113 227 / .13), rgb(255 255 255 / .035));
+  }
+
+  .hero-flow__step--human .hero-flow__icon {
+    color: #b9dffe;
+    background: rgb(0 113 227 / .2);
+  }
+
+  .hero-board__foot {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    border-top: 1px solid rgb(255 255 255 / .1);
+    padding-top: .8rem;
+  }
+
+  .hero-board__foot-mark {
+    display: grid;
+    width: 1.65rem;
+    height: 1.65rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    color: #a9a3ff;
+    background: rgb(101 92 255 / .16);
+    font-size: .72rem;
+  }
+
+  .hero-board__foot strong,
+  .hero-board__foot small { display: block; }
+  .hero-board__foot strong { font-size: .73rem; font-weight: 650; }
+  .hero-board__foot small { margin-top: .15rem; color: #a1a1a6; font-size: .62rem; line-height: 1.45; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .hero-board:hover {
+      box-shadow: 0 38px 100px rgb(17 19 24 / .25), 0 2px 8px rgb(17 19 24 / .12), inset 0 1px rgb(255 255 255 / .1);
+      transform: perspective(1200px) rotateY(-1deg) rotateX(0deg) translateY(-3px);
+    }
+  }
+
+  @media (max-width: 639px) {
+    .hero-title { max-width: 11ch; font-size: clamp(3.1rem, 13vw, 4.25rem); }
+    .hero-board { border-radius: 1.55rem; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-board { transform: none; transition: none; }
+  }
+</style>
