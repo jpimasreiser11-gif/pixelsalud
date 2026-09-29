@@ -40,6 +40,8 @@ jobs:
         run: npm run test:unit
       - name: Pages Functions typecheck and bundle
         run: npm run functions:typecheck && npm run functions:build
+      - name: Cloudflare Pages runtime smoke (local only)
+        run: npm run test:pages-runtime
       - name: D1 schema isolation tests (local only)
         run: npm run test:d1
       - name: Auth/workspace runtime tests (local only)
