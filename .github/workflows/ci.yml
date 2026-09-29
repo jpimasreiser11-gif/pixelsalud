@@ -2,7 +2,7 @@ name: Verify VARINO
 
 on:
   pull_request:
-    branches: [main]
+    # No filtrar por rama base: las PR apiladas también deben validar.
   push:
     branches: [main]
 
