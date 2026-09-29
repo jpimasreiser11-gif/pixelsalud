@@ -25,7 +25,8 @@ test("la guía responde y convierte la conversación en arquitectura", async ({ 
   await expect(page.getByText(/quieres ordenar un proceso sensible/i)).toBeVisible();
   await expect(page.getByText(/quién debe aprobar/i)).toBeVisible();
   await expect(guide.locator("[data-service]")).toHaveText("IA privada");
-  await expect(guide.locator("[data-guide-status]")).toHaveText("Modelo local · qwen3.6:27b");
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Respuesta asistida");
+  await expect(guide.locator("[data-guide-status]")).not.toContainText(/modelo local|qwen|ollama/i);
   await expect(guide.getByText("50.5")).toBeVisible();
   await expect(guide.locator("[data-maintenance-hours]")).toHaveText("6 h/mes");
   await expect(guide.locator("[data-budget-monthly]")).toHaveCount(0);
@@ -58,10 +59,10 @@ test("la guía no afirma que Ollama funciona si el endpoint responde sin modelo"
   const guide = page.locator("[data-ai-guide]");
   const answer = guide.getByLabel("Escribe tu mensaje");
 
-  await expect(guide.locator("[data-guide-status]")).toHaveText("Modelo local: se comprueba al responder");
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía lista");
   await answer.fill("Somos una clínica y queremos ordenar documentos sensibles");
   await answer.press("Enter");
-  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía base · respuesta por reglas");
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Orientación inicial");
   await expect(guide.locator(".ai-message--assistant").last()).toContainText(/Entiendo:/i);
 });
 
@@ -81,8 +82,8 @@ test("un saludo no etiqueta como inferencia un modelo que estaba disponible pero
   await answer.fill("Hola");
   await answer.press("Enter");
   await expect(guide.locator(".ai-message--assistant").last()).toContainText("¡Hola!");
-  await expect(guide.locator("[data-guide-status]")).toHaveText("Respuesta instantánea · sin inferencia");
-  await expect(guide.locator("[data-guide-status]")).not.toContainText(/qwen/i);
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Respuesta inmediata");
+  await expect(guide.locator("[data-guide-status]")).not.toContainText(/qwen|modelo local|ollama/i);
 });
 
 // La web publicada es estática: no existe /api/guide. Esta prueba simula esa
@@ -97,8 +98,8 @@ test("la guía sigue funcionando sin servidor, como en la web publicada", async 
   await answer.fill("Tenemos una clínica dental y perdemos citas");
   await answer.press("Enter");
   await expect(guide.locator("[data-service]")).toHaveText("IA privada");
-  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía base · conexión local no disponible");
-  await expect(guide.locator("[data-guide-status]")).not.toContainText(/modelo local activo/i);
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía de respaldo");
+  await expect(guide.locator("[data-guide-status]")).not.toContainText(/modelo local|ollama|conexión local/i);
 
   await answer.fill("Se nos pierden las solicitudes que llegan por WhatsApp");
   await answer.press("Enter");
@@ -124,7 +125,7 @@ test("un primer mensaje libre reconoce el sector y el problema sin pedirlos otra
   await expect(guide.locator(".ai-message--assistant").last()).toContainText(/cómo realizáis ahora ese proceso/i);
   await expect(guide.locator(".ai-message--assistant").last()).not.toContainText(/a qué se dedica tu empresa|qué sector/i);
   await expect(guide.locator("[data-service]")).toHaveText("IA privada");
-  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía base · conexión local no disponible");
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía de respaldo");
 });
 
 test("un primer mensaje que ya incluye la tarea y el proceso avanza a la siguiente pregunta", async ({ page }) => {

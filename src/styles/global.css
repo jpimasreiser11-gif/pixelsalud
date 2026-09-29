@@ -107,6 +107,15 @@ body {
 .dark [class~="text-[#005bb5]"] { color: #a1caff; }
 .dark [class~="text-[#3a3a3c]"] { color: #d1d1d6; }
 
+/* Evita contrastes transitorios al cambiar de tema en enlaces pequeños del pie. */
+.site-footer a {
+  color: #6e6e73;
+  transition-property: background-color, text-decoration-color;
+}
+.site-footer a:hover { color: #1d1d1f; }
+.dark .site-footer a { color: #a1a1a6; }
+.dark .site-footer a:hover { color: #fff; }
+
 :is(
   [class~="bg-[#0a0d14]"],
   [class~="bg-[#080b12]"],

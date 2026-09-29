@@ -13,7 +13,7 @@ const hasLocalGuideApi = import.meta.env.DEV;
       <p class="eyebrow">Definición guiada</p>
       <h2>De una tarea repetitiva a un sistema claro.</h2>
     </div>
-    <p class="ai-guide__promise"><span><i></i>{hasLocalGuideApi ? "Modelo local · entorno de desarrollo" : "Procesado en este navegador"}</span>Responde unas preguntas para delimitar el proceso. La guía organiza lo que indiques, muestra un flujo y calcula un rango orientativo; una persona confirma el alcance antes de cualquier propuesta.</p>
+    <p class="ai-guide__promise"><span><i></i>Guía de proyecto · orientación inicial</span>Cuéntanos cómo trabajáis hoy. La guía convierte tus respuestas en un flujo y un rango orientativo; una persona revisa el alcance antes de cualquier propuesta.</p>
   </div>
 
   <div class="ai-studio">
@@ -21,7 +21,7 @@ const hasLocalGuideApi = import.meta.env.DEV;
       <header class="ai-chat__topbar">
         <div class="ai-orb" aria-hidden="true"><span></span></div>
         <div><strong>VARINO Guide</strong><small>Guía de alcance y estimación</small></div>
-        <span class="ai-chat__local" data-guide-status>{hasLocalGuideApi ? "Modelo local: se comprueba al responder" : "Guía interactiva en navegador"}</span>
+        <span class="ai-chat__local" data-guide-status aria-live="polite" aria-atomic="true">Guía lista</span>
       </header>
       <div class="ai-chat__messages" data-guide-messages aria-live="polite">
         <div class="ai-message ai-message--assistant"><p>Hola, soy VARINO Guide. Cuéntame a qué se dedica tu empresa y qué te gustaría mejorar. Con tus respuestas dibujaré el sistema y un rango de horas y precio.</p></div>
@@ -95,8 +95,8 @@ const hasLocalGuideApi = import.meta.env.DEV;
     const budget = root.querySelector("[data-budget]");
     const base = root.dataset.base || "";
     const hasLocalGuideApi = root.dataset.localGuideApi === "true";
-    const browserStatus = "Guía interactiva en navegador";
-    const idleStatus = hasLocalGuideApi ? "Modelo local: se comprueba al responder" : browserStatus;
+    const browserStatus = "Guía lista";
+    const idleStatus = browserStatus;
     let conversation = [];
     let profile = {};
 
@@ -200,7 +200,7 @@ const hasLocalGuideApi = import.meta.env.DEV;
       input.disabled = submit.disabled = true;
       status.textContent = "Analizando";
       const pending = appendMessage("Estoy analizando tu respuesta…", "assistant", true);
-      let statusLabel = hasLocalGuideApi ? "Guía base · sin modelo local" : browserStatus;
+      let statusLabel = hasLocalGuideApi ? "Preparando orientación" : browserStatus;
       try {
         // El motor local siempre produce una respuesta completa. El modelo,
         // cuando está disponible, solo mejora la redacción.
@@ -215,14 +215,14 @@ const hasLocalGuideApi = import.meta.env.DEV;
             const data = await response.json();
             if (response.ok && data.profile) {
               result = data;
-              statusLabel = data.replySource === "model" && data.model
-                ? `Modelo local · ${data.model}`
+              statusLabel = data.replySource === "model" && data.modelInvoked
+                ? "Respuesta asistida"
                 : data.stage === "welcome"
-                  ? "Respuesta instantánea · sin inferencia"
-                  : "Guía base · respuesta por reglas";
+                  ? "Respuesta inmediata"
+                  : "Orientación inicial";
             }
           } catch {
-            statusLabel = "Guía base · conexión local no disponible";
+            statusLabel = "Guía de respaldo";
           }
         }
         pending.remove();
