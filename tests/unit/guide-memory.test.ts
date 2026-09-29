@@ -39,9 +39,29 @@ describe("motor de VARINO Guide", () => {
   it("responde al saludo sin repetir la pregunta inicial ni inventar presupuesto", () => {
     const result = advise({ messages: [{ role: "user", content: "hola" }] });
     expect(result.stage).toBe("welcome");
+    expect(result.replySource).toBe("rules");
     expect(result.estimate).toBeNull();
     expect(result.reply).toMatch(/^¡Hola!/i);
     expect(result.nextQuestion).toBe("");
+  });
+
+  it("marca como modelo solo una redacción útil que realmente aparece en la respuesta", () => {
+    const modelReply = "El proceso que describes está claro: una persona copia las solicitudes en Excel y redacta cada respuesta manualmente. La revisión final del equipo puede seguir siendo el punto de aprobación.";
+    const result = advise({
+      profile: {
+        business: "asesoría",
+        problem: "el registro manual de solicitudes",
+        process: "Una persona copia solicitudes en Excel y responde a mano.",
+      },
+      messages: [
+        { role: "assistant", content: "¿Qué herramientas intervienen?" },
+        { role: "user", content: "Usamos Excel y una persona revisa cada respuesta." },
+      ],
+      modelReply,
+    });
+
+    expect(result.reply).toBe(modelReply);
+    expect(result.replySource).toBe("model");
   });
 
   it("extrae negocio y problema del primer mensaje sustantivo después de un saludo", () => {
@@ -77,6 +97,21 @@ describe("motor de VARINO Guide", () => {
     expect(result.profile.process).toBe("");
     expect(result.profile.approvals).toBe("");
     expect(result.nextQuestion).toMatch(/c[oó]mo realiz[aá]is ahora ese proceso/i);
+  });
+
+  it("no vuelve a preguntar por el problema si ya describieron una tarea y su objetivo", () => {
+    const result = advise({
+      messages: [{
+        role: "user",
+        content: "Caso ficticio: una tienda de bicicletas recibe consultas de stock por email. Una persona copia cada solicitud a una hoja y comprueba existencias antes de responder. Queremos clasificar las consultas y preparar respuestas para revisión humana, sin envío automático.",
+      }],
+      modelReply: "Entendido, puedo ayudarte a ordenar esas consultas y preparar borradores para revisión humana.",
+    });
+
+    expect(result.profile.sector).toBe("comercio y ecommerce");
+    expect(result.profile.problem).toMatch(/clasificar las consultas/i);
+    expect(result.profile.process).toMatch(/copia cada solicitud/i);
+    expect(result.nextQuestion).not.toMatch(/qu[eé] tarea, problema o cuello de botella/i);
   });
 
   it("extrae datos adicionales explícitos mientras conserva la respuesta al proceso", () => {

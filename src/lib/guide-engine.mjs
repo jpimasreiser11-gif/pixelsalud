@@ -142,7 +142,7 @@ function explicitGoal(answer) {
 }
 
 function explicitProblem(answer) {
-  const match = answer.match(/\b(?:perdemos|pierdo|tardamos|se nos va|se me va|se pierden|se nos pierden|nos cuesta|me cuesta|no (?:conseguimos|podemos|llegamos|contestamos|respondemos)|queremos mejorar|quiero mejorar|necesitamos mejorar|necesito mejorar|queremos automatizar|quiero automatizar|necesitamos automatizar|necesito automatizar|me gustar[ií]a automatizar|nos gustar[ií]a automatizar|tenemos (?:un )?problema(?:s)?|hay un problema|problema con)\b[^.!?;]*/i);
+  const match = answer.match(/\b(?:perdemos|pierdo|tardamos|se nos va|se me va|se pierden|se nos pierden|nos cuesta|me cuesta|no (?:conseguimos|podemos|llegamos|contestamos|respondemos)|(?:queremos|quiero|necesitamos|necesito|buscamos|me gustar[ií]a|nos gustar[ií]a)\s+(?:mejorar|clasificar|ordenar|organizar|gestionar|centralizar|registrar|digitalizar|automatizar|reducir|disminuir|aumentar|ahorrar|eliminar|evitar)|tenemos (?:un )?problema(?:s)?|hay un problema|problema con)\b[^.!?;]*/i);
   return match ? clampText(match[0], 300) : "";
 }
 
@@ -159,8 +159,8 @@ function explicitProcess(answer) {
   const sentence = answer.split(/(?<=[.!?;])\s+/).find((part) =>
     /\b(?:entra|entran|llega|llegan|recibimos|reciben)\b[^.!?;]*\b(?:registramos|registran|anotamos|apuntamos|copiamos|guardamos)\b[^.!?;]*\b(?:respondemos|responden|revisamos|revisan|enviamos|env[ií]an)\b/i.test(part)
     || /\b(?:entra|entran|llega|llegan|recibimos|reciben)\b[^.!?;]*\b(?:registramos|registran|anotamos|apuntamos|copiamos|guardamos|apunta|anota|copia|registra)\b/i.test(part)
-    || /\b(?:copia|copian|copiamos|traslada|pasa|apunta|anota|registra|guarda)\b[^.!?;]*\b(?:excel|hoja|crm|sistema|registro|agenda)\b[^.!?;]*\b(?:confirma|responde|revisa|env[ií]a|contacta|actualiza)\b/i.test(part)
-    || /\b(?:recepci[oó]n|administraci[oó]n|equipo|persona|alguien)\b[^.!?;]*\b(?:copia|copian|copiamos|traslada|pasa|apunta|anota|registra|guarda)\b[^.!?;]*\b(?:excel|hoja|crm|sistema|registro|agenda)\b[^.!?;]*\b(?:confirma|responde|revisa|env[ií]a|contacta|actualiza)\b/i.test(part)
+    || /\b(?:copia|copian|copiamos|traslada|pasa|apunta|anota|registra|guarda)\b[^.!?;]*\b(?:excel|hoja|crm|sistema|registro|agenda)\b[^.!?;]*\b(?:comprueba|comprueban|compruebo|comprobar|verifica|verifican|verificar|valida|validan|validar|confirma|responde|revisa|env[ií]a|contacta|actualiza)\b/i.test(part)
+    || /\b(?:recepci[oó]n|administraci[oó]n|equipo|persona|alguien)\b[^.!?;]*\b(?:copia|copian|copiamos|traslada|pasa|apunta|anota|registra|guarda)\b[^.!?;]*\b(?:excel|hoja|crm|sistema|registro|agenda)\b[^.!?;]*\b(?:comprueba|comprueban|compruebo|comprobar|verifica|verifican|verificar|valida|validan|validar|confirma|responde|revisa|env[ií]a|contacta|actualiza)\b/i.test(part)
     || /\b(?:primero|despu[eé]s|luego|al final)\b[^.!?;]*\b(?:copia|copian|traslada|pasa|apunta|anota|registra|guarda|confirma|responde|revisa|env[ií]a|actualiza)\b/i.test(part),
   );
   return clampText(sentence || "", 500);
@@ -499,17 +499,28 @@ function isWeak(reply, service, allowRecommendation = true) {
   return others.some((name) => new RegExp(name, "i").test(reply));
 }
 
-export function consultativeReply({ profile, filledField, modelReply, service }) {
+function consultativeResponse({ profile, filledField, modelReply, service }) {
   const cleaned = cleanReply(modelReply);
   const recommendationReady = Boolean(profile.business && profile.problem && profile.process);
-  if (cleaned && !isWeak(cleaned, service, recommendationReady)) return cleaned;
+  if (cleaned && !isWeak(cleaned, service, recommendationReady)) {
+    return { reply: cleaned, source: "model" };
+  }
   const value = filledField ? clampText(profile[filledField], 180).replace(/[.!?;,\s]+$/, "") : "";
   const acknowledgement = value && ACKNOWLEDGEMENT[filledField]
     ? ACKNOWLEDGEMENT[filledField](value)
     : "Anotado, lo incorporo al mapa del sistema.";
-  if (!(profile.business && profile.problem && profile.process)) return acknowledgement;
+  if (!(profile.business && profile.problem && profile.process)) {
+    return { reply: acknowledgement, source: "rules" };
+  }
   const recap = filledField === "process" ? processRecap(profile) : "";
-  return `${acknowledgement} ${recap} ${RATIONALE[service.slug]}`.replace(/\s+/g, " ").trim();
+  return {
+    reply: `${acknowledgement} ${recap} ${RATIONALE[service.slug]}`.replace(/\s+/g, " ").trim(),
+    source: "rules",
+  };
+}
+
+export function consultativeReply(options) {
+  return consultativeResponse(options).reply;
 }
 
 export function hardwareFor(profile, documentCount = 0) {
@@ -552,6 +563,7 @@ export function advise({ messages = [], profile: previousProfile = {}, modelRepl
     const copy = welcomeCopy(messages, known);
     return {
       reply: copy.reply,
+      replySource: "rules",
       nextQuestion: copy.nextQuestion,
       stage: "welcome",
       profile: known,
@@ -577,8 +589,10 @@ export function advise({ messages = [], profile: previousProfile = {}, modelRepl
   const stage = stageFor(profile);
   const quoteReady = Boolean(profile.problem && (profile.business || profile.sector) && profile.process);
   const lastAssistantQuestion = lastOf(messages, "assistant");
+  const response = consultativeResponse({ profile, filledField, modelReply, service });
   return {
-    reply: consultativeReply({ profile, filledField, modelReply, service }),
+    reply: response.reply,
+    replySource: response.source,
     nextQuestion: nextUsefulQuestion(profile, fieldFromQuestion(lastAssistantQuestion), lastAssistantQuestion),
     stage,
     profile,

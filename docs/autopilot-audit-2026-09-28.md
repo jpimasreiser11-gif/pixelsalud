@@ -197,3 +197,33 @@ integraciones reales.
   Telegram, cambios DNS, activaciones, fusiones ni despliegues. La conexión de
   Sheets sigue esperando aprobación del propietario y posterior consentimiento
   OAuth en Google.
+
+## Revalidación de integración y prelanzamiento — 30-09-2026
+
+- En la rama candidata del PR #14 se integró la rama de prelanzamiento #13
+  para resolver cuatro conflictos de CI, layout, estilos y pruebas de la guía.
+  La resolución conserva las correcciones de prelanzamiento y los tests nuevos
+  de autenticación/Pages Functions. Esta integración de ramas no fusiona la PR
+  ni publica la web.
+- Después de integrar, pasaron `npm run readiness` (39 páginas, SEO, enlaces,
+  sintaxis, CSP y gate local), `npm run test:unit` (62/62), `npm run test:d1`,
+  `npm run test:auth-runtime`, `npm run test:pages-runtime`,
+  `npm run functions:typecheck`, `npm run functions:build`,
+  `npm run claims:check` y `npm audit --audit-level=moderate` (0 vulnerabilidades).
+- E2E con servidores aislados en puertos 4467/4468: 240 pasadas y 2 omitidas;
+  incluye navegador de escritorio/móvil, páginas estáticas, estados legales,
+  controles de privacidad y accesibilidad axe. Los 2 omitidos están declarados
+  en la suite y no se cuentan como aprobados.
+- La E2E usó datos sintéticos y mocks de APIs; no constituye un login Google,
+  una integración real con D1 remoto, n8n, CRM ni envío. n8n local sigue con 17
+  workflows, 0 activos, 0 credenciales y 0 ejecuciones.
+- El smoke de solo lectura vuelve a observar `d824d2cc8afb1d3711c943b94daa66230053567d`
+  en `varinoai.me` y falla con 54 problemas en 11 páginas; `security:origin`
+  constata 7 cabeceras HTTP ausentes. La web pública no ha recibido los cambios
+  de esta rama.
+- `npm run launch:check` sigue bloqueado: falta la revisión OEPM/EUIPO,
+  `legalOwner`, NIF, domicilio y las aprobaciones legales/de seguridad. No
+  fusionar/desplegar ni dirigir anuncios mientras siga así.
+- La pantalla de credenciales de n8n permanece vacía. Sheets OAuth requiere
+  autorización explícita y consentimiento del usuario en Google; no se
+  escribieron datos ni se enviaron correos durante esta revalidación.

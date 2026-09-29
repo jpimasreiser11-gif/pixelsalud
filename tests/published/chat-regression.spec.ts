@@ -9,7 +9,7 @@ test('la guía ofrece una ruta real y no presenta una ventana desconectada como 
   await page.goto('/');
   await expect(page.locator('[data-aichat]')).toHaveCount(0);
   await expect(page.locator('[data-aichat-offline]')).toHaveCount(0);
-  await expect(page.getByText('Guía interactiva en navegador')).toBeVisible();
+  await expect(page.getByText('Guía lista')).toBeVisible();
 
   if (testInfo.project.use.isMobile) {
     const floatingEntry = page.locator('.aichat-guide-entry');
@@ -30,7 +30,7 @@ test('la guía ofrece una ruta real y no presenta una ventana desconectada como 
   await input.fill('hola');
   await guide.locator('[data-guide-form] button').click();
   await expect(guide.locator('[data-guide-messages]')).toContainText('¡Hola! Claro, estoy aquí.');
-  await expect(guide.locator('[data-guide-status]')).toHaveText('Guía interactiva en navegador');
+  await expect(guide.locator('[data-guide-status]')).toHaveText('Guía lista');
   expect(await page.evaluate(() => localStorage.length)).toBe(0);
   expect(backendRequests).toEqual([]);
 

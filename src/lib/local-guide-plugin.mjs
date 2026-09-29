@@ -132,6 +132,10 @@ export function buildModelRequest(model, messages, profile) {
   };
 }
 
+export function shouldCallModel(model, messages) {
+  return Boolean(model) && !isGreeting(messages.at(-1)?.content);
+}
+
 async function askModel(model, messages, profile) {
   const response = await fetch(`${OLLAMA_URL}/api/chat`, {
     method: "POST",
@@ -159,12 +163,13 @@ export function createLocalGuidePlugin() {
           const previousProfile = normalizeProfile(body.profile || {});
           const documentCount = Number(body.documentCount) || 0;
           const model = await selectModel();
+          const modelInvoked = shouldCallModel(model, messages);
 
           let modelReply = "";
           let modelError = "";
           // Los saludos tienen una respuesta fija y no requieren inferencia:
           // evitamos que un “hola” tarde lo mismo que un diagnóstico.
-          if (model && !isGreeting(messages.at(-1)?.content)) {
+          if (modelInvoked) {
             try {
               const answer = await askModel(model, messages, previousProfile);
               modelReply = answer.reply;
@@ -175,7 +180,12 @@ export function createLocalGuidePlugin() {
 
           // El motor responde igual sin modelo: el modelo solo redacta.
           const result = advise({ messages, profile: previousProfile, modelReply, documentCount });
-          send(res, 200, { ...result, model: model || null, modelError: modelError || undefined });
+          send(res, 200, {
+            ...result,
+            model: model || null,
+            modelInvoked,
+            modelError: modelError || undefined,
+          });
         } catch (error) {
           const status = error.message === "payload_too_large"
             ? 413
