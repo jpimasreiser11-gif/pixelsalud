@@ -1,13 +1,23 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const devPort = Number(process.env.VARINO_E2E_PORT ?? "4321");
-if (!Number.isInteger(devPort) || devPort < 1024 || devPort > 65535) {
-  throw new Error("VARINO_E2E_PORT must be an integer between 1024 and 65535");
+function getPort(name: string, fallback: number): number {
+  const configured = process.env[name];
+  if (!configured) return fallback;
+  const port = Number(configured);
+  if (!Number.isInteger(port) || port < 1024 || port > 65535) {
+    throw new Error(`${name} must be an integer between 1024 and 65535`);
+  }
+  return port;
 }
-const DEV_URL = `http://localhost:${devPort}`;
+
+const DEV_PORT = getPort("VARINO_E2E_PORT", 4321);
+const PUBLISHED_PORT = getPort("VARINO_E2E_PUBLISHED_PORT", 4456);
+const DEV_URL = `http://localhost:${DEV_PORT}`;
+const DEV_HOST = new URL(DEV_URL).hostname;
 // Puerto propio para el build estático: no puede compartirlo con el servidor de
-// desarrollo porque las dos pruebas corren a la vez.
-const PUBLISHED_URL = "http://localhost:4456/";
+// desarrollo porque las dos pruebas corren a la vez. Los puertos se pueden
+// aislar por proceso para no reutilizar accidentalmente otra preview local.
+const PUBLISHED_URL = `http://localhost:${PUBLISHED_PORT}/`;
 
 export default defineConfig({
   testDir: "tests",
@@ -19,20 +29,20 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: `npm run dev -- --port ${devPort}`,
+      command: `ASTRO_DEV_BACKGROUND=false npx astro dev --host ${DEV_HOST} --port ${DEV_PORT} --strictPort --ignore-lock`,
       // Comprobar la URL real, no solo el puerto: así detecta el servidor
       // existente exactamente por donde luego navegan las pruebas.
       url: `${DEV_URL}/`,
-      reuseExistingServer: true,
+      reuseExistingServer: process.env.PLAYWRIGHT_REUSE_EXISTING_SERVER === "true",
       timeout: 60_000,
     },
     {
       // El artefacto publicado, servido como lo sirve GitHub Pages: sin
       // cabeceras de seguridad. `astro preview` sí las manda, y eso escondía
       // que en producción la única CSP es el <meta> del HTML.
-      command: "GITHUB_ACTIONS=true npm run build && node scripts/serve-dist.mjs --port 4456",
+      command: `GITHUB_ACTIONS=true npm run build && node scripts/serve-dist.mjs --port ${PUBLISHED_PORT}`,
       url: PUBLISHED_URL,
-      reuseExistingServer: true,
+      reuseExistingServer: process.env.PLAYWRIGHT_REUSE_EXISTING_SERVER === "true",
       timeout: 120_000,
     },
   ],

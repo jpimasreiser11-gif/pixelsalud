@@ -48,3 +48,24 @@ test('el acceso a la guía no cubre contenido en páginas móviles', async ({ pa
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(await page.evaluate(() => window.innerWidth));
   }
 });
+
+test('responde primero a una pregunta sobre servicios y precios, sin inventar un diagnóstico', async ({ page }) => {
+  await page.route('**/api/guide', route => route.abort());
+  await page.goto('/');
+  const guide = page.locator('[data-ai-guide]');
+  const answer = guide.getByLabel('Escribe tu mensaje');
+  await answer.fill('Quiero saber qué servicios ofrecéis y cuánto cuestan.');
+  await answer.press('Enter');
+
+  const response = guide.locator('.ai-message--assistant').last();
+  await expect(response).toContainText('Automation Sprint');
+  await expect(response).toContainText('950–1.900 € + IVA');
+  await expect(response).toContainText('Sistema de crecimiento');
+  await expect(response).toContainText('2.500–6.000 € + IVA');
+  await expect(response).toContainText('IA privada');
+  await expect(response).toContainText('Care 149 €/mes');
+  await expect(response).toContainText(/tarea repetitiva o cuello de botella/i);
+  await expect(response).not.toContainText(/el sistema calcula automáticamente/i);
+  await expect(guide.getByRole('link', { name: 'Ver todos los servicios' })).toHaveAttribute('href', '/servicios/');
+  await expect(guide.locator('[data-budget]')).toBeHidden();
+});

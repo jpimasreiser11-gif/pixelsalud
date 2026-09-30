@@ -55,7 +55,7 @@ const hasLocalGuideApi = import.meta.env.DEV;
         <span>Estimación inicial transparente</span>
         <div class="ai-budget__grid">
           <p><strong data-budget-hours>—</strong><small>horas con margen</small></p>
-          <p><strong data-budget-range>—</strong><small>rango sin IVA</small></p>
+          <p><strong data-budget-range>—</strong><small data-budget-range-label>rango orientativo · sin IVA</small></p>
           <p><strong data-maintenance-hours>—</strong><small>horas de operación estimadas</small></p>
         </div>
         <p class="ai-budget__note" data-budget-note>Rango orientativo sin IVA. Las horas de operación no son una cuota: el mantenimiento es opcional y se contrata con uno de los planes publicados.</p>
@@ -77,7 +77,7 @@ const hasLocalGuideApi = import.meta.env.DEV;
 
   const stageNames = { welcome: "BIENVENIDA", discovery: "DESCUBRIMIENTO", process: "PROCESO", requirements: "REQUISITOS", architecture: "ARQUITECTURA", estimate: "ESTIMACIÓN" };
   const activeNodes = { welcome: 1, discovery: 1, process: 2, requirements: 3, architecture: 4, estimate: 4 };
-  const money = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+  const money = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0, useGrouping: "always" });
   const rationale = {
     "ia-privada": "Datos aislados, permisos explícitos y aprobación humana antes de cualquier acción sensible.",
     "sistema-crecimiento": "Captura, cualificación y seguimiento medibles, sin automatizar decisiones que necesiten criterio humano.",
@@ -132,7 +132,13 @@ const hasLocalGuideApi = import.meta.env.DEV;
       const count = activeNodes[data.stage] || 1;
       root.querySelectorAll(".ai-blueprint article").forEach((card, index) => card.classList.toggle("is-active", index < count));
 
-      if (data.service) {
+      if (data.catalog) {
+        setText("[data-service]", "Explora los servicios VARINO");
+        setText("[data-reason]", "Elige entre automatización de operaciones, crecimiento conectado o IA privada; confirmamos el encaje después de conocer el proceso.");
+        const link = root.querySelector("[data-service-link]");
+        link.href = `${base}/servicios/`;
+        setText("[data-service-link-label]", "Ver todos los servicios");
+      } else if (data.service) {
         setText("[data-service]", data.service.name);
         setText("[data-reason]", rationale[data.service.slug]);
         const link = root.querySelector("[data-service-link]");
@@ -143,11 +149,18 @@ const hasLocalGuideApi = import.meta.env.DEV;
       if (data.estimate) {
         budget.hidden = false;
         setText("[data-budget-hours]", String(data.estimate.quotedHours));
-        setText("[data-budget-range]", `${money.format(data.estimate.range.min)}–${money.format(data.estimate.range.max)}`);
+        setText("[data-budget-range]", data.estimate.minimumOnly
+          ? `Desde ${money.format(data.estimate.range.min)}`
+          : `${money.format(data.estimate.range.min)}–${money.format(data.estimate.range.max)}`);
+        setText("[data-budget-range-label]", data.estimate.minimumOnly
+          ? "mínimo publicado · sin IVA"
+          : "rango orientativo · sin IVA");
         setText("[data-maintenance-hours]", `${data.estimate.maintenanceHours} h/mes`);
         setText("[data-budget-note]", data.estimate.exceedsPackage
           ? "El caso supera los límites del paquete publicado y requiere propuesta personalizada. Las horas de operación son una estimación, no una cuota; el mantenimiento es opcional y se contrata aparte."
-          : "Rango del proyecto orientativo y sin IVA. Las horas de operación no son una cuota: el mantenimiento es opcional y se contrata con uno de los planes publicados.");
+          : data.estimate.minimumOnly
+            ? "El importe mostrado es el mínimo publicado, no un precio cerrado. La propuesta dependerá del proceso, los datos, las integraciones, las pruebas y el dimensionamiento; hardware y licencias se cotizan aparte."
+            : "Rango del proyecto orientativo y sin IVA. Las horas de operación no son una cuota: el mantenimiento es opcional y se contrata con uno de los planes publicados.");
       }
       if (data.hardware) setText("[data-hardware]", `${data.hardware.profile}: ${data.hardware.unifiedMemoryGb} GB de memoria unificada, ${data.hardware.freeStorageGb} GB libres y ${data.hardware.headroom}.`);
     };

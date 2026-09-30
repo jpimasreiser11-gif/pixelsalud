@@ -171,8 +171,8 @@ const examples = [
       var assumption = document.getElementById("range-potencial-calc");
       var tabs = document.querySelectorAll("#calc-sector-tabs .calc-tab");
       if (!hours || !rate || !weeks || !assumption) return;
-      var fmt = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 });
-      var money = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+      var fmt = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0, useGrouping: "always" });
+      var money = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0, useGrouping: "always" });
       var outputs = {
         hours: document.getElementById("val-horas-calc"),
         rate: document.getElementById("val-coste-calc"),

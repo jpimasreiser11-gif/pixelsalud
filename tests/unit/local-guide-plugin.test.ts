@@ -11,6 +11,8 @@ describe("protecciones del asistente local", () => {
   it("no llama al modelo para un saludo que el motor responde de inmediato", () => {
     const model = "qwen3.6:27b";
     expect(shouldCallModel(model, [{ role: "user", content: "Hola" }])).toBe(false);
+    expect(shouldCallModel(model, [{ role: "user", content: "Quiero saber qué servicios ofrecéis y cuánto cuestan" }])).toBe(false);
+    expect(shouldCallModel(model, [{ role: "user", content: "Quiero saber los precios" }])).toBe(false);
     expect(shouldCallModel(model, [{ role: "user", content: "Quiero ordenar solicitudes que llegan por correo" }])).toBe(true);
     expect(shouldCallModel(null, [{ role: "user", content: "Quiero ordenar solicitudes" }])).toBe(false);
   });
