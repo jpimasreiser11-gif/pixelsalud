@@ -53,3 +53,18 @@ test("mobile navigation controls meet the 44px touch-target floor", async ({ pag
     expect(target.height).toBeGreaterThanOrEqual(44);
   }
 });
+
+test("keeps a labeled path to the interactive guide visible and tappable on mobile", async ({ page, isMobile }) => {
+  test.skip(!isMobile, "The mobile header guide entry is a mobile-layout control.");
+  await page.goto("/precios/");
+
+  const guide = page.getByRole("link", { name: "Abrir guía interactiva" });
+  await expect(guide).toBeVisible();
+  await expect(guide).toHaveAttribute("href", /#guia-varino$/);
+  const { width, height } = await guide.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return { width: rect.width, height: rect.height };
+  });
+  expect(width).toBeGreaterThanOrEqual(44);
+  expect(height).toBeGreaterThanOrEqual(44);
+});
