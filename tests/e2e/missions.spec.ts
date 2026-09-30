@@ -49,6 +49,21 @@ test("la guía avisa cuando el cálculo rebasa el paquete publicado", async ({ p
   await expect(guide.locator("[data-budget-note]")).toContainText(/supera los límites del paquete publicado/i);
 });
 
+test("la guía presenta el suelo comercial como mínimo, no como rango cerrado", async ({ page }) => {
+  const minimum = {
+    ...guideResponse,
+    estimate: { ...guideResponse.estimate, range: { min: 5500, max: 5500 }, minimumOnly: true },
+  };
+  await page.route("**/api/guide", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(minimum) }));
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  await guide.getByLabel("Escribe tu mensaje").fill("Caso de prueba: necesito IA privada para revisar documentos");
+  await guide.getByLabel("Escribe tu mensaje").press("Enter");
+  await expect(guide.locator("[data-budget-range]")).toHaveText("Desde 5.500 €");
+  await expect(guide.locator("[data-budget-range-label]")).toHaveText("mínimo publicado · sin IVA");
+  await expect(guide.locator("[data-budget-note]")).toContainText(/no un precio cerrado/i);
+});
+
 test("la guía no afirma que Ollama funciona si el endpoint responde sin modelo", async ({ page }) => {
   await page.route("**/api/guide", (route) => route.fulfill({
     status: 200,

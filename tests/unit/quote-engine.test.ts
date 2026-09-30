@@ -17,6 +17,7 @@ describe("motor de presupuesto", () => {
     const sprint = calculateEstimate({ integrations: 2, workflows: 1, users: 2, complexity: "standard", sensitivity: "medium", localAi: false, service: "automation-sprint" });
     expect(sprint.range.min).toBeGreaterThanOrEqual(900);
     expect(sprint.range.max).toBeLessThanOrEqual(2400);
+    expect(sprint.minimumOnly).toBe(false);
 
     const crecimiento = calculateEstimate({ integrations: 3, workflows: 2, users: 4, complexity: "standard", sensitivity: "high", localAi: false, service: "sistema-crecimiento" });
     expect(crecimiento.range.min).toBeGreaterThanOrEqual(2500);
@@ -33,6 +34,8 @@ describe("motor de presupuesto", () => {
       sensitivity: "medium", localAi: true, service: "ia-privada",
     });
     expect(smallPrivateAi.range.min).toBeGreaterThanOrEqual(SERVICE_QUOTE_LIMITS["ia-privada"].floor);
+    expect(smallPrivateAi.minimumOnly).toBe(true);
+    expect(smallPrivateAi.range.max).toBe(smallPrivateAi.range.min);
 
     const oneFlowSprint = calculateEstimate({
       integrations: 1, workflows: 1, users: 2, complexity: "simple",
@@ -64,12 +67,12 @@ describe("motor de presupuesto", () => {
     expect(hardware.profile).not.toContain("27B");
   });
 
-  it("incluye Qwen 3.8 27,3B y reserva memoria para el sistema y el contexto", () => {
+  it("usa el Qwen 3.6 27B instalado y reserva memoria para el sistema y el contexto", () => {
     const hardware = recommendHardware({ modelSize: "27b", users: 3, concurrency: 1, sensitivity: "high" });
-    expect(hardware.model).toBe("qwen3.8:latest");
-    expect(hardware.modelWeightsGb).toBe(17);
+    expect(hardware.model).toBe("qwen3.6:27b");
+    expect(hardware.modelWeightsGb).toBe(17.8);
     expect(hardware.unifiedMemoryGb).toBe(64);
-    expect(hardware.profile).toContain("27,3B Q4_K_M");
+    expect(hardware.profile).toContain("Qwen 3.6 · 27B Q4_K_M");
   });
 
   it("sube de nivel cuando la carga lo exige y nunca baja del pedido", () => {
