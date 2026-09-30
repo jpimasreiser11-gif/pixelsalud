@@ -7,6 +7,7 @@ Estado: código y circuito local probados con datos ficticios. La web pública n
 | Situación | Comportamiento del formulario |
 | --- | --- |
 | Sin backend habilitado/configuración inválida | Preparar correo o copiar briefing en el dispositivo. No guardar ni enviar; abrir el correo es una acción explícita |
+| Capacidad habilitada después de preparar un borrador | Ocultar y vaciar el enlace anterior; avisar de no reenviar si ya salió por correo. Nunca registrar automáticamente |
 | Capacidad local habilitada | Aviso visible de ensayo; solo email `.test` y teléfono vacío. Nunca challenge externo |
 | Capacidad de producción aprobada | Información de privacidad obligatoria; novedades opcionales/desmarcadas. Challenge después de un envío válido |
 | Validación o su carga falla | Mantener campos editables y contenido; no enviar ni afirmar recepción |

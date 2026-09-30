@@ -60,6 +60,28 @@ async function fillSyntheticContact(page, email = "prueba@example.test") {
   return form;
 }
 
+test("al llegar tarde la capacidad de envío oculta el borrador previo y evita dos canales", async ({ page }) => {
+  let releaseConfig: () => void = () => {};
+  const configReady = new Promise<void>((resolve) => { releaseConfig = resolve; });
+  let posts = 0;
+  await page.route("**/api/briefings/config", async (route) => {
+    await configReady;
+    await route.fulfill({ contentType: "application/json", body: JSON.stringify(contactConfig) });
+  });
+  page.on("request", (request) => { if (request.method() === "POST" && request.url().endsWith("/api/briefings")) posts += 1; });
+  await page.goto("/contacto/");
+  const form = await fillSyntheticContact(page);
+  await form.getByRole("button", { name: "Preparar correo →" }).click();
+  await expect(form.locator("#contacto-mailto")).toBeVisible();
+  releaseConfig();
+  await expect(form.getByRole("button", { name: "Enviar solicitud →" })).toBeVisible();
+  await expect(form.locator("#contacto-mailto")).toBeHidden();
+  await expect(form.locator("#contacto-mailto")).toHaveAttribute("href", "#");
+  await expect(form.locator("[data-form-status]")).toContainText(/si ya enviaste este briefing por correo, no lo vuelvas a enviar/i);
+  await expect(form.locator('[name="privacy_acknowledged"]')).not.toBeChecked();
+  expect(posts).toBe(0);
+});
+
 test("el formulario conserva la clave y campos tras un fallo; nueva solicitud solo con acción explícita", async ({ page }) => {
   const payloads: Array<Record<string, unknown>> = [];
   await page.route("**/api/briefings", async (route) => {

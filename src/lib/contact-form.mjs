@@ -111,6 +111,11 @@ export function mountContactForm(form, dependencies = {}) {
     } catch { /* static hosting remains a local-only mail draft */ }
     if (config) {
       form.querySelector('[data-contact-offline]').hidden = true;
+      const draft = form.querySelector('#contacto-mailto');
+      if (draft) {
+        if (!draft.hidden) message('El registro automático ya está disponible. Si ya enviaste este briefing por correo, no lo vuelvas a enviar.');
+        draft.hidden = true; draft.href = '#';
+      }
       privacy.hidden = false; privacy.disabled = false;
       const live = form.querySelector('[data-contact-live]'); live.hidden = false;
       live.textContent = config.mode === 'local-test'
