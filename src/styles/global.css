@@ -644,7 +644,7 @@ body {
 .button-primary:active,
 .button-secondary:active,
 .ai-composer button:active {
-  transform: scale(.985);
+  transform: scale(.98);
   transition-duration: 100ms;
 }
 
