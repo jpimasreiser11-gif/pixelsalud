@@ -4,7 +4,7 @@
 // guide-engine, el mismo módulo que usa el navegador en la web publicada.
 // Así la conversación no cambia de criterio según dónde se ejecute.
 
-import { advise, containsPrivateData, DISCOVERY_QUESTIONS, isGreeting, normalizeProfile, welcomeCopy } from "./guide-engine.mjs";
+import { advise, containsPrivateData, DISCOVERY_QUESTIONS, isGreeting, isServiceCatalogQuestion, normalizeProfile, welcomeCopy } from "./guide-engine.mjs";
 
 const MAX_BODY_BYTES = 96_000;
 const MAX_MESSAGES = 40;
@@ -131,7 +131,8 @@ export function buildModelRequest(model, messages, profile) {
 }
 
 export function shouldCallModel(model, messages) {
-  return Boolean(model) && !isGreeting(messages.at(-1)?.content);
+  const latestMessage = messages.at(-1)?.content;
+  return Boolean(model) && !isGreeting(latestMessage) && !isServiceCatalogQuestion(latestMessage);
 }
 
 async function askModel(model, messages, profile) {

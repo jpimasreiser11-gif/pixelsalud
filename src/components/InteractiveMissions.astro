@@ -132,7 +132,13 @@ const hasLocalGuideApi = import.meta.env.DEV;
       const count = activeNodes[data.stage] || 1;
       root.querySelectorAll(".ai-blueprint article").forEach((card, index) => card.classList.toggle("is-active", index < count));
 
-      if (data.service) {
+      if (data.catalog) {
+        setText("[data-service]", "Explora los servicios VARINO");
+        setText("[data-reason]", "Elige entre automatización de operaciones, crecimiento conectado o IA privada; confirmamos el encaje después de conocer el proceso.");
+        const link = root.querySelector("[data-service-link]");
+        link.href = `${base}/servicios/`;
+        setText("[data-service-link-label]", "Ver todos los servicios");
+      } else if (data.service) {
         setText("[data-service]", data.service.name);
         setText("[data-reason]", rationale[data.service.slug]);
         const link = root.querySelector("[data-service-link]");
