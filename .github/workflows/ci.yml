@@ -39,6 +39,8 @@ jobs:
         run: npm run readiness
       - name: Unit tests
         run: npm run test:unit
+      - name: n8n backup failure and WAL tests (synthetic data only)
+        run: npm run test:n8n-backup
       - name: Pages Functions typecheck and bundle
         run: npm run functions:typecheck && npm run functions:build
       - name: Cloudflare Pages runtime smoke (local only)

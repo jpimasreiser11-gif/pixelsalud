@@ -9,6 +9,7 @@
     "scripts:syntax": "node scripts/check-inline-script-syntax.mjs",
     "links:check": "node scripts/check-links.mjs",
     "test:unit": "vitest run",
+    "test:n8n-backup": "python3 -m unittest discover -s tests/backups -p test_n8n_snapshot.py -v",
     "test:d1": "node scripts/test-autopilot-d1.mjs",
     "test:auth-runtime": "node scripts/test-autopilot-auth-runtime.mjs",
     "test:oauth-rate-limit": "node scripts/test-google-login-rate-limit.mjs",
