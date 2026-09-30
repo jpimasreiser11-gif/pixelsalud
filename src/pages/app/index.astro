@@ -4,8 +4,8 @@ import Base from "../../layouts/Base.astro";
 
 <Base title="Varino Autopilot · Espacio de trabajo" description="Acceso seguro al espacio de trabajo de Varino Autopilot." noindex includeVisitorTools={false}>
   <section id="contenido" class="mx-auto min-h-[70vh] max-w-5xl px-6 pb-24 pt-20 sm:pt-28">
-    <div class="mb-10 flex items-center justify-between gap-4">
-      <div>
+    <div class="mb-10 flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
+      <div class="min-w-0">
         <p class="eyebrow">VARINO AI · AUTOPILOT</p>
         <h1 class="mt-3 text-4xl font-semibold tracking-[-0.05em] sm:text-6xl">Tu espacio de trabajo.</h1>
       </div>
@@ -83,6 +83,14 @@ import Base from "../../layouts/Base.astro";
       <div id="document-jobs-status" class="mt-4 text-sm" role="status" aria-live="polite" hidden></div>
       <ul id="document-jobs-list" class="mt-6 grid gap-4"></ul>
     </section>
+    <section id="inbound-panel" class="mt-8 rounded-[2rem] border border-black/10 bg-[#f7f7f5] p-7 dark:border-white/10 dark:bg-[#111318] sm:p-9" aria-labelledby="inbound-title" hidden>
+      <p class="eyebrow">Recepción de la agencia</p>
+      <h2 id="inbound-title" class="mt-3 text-2xl font-semibold tracking-[-0.04em]">Solicitudes, con estado comprobable.</h2>
+      <p class="mt-3 max-w-3xl text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">La recepción queda guardada aunque el taller esté apagado. «CRM confirmado» significa que el flujo confirmó el registro; no acredita un correo enviado, una reserva ni una venta. Las fichas personales se consultan en el CRM, no en este panel.</p>
+      <button id="refresh-inbound" type="button" class="button-secondary mt-4">Actualizar solicitudes</button>
+      <p id="inbound-status" class="mt-4 text-sm" role="status" aria-live="polite"></p>
+      <ul id="inbound-list" class="mt-6 grid gap-3"></ul>
+    </section>
   </section>
 
   <script>
@@ -109,6 +117,10 @@ import Base from "../../layouts/Base.astro";
     const jobsList = document.querySelector("#document-jobs-list");
     const jobsStatus = document.querySelector("#document-jobs-status");
     const refreshJobs = document.querySelector("#refresh-document-jobs");
+    const inboundPanel = document.querySelector("#inbound-panel");
+    const inboundStatus = document.querySelector("#inbound-status");
+    const inboundList = document.querySelector("#inbound-list");
+    const refreshInbound = document.querySelector("#refresh-inbound");
     let documentJobsAvailable = false;
     let savedAutomations = [];
     let refreshTimer;
@@ -230,6 +242,52 @@ import Base from "../../layouts/Base.astro";
     });
     window.addEventListener("pagehide", () => clearTimeout(refreshTimer));
 
+    async function loadInbound() {
+      if (refreshInbound) refreshInbound.disabled = true;
+      try {
+        const response = await fetch("/api/inbound", { credentials: "same-origin", cache: "no-store" });
+        if (!response.ok) {
+          if (inboundPanel?.hidden && [401, 403, 503].includes(response.status)) return;
+          throw new Error("inbound unavailable");
+        }
+        const result = await response.json();
+        if (result.agencyInternalOnly !== true || !Array.isArray(result.requests)) throw new Error("invalid inbound response");
+        if (inboundPanel) inboundPanel.hidden = false;
+        if (inboundStatus) inboundStatus.textContent = (result.synthetic === true ? "Prueba técnica · datos ficticios. " : "")
+          + (result.requests.length ? "Últimas solicitudes recibidas · máximo 50" : "Todavía no hay solicitudes recibidas. No hay datos comerciales que mostrar.");
+        const labels = { pending: "Recibida · pendiente del taller", claimed: "Comprobando registro en el CRM", crm_confirmed: "CRM confirmado", manual_review: "Revisión necesaria · registro sin confirmar", expired: "Entrega caducada · revisar con el equipo" };
+        const services = { "automation-sprint": "Automatización de procesos", "growth-system": "Sistema comercial", "private-ai": "IA privada", otro: "Otra consulta" };
+        inboundList?.replaceChildren(...result.requests.map((request) => {
+          const item = document.createElement("li");
+          item.className = "rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-black";
+          const title = document.createElement("strong");
+          title.className = "block text-sm";
+          title.textContent = services[request.service] || "Solicitud";
+          const state = document.createElement("p");
+          state.className = "mt-2 text-sm";
+          state.textContent = labels[request.status] || "Estado por comprobar";
+          const info = document.createElement("p");
+          info.className = "mt-2 [overflow-wrap:anywhere] text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]";
+          info.textContent = `Referencia: ${request.id} · ${new Date(request.receivedAt * 1000).toLocaleString("es-ES")} · Novedades solicitadas: ${request.marketingConsent === 1 ? "sí · correo aún sin verificar" : "no"}`;
+          item.append(title, state, info);
+          const detail = document.createElement("details");
+          detail.className = "mt-3 text-xs";
+          const summary = document.createElement("summary");
+          summary.className = "cursor-pointer font-semibold";
+          summary.textContent = "Referencia para comprobar en el CRM";
+          const crm = document.createElement("p");
+          crm.className = "mt-2 [overflow-wrap:anywhere] leading-5";
+          crm.textContent = `Busca este ID en la columna lead_id: ${request.crmLeadId}`;
+          detail.append(summary, crm);
+          item.append(detail);
+          return item;
+        }));
+      } catch {
+        if (inboundStatus) inboundStatus.textContent = "No se pudo actualizar. El estado anterior puede estar desactualizado; no se ha confirmado ninguna entrega nueva.";
+      } finally { if (refreshInbound) refreshInbound.disabled = false; }
+    }
+    refreshInbound?.addEventListener("click", () => void loadInbound());
+
     async function loadAutomations() {
       if (!automationPanel) return;
       automationPanel.hidden = false;
@@ -272,6 +330,7 @@ import Base from "../../layouts/Base.astro";
           }
           await loadAutomations();
           await loadDocumentJobs();
+          await loadInbound();
         } else if (workspaceForm) {
           if (automationPanel) automationPanel.hidden = true;
           workspaceForm.hidden = false;

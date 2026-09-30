@@ -34,7 +34,7 @@ export async function authorizeAgencyOwner(request: Request, env: DocumentEnviro
     .bind(env.AGENCY_WORKSPACE_ID, session.id).first();
   return owner ? { userId: session.id } : jsonResponse({ error: 'agency_owner_required' }, 403);
 }
-export async function readBoundedJson(request: Request, limit = 8192): Promise<unknown> {
+export async function readBoundedJson(request: Pick<Request, 'body'>, limit = 8192): Promise<unknown> {
   const reader = request.body?.getReader();
   if (!reader) throw new Error('invalid_json');
   const chunks: Uint8Array[] = [];
