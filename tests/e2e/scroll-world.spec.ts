@@ -20,12 +20,15 @@ test("las demos usan profundidad ligada al scroll como mejora progresiva", async
     CSS.supports("animation-timeline", "view()") && CSS.supports("animation-range", "entry 0% cover 35%"),
   );
   if (supportsScrollTimeline) {
-    const motion = await cards.first().evaluate((element) => {
+    const motions = await cards.evaluateAll((elements) => elements.map((element) => {
       const style = getComputedStyle(element);
-      return { timeline: style.animationTimeline, animation: style.animationName };
-    });
-    expect(motion.timeline).toContain("view");
-    expect(motion.animation).toContain("demo-flow-arrive");
+      return { timeline: style.animationTimeline, animation: style.animationName, opacity: style.opacity };
+    }));
+    for (const motion of motions) {
+      expect(motion.timeline).toContain("view");
+      expect(motion.animation).toContain("demo-flow-arrive");
+      expect(motion.opacity).toBe("1");
+    }
   }
 });
 
