@@ -76,6 +76,13 @@ import Base from "../../layouts/Base.astro";
         </ol>
       </aside>
     </div>
+    <section id="document-jobs-panel" class="mt-8 rounded-[2rem] border border-black/10 bg-[#f7f7f5] p-7 dark:border-white/10 dark:bg-[#111318] sm:p-9" aria-labelledby="document-jobs-title" hidden>
+      <h2 id="document-jobs-title" class="text-2xl font-semibold tracking-[-0.04em]">Taller documental de la agencia</h2>
+      <p class="mt-3 max-w-3xl text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">CAIO, mapa del bucle, PRD, implementación, adopción y recurrencia. La solicitud queda en cola hasta que el taller pueda procesarla. Los documentos requieren revisión; no son contratos ni implementaciones.</p>
+      <button id="refresh-document-jobs" type="button" class="button-secondary mt-4">Actualizar estado</button>
+      <div id="document-jobs-status" class="mt-4 text-sm" role="status" aria-live="polite" hidden></div>
+      <ul id="document-jobs-list" class="mt-6 grid gap-4"></ul>
+    </section>
   </section>
 
   <script>
@@ -98,6 +105,13 @@ import Base from "../../layouts/Base.astro";
     const automationList = document.querySelector("#automation-list");
     const signInButton = document.querySelector("#google-sign-in");
     const signOutButton = document.querySelector("#sign-out");
+    const jobsPanel = document.querySelector("#document-jobs-panel");
+    const jobsList = document.querySelector("#document-jobs-list");
+    const jobsStatus = document.querySelector("#document-jobs-status");
+    const refreshJobs = document.querySelector("#refresh-document-jobs");
+    let documentJobsAvailable = false;
+    let savedAutomations = [];
+    let refreshTimer;
     let pendingDraftSubmission = null;
 
     const messages = {
@@ -119,6 +133,7 @@ import Base from "../../layouts/Base.astro";
     }
 
     function renderAutomations(items) {
+      savedAutomations = items;
       if (!automationList || !automationListView) return;
       automationList.replaceChildren(...items.map((automation) => {
         const item = document.createElement("li");
@@ -130,10 +145,90 @@ import Base from "../../layouts/Base.astro";
         summary.className = "mt-1 block text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]";
         summary.textContent = `Borrador · versión ${automation.version} · ${automation.riskLevel} · no ejecutable`;
         item.append(title, summary);
+        if (documentJobsAvailable) {
+          const prepare = document.createElement("button");
+          prepare.type = "button";
+          prepare.className = "button-secondary mt-3";
+          prepare.textContent = "Preparar seis documentos";
+          prepare.addEventListener("click", async () => {
+            prepare.disabled = true;
+            try {
+              const response = await fetch("/api/document-jobs", {
+                method: "POST", credentials: "same-origin", cache: "no-store",
+                headers: { "content-type": "application/json" }, body: JSON.stringify({ automationId: automation.id }),
+              });
+              if (!response.ok) throw new Error("queue unavailable");
+              const result = await response.json();
+              if (!result.job?.id) throw new Error("invalid queue response");
+              announceAutomation(result.created ? "Solicitud documental guardada en la cola." : "La solicitud ya estaba guardada; no se creó otra copia.");
+              await loadDocumentJobs();
+            } catch { announceAutomation("No se pudo confirmar la solicitud. Puedes reintentar sin crear otra copia de esta versión."); }
+            finally { prepare.disabled = false; }
+          });
+          item.append(prepare);
+        }
         return item;
       }));
       automationListView.hidden = items.length === 0;
     }
+
+    async function loadDocumentJobs() {
+      clearTimeout(refreshTimer);
+      try {
+        const response = await fetch("/api/document-jobs", { credentials: "same-origin", cache: "no-store" });
+        if (!response.ok) {
+          if ([403, 503].includes(response.status) && !documentJobsAvailable) return;
+          throw new Error("job list unavailable");
+        }
+        const result = await response.json();
+        if (!Array.isArray(result.jobs) || result.agencyInternalOnly !== true) throw new Error("invalid job list");
+        documentJobsAvailable = true;
+        if (jobsPanel) jobsPanel.hidden = false;
+        if (jobsStatus) jobsStatus.hidden = true;
+        const labels = { pending: "En cola · esperando al taller", claimed: "Preparando documentos", completed: "Listos para revisión humana", manual_review: "Necesita revisión del equipo · reintentos detenidos" };
+        const titles = { diagnostico_caio: "Diagnóstico CAIO", mapa_del_bucle: "Mapa del Bucle", prd: "PRD", implementacion: "Plan de Implementación", adopcion: "Plan de Adopción", recurrencia: "Plan de Recurrencia" };
+        jobsList?.replaceChildren(...result.jobs.map((job) => {
+          const item = document.createElement("li");
+          item.className = "rounded-xl border border-black/10 p-4 dark:border-white/10";
+          const title = document.createElement("strong");
+          title.textContent = savedAutomations.find((automation) => automation.id === job.automationId)?.name || "Paquete documental";
+          const state = document.createElement("p");
+          state.className = "mt-2 text-sm";
+          state.textContent = labels[job.status] || "Estado por comprobar";
+          item.append(title, state);
+          for (const [key, label] of Object.entries(titles)) {
+            if (typeof job.documents?.[key] !== "string") continue;
+            const detail = document.createElement("details");
+            detail.className = "mt-3";
+            const summary = document.createElement("summary");
+            summary.className = "cursor-pointer text-sm font-semibold";
+            summary.textContent = label;
+            const text = document.createElement("pre");
+            text.className = "mt-3 whitespace-pre-wrap break-words text-xs leading-6";
+            text.textContent = job.documents[key];
+            detail.append(summary, text);
+            item.append(detail);
+          }
+          if (job.questions?.length) {
+            const questions = document.createElement("p");
+            questions.className = "mt-4 whitespace-pre-wrap text-sm leading-6";
+            questions.textContent = `Por confirmar:\n${job.questions.join("\n")}`;
+            item.append(questions);
+          }
+          return item;
+        }));
+        renderAutomations(savedAutomations);
+        if (result.jobs.some((job) => ["pending", "claimed"].includes(job.status)) && !document.hidden) refreshTimer = setTimeout(loadDocumentJobs, 15000);
+      } catch {
+        if (jobsStatus) { jobsStatus.textContent = "No se pudo actualizar el estado. Los datos anteriores pueden estar desactualizados."; jobsStatus.hidden = false; }
+      }
+    }
+    refreshJobs?.addEventListener("click", () => void loadDocumentJobs());
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) clearTimeout(refreshTimer);
+      else if (documentJobsAvailable) void loadDocumentJobs();
+    });
+    window.addEventListener("pagehide", () => clearTimeout(refreshTimer));
 
     async function loadAutomations() {
       if (!automationPanel) return;
@@ -175,7 +270,8 @@ import Base from "../../layouts/Base.astro";
               return item;
             }));
           }
-          void loadAutomations();
+          await loadAutomations();
+          await loadDocumentJobs();
         } else if (workspaceForm) {
           if (automationPanel) automationPanel.hidden = true;
           workspaceForm.hidden = false;

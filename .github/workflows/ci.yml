@@ -51,6 +51,8 @@ jobs:
         run: npm run test:auth-runtime
       - name: Google login abuse control (local only)
         run: npm run test:oauth-rate-limit
+      - name: Document queue and worker runtime (local D1 and HTTP stub only)
+        run: npm run test:document-jobs
       - name: Claims audit
         run: npm run claims:check
       - name: Security headers audit

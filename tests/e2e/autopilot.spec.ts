@@ -69,3 +69,32 @@ test("el acceso Autopilot no tiene fallos axe serios o críticos", async ({ page
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations.filter((violation) => ["serious", "critical"].includes(violation.impact || ""))).toEqual([]);
 });
+
+test("el taller interno encola una versión y muestra seis documentos como texto seguro", async ({ page }) => {
+  const automationId = "04bf0ebe-fd8c-4253-a4a6-ec2eed6ebfb2";
+  const jobs = [];
+  await page.route("**/api/auth/session", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ authenticated: true, user: { email: "owner@example.test" }, workspaces: [{ id: "agency-test", name: "Equipo de prueba", role: "OWNER" }] }) }));
+  await page.route("**/api/automations**", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ automations: [{ id: automationId, name: "Resumen ficticio", version: 1, riskLevel: "low" }] }) }));
+  await page.route("**/api/document-jobs", (route) => {
+    if (route.request().method() === "POST") {
+      expect(route.request().postDataJSON()).toEqual({ automationId });
+      if (!jobs.length) jobs.push({ id: "job-test", automationId, status: "pending", documents: null, questions: [] });
+      return route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ created: true, job: jobs[0] }) });
+    }
+    return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ jobs, agencyInternalOnly: true }) });
+  });
+  await page.goto("/app/");
+  await expect(page.getByRole("heading", { name: "Taller documental de la agencia" })).toBeVisible();
+  await page.getByRole("button", { name: "Preparar seis documentos" }).click();
+  await expect(page.getByText("En cola · esperando al taller", { exact: true })).toBeVisible();
+  const keys = ["diagnostico_caio", "mapa_del_bucle", "prd", "implementacion", "adopcion", "recurrencia"];
+  jobs[0] = { ...jobs[0], status: "completed", documents: Object.fromEntries(keys.map((key) => [key, `BORRADOR · REVISIÓN HUMANA OBLIGATORIA\n${key}\n<img src=x onerror=alert('bad')>`])), questions: ["¿Qué datos faltan?"] };
+  await page.getByRole("button", { name: "Actualizar estado" }).click();
+  await expect(page.getByText("Listos para revisión humana", { exact: true })).toBeVisible();
+  await page.getByText("Diagnóstico CAIO", { exact: true }).click();
+  await expect(page.locator("#document-jobs-list pre").first()).toContainText("<img src=x onerror=alert('bad')>");
+  await expect(page.locator("#document-jobs-list img")).toHaveCount(0);
+  await expect(page.getByText(/¿Qué datos faltan/)).toBeVisible();
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations.filter((violation) => ["serious", "critical"].includes(violation.impact || ""))).toEqual([]);
+});
