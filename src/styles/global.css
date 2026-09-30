@@ -656,3 +656,47 @@ body {
   .button-secondary:active,
   .ai-composer button:active { transform: none; }
 }
+
+/* Keep the floating navigation legible when a visitor asks for less transparency. */
+@media (prefers-reduced-transparency: reduce) {
+  header.site-header {
+    background-color: #fff;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  html.dark header.site-header {
+    background-color: #000;
+  }
+
+  header.site-header #menu-movil {
+    background-color: #fff;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  html.dark header.site-header #menu-movil {
+    background-color: #000;
+  }
+}
+
+/* Strengthen the separation of floating chrome for high-contrast preferences. */
+@media (prefers-contrast: more) {
+  header.site-header {
+    border-bottom-width: 2px;
+    border-bottom-color: #6e6e73;
+  }
+
+  html.dark header.site-header {
+    border-bottom-color: #a1a1a6;
+  }
+
+  header.site-header #menu-movil {
+    border-top-width: 2px;
+    border-top-color: #6e6e73;
+  }
+
+  html.dark header.site-header #menu-movil {
+    border-top-color: #a1a1a6;
+  }
+}
