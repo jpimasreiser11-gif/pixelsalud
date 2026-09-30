@@ -3,6 +3,7 @@ import {
   type AuthEnvironment,
   type PagesFunction,
   configuredBaseUrl,
+  consumeGoogleLoginStartLimit,
   isAuthConfigured,
   jsonResponse,
   oauthCallbackUrl,
@@ -14,6 +15,12 @@ export const onRequest: PagesFunction<AuthEnvironment> = async ({ request, env }
   if (request.method !== "POST") return jsonResponse({ error: "method_not_allowed" }, 405, { allow: "POST" });
   if (!isAuthConfigured(env)) return jsonResponse({ error: "sign_in_unavailable" }, 503);
   if (!requestHasExpectedOrigin(request, env)) return jsonResponse({ error: "origin_not_allowed" }, 403);
+
+  const limit = await consumeGoogleLoginStartLimit(request, env);
+  if (!limit.allowed && limit.status === 429) {
+    return jsonResponse({ error: "rate_limited" }, 429, { "retry-after": String(limit.retryAfterSeconds) });
+  }
+  if (!limit.allowed) return jsonResponse({ error: "rate_limit_unavailable" }, 503);
 
   const baseUrl = configuredBaseUrl(env)!;
   const clientId = env.GOOGLE_CLIENT_ID!.trim();

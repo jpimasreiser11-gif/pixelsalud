@@ -6,6 +6,16 @@ de Gmail. La web pública sigue siendo estática.
 
 ## Qué hace esta fase
 
+- El endpoint `POST /api/auth/google/start` exige el origen exacto y, en el
+  entorno publicado, la IP de cliente entregada por Cloudflare mediante
+  `CF-Connecting-IP`. Solo en un origen local explícito admite el loopback como
+  identificador de desarrollo. Limita a 5
+  inicios por ventana fija de 15 minutos y devuelve `Retry-After`. La IP no se
+  guarda ni registra: D1 conserva solo un HMAC por ventana, derivado mediante
+  HKDF de `OAUTH_STATE_SECRET`, el contador y la caducidad. Los cubos caducados
+  se purgan en nuevas solicitudes de inicio; tras inactividad no hay borrado
+  por reloj, así que esa retención debe completarse antes de admitir usuarios.
+
 - Inicio de sesión Google OIDC con scopes `openid email profile` únicamente.
 - `state` cifrado/autenticado y de vida corta, `nonce`, PKCE S256, validación de firma,
   emisor, audiencia, expiración, nonce, `sub` y `email_verified`.
@@ -64,6 +74,13 @@ explica que el acceso no está configurado. No se simula un login.
   publicación.
 
 ## Pruebas
+
+Antes de staging/producción también hay que añadir un límite antiabuso a nivel
+de Cloudflare contra tráfico distribuido y verificar en ese entorno que
+`CF-Connecting-IP` solo llega desde el edge. El límite D1 por IP no es una
+protección DDoS y no se debe habilitar un origen directo al Worker. El borrado
+de los registros vencidos de rate limit sigue siendo oportunista y requiere
+una política operativa con fecha límite antes de admitir usuarios externos.
 
 - Unitarias: firma/caducidad/CSRF de state, PKCE S256, verificación OIDC con una
   clave efímera de test, configuración/origen y propiedades de cookie.

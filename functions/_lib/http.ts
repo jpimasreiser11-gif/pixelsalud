@@ -131,6 +131,99 @@ export async function sha256Hex(value: string): Promise<string> {
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+export const GOOGLE_LOGIN_START_LIMIT = 5;
+export const GOOGLE_LOGIN_START_WINDOW_SECONDS = 15 * 60;
+
+export type GoogleLoginStartLimitDecision =
+  | { allowed: true }
+  | { allowed: false; status: 429; retryAfterSeconds: number }
+  | { allowed: false; status: 503 };
+
+function isValidClientAddress(value: string): boolean {
+  if (value.length < 3 || value.length > 45) return false;
+  const ipv4 = value.split(".");
+  if (ipv4.length === 4) {
+    return ipv4.every((part) => /^(0|[1-9][0-9]{0,2})$/.test(part) && Number(part) <= 255);
+  }
+  if (!value.includes(":") || !/^[A-Fa-f0-9:]+$/.test(value) || value.includes(":::")) return false;
+  const compressedGroups = value.match(/::/g)?.length ?? 0;
+  if (compressedGroups > 1) return false;
+  const groups = value.split(":").filter(Boolean);
+  if (!groups.every((group) => /^[A-Fa-f0-9]{1,4}$/.test(group))) return false;
+  return compressedGroups === 1 ? groups.length < 8 : groups.length === 8;
+}
+
+async function googleLoginStartBucketHash(secret: string, windowStart: number, clientAddress: string): Promise<string> {
+  const keyMaterial = await crypto.subtle.importKey("raw", encoder.encode(secret), "HKDF", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey(
+    {
+      name: "HKDF",
+      hash: "SHA-256",
+      salt: encoder.encode("VARINO Autopilot rate-limit v1"),
+      info: encoder.encode("Google login start client bucket"),
+    },
+    keyMaterial,
+    { name: "HMAC", hash: "SHA-256", length: 256 },
+    false,
+    ["sign"],
+  );
+  const digest = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    encoder.encode(`${windowStart}:${clientAddress}`),
+  );
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+export async function consumeGoogleLoginStartLimit(
+  request: Request,
+  env: AuthEnvironment,
+  now = Math.floor(Date.now() / 1000),
+): Promise<GoogleLoginStartLimitDecision> {
+  // Cloudflare supplies this header only on edge-to-origin traffic. Never fall back to
+  // X-Forwarded-For, which a client can forge. Only its keyed, time-bucketed digest is stored.
+  let clientAddress = request.headers.get("cf-connecting-ip")?.trim() ?? "";
+  const baseUrl = configuredBaseUrl(env);
+  const requestOrigin = new URL(request.url).origin;
+  if (
+    !clientAddress
+    && baseUrl?.protocol === "http:"
+    && baseUrl.origin === requestOrigin
+    && ["localhost", "127.0.0.1", "::1"].includes(baseUrl.hostname)
+  ) {
+    // Local development may not have Cloudflare's edge header; loopback is scoped to
+    // an explicitly configured local-only origin and never used for hosted domains.
+    clientAddress = baseUrl.hostname === "::1" ? "::1" : "127.0.0.1";
+  }
+  const secret = env.OAUTH_STATE_SECRET;
+  if (!isValidClientAddress(clientAddress) || !secret || encoder.encode(secret).byteLength < 32) {
+    return { allowed: false, status: 503 };
+  }
+
+  const windowStart = Math.floor(now / GOOGLE_LOGIN_START_WINDOW_SECONDS) * GOOGLE_LOGIN_START_WINDOW_SECONDS;
+  const retryAfterSeconds = Math.max(1, windowStart + GOOGLE_LOGIN_START_WINDOW_SECONDS - now);
+  try {
+    const bucketHash = await googleLoginStartBucketHash(secret, windowStart, clientAddress);
+    await env.VARINO_DB.prepare(
+      "DELETE FROM google_login_start_rate_limits WHERE expires_at <= ?",
+    ).bind(now).run();
+    const counted = await env.VARINO_DB.prepare(`
+      INSERT INTO google_login_start_rate_limits (bucket_hash, request_count, expires_at)
+      VALUES (?, 1, ?)
+      ON CONFLICT (bucket_hash) DO UPDATE SET request_count = request_count + 1
+      WHERE google_login_start_rate_limits.request_count < ?
+      RETURNING request_count
+    `).bind(bucketHash, windowStart + GOOGLE_LOGIN_START_WINDOW_SECONDS, GOOGLE_LOGIN_START_LIMIT)
+      .first<{ request_count: number }>();
+    return counted
+      ? { allowed: true }
+      : { allowed: false, status: 429, retryAfterSeconds };
+  } catch {
+    // Authentication must fail closed if the limiter cannot be consulted.
+    return { allowed: false, status: 503 };
+  }
+}
+
 export async function findSession(request: Request, db: D1Database, now = Math.floor(Date.now() / 1000)): Promise<SessionRecord | null> {
   const base64Token = cookieValue(request, SESSION_COOKIE);
   if (!base64Token || !/^[A-Za-z0-9_-]{40,60}$/.test(base64Token)) return null;

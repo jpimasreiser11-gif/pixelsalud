@@ -11,6 +11,7 @@
     "test:unit": "vitest run",
     "test:d1": "node scripts/test-autopilot-d1.mjs",
     "test:auth-runtime": "node scripts/test-autopilot-auth-runtime.mjs",
+    "test:oauth-rate-limit": "node scripts/test-google-login-rate-limit.mjs",
     "test:e2e": "playwright test",
     "functions:typecheck": "tsc --noEmit -p functions/tsconfig.json",
     "functions:build": "wrangler pages functions build",

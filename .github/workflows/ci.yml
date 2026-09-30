@@ -47,6 +47,8 @@ jobs:
         run: npm run test:d1
       - name: Auth/workspace runtime tests (local only)
         run: npm run test:auth-runtime
+      - name: Google login abuse control (local only)
+        run: npm run test:oauth-rate-limit
       - name: Claims audit
         run: npm run claims:check
       - name: Security headers audit

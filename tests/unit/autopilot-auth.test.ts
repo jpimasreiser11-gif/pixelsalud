@@ -10,6 +10,7 @@ import {
 } from "../../functions/_lib/google-oidc";
 import {
   configuredBaseUrl,
+  consumeGoogleLoginStartLimit,
   isAuthConfigured,
   requestHasExpectedOrigin,
   setSessionCookie,
@@ -86,5 +87,36 @@ describe("base segura de identidad para Autopilot", () => {
     expect(setSessionCookie("x".repeat(43), new URL("https://varinoai.me"))).toContain("HttpOnly; SameSite=Lax");
     expect(setSessionCookie("x".repeat(43), new URL("https://varinoai.me"))).toContain("; Secure");
     expect(await sha256Hex("opaque-session-token")).toBe("00f5c39025967a24e513257fc3a8572166ddddaa08809f00fd260414df28ba9f");
+  });
+
+  it("exige una IP de borde válida y falla cerrado si no puede consultar el limitador", async () => {
+    let databaseCalled = false;
+    const env = {
+      OAUTH_STATE_SECRET: "test-only-secret-with-at-least-32-bytes",
+      VARINO_DB: {
+        prepare: () => {
+          databaseCalled = true;
+          throw new Error("D1 unavailable");
+        },
+        batch: async () => [],
+      },
+    };
+    const missingIp = new Request("https://varinoai.me/api/auth/google/start", { method: "POST" });
+    expect(await consumeGoogleLoginStartLimit(missingIp, env, 1_800_000_000)).toEqual({ allowed: false, status: 503 });
+    expect(databaseCalled).toBe(false);
+
+    const invalidIp = new Request("https://varinoai.me/api/auth/google/start", {
+      method: "POST",
+      headers: { "cf-connecting-ip": "not-an-ip" },
+    });
+    expect(await consumeGoogleLoginStartLimit(invalidIp, env, 1_800_000_000)).toEqual({ allowed: false, status: 503 });
+    expect(databaseCalled).toBe(false);
+
+    const validIp = new Request("https://varinoai.me/api/auth/google/start", {
+      method: "POST",
+      headers: { "cf-connecting-ip": "203.0.113.10" },
+    });
+    expect(await consumeGoogleLoginStartLimit(validIp, env, 1_800_000_000)).toEqual({ allowed: false, status: 503 });
+    expect(databaseCalled).toBe(true);
   });
 });
