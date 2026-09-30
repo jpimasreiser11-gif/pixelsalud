@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { advise, applyLastAnswer, cleanReply, consultativeReply, nextUsefulQuestion, normalizeProfile, recommendService } from "../../src/lib/guide-engine.mjs";
+import { MAINTENANCE_PLANS, SERVICES } from "../../src/config";
 
 describe("motor de VARINO Guide", () => {
   it("asigna la respuesta al campo que pedía la última pregunta", () => {
@@ -15,6 +16,23 @@ describe("motor de VARINO Guide", () => {
 
   it("elimina la pregunta que el modelo mete dentro de la respuesta", () => {
     expect(cleanReply("Entendido. ¿Qué herramienta utilizáis?")).toBe("Entendido.");
+  });
+
+  it.each([
+    "Entendido, para diseñar el flujo exacto necesito que me describas paso a paso cómo gestionáis las citas actualmente, desde que llega la solicitud hasta que se confirma.",
+    "Entendido, para diseñar la solución ajustada a vuestro flujo actual necesito saber cómo gestionáis el proceso paso a paso hoy en día.",
+  ])("descarta una petición indirecta del modelo que duplicaría la siguiente pregunta", (modelReply) => {
+    const result = advise({
+      messages: [{
+        role: "user",
+        content: "Somos una clínica veterinaria pequeña. Queremos automatizar la solicitud y confirmación de citas desde un formulario y una hoja de cálculo; una persona debe aprobar cada cita.",
+      }],
+      modelReply,
+    });
+
+    expect(result.replySource).toBe("rules");
+    expect(result.reply).not.toMatch(/necesito que me|necesito saber|describas paso a paso|cómo gestionáis el proceso/i);
+    expect(result.nextQuestion).toBe("¿Cómo realizáis ahora ese proceso, desde que empieza hasta que termina?");
   });
 
   it("descarta una respuesta genérica del modelo y reconoce el dato concreto", () => {
@@ -43,6 +61,40 @@ describe("motor de VARINO Guide", () => {
     expect(result.estimate).toBeNull();
     expect(result.reply).toMatch(/^¡Hola!/i);
     expect(result.nextQuestion).toBe("");
+  });
+
+  it("contesta una consulta de servicios y precios sin convertirla en un proceso del cliente", () => {
+    const result = advise({
+      messages: [{ role: "user", content: "Quiero saber qué servicios ofrecéis y cuánto cuestan." }],
+      modelReply: "El sistema calcula automáticamente la solución y el presupuesto adaptados a tu caso concreto.",
+    });
+
+    expect(result.reply).toContain("950–1.900 € + IVA");
+    expect(result.reply).toContain("2.500–6.000 € + IVA");
+    expect(result.reply).toContain("desde 5.500 € + IVA");
+    expect(result.reply).toContain("Care 149 €/mes");
+    for (const service of SERVICES) {
+      expect(result.reply.toLowerCase()).toContain(`${service.name} (${service.range}`.toLowerCase());
+    }
+    for (const plan of MAINTENANCE_PLANS) {
+      expect(result.reply.toLowerCase()).toContain(`${plan.name} ${plan.monthly.replace(" + IVA", "")}`.toLowerCase());
+    }
+    expect(result.nextQuestion).toMatch(/tarea repetitiva o cuello de botella/i);
+    expect(result.profile.business).toBe("");
+    expect(result.estimate).toBeNull();
+    expect(result.service).toBeNull();
+    expect(result.catalog).toBe(true);
+  });
+
+  it("descarta la respuesta local genérica que promete un presupuesto automático", () => {
+    const result = advise({
+      messages: [{ role: "user", content: "Somos una tienda y queremos mejorar las consultas de stock." }],
+      modelReply: "El sistema calcula automáticamente la solución y el presupuesto adaptados a tu caso concreto.",
+    });
+
+    expect(result.replySource).toBe("rules");
+    expect(result.reply).not.toMatch(/el sistema calcula automáticamente/i);
+    expect(result.nextQuestion).toMatch(/proceso|empresa/i);
   });
 
   it("marca como modelo solo una redacción útil que realmente aparece en la respuesta", () => {

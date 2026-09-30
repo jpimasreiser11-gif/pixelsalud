@@ -63,6 +63,9 @@ export function calculateEstimate(raw = {}) {
     max: Math.max(limits?.floor || 0, roundMoney(price * 1.15)),
   };
   range.max = Math.max(range.min, range.max);
+  // If the calculation is still below the published package floor, do not
+  // display that floor twice as a closed quote (for example 5,500–5,500 €).
+  const minimumOnly = Boolean(limits && price <= limits.floor);
   const exceedsPackage = Boolean(limits && (
     input.workflows > limits.workflows
     || input.integrations > limits.integrations
@@ -73,20 +76,19 @@ export function calculateEstimate(raw = {}) {
   const maintenanceHours = Math.max(4, Math.ceil((input.workflows * 1.25 + input.integrations + riskHours / 3) / 2) * 2);
   return {
     input, lineItems, baseHours, contingencyHours, quotedHours, range,
-    maintenanceHours, policy: QUOTE_POLICY,
+    maintenanceHours, policy: QUOTE_POLICY, minimumOnly,
     exceedsPackage,
   };
 }
 // Perfiles orientativos de hardware para IA privada.
-// qwen3.6:27b se verificó localmente con `ollama show` el 2026-09-29:
-// 27,3B parámetros, Q4_K_M y 17 GB en el registro local. Las cifras son una
-// preselección conservadora; antes de comprar hay que medir contexto, carga y
-// concurrencia reales con los datos del cliente.
+// qwen3.6:27b se verificó en Ollama local el 2026-09-30: 27,3B parámetros,
+// Q4_K_M y 17.77 GB. La estimación deja margen para contexto/sistema; antes de
+// comprar hay que medir carga y concurrencia reales con los datos del cliente.
 export const MODEL_TIERS = Object.freeze({
   small: { model: "qwen3:4b", weightsGb: 2.6, memoryGb: 16, storageGb: 80, label: "Piloto local (Qwen3 4B)" },
   medium: { model: "qwen3:8b", weightsGb: 5.2, memoryGb: 24, storageGb: 120, label: "Equipo pequeño (Qwen3 8B)" },
   large: { model: "qwen3:14b", weightsGb: 9.3, memoryGb: 32, storageGb: 180, label: "Producción (Qwen3 14B)" },
-  xlarge: { model: "qwen3.6:27b", weightsGb: 17, memoryGb: 64, storageGb: 300, label: "IA exigente (Qwen 3.6 · 27,3B Q4_K_M)" },
+  xlarge: { model: "qwen3.6:27b", weightsGb: 17.77, memoryGb: 64, storageGb: 300, label: "IA exigente (Qwen 3.6 · 27,3B Q4_K_M)" },
   xxlarge: { model: "qwen3:32b", weightsGb: 20.2, memoryGb: 64, storageGb: 400, label: "Alta concurrencia (Qwen3 32B)" },
 });
 

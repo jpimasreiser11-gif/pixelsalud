@@ -1,12 +1,23 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const DEV_URL = process.env.PLAYWRIGHT_DEV_URL || "http://localhost:4321";
+function getPort(name: string, fallback: number): number {
+  const configured = process.env[name];
+  if (!configured) return fallback;
+  const port = Number(configured);
+  if (!Number.isInteger(port) || port < 1024 || port > 65535) {
+    throw new Error(`${name} must be an integer between 1024 and 65535`);
+  }
+  return port;
+}
+
+const DEV_PORT = getPort("VARINO_E2E_PORT", 4321);
+const PUBLISHED_PORT = getPort("VARINO_E2E_PUBLISHED_PORT", 4456);
+const DEV_URL = `http://localhost:${DEV_PORT}`;
 const DEV_HOST = new URL(DEV_URL).hostname;
-const DEV_PORT = new URL(DEV_URL).port || "4321";
 // Puerto propio para el build estático: no puede compartirlo con el servidor de
-// desarrollo porque las dos pruebas corren a la vez.
-const PUBLISHED_URL = process.env.PLAYWRIGHT_PUBLISHED_URL || "http://localhost:4456/";
-const PUBLISHED_PORT = new URL(PUBLISHED_URL).port || "80";
+// desarrollo porque las dos pruebas corren a la vez. Los puertos se pueden
+// aislar por proceso para no reutilizar accidentalmente otra preview local.
+const PUBLISHED_URL = `http://localhost:${PUBLISHED_PORT}/`;
 
 export default defineConfig({
   testDir: "tests",
@@ -18,7 +29,7 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: `ASTRO_DEV_BACKGROUND=false npx astro dev --host ${DEV_HOST} --port ${DEV_PORT} --ignore-lock`,
+      command: `ASTRO_DEV_BACKGROUND=false npx astro dev --host ${DEV_HOST} --port ${DEV_PORT} --strictPort --ignore-lock`,
       // Comprobar la URL real, no solo el puerto, antes de ejecutar pruebas.
       url: `${DEV_URL}/`,
       // No reutilizar servidores de otro checkout: pueden servir una build

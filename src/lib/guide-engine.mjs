@@ -41,6 +41,15 @@ const CLOSING_QUESTION = "¿Quieres que preparemos una propuesta revisada con es
 
 const GREETING = /^(hola|holaa+|buenas|buenos días|buenas tardes|buenas noches|hey|qué tal|que tal|saludos)[\s!.¡]*$/i;
 
+const SERVICE_CATALOG_QUERY = /\b(?:que\s+(?:servicios?|soluciones?|planes?)\b|que\s+(?:haceis|ofreceis|montais)\b|a\s+que\s+os\s+dedicais\b|(?:precios?|coste|costes|cuanto\s+cuesta(?:n)?|tarifa|tarifas)\b)/i;
+const SERVICE_CATALOG_REPLY = "Tenemos tres servicios de proyecto: Automation Sprint (950–1.900 € + IVA; un proceso, un flujo y una integración estándar), Sistema de crecimiento (2.500–6.000 € + IVA; hasta tres flujos y cuatro integraciones) e IA privada (desde 5.500 € + IVA; hardware y licencias se cotizan aparte). El mantenimiento es opcional: Care 149 €/mes, Managed 349 €/mes, Optimize 690 €/mes y Private AI Ops desde 1.190 €/mes. Son rangos orientativos; cerramos el precio tras revisar alcance y dependencias.";
+const SERVICE_CATALOG_FOLLOW_UP = "¿Qué tarea repetitiva o cuello de botella te gustaría resolver primero?";
+
+export function isServiceCatalogQuestion(value) {
+  const normalized = String(value ?? "").normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+  return SERVICE_CATALOG_QUERY.test(normalized);
+}
+
 const FIELD_HINTS = {
   process: /ahora|actualmente|primero|después|luego|paso|manual/i,
   tools: /n8n|make|zapier|crm|erp|excel|sheets|hubspot|salesforce|notion|odoo|correo|software|programa|agenda/i,
@@ -482,9 +491,14 @@ function processRecap(profile) {
   return facts.length ? `El mapa ya incluye ${facts.join("; ")}.` : "";
 }
 
+const MODEL_INPUT_REQUEST = /\b(?:cu[eé]ntame|cuenta\s+(?:c[oó]mo|qu[eé])|d[ií]me|descr[ií]beme|expl[ií]came|ind[ií]came|facil[ií]tame|comp[aá]rteme|proporci[oó]name|necesito que me|necesito\s+(?:saber|conocer|entender)|me gustar[ií]a\s+(?:saber|conocer|entender)|quisiera\s+(?:saber|conocer|entender)|podr[ií]as decirme|me puedes decir|te agradecer[ií]a que me)\b/i;
+
 // Una respuesta del modelo sirve si aporta algo. Si es genérica, se descarta:
 // más vale una frase concreta escrita por el motor que un halago vacío.
 function isWeak(reply, service, allowRecommendation = true) {
+  // Qwen puede ignorar la instrucción de no preguntar y repetir, sin signos
+  // de interrogación, la pregunta que el motor añadirá a continuación.
+  if (/[¿?]/.test(reply) || MODEL_INPUT_REQUEST.test(reply)) return true;
   if (reply.length < 72) return true;
   if (/^(gracias|entiendo|perfecto|claro|genial|estupendo)\b/i.test(reply)) return true;
   if (/varino (puede|podría|te puede|os puede)/i.test(reply)) return true;
@@ -493,6 +507,7 @@ function isWeak(reply, service, allowRecommendation = true) {
   // resultado cuantitativo: el alcance solo se diseña después de validar el
   // proceso, y los ahorros nunca se presuponen.
   if (/\b(?:recordatorios?|notificaciones?|seguimiento autom[aá]tico|liberar\w*|ahorrar\w*|reducir\w*|aumentar\w*|incrementar\w*|garantizar\w*)\b/i.test(reply)) return true;
+  if (/\bel sistema calcula autom[aá]ticamente\b|\bpresupuesto autom[aá]tico adaptado a tu caso\b/i.test(reply)) return true;
   if (!allowRecommendation && /automation sprint|sistema de crecimiento|ia privada|opci[oó]n m[aá]s coherente|te recomiendo|recomiendo|te propongo|presupuesto estimado/i.test(reply)) return true;
   // El modelo pequeño a veces recomienda un servicio distinto al calculado.
   const others = ["Automation Sprint", "Sistema de crecimiento", "IA privada"].filter((name) => name !== service.name);
@@ -557,7 +572,8 @@ export function welcomeCopy(messages, profile = {}) {
 // visitante y reglas verificables; el modelo solo puede redactar la respuesta.
 export function advise({ messages = [], profile: previousProfile = {}, modelReply = "", documentCount = 0 } = {}) {
   const known = normalizeProfile(previousProfile);
-  const greetingOnly = isGreeting(lastOf(messages, "user"));
+  const latestUserMessage = lastOf(messages, "user");
+  const greetingOnly = isGreeting(latestUserMessage);
 
   if (greetingOnly) {
     const copy = welcomeCopy(messages, known);
@@ -570,6 +586,35 @@ export function advise({ messages = [], profile: previousProfile = {}, modelRepl
       estimate: null,
       hardware: null,
       service: null,
+      filledField: "",
+    };
+  }
+
+  // Las preguntas de catálogo son consultas comerciales, no datos del negocio.
+  // Respóndelas con precios publicados y evita enviarlas a Qwen para que no
+  // sustituya una respuesta verificable por una frase genérica.
+  if (isServiceCatalogQuestion(latestUserMessage)) {
+    const profile = known;
+    profile.sector = deriveSector(profile);
+    if (SENSITIVE.test(profile.sector)) profile.sensitivity = "high";
+    Object.assign(profile, deriveScope(profile));
+    const hasProjectContext = Boolean(profile.business || profile.problem || profile.process);
+    const service = hasProjectContext ? recommendService(profile) : null;
+    profile.localAi = service?.slug === "ia-privada";
+    const quoteReady = Boolean(profile.problem && (profile.business || profile.sector) && profile.process);
+    const assistantQuestion = lastOf(messages, "assistant");
+    return {
+      reply: SERVICE_CATALOG_REPLY,
+      replySource: "rules",
+      nextQuestion: hasProjectContext
+        ? nextUsefulQuestion(profile, fieldFromQuestion(assistantQuestion), assistantQuestion)
+        : SERVICE_CATALOG_FOLLOW_UP,
+      stage: stageFor(profile),
+      profile,
+      estimate: quoteReady ? calculateEstimate({ ...profile, service: service.slug }) : null,
+      hardware: quoteReady && profile.localAi ? hardwareFor(profile, documentCount) : null,
+      service,
+      catalog: true,
       filledField: "",
     };
   }

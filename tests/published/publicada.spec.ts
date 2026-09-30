@@ -406,3 +406,22 @@ test("el laboratorio publica tres demos n8n descargables y seguras", async ({ pa
 
   expect(respuestas).toEqual([]);
 });
+
+test("la calculadora de la portada solo presenta un escenario hipotético editable", async ({ page }) => {
+  await page.goto("./");
+  const calculadora = page.locator("#calculadora-ahorro");
+
+  await expect(calculadora).toContainText(/no predice ahorro, ROI ni plazo de implantación/i);
+  await expect(calculadora).toContainText(/no un caso de cliente ni una promesa de resultado/i);
+  await expect(calculadora.locator("#calc-res-horas")).toHaveText("736 h");
+  await expect(calculadora.locator("#calc-res-coste")).toHaveText("23.552 €");
+  await expect(calculadora.locator("#calc-res-potencial")).toHaveText("5.888 €");
+
+  const hipotesis = calculadora.locator("#range-potencial-calc");
+  await hipotesis.focus();
+  await hipotesis.press("ArrowRight");
+
+  await expect(calculadora.locator("#val-potencial-calc")).toHaveText("30 %");
+  await expect(calculadora.locator("#calc-res-potencial")).toHaveText("7.066 €");
+  await expect(calculadora.locator("#calc-res-explicacion")).toContainText("antes de costes y validación");
+});

@@ -4,7 +4,7 @@
 // guide-engine, el mismo módulo que usa el navegador en la web publicada.
 // Así la conversación no cambia de criterio según dónde se ejecute.
 
-import { advise, containsPrivateData, DISCOVERY_QUESTIONS, isGreeting, normalizeProfile, welcomeCopy } from "./guide-engine.mjs";
+import { advise, containsPrivateData, DISCOVERY_QUESTIONS, isGreeting, isServiceCatalogQuestion, normalizeProfile, welcomeCopy } from "./guide-engine.mjs";
 
 const MAX_BODY_BYTES = 96_000;
 const MAX_MESSAGES = 40;
@@ -24,7 +24,7 @@ const systemPrompt = `Eres VARINO Guide, consultor senior de automatización e I
 
 TU ÚNICA TAREA: redactar una respuesta natural, útil y breve (1 o 2 frases) al último mensaje del usuario, teniendo en cuenta la conversación.
 
-NO HAGAS PREGUNTAS. La siguiente pregunta la elige el sistema. No escribas "¿". No extraigas, corrijas ni devuelvas campos de perfil: el sistema registra literalmente lo que dice el usuario.
+NO HAGAS PREGUNTAS NI PIDAS AL USUARIO QUE DESCRIBA, CUENTE, INDIQUE O COMPARTA NADA. La siguiente pregunta la elige el sistema. No escribas "¿" ni "?". No extraigas, corrijas ni devuelvas campos de perfil: el sistema registra literalmente lo que dice el usuario.
 
 NO RECOMIENDES SERVICIOS por nombre. El servicio lo calcula el sistema; si lo mencionas, tu texto se descarta.
 
@@ -133,7 +133,8 @@ export function buildModelRequest(model, messages, profile) {
 }
 
 export function shouldCallModel(model, messages) {
-  return Boolean(model) && !isGreeting(messages.at(-1)?.content);
+  const latestMessage = messages.at(-1)?.content;
+  return Boolean(model) && !isGreeting(latestMessage) && !isServiceCatalogQuestion(latestMessage);
 }
 
 async function askModel(model, messages, profile) {
