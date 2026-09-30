@@ -227,3 +227,26 @@ integraciones reales.
 - La pantalla de credenciales de n8n permanece vacía. Sheets OAuth requiere
   autorización explícita y consentimiento del usuario en Google; no se
   escribieron datos ni se enviaron correos durante esta revalidación.
+
+### Revisión directa en la interfaz local de n8n — 2026-09-30
+
+- La lista del proyecto sigue mostrando 17 workflows. El Overview muestra
+  0 ejecuciones de producción, 0 fallos de producción y 0% de tasa de fallo.
+  Esta lectura no certifica por sí sola el estado publicado de cada workflow.
+- Las vistas de credenciales y Data tables muestran el estado vacío inicial:
+  no hay OAuth guardado ni tabla CRM en n8n.
+- Se abrió el formulario de Google Sheets OAuth2, sin guardar nada. Requiere
+  Client ID y Client Secret; Guardar sigue deshabilitado. El callback mostrado
+  es `http://localhost:5679/rest/oauth2-credential/callback`; la pantalla
+  indica habilitar Google Drive API y Google Sheets API. No se introdujeron
+  secretos ni se inició el consentimiento Google.
+- La inspección de `VARINO · 1 lead-ingest` confirma un webhook POST, validación
+  y normalización, comprobación del esquema CRM, lectura de IDs para evitar
+  duplicados, escritura en Sheets, aviso Telegram y respuestas diferenciadas
+  para inválidos, duplicados, guardado y fallo de persistencia. No se ejecutó:
+  aún faltan credenciales y no hay prueba end-to-end.
+- Siguiente gate: completar el cliente OAuth desde Google Cloud y aprobar el
+  consentimiento en Google; después probar con datos sintéticos, verificar que
+  solo se inserta una fila y que fallos de Sheets no devuelven éxito. Mantener
+  los flujos de correo, cobro y aceptación sin publicar hasta revisar su lógica,
+  consentimiento, idempotencia y pasos de aprobación humana.
