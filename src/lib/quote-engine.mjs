@@ -10,6 +10,14 @@ export const QUOTE_POLICY = Object.freeze({
   validityDays: 15,
 });
 
+// Keep the interactive estimate aligned with the publicly published packages.
+// Larger scopes are still estimated, but clearly routed to a custom proposal.
+export const SERVICE_QUOTE_LIMITS = Object.freeze({
+  "automation-sprint": { floor: 950, ceiling: 1900, workflows: 1, integrations: 1 },
+  "sistema-crecimiento": { floor: 2500, ceiling: 6000, workflows: 3, integrations: 4 },
+  "ia-privada": { floor: 5500, ceiling: null, workflows: 3, integrations: 3 },
+});
+
 export function calculateEstimate(raw = {}) {
   const input = {
     integrations: clamp(raw.integrations, 1, 12),
@@ -20,6 +28,7 @@ export function calculateEstimate(raw = {}) {
     localAi: raw.localAi !== false,
     customUi: Boolean(raw.customUi),
     dataMigration: Boolean(raw.dataMigration),
+    service: Object.hasOwn(SERVICE_QUOTE_LIMITS, raw.service) ? raw.service : "",
   };
   // Calibrado contra los rangos comerciales publicados en config.ts y el plan
   // de negocio (ops/PLAN-0-A-10K.md): un sprint típico ronda los 1.200–1.900 €,
@@ -48,26 +57,42 @@ export function calculateEstimate(raw = {}) {
   const contingencyHours = roundHours(baseHours * QUOTE_POLICY.contingencyRate);
   const quotedHours = baseHours + contingencyHours;
   const price = roundMoney(quotedHours * QUOTE_POLICY.hourlyRate);
-  const range = { min: roundMoney(price * 0.9), max: roundMoney(price * 1.15) };
+  const limits = input.service ? SERVICE_QUOTE_LIMITS[input.service] : null;
+  const range = {
+    min: Math.max(limits?.floor || 0, roundMoney(price * 0.9)),
+    max: Math.max(limits?.floor || 0, roundMoney(price * 1.15)),
+  };
+  range.max = Math.max(range.min, range.max);
+  // If the calculation is still below the published package floor, do not
+  // display that floor twice as a closed quote (for example 5,500–5,500 €).
+  const minimumOnly = Boolean(limits && price <= limits.floor);
+  const exceedsPackage = Boolean(limits && (
+    input.workflows > limits.workflows
+    || input.integrations > limits.integrations
+    || (limits.ceiling != null && range.max > limits.ceiling)
+  ));
+  // Orienta sobre carga de operación, no sobre una cuota: los precios y
+  // límites mensuales pertenecen a los planes comerciales publicados.
   const maintenanceHours = Math.max(4, Math.ceil((input.workflows * 1.25 + input.integrations + riskHours / 3) / 2) * 2);
-  const maintenanceMonthly = roundMoney(maintenanceHours * QUOTE_POLICY.hourlyRate);
-  return { input, lineItems, baseHours, contingencyHours, quotedHours, range, maintenanceHours, maintenanceMonthly, policy: QUOTE_POLICY };
+  return {
+    input, lineItems, baseHours, contingencyHours, quotedHours, range,
+    maintenanceHours, policy: QUOTE_POLICY, minimumOnly,
+    exceedsPackage,
+  };
 }
-// Perfiles de hardware para IA privada.
-//
-// Los modelos y sus pesos están verificados contra el registro público de
-// Ollama (septiembre 2026). No se nombra "Qwen 27B": ese tamaño no existe en
-// la familia Qwen 3 y prometerlo en un presupuesto es un error de cara al
-// cliente. La memoria se calcula sobre el peso real del modelo dejando margen
-// para contexto, sistema operativo y el resto del sistema.
+// Perfiles orientativos de hardware para IA privada.
+// Qwen 3.6:27b se verificó en el Ollama local el 2026-09-30: 27,3B parámetros,
+// Q4_K_M y 17,8 GB en el registro. Las cifras son una preselección conservadora;
+// antes de comprar hay que medir contexto, carga y concurrencia reales.
 export const MODEL_TIERS = Object.freeze({
   small: { model: "qwen3:4b", weightsGb: 2.6, memoryGb: 16, storageGb: 80, label: "Piloto local (Qwen3 4B)" },
   medium: { model: "qwen3:8b", weightsGb: 5.2, memoryGb: 24, storageGb: 120, label: "Equipo pequeño (Qwen3 8B)" },
   large: { model: "qwen3:14b", weightsGb: 9.3, memoryGb: 32, storageGb: 180, label: "Producción (Qwen3 14B)" },
-  xlarge: { model: "qwen3:32b", weightsGb: 20.2, memoryGb: 64, storageGb: 300, label: "Alta exigencia (Qwen3 32B)" },
+  xlarge: { model: "qwen3.6:27b", weightsGb: 17.8, memoryGb: 64, storageGb: 300, label: "IA exigente (Qwen 3.6 · 27B Q4_K_M)" },
+  xxlarge: { model: "qwen3:32b", weightsGb: 20.2, memoryGb: 64, storageGb: 400, label: "Alta concurrencia (Qwen3 32B)" },
 });
 
-const TIER_ALIASES = { small: "small", "4b": "small", "8b": "medium", medium: "medium", "14b": "large", large: "large", "32b": "xlarge", xlarge: "xlarge" };
+const TIER_ALIASES = { small: "small", "4b": "small", "8b": "medium", medium: "medium", "14b": "large", large: "large", "27b": "xlarge", xlarge: "xlarge", "32b": "xxlarge", xxlarge: "xxlarge" };
 
 export function recommendHardware(raw = {}) {
   const users = clamp(raw.users, 1, 250);
@@ -78,15 +103,19 @@ export function recommendHardware(raw = {}) {
   const requested = TIER_ALIASES[raw.modelSize] || "medium";
   // La concurrencia y el número de usuarios pueden exigir un nivel superior al
   // pedido: se sube, nunca se baja, para no quedarse corto en producción.
-  const order = ["small", "medium", "large", "xlarge"];
-  const byLoad = concurrency > 6 || users > 60 ? "xlarge" : concurrency > 2 || users > 15 ? "large" : requested;
+  const order = ["small", "medium", "large", "xlarge", "xxlarge"];
+  const byLoad = concurrency > 6 || users > 60 ? "xxlarge" : concurrency > 2 || users > 15 ? "large" : requested;
   const tierKey = order[Math.max(order.indexOf(requested), order.indexOf(byLoad))];
   const tier = MODEL_TIERS[tierKey];
 
-  // Cada petición concurrente añade contexto en memoria; se redondea al alza
-  // y se contrasta con el mínimo del perfil.
-  const concurrencyMemory = Math.ceil(tier.weightsGb + tier.weightsGb * 0.35 * concurrency + 8);
-  const unifiedMemoryGb = Math.max(tier.memoryGb, concurrencyMemory);
+  // Estima peso + 35% por petición concurrente + SO/servicios; divide por 0,7
+  // para reservar un 30% teórico. Redondea a capacidades habituales y siempre
+  // exige una prueba de carga antes de convertirlo en especificación final.
+  const workingMemoryGb = tier.weightsGb * (1 + 0.35 * concurrency) + 8;
+  const neededMemoryGb = Math.max(tier.memoryGb, workingMemoryGb / 0.7);
+  const memoryOptions = [16, 24, 32, 48, 64, 96, 128, 192, 256];
+  const unifiedMemoryGb = memoryOptions.find((capacity) => capacity >= neededMemoryGb)
+    || Math.ceil(neededMemoryGb / 64) * 64;
   const freeStorageGb = tier.storageGb + Math.ceil(documentCount / 10000) * 20;
 
   return {

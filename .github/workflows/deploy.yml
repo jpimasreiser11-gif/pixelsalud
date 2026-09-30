@@ -30,6 +30,12 @@ jobs:
         run: npm ci
       - name: Build and gates
         run: npm run readiness
+      - name: Require launch approval before production deploy
+        if: github.ref == 'refs/heads/main'
+        run: npm run launch:check
+      - name: Verify public host security headers before production deploy
+        if: github.ref == 'refs/heads/main'
+        run: npm run security:origin
       - name: Stamp deployed commit
         run: printf '%s\n' "$GITHUB_SHA" > dist/version.txt
       - name: Upload Pages artifact
@@ -38,6 +44,8 @@ jobs:
           path: ./dist
 
   deploy:
+    # A manual dispatch may target a feature branch; publish only the production branch.
+    if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -50,6 +58,18 @@ jobs:
       pages: write
       id-token: write
     steps:
+      - name: Checkout release verification script
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Node for production smoke test
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 22
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+      - name: Verify deployed website from the public edge
+        env:
+          VARINO_EXPECTED_VERSION: ${{ github.sha }}
+        run: npm run production:smoke

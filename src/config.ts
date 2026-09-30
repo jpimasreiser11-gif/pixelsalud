@@ -1,13 +1,15 @@
+import { launchReady } from "./lib/launch-config.mjs";
+
 // Fuente única de verdad para marca, oferta y canales de contacto.
 // Los campos vacíos son deliberados: no se publican identidades o canales inventados.
 export const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-// Backend de operaciones (n8n local + túnel estable). La web llama aquí a
-// /webhook/chat, /webhook/lead, /webhook/availability y /webhook/book.
-// enabled:false mantiene la web 100% estática (guía local) si el backend cae.
+// Backend de operaciones (n8n local). Mantener desconectado hasta comprobar que
+// el túnel llega a n8n y no a otro servicio local: no enviar datos de visitantes
+// a un destino sin verificar. La guía estática sigue disponible mientras tanto.
 export const BACKEND = {
-  enabled: true,
-  url: "https://ettie-submicroscopic-gannon.ngrok-free.dev",
+  enabled: false,
+  url: "",
   origin: "https://varinoai.me",
 } as const;
 
@@ -29,7 +31,7 @@ export const SITE = {
   name: "VARINO",
   brandDisplay: "VARINO",
   brandSuffix: "",
-  launchReady: true,
+  launchReady,
   domainVerified: true,
   trademarkReviewed: false,
   url: "https://varinoai.me",
@@ -41,9 +43,11 @@ export const SITE = {
   email: "varinoagency@gmail.com",
   whatsapp: "34623204319",
   calendly: "",
-  legalOwner: "Joan Pimas Reiser",
-  legalNif: "20569591Q",
-  legalAddress: "Passeig de la Rectoria Vella, 08460 Barcelona, España",
+  // No incluir datos personales identificativos en el repositorio público
+  // durante el prelanzamiento. Completar solo tras aprobación expresa y revisión.
+  legalOwner: "",
+  legalNif: "",
+  legalAddress: "",
 } as const;
 
 export const SERVICES = [
@@ -58,8 +62,10 @@ export const SERVICES = [
       "Mapeamos, construimos y probamos una automatización acotada, con observabilidad, recuperación y transferencia.",
     descripcion:
       "Mapeamos, construimos y probamos una automatización acotada, con observabilidad, recuperación y transferencia.",
-    range: "950–1.900 €",
-    precio: "950–1.900 €",
+    range: "950–1.900 € + IVA",
+    precio: "950–1.900 € + IVA",
+    scope:
+      "1 proceso, 1 flujo de trabajo y 1 integración estándar. Flujos adicionales, sistemas legacy, migración de datos o IA local requieren una propuesta a medida.",
     outcome: "Un proceso crítico automatizado",
     resultado: "Un proceso crítico automatizado",
     deliverables: [
@@ -90,8 +96,10 @@ export const SERVICES = [
       "Conectamos la entrada de oportunidades, su cualificación y el trabajo comercial manteniendo las decisiones en manos del equipo.",
     descripcion:
       "Conectamos la entrada de oportunidades, su cualificación y el trabajo comercial manteniendo las decisiones en manos del equipo.",
-    range: "2.500–6.000 €",
-    precio: "2.500–6.000 €",
+    range: "2.500–6.000 € + IVA",
+    precio: "2.500–6.000 € + IVA",
+    scope:
+      "1 recorrido de captación y seguimiento, hasta 3 flujos conectados y 4 integraciones estándar. Los mensajes externos quedan sujetos a aprobación humana.",
     outcome: "Captación, seguimiento y operaciones conectadas",
     resultado: "Captación, seguimiento y operaciones conectadas",
     deliverables: [
@@ -122,8 +130,10 @@ export const SERVICES = [
       "Diseñamos asistentes, búsqueda documental y flujos locales o privados con permisos, evaluación y trazabilidad.",
     descripcion:
       "Diseñamos asistentes, búsqueda documental y flujos locales o privados con permisos, evaluación y trazabilidad.",
-    range: "Desde 5.500 €",
-    precio: "Desde 5.500 €",
+    range: "Desde 5.500 € + IVA",
+    precio: "Desde 5.500 € + IVA",
+    scope:
+      "1 caso de uso y asistente, hasta 3 flujos y 3 integraciones; corpus, permisos y entorno se concretan en el diagnóstico. Hardware, licencias y operación del modelo se cotizan aparte.",
     outcome: "Conocimiento y modelos bajo control",
     resultado: "Conocimiento y modelos bajo control",
     deliverables: [
@@ -166,14 +176,14 @@ export const CAPACIDADES = [
   {
     id: "migracion",
     titulo: "Migración desde Zapier o Make",
-    desc: "Trasladamos tus automatizaciones a n8n propio para bajar el coste por operación y ganar control.",
-    ejemplo: "De 20 'zaps' sueltos a flujos observables y documentados.",
+    desc: "Comparamos coste total, mantenimiento y requisitos antes de proponer una migración. Si n8n no compensa para tu caso, recomendamos mantener la herramienta actual.",
+    ejemplo: "Evaluación con volumen, integraciones, operación y costes externos acordados.",
   },
   {
     id: "privado",
     titulo: "IA y n8n privados",
-    desc: "Datos y flujos bajo tu control: n8n en tu servidor y modelos locales o privados, sin depender de un proveedor.",
-    ejemplo: "Automatización de datos sensibles sin salir de tu entorno.",
+    desc: "Diseñamos n8n y modelos locales o privados según el nivel de control requerido. Documentamos qué datos procesa cada componente, los proveedores externos y las responsabilidades operativas.",
+    ejemplo: "Arquitectura con flujos de datos, permisos, copias y proveedores identificados.",
   },
   {
     id: "mantenimiento",
@@ -193,7 +203,7 @@ export const MAINTENANCE_PLANS = [
   {
     id: "care",
     name: "Care",
-    monthly: "149 €/mes",
+    monthly: "149 €/mes + IVA",
     horas: 1,
     sla: "48 h laborables",
     setup: "190 €",
@@ -209,7 +219,7 @@ export const MAINTENANCE_PLANS = [
   {
     id: "managed",
     name: "Managed",
-    monthly: "349 €/mes",
+    monthly: "349 €/mes + IVA",
     horas: 3,
     sla: "24 h laborables",
     setup: "0 €",
@@ -226,7 +236,7 @@ export const MAINTENANCE_PLANS = [
   {
     id: "optimize",
     name: "Optimize",
-    monthly: "690 €/mes",
+    monthly: "690 €/mes + IVA",
     horas: 8,
     sla: "8 h laborables",
     setup: "0 €",
@@ -242,7 +252,7 @@ export const MAINTENANCE_PLANS = [
   {
     id: "private-ai-ops",
     name: "Private AI Ops",
-    monthly: "Desde 1.190 €/mes",
+    monthly: "Desde 1.190 €/mes + IVA",
     horas: 12,
     sla: "8 h laborables",
     setup: "0 €",
@@ -260,12 +270,14 @@ export const MAINTENANCE_PLANS = [
 
 // Reglas comerciales de las mensualidades (explícitas para que no haya sorpresas).
 export const PLAN_RULES = {
-  permanencia: "Sin permanencia. Con 12 meses de compromiso, −15 % en la cuota.",
-  anual: "Pago anual: 2 meses gratis (pagas 10 cuotas).",
-  horasExtra: "Horas extra: 85 €/hora; bono de 10 horas con −10 %.",
-  setup: "Alta técnica: 190 € en Care; sin coste en Managed, Optimize y Private AI Ops.",
-  iva: "Todos los precios son sin IVA (21 %).",
-  sla: "Atención de 9:00 a 18:00 (Europe/Madrid) en días laborables.",
+  permanencia: "Modalidad mensual sin permanencia. El −15 % requiere un compromiso de 12 meses, documentado en la propuesta.",
+  anual: "Prepago anual: 10 cuotas por adelantado (equivale a 2 meses gratis); no acumulable al descuento por compromiso.",
+  horasExtra: "Horas extra: 85 €/hora + IVA; bono de 10 horas con −10 %.",
+  setup: "Alta técnica: 190 € + IVA en Care; sin coste en Managed, Optimize y Private AI Ops.",
+  iva: "Los precios publicados son importes sin IVA; el IVA aplicable y el total se desglosan antes de aceptar.",
+  sla: "Atención de 9:00 a 18:00 (Europe/Madrid), en días laborables.",
+  slaDefinition:
+    "Los tiempos publicados son objetivos de primera respuesta —confirmar la recepción y comunicar el siguiente paso— dentro del horario de atención. No son plazos de resolución ni atención 24/7; el SLA vinculante y sus exclusiones se concretan en la propuesta aceptada.",
 } as const;
 
 // Compatibilidad temporal con la página de precios actual.

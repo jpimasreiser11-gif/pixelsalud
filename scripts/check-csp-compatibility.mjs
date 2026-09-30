@@ -59,10 +59,36 @@ async function paginasHtml(dir) {
   return salida;
 }
 
+async function archivosTextoPublicados(dir) {
+  const salida = [];
+  let entradas;
+  try {
+    entradas = await readdir(dir, { withFileTypes: true });
+  } catch {
+    return salida;
+  }
+  for (const entrada of entradas) {
+    const full = join(dir, entrada.name);
+    if (entrada.isDirectory()) salida.push(...(await archivosTextoPublicados(full)));
+    else if (/\.(?:html|js|mjs|css|json|xml|txt)$/i.test(entrada.name)) salida.push(full);
+  }
+  return salida;
+}
+
 const paginas = await paginasHtml(distDir);
 if (paginas.length === 0) {
   console.error("✗ no hay HTML en dist/: ejecuta el build antes de este gate");
   process.exit(1);
+}
+
+// El túnel antiguo no es una API de VARINO ni un destino aprobado. Evita que
+// vuelva a publicarse en el CSP o en cualquier script estático del sitio.
+const recursosPublicados = await archivosTextoPublicados(distDir);
+for (const recurso of recursosPublicados) {
+  const contenido = await readFile(recurso, "utf8");
+  if (/(?:[a-z0-9-]+\.)?ngrok(?:-free)?\.(?:dev|io)\b/i.test(contenido)) {
+    nota(relative(root, recurso) + ": contiene una dirección de túnel ngrok no aprobada");
+  }
 }
 
 // frame-ancestors y las cabeceras de transporte no existen en <meta>: son un

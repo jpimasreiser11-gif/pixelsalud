@@ -5,13 +5,13 @@ import { BASE, MAINTENANCE_PLANS, PLAN_RULES, SITE, STRIPE_LINKS } from "../conf
 
 const filas = [
   { label: "Horas de trabajo al mes", key: "horas" },
-  { label: "Tiempo de respuesta (SLA)", key: "sla" },
+  { label: "Primera respuesta objetivo", key: "sla" },
   { label: "Monitorización y avisos", v: [true, true, true, true] },
   { label: "Gestión de incidencias", v: [false, true, true, true] },
   { label: "Copia de seguridad verificada", v: [false, true, true, true] },
   { label: "Mejoras continuas incluidas", v: [false, false, true, true] },
   { label: "Prioridad de atención", v: [false, false, true, true] },
-  { label: "Alta técnica", v: ["190 €", "0 €", "0 €", "0 €"] },
+  { label: "Alta técnica", v: ["190 € + IVA", "Sin coste", "Sin coste", "Sin coste"] },
 ];
 
 const link = (id: string) => (STRIPE_LINKS as Record<string, string>)[id] || "";
@@ -50,7 +50,7 @@ const hayPago = Object.values(STRIPE_LINKS).some(Boolean);
           <ul class="mt-5 flex-1 space-y-2.5 text-sm">
             {plan.includes.map((i) => <li class="leading-6">✓ {i}</li>)}
           </ul>
-          <p class="mt-5 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Respuesta en {plan.sla} · {plan.horas} h/mes</p>
+          <p class="mt-5 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Primera respuesta objetivo: {plan.sla} · {plan.horas} h de trabajo incluidas/mes</p>
           {
             link(plan.id) ? (
               <a href={link(plan.id)} class="button-primary mt-4 text-center" rel="noopener">Contratar {plan.name}</a>
@@ -61,14 +61,15 @@ const hayPago = Object.values(STRIPE_LINKS).some(Boolean);
         </article>
       ))}
     </div>
-    <p class="mt-4 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">
-      {hayPago ? "Pago seguro con tarjeta o domiciliación (SEPA)." : "El alta se activa por Stripe en cuanto conectemos el pago; mientras, la solicitamos contigo."}
+    <p class="mt-4 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+      {hayPago ? "Pago mediante el proveedor conectado; revisa el importe e impuestos antes de confirmar." : "Contratación y cobro online desactivados. Solicita una propuesta; no se cobra ni se crea una suscripción desde esta web."}
     </p>
+    <p class="mt-2 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">{PLAN_RULES.slaDefinition}</p>
   </section>
 
   <!-- Comparador -->
   <section class="border-y border-black/6 bg-[#f7f7f5] dark:border-white/10 dark:bg-[#0a0d14]">
-    <div class="mx-auto max-w-6xl overflow-x-auto px-6 py-16">
+    <div class="mx-auto max-w-6xl overflow-x-auto px-6 py-16" tabindex="0" role="region" aria-label="Comparador de planes mensuales">
       <h2 class="text-3xl font-semibold tracking-[-0.04em]">Comparador de planes</h2>
       <table class="mt-8 w-full min-w-[640px] border-collapse text-sm">
         <thead>
@@ -104,6 +105,7 @@ const hayPago = Object.values(STRIPE_LINKS).some(Boolean);
       <li>· <strong>Alta:</strong> {PLAN_RULES.setup}</li>
       <li>· <strong>IVA:</strong> {PLAN_RULES.iva}</li>
       <li>· <strong>Horario:</strong> {PLAN_RULES.sla}</li>
+      <li>· <strong>Primera respuesta:</strong> {PLAN_RULES.slaDefinition}</li>
     </ul>
   </section>
 
@@ -116,9 +118,10 @@ const hayPago = Object.values(STRIPE_LINKS).some(Boolean);
         ["¿Qué pasa si no consumo las horas de un mes?", "Las horas incluidas no se acumulan de un mes a otro, pero si un mes necesitas más, se facturan como horas extra a 85 €/h o con el bono de 10 horas (−10 %)."],
         ["¿Puedo cambiar de plan?", "Sí. Puedes subir o bajar de plan al inicio de cualquier mes. Los cambios se avisan por email y quedan reflejados en la factura."],
         ["¿El mantenimiento es obligatorio?", "No. Recibes la documentación y la formación del proyecto igualmente. El plan es para quien quiere que otro vigile, arregle y mejore el sistema."],
+        ["¿Qué significa el tiempo de respuesta publicado?", PLAN_RULES.slaDefinition],
         ["¿Qué no incluye?", "Desarrollo de nuevos procesos fuera del alcance del plan, licencias y consumos de terceros (APIs, servidores), y cambios de alcance: eso se presupuesta aparte antes de hacerlo."],
-        ["¿Cómo se paga?", "Tarjeta o domiciliación SEPA mediante Stripe, con factura automática y sin IVA oculto (21 %). También se puede pagar por transferencia con factura."],
-        ["¿De quién son los flujos?", "Tuyos. Trabajamos sobre n8n (propio o en tu servidor) y te entregamos los flujos exportables y documentados, sin lock-in."],
+        ["¿Cómo se paga?", "La contratación y el cobro online están desactivados. Antes de aceptar recibirás por escrito el alcance, la base imponible, el IVA aplicable, el total, la forma de pago y las condiciones de facturación. No se activa ningún cargo recurrente sin aceptación expresa."],
+        ["¿De quién son los flujos y dónde se ejecutan?", "Los flujos exportables son tuyos. Por defecto, se ejecutan en una instancia e infraestructura bajo tu control; tú contratas la licencia y el hosting. La guía de n8n señala que alojar workflows y credenciales de clientes en una instancia de agencia requiere licencia Enterprise. VARINO solo ofrecerá ese modelo después de confirmar la licencia y su coste por escrito."],
       ].map(([q, a]) => (
         <details class="group rounded-2xl border border-black/8 p-5 dark:border-white/10">
           <summary class="cursor-pointer font-semibold list-none">{q}</summary>
@@ -126,6 +129,9 @@ const hayPago = Object.values(STRIPE_LINKS).some(Boolean);
         </details>
       ))}
     </div>
+    <p class="mt-6 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+      Consulta la <a class="underline hover:text-[#0071e3]" href="https://support.n8n.io/article/can-i-use-your-license-for-my-use-case" target="_blank" rel="noopener noreferrer">guía oficial de licencias de n8n</a> para distinguir consultoría en una instancia propia del cliente de un servicio alojado por VARINO.
+    </p>
   </section>
 
   <Cta titulo="¿No sabes qué plan te encaja?" texto="En una llamada de 30 minutos vemos qué necesita tu sistema y te decimos el plan mínimo suficiente (o si no necesitas ninguno)." />

@@ -17,6 +17,10 @@ test("respects and persists a manual theme choice", async ({ page }) => {
 
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-pressed", String(!startedDark));
+  await expect(toggle).toHaveAttribute(
+    "aria-label",
+    startedDark ? "Cambiar a tema oscuro" : "Cambiar a tema claro",
+  );
   await page.reload();
 
   expect(

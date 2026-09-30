@@ -1,26 +1,30 @@
 ---
 import Base from "../layouts/Base.astro";
 import Cta from "../components/Cta.astro";
-import { SITE } from "../config";
+import InteractiveMissions from "../components/InteractiveMissions.astro";
+import { BACKEND_CHAT, SITE } from "../config";
 ---
 
 <Base
-  title={`Cómo es trabajar con VARINO AI — ${SITE.name}`}
+  title={`Cómo definimos un proyecto con VARINO — ${SITE.name}`}
   description="Automatización e IA con proceso claro, control humano y precio cerrado antes de empezar."
 >
   <section class="mx-auto max-w-6xl px-6 pb-6 pt-20 sm:pt-28">
     <p class="eyebrow">La experiencia VARINO</p>
     <h1 class="display-title max-w-5xl">Proceso claro.<br /><span>Control siempre tuyo.</span></h1>
     <p class="mt-7 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
-      No prometemos magia: ordenamos el trabajo. Empiezas preguntándole a <strong>VARINO AI</strong> (chat,
-      abajo a la derecha) o reservando una llamada, y todo lo demás queda por escrito.
+      No prometemos magia: ordenamos el trabajo. {BACKEND_CHAT ? "Habla con VARINO AI o usa la guía de alcance para convertir tu caso, paso a paso, en una arquitectura y una estimación inicial revisable." : "Usa la guía interactiva para convertir tu caso, paso a paso, en un flujo y una estimación inicial revisable. La guía procesa tus respuestas en este navegador; no es un chat de IA."}
     </p>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-6 pb-14" aria-label="Guía interactiva de VARINO">
+    <InteractiveMissions />
   </section>
 
   <section class="mx-auto max-w-6xl px-6 pb-12">
     <div class="grid gap-px overflow-hidden rounded-3xl border border-black/10 bg-black/10 dark:border-white/10 dark:bg-white/10 md:grid-cols-3">
       {[
-        ['01', 'Entender', 'Primera conversación (o chat con VARINO AI). Definimos el proceso, las herramientas y qué debe seguir aprobando una persona.'],
+        ['01', 'Entender', BACKEND_CHAT ? 'Primera conversación con VARINO AI o en llamada. Definimos el proceso, las herramientas y qué debe seguir aprobando una persona.' : 'Guía interactiva o llamada. Definimos el proceso, las herramientas y qué debe seguir aprobando una persona.'],
         ['02', 'Acordar', 'Alcance, entregables y rango de precio cerrado por escrito antes de construir nada.'],
         ['03', 'Construir y transferir', 'Automatizamos con pruebas, recuperación manual y documentación. Tú apruebas cada paso sensible.'],
       ].map(([n, t, d]) => (

@@ -51,6 +51,11 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
         data-lead={BACKEND_LEAD}
         class="rounded-3xl border border-black/10 bg-[#f7f7f5] p-6 shadow-sm space-y-4 dark:border-white/10 dark:bg-[#111318] sm:p-8"
       >
+        {!BACKEND_LEAD && (
+          <p class="rounded-xl border border-black/8 bg-white p-3 text-xs leading-5 text-[#6e6e73] dark:border-white/10 dark:bg-black/20 dark:text-[#a1a1a6]">
+            El envío automático está desconectado mientras verificamos el servidor. Este formulario solo prepara o copia un correo; nada se envía ni se guarda en los servidores de VARINO hasta que tú lo envíes desde tu correo.
+          </p>
+        )}
         {!hasContactChannel && (
           <p class="rounded-xl border border-black/8 bg-white p-3 text-xs text-[#6e6e73] dark:border-white/10 dark:bg-black/20 dark:text-[#a1a1a6]">
             Modo privado: prepara el briefing y cópialo. Nada se envía ni se almacena.
@@ -134,13 +139,47 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
             type="submit"
             class="w-full rounded-full bg-[#0071e3] px-6 py-3 font-semibold text-white transition hover:bg-[#0077ed] text-xs shadow-lg shadow-[#0071e3]/20"
           >
-            {hasContactChannel ? "Enviar solicitud →" : "Copiar briefing →"}
+            {BACKEND_LEAD ? "Enviar solicitud →" : SITE.email ? "Preparar correo →" : "Copiar briefing →"}
           </button>
 
-          <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
-            <input type="checkbox" name="consentimiento" required class="mt-0.5 shrink-0" />
-            <span>Acepto que VARINO guarde estos datos para contactarme, según su <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">política de privacidad</a>.</span>
-          </label>
+          {SITE.email && (
+            <a
+              id="contacto-mailto"
+              href="#"
+              hidden
+              class="block w-full rounded-full border border-[#0071e3]/30 px-6 py-3 text-center text-xs font-semibold text-[#0071e3] hover:bg-[#0071e3]/5"
+            >
+              Abrir borrador en tu correo →
+            </a>
+          )}
+
+          {!BACKEND_LEAD && (
+            <button
+              type="button"
+              data-copy-briefing
+              class="w-full rounded-full border border-black/10 px-6 py-3 text-xs font-semibold text-[#1d1d1f] hover:bg-black/5 dark:border-white/15 dark:text-[#f5f5f7] dark:hover:bg-white/5"
+            >
+              Copiar briefing
+            </button>
+          )}
+
+          {BACKEND_LEAD ? (
+            <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+              <input type="checkbox" name="privacy_acknowledged" required class="mt-0.5 shrink-0" />
+              <span>He leído la <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">información de privacidad</a>. Usaremos estos datos para responder a esta solicitud; no es una suscripción comercial.</span>
+            </label>
+          ) : (
+            <p class="text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+              Al copiar o preparar el correo, tus datos permanecen en este dispositivo hasta que decidas compartirlos. Consulta la <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">información de privacidad</a>.
+            </p>
+          )}
+
+          {BACKEND_LEAD && (
+            <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+              <input type="checkbox" name="marketing_consent" value="true" class="mt-0.5 shrink-0" />
+              <span>Opcional: quiero recibir por email novedades, consejos y ofertas de VARINO. Puedo darme de baja cuando quiera. No es necesario para responder a esta solicitud.</span>
+            </label>
+          )}
 
           <p class="text-[11px] text-[#6e6e73] dark:text-[#a1a1a6] text-center" aria-live="polite" data-form-status>
             No incluyas información confidencial o datos personales de terceros.
@@ -151,11 +190,14 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
   </section>
 
   <script>
+    import { clearLeadSubmissionId, getLeadSubmissionId } from "../lib/lead-idempotency.mjs";
+
     (function () {
       var form = document.getElementById("form-contacto");
       if (!form) return;
       var lead = form.getAttribute("data-lead") || "";
       var statusEl = form.querySelector("[data-form-status]");
+      var sendingLead = false;
       function val(name) {
         var el = form.querySelector('[name="' + name + '"]');
         return el ? el.value.trim() : "";
@@ -168,26 +210,36 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
         };
         return map[nombre] || "otro";
       }
-      function abrirMailto() {
+      function prepararMailto() {
         var destinatario = form.getAttribute("data-email") || "";
+        if (!destinatario) return false;
         var asunto = "Consulta de Proyecto: " + val("negocio");
         var cuerpo =
           "Nombre: " + val("nombre") + "\n" +
           "Email: " + val("email") + "\n" +
           "Empresa: " + val("negocio") + "\n" +
+          "Web o software: " + val("web") + "\n" +
+          "WhatsApp: " + val("whatsapp") + "\n" +
           "Servicio: " + val("servicio") + "\n\n" +
           "Mensaje: " + val("mensaje");
-        window.location.href = "mailto:" + destinatario + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(cuerpo);
+        var draftLink = form.querySelector("#contacto-mailto");
+        if (!draftLink) return false;
+        draftLink.href = "mailto:" + destinatario + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(cuerpo);
+        draftLink.hidden = false;
+        return true;
       }
-      form.addEventListener("submit", function (ev) {
+      form.addEventListener("submit", async function (ev) {
         ev.preventDefault();
+        if (sendingLead) return;
         var nombre = val("nombre");
         var email = val("email");
         var whatsapp = val("whatsapp");
-        var consent = form.querySelector('[name="consentimiento"]').checked;
-        if (!consent) { if (statusEl) statusEl.textContent = "Necesitamos tu consentimiento para contactarte."; return; }
+        var privacyEl = form.querySelector('[name="privacy_acknowledged"]');
+        if (lead && (!privacyEl || !privacyEl.checked)) { if (statusEl) statusEl.textContent = "Confirma que has leído la información de privacidad para continuar."; return; }
         if (lead) {
-          if (statusEl) statusEl.textContent = "Enviando…";
+          sendingLead = true;
+          var submitButton = form.querySelector('button[type="submit"]');
+          if (submitButton) submitButton.disabled = true;
           var payload = {
             nombre: nombre,
             email: email,
@@ -196,27 +248,65 @@ import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
             interes: servicioAI(val("servicio")),
             fuente: "form-contacto",
             pagina: location.pathname,
-            consentimiento: true,
+            privacy_acknowledged: privacyEl ? privacyEl.checked : false,
+            marketing_consent: form.querySelector('[name="marketing_consent"]')?.checked === true,
             mensaje: val("mensaje"),
           };
+          var submissionId = await getLeadSubmissionId("contacto", payload);
+          if (!submissionId) {
+            sendingLead = false;
+            if (submitButton) submitButton.disabled = false;
+            if (statusEl) statusEl.textContent = "No se pudo preparar un identificador seguro para el envío. No se han guardado tus datos; prueba en otro navegador o utiliza el correo.";
+            return;
+          }
+          if (statusEl) statusEl.textContent = "Enviando…";
+          payload.submissionId = submissionId;
           fetch(lead, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
-          }).then(function (r) { return r.json(); }).then(function (d) {
+          }).then(function (r) {
+            if (!r.ok) throw new Error("lead_request_failed");
+            return r.json();
+          }).then(function (d) {
             if (d && d.ok) {
-              if (statusEl) statusEl.textContent = "✓ Recibido. El equipo de VARINO te escribirá en breve.";
+              clearLeadSubmissionId("contacto");
+              if (statusEl) statusEl.textContent = "✓ Solicitud recibida. El equipo revisará la información.";
               form.reset();
             } else {
-              abrirMailto();
+              prepararMailto();
+              if (statusEl) statusEl.textContent = "No se pudo confirmar la recepción. Si decides continuar, revisa el borrador de correo; no se ha enviado desde esta página.";
             }
-          }).catch(function () { abrirMailto(); });
+          }).catch(function () {
+            prepararMailto();
+            if (statusEl) statusEl.textContent = "No se pudo confirmar la recepción. Si decides continuar, revisa el borrador de correo; no se ha enviado desde esta página.";
+          }).finally(function () {
+            sendingLead = false;
+            if (submitButton) submitButton.disabled = false;
+          });
         } else {
-          // Sin backend (web estática): plantilla por correo como antes.
-          navigator.clipboard.writeText("Nombre: " + val("nombre") + "\nEmail: " + email + "\nEmpresa: " + val("negocio") + "\n\n" + val("mensaje"))
-            .then(function () { if (statusEl) statusEl.textContent = "Briefing copiado."; })
-            .catch(function () { abrirMailto(); });
+          // Sin backend: el usuario revisa el borrador en su aplicación antes de enviarlo.
+          if (prepararMailto()) {
+            if (statusEl) statusEl.textContent = "Borrador preparado en este dispositivo. No se ha enviado ni guardado; abre el enlace y revísalo antes de enviarlo.";
+          } else if (statusEl) {
+            statusEl.textContent = "No hay un correo configurado. Puedes copiar el briefing y guardarlo en tu dispositivo.";
+          }
         }
+      });
+
+      var copyButton = form.querySelector("[data-copy-briefing]");
+      if (copyButton) copyButton.addEventListener("click", function () {
+        var briefing =
+          "Nombre: " + val("nombre") + "\n" +
+          "Email: " + val("email") + "\n" +
+          "Empresa: " + val("negocio") + "\n" +
+          "Web o software: " + val("web") + "\n" +
+          "WhatsApp: " + val("whatsapp") + "\n" +
+          "Servicio: " + val("servicio") + "\n\n" +
+          "Mensaje: " + val("mensaje");
+        navigator.clipboard.writeText(briefing)
+          .then(function () { if (statusEl) statusEl.textContent = "Briefing copiado en este dispositivo; no se ha enviado."; })
+          .catch(function () { if (statusEl) statusEl.textContent = "No se pudo copiar. Prepara el correo para continuar."; });
       });
     })();
   </script>

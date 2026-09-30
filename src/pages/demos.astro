@@ -1,6 +1,31 @@
 ---
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import Base from "../layouts/Base.astro";
-import { BASE } from "../config";
+import DemoRunthrough from "../components/DemoRunthrough.astro";
+import { BASE, SERVICES } from "../config";
+
+const servicePrice = (id: string) => SERVICES.find((service) => service.id === id)?.range ?? "Consultar alcance";
+const clinicWorkflowPath = resolve(process.cwd(), "public/demos/clinica-intake.n8n.json");
+const clinicWorkflow = JSON.parse(readFileSync(clinicWorkflowPath, "utf8"));
+const sampleNode = clinicWorkflow.nodes.find((node: { name: string }) => node.name === "Solicitud sintética");
+const sampleAssignments = sampleNode?.parameters?.assignments?.assignments ?? [];
+const clinicSample = Object.fromEntries(sampleAssignments.map((assignment: { name: string; value: string }) => [assignment.name, assignment.value]));
+const clinicStepDescriptions: Record<string, string> = {
+  "Solicitud sintética": "Introduce únicamente el canal y un mensaje general ficticio; no añade datos identificativos.",
+  "Validar y minimizar": "Comprueba el formato y conserva solo los campos mínimos para clasificar la solicitud.",
+  "PARAR - revisión de recepción": "Deja el caso pendiente. El equipo humano decide; no se confirma la cita ni se envía un mensaje.",
+};
+const clinicDemoSteps = clinicWorkflow.nodes
+  .filter((node: { name: string }) => node.name !== "Prueba manual")
+  .map((node: { name: string }) => {
+    const detail = clinicStepDescriptions[node.name];
+    if (!detail) throw new Error(`Falta una explicación segura para el nodo de demo: ${node.name}`);
+    return { name: node.name, detail };
+  });
+if (clinicDemoSteps.length !== 3 || clinicWorkflow.active !== false) {
+  throw new Error("El recorrido de clínica debe corresponder a una demo inactiva de tres pasos después del disparador manual.");
+}
 
 const cases = [
   {
@@ -13,7 +38,7 @@ const cases = [
     control: "El flujo no confirma citas ni envía mensajes. Recepción decide qué hacer.",
     output: "Cola estructurada, estado y trazabilidad para cada solicitud.",
     service: "IA privada",
-    price: "4.500–12.000 €+",
+    price: servicePrice("private-ai"),
     file: `${BASE}/demos/clinica-intake.n8n.json`,
   },
   {
@@ -26,7 +51,7 @@ const cases = [
     control: "No compra bases de datos, no puntúa personas y no contacta sin aprobación.",
     output: "Bandeja priorizada y borrador de siguiente acción para el comercial.",
     service: "Sistema de crecimiento",
-    price: "2.500–4.500 €",
+    price: servicePrice("growth-system"),
     file: `${BASE}/demos/leads-seguimiento.n8n.json`,
   },
   {
@@ -39,7 +64,7 @@ const cases = [
     control: "Cada excepción conserva una recuperación manual; no se modifica ningún sistema externo.",
     output: "Caso enrutable, observable y preparado para aprobación.",
     service: "Automation Sprint",
-    price: "950–1.500 €",
+    price: servicePrice("automation-sprint"),
     file: `${BASE}/demos/operaciones-bandeja.n8n.json`,
   },
 ];
@@ -81,7 +106,14 @@ const cases = [
     ))}
   </section>
 
+  <DemoRunthrough
+    steps={clinicDemoSteps}
+    requestId={clinicSample.requestId}
+    channel={clinicSample.channel}
+    message={clinicSample.message}
+  />
+
   <section class="border-y border-black/6 bg-[#f7f7f5] py-24 dark:border-white/10 dark:bg-[#0a0d14]">
-    <div class="mx-auto max-w-6xl px-6"><div class="section-heading"><div><p class="eyebrow">Tu proceso</p><h2>La mejor demo empieza con una situación real.</h2></div><p>Describe el proceso sin identificar a personas ni incluir información confidencial, pregúntale a VARINO AI y reserva una llamada para verlo en tu caso.</p></div></div>
+    <div class="mx-auto max-w-6xl px-6"><div class="section-heading"><div><p class="eyebrow">Tu proceso</p><h2>La mejor demo empieza con una situación real.</h2></div><p>Describe el proceso sin identificar a personas ni incluir información confidencial. Usa la <a class="font-semibold text-[#0071e3]" href={`${BASE}/#guia-varino`}>guía interactiva</a> para ordenar el alcance y reserva una llamada si quieres revisarlo con el equipo.</p></div></div>
   </section>
 </Base>

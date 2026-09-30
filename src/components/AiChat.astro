@@ -1,33 +1,35 @@
 ---
-import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
+import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, BASE, SITE } from "../config";
+const CHAT = BACKEND_CHAT;
 ---
-<!-- Asistente IA de VARINO. Habla con la IA local de la agencia vía n8n y
-     captura datos de contacto solo con consentimiento explícito. -->
+<!-- Asistente IA de VARINO. Envía mensajes al backend de la agencia si está disponible;
+     el historial y los datos de contacto no se persisten en el navegador. -->
+{CHAT ? (
 <section
   class="ai-chat-widget"
   data-aichat
-  data-enabled={String(BACKEND.enabled)}
   data-chat={BACKEND_CHAT}
   data-lead={BACKEND_LEAD}
   data-origin={BACKEND.origin}
   aria-label="Asistente VARINO AI"
 >
-  <button type="button" class="aichat-launcher" data-aichat-open aria-expanded="false">
+  <button type="button" class="aichat-launcher" data-aichat-open aria-controls="aichat-panel" aria-expanded="false">
     <span aria-hidden="true">◉</span> VARINO AI
   </button>
 
   <div class="aichat-backdrop" data-aichat-backdrop hidden></div>
 
-  <div class="aichat-panel" hidden>
+  <div id="aichat-panel" class="aichat-panel" role="dialog" aria-modal="true" aria-labelledby="aichat-title" hidden>
     <header class="aichat-head">
       <div>
-        <strong>VARINO AI</strong>
-        <small>Asistente de la agencia</small>
+        <strong id="aichat-title">VARINO AI</strong>
+        <small>Asistente conectado</small>
       </div>
       <button type="button" class="aichat-close" data-aichat-close aria-label="Cerrar">✕</button>
     </header>
 
-    <div class="aichat-msgs" data-aichat-msgs aria-live="polite"></div>
+    <div class="aichat-msgs" data-aichat-msgs aria-live="polite">
+    </div>
 
     <form class="aichat-composer" data-aichat-form>
       <label class="sr-only" for="aichat-input">Escribe tu mensaje</label>
@@ -35,7 +37,7 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
       <button type="submit" aria-label="Enviar">↑</button>
     </form>
 
-    <!-- Captura con consentimiento -->
+    <!-- Captura con confirmación de lectura del aviso; el opt-in comercial es independiente. -->
     <div class="aichat-capture" data-aichat-capture hidden>
       <form data-aichat-lead>
         <input type="hidden" name="website" value="" aria-hidden="true" tabindex="-1" autocomplete="off" />
@@ -46,9 +48,9 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
         <input id="aichat-email" name="email" type="email" placeholder="Email (o WhatsApp abajo)" />
         <label class="sr-only" for="aichat-whatsapp">WhatsApp</label>
         <input id="aichat-whatsapp" name="whatsapp" type="tel" placeholder="WhatsApp (opcional)" />
-        <label class="aichat-consent">
-          <input type="checkbox" name="consentimiento" value="true" required />
-          <span>Acepto que VARINO guarde mis datos para contactarme según su <a href={`${"/privacidad/"}`} target="_blank" rel="noopener">política de privacidad</a>.</span>
+        <label class="aichat-privacy-notice">
+          <input type="checkbox" name="privacy_acknowledged" value="true" required />
+          <span>He leído la <a href={`${"/privacidad/"}`} target="_blank" rel="noopener">información de privacidad</a>. Usaremos estos datos para tramitar esta solicitud; no es una suscripción comercial.</span>
         </label>
         <button type="submit" class="aichat-send">Enviar y que me contacten →</button>
         <p class="aichat-status" data-aichat-lead-status aria-live="polite"></p>
@@ -56,11 +58,18 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     </div>
 
     <p class="aichat-legal">
-      Asistente con IA de {SITE.name}. No compartas datos de terceros ni información sensible.
+      {`Asistente con IA de ${SITE.name}. El mensaje se envía al servidor de la agencia para generar una respuesta; no guardamos una copia del chat en este navegador. No compartas datos sensibles ni de terceros.`}
       <a href={`${"/privacidad/"}`} target="_blank" rel="noopener">Privacidad</a>
     </p>
   </div>
 </section>
+) : (
+  <nav aria-label="Guía interactiva de VARINO">
+    <a class="aichat-guide-entry" href={`${BASE}/#guia-varino`} aria-label="Explorar la guía interactiva de VARINO">
+      <span aria-hidden="true">◉</span> Explorar guía
+    </a>
+  </nav>
+)}
 
 <style is:global>
   .ai-chat-widget {
@@ -74,6 +83,15 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     box-shadow: 0 10px 30px rgb(0 0 0 / .18); transition: transform .15s ease, background .2s;
   }
   .aichat-launcher:hover { background: #0077ed; }
+  .aichat-guide-entry {
+    position: fixed; right: 18px; bottom: 18px; z-index: 70;
+    display: inline-flex; align-items: center; gap: .5rem;
+    border-radius: 999px; padding: .7rem 1.1rem;
+    background: #0071e3; color: #fff; font-size: .8rem; font-weight: 600;
+    text-decoration: none; box-shadow: 0 10px 30px rgb(0 0 0 / .18);
+    transition: transform .15s ease, background .2s;
+  }
+  .aichat-guide-entry:hover { background: #0077ed; }
   .aichat-backdrop {
     position: fixed; inset: 0; z-index: 69; background: rgba(15, 15, 20, .25);
   }
@@ -108,6 +126,8 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
   .aichat-row.user .aichat-bubble { background: var(--ac); color: #fff; border-bottom-right-radius: 5px; }
   .aichat-bubble.typing { opacity: .7; font-style: italic; }
   .dark .ai-chat-widget { --ac: #2997ff; --panel: #111318; --line: #2a2a2c; --text: #f5f5f7; --muted: #a1a1a6; }
+  .dark .aichat-launcher, .dark .aichat-send { background: #005bb5; color: #fff; }
+  .dark .aichat-launcher:hover, .dark .aichat-send:hover { background: #004b96; }
   .dark .aichat-row.bot .aichat-bubble { background: #23262d; color: #f5f5f7; }
   .aichat-composer { display: flex; gap: .5rem; padding: .65rem .85rem; border-top: 1px solid var(--line); }
   .aichat-composer textarea {
@@ -121,23 +141,25 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     border: 1px solid var(--line); border-radius: 9px; padding: .45rem .6rem; font: inherit; font-size: .8rem;
     background: transparent; color: var(--text);
   }
-  .aichat-consent { display: flex; gap: .5rem; align-items: flex-start; color: var(--muted); font-size: .7rem; line-height: 1.4; margin: .4rem 0; }
-  .aichat-consent a, .aichat-legal a, .aichat-capture a { color: var(--ac); }
+  .aichat-privacy-notice { display: flex; gap: .5rem; align-items: flex-start; color: var(--muted); font-size: .7rem; line-height: 1.4; margin: .4rem 0; }
+  .aichat-privacy-notice a, .aichat-legal a, .aichat-capture a { color: var(--ac); }
   .aichat-send { width: 100%; background: var(--ac); color: #fff; border: 0; border-radius: 999px; padding: .55rem; font-weight: 600; cursor: pointer; font-size: .78rem; }
   .aichat-status { min-height: 1em; margin: .35rem 0 0; color: var(--muted); font-size: .72rem; }
   .aichat-legal { margin: 0; padding: .55rem .9rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .66rem; line-height: 1.45; }
   .aichat-panel[hidden] { display: none; }
+  @media (max-width: 767px) {
+    .aichat-guide-entry, .ai-chat-widget > .aichat-launcher { display: none; }
+  }
 </style>
 
 <script>
+  import { clearLeadSubmissionId, getLeadSubmissionId } from "../lib/lead-idempotency.mjs";
+
   (function () {
     var root = document.querySelector("[data-aichat]");
     if (!root) return;
     var CHAT = root.getAttribute("data-chat");
     var LEAD = root.getAttribute("data-lead");
-    var enabled = root.getAttribute("data-enabled") === "true";
-    var OPEN = "varino_aichat_open", KEY = "varino_aichat_conv", MSGS = "varino_aichat_msgs";
-
     var launcher = root.querySelector("[data-aichat-open]");
     var panel = root.querySelector(".aichat-panel");
     var msgsEl = root.querySelector("[data-aichat-msgs]");
@@ -147,17 +169,15 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     var leadForm = root.querySelector("[data-aichat-lead]");
     var leadStatus = root.querySelector("[data-aichat-lead-status]");
     var backdrop = root.querySelector("[data-aichat-backdrop]");
+    var closeButton = root.querySelector("[data-aichat-close]");
+    var lastOpener = launcher;
+    var inertSiblings = [];
 
-    function store(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {} }
-    function load(key, fallback) { try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
-
-    var savedMsgs = load(MSGS, []);
-    var msgs = Array.isArray(savedMsgs) ? savedMsgs.filter(function (m) {
-      return m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string";
-    }).slice(-48) : [];
+    var msgs = [];
     var sending = false;
-    var convId = load(KEY, "");
-    function persist() { msgs = msgs.slice(-48); store(MSGS, msgs); if (convId) store(KEY, convId); }
+    var sendingLead = false;
+    var convId = "";
+    function persist() { msgs = msgs.slice(-48); }
 
     function say(text, who, typing) {
       var isUser = who === "user";
@@ -177,124 +197,73 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     }
     function save(role, content) { msgs.push({ role: role, content: content }); persist(); }
 
-    function openPanel() {
+    function setBackgroundInert(inert) {
+      if (inert) {
+        inertSiblings = Array.from(document.body.children)
+          .filter(function (child) { return child !== root; })
+          .map(function (child) { return { node: child, wasInert: child.inert }; });
+        inertSiblings.forEach(function (item) { item.node.inert = true; });
+      } else {
+        inertSiblings.forEach(function (item) { item.node.inert = item.wasInert; });
+        inertSiblings = [];
+      }
+    }
+
+    function openPanel(opener) {
       if (!panel.hidden) return;
-      if (!enabled) { window.open("https://wa.me/34623204319", "_blank"); return; }
+      lastOpener = opener || launcher;
       panel.hidden = false;
       if (backdrop) backdrop.hidden = false;
+      setBackgroundInert(true);
       launcher.hidden = true;
       launcher.setAttribute("aria-expanded", "true");
-      store(OPEN, true);
-      msgsEl.replaceChildren();
-      if (!msgs.length) {
-        say("Hola, soy VARINO AI. Puedo contarte qué hacemos, darte precios orientativos y ayudarte a dar el primer paso. ¿Qué proceso te gustaría mejorar?");
-      } else {
-        for (var i = 0; i < msgs.length; i++) say(msgs[i].content, msgs[i].role === "user" ? "user" : "assistant");
+      lastOpener.setAttribute("aria-expanded", "true");
+      if (CHAT) {
+        msgsEl.replaceChildren();
+        if (!msgs.length) {
+          say("Hola, soy VARINO AI. Puedo orientarte sobre servicios y precios publicados y ayudarte a delimitar un proceso. ¿Qué tarea repetitiva te gustaría mejorar?");
+        } else {
+          for (var i = 0; i < msgs.length; i++) say(msgs[i].content, msgs[i].role === "user" ? "user" : "assistant");
+        }
       }
-      input.focus();
+      if (input) input.focus();
+      else closeButton.focus();
     }
     function closePanel() {
       panel.hidden = true;
       if (backdrop) backdrop.hidden = true;
+      setBackgroundInert(false);
       launcher.hidden = false;
       launcher.setAttribute("aria-expanded", "false");
-      store(OPEN, false);
-      launcher.focus();
+      if (lastOpener) lastOpener.setAttribute("aria-expanded", "false");
+      if (lastOpener && lastOpener.isConnected) lastOpener.focus();
+      else launcher.focus();
     }
-    launcher.addEventListener("click", function () { if (panel.hidden) openPanel(); else closePanel(); });
-    root.querySelector("[data-aichat-close]").addEventListener("click", closePanel);
+    launcher.addEventListener("click", function () { if (panel.hidden) openPanel(launcher); else closePanel(); });
+    closeButton.addEventListener("click", closePanel);
     if (backdrop) backdrop.addEventListener("click", closePanel);
+    panel.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") { ev.preventDefault(); closePanel(); return; }
+      if (ev.key !== "Tab") return;
+      var focusable = Array.from(panel.querySelectorAll('a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+        .filter(function (element) { return element.getClientRects().length > 0; });
+      if (!focusable.length) { ev.preventDefault(); closeButton.focus(); return; }
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+      else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+    });
     // Cualquier botón [data-open-chat] (p. ej. en la portada) abre el asistente
     var openers = document.querySelectorAll("[data-open-chat]");
     for (var oi = 0; oi < openers.length; oi++) {
-      openers[oi].addEventListener("click", function () { openPanel(); });
+      openers[oi].addEventListener("click", function () { openPanel(this); });
     }
 
-    // Motor autónomo de conocimiento e inferencia de VARINO AI
-    function generarRespuestaVarino(userPrompt) {
-      var p = (userPrompt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    // Defensa adicional: sin endpoint no se habilita envío ni captura de leads.
+    if (!CHAT) return;
 
-      // 1. Precios y Tarifas
-      if (/precio|cost|cuant|tarifa|presupuest|rango|val|cobran|cuanto/.test(p)) {
-        return "Nuestros proyectos tienen precios cerrados sin sorpresas ni permanencias:\n\n"
-          + "• Automation Sprint: 950 € – 1.900 € (proceso automatizado y entregado en 7 días).\n"
-          + "• Sistema de Crecimiento: 2.500 € – 6.000 € (captación B2B, cualificación multicanal y CRM).\n"
-          + "• IA Privada Local: Desde 5.500 € (modelos LLM locales en tus servidores sin fuga de datos).\n"
-          + "• Mantenimiento opcional: desde 149 €/mes (Care) hasta 950 €/mes (Enterprise SLA 99.9%).\n\n"
-          + "¿Qué proceso específico te gustaría automatizar para darte un rango exacto?";
-      }
-
-      // 2. Legal / Despachos / LexNET
-      if (/legal|abogad|lexnet|juzgad|despach|plazo|procesal|cmac|itss|sentenc/.test(p)) {
-        return "Para despachos de abogados y asesorías implementamos:\n\n"
-          + "• Ingesta y clasificación automática de notificaciones (LexNET, DEHú, e-Justícia).\n"
-          + "• Control algorítmico de plazos fatídicos de caducidad y preclusión (LEC y LRJS/CMAC).\n"
-          + "• Conexión con A3ERP y software de gestión jurídica con secreto profesional blindado (RGPD Art. 28).\n\n"
-          + "¿Gestionáis alto volumen de notificaciones o expedientes judiciales?";
-      }
-
-      // 3. Industria / Fabricación / CPQ
-      if (/industr|maquinar|fabrica|cpq|cotiza|reduct|toleranc|iso|quimic|elevad|ascent/.test(p)) {
-        return "Para fabricantes industriales y oficinas técnicas desarrollamos:\n\n"
-          + "• Motores CPQ (Configure, Price, Quote) que generan ofertas y planos en 2 minutos en vez de días.\n"
-          + "• Cálculo automatizado de tolerancias y esfuerzos bajo normas ISO 6336 y EN 81.\n"
-          + "• Conexión directa con ERPs (SAP, Navision, Sage).\n\n"
-          + "¿Qué tipo de producto o maquinaria fabricáis?";
-      }
-
-      // 4. Clínicas / Salud / Médicos
-      if (/clinic|salud|medic|pacient|estetic|dental|doctor|cirug|tratamiento/.test(p)) {
-        return "Para clínicas médicas, policlínicas y medicina estética:\n\n"
-          + "• Triaje automatizado de pacientes en WhatsApp 24/7 con respuesta en <45 segundos.\n"
-          + "• Pre-anamnesis digital y agendamiento prioritario para tratamientos de alto valor.\n"
-          + "• Cumplimiento riguroso del RGPD Art. 9 para datos de salud protegidos.\n\n"
-          + "¿Cuántas consultas o pacientes recibís al día aproximadamente?";
-      }
-
-      // 5. Cita / Agendar / Reunión / Llamada
-      if (/agend|cita|reunion|reserv|llamada|demo|diagnostico|hablar/.test(p)) {
-        return "¡Estupendo! Ofrecemos una llamada de diagnóstico gratuita de 30 minutos sin ningún compromiso.\n\n"
-          + "Puedes elegir directamente el día y la hora en nuestra agenda aquí:\n"
-          + "👉 [Ir a Reservar llamada](/reservar/)\n\n"
-          + "O si lo prefieres, completa el formulario que te he abierto abajo con tu nombre y contacto, y te coordinamos la cita nosotros hoy mismo.";
-      }
-
-      // 6. Contacto / WhatsApp / Joan Pimas
-      if (/contact|telefon|whatsapp|donde|email|correo|quien|joan|pimas/.test(p)) {
-        return "Puedes contactar directamente con Joan Pimas, fundador y director de VARINO AI:\n\n"
-          + "• WhatsApp directo: +34 623 20 43 19 (https://wa.me/34623204319)\n"
-          + "• Email: varinoagency@gmail.com\n"
-          + "• Sede: Barcelona, España.\n\n"
-          + "También puedes rellenar el formulario de abajo y te contactamos en menos de 2 horas.";
-      }
-
-      // 7. Seguridad / Privacidad / Local
-      if (/privacidad|segur|rgpd|datos|nube|local|servidor/.test(p)) {
-        return "En VARINO la soberanía de tus datos es prioritaria:\n\n"
-          + "• Arquitectura Zero-Persistence: no guardamos datos sensibles de tus clientes.\n"
-          + "• Modelos de IA locales (Ollama/Mistral/Qwen) en servidores propios para no enviar nada a nubes de terceros.\n"
-          + "• DPA (Data Processing Agreement) formal firmado conforme al RGPD.\n\n"
-          + "¿Tenéis algún requerimiento especial de privacidad?";
-      }
-
-      // 8. Qué hacéis / Servicios generales
-      if (/haceis|hacen|servicios|que es|como funciona|automatiz|flujo/.test(p)) {
-        return "En VARINO convertimos cuellos de botella en sistemas fiables de automatización e IA:\n\n"
-          + "1. Automation Sprint (950–1.900 €): entrega en 7 días de tu proceso automatizado (ingesta de facturas, OCR, triaje y ERP/CRM).\n"
-          + "2. Sistema de Crecimiento (2.500–6.000 €): captación B2B y cualificación en <60s.\n"
-          + "3. IA Privada (desde 5.500 €): asistentes locales RAG con permisos.\n\n"
-          + "¿Qué proceso te gustaría optimizar en tu empresa?";
-      }
-
-      // 9. Saludo
-      if (/hola|buen|que tal|hey|saludos/.test(p)) {
-        return "¡Hola! Soy VARINO AI, el asistente de la agencia. Puedo explicarte nuestros servicios de automatización, darte precios orientativos o coordinar un diagnóstico gratuito de 30 min con Joan Pimas.\n\n"
-          + "¿Qué proceso o área de tu empresa te quita más tiempo?";
-      }
-
-      // 10. Default contextual
-      return "En VARINO ayudamos a empresas a eliminar tareas manuales mediante automatizaciones robustas e IA local.\n\n"
-        + "Para analizar tu caso concreto, te invito a agendar una llamada de diagnóstico gratuita de 30 min en [/reservar/](/reservar/), o bien déjame tus datos en el formulario de abajo para que Joan Pimas te contacte hoy mismo.";
+    function respuestaSinConexion() {
+      return "Ahora mismo no puedo conectar con el asistente, así que no quiero inventar una respuesta. Puedes consultar los servicios y precios en la web, o escribirnos por WhatsApp al +34 623 20 43 19 o a varinoagency@gmail.com. Tus mensajes no se guardan en este navegador.";
     }
 
     form.addEventListener("submit", async function (ev) {
@@ -308,16 +277,16 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
       var pending = say("…", "assistant", true);
       var replyText = "";
 
-      // 1. Intentar con backend si está configurado (timeout rápido de 2.5s)
+      // Un modelo local grande puede tardar; el historial permanece solo en memoria de esta página.
       if (CHAT) {
         try {
           var ctrl = new AbortController();
-          var t = setTimeout(function () { ctrl.abort(); }, 2500);
-          var history = msgs.slice(-16, -1);
+          var t = setTimeout(function () { ctrl.abort(); }, 45000);
+          var history = msgs.slice(-21, -1);
           var res = await fetch(CHAT, {
             method: "POST",
             signal: ctrl.signal,
-            headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: text, history: history, conversationId: convId, pagina: location.pathname })
           });
           clearTimeout(t);
@@ -327,13 +296,13 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
             if (!convId && data.conversationId) { convId = data.conversationId; persist(); }
           }
         } catch (e) {
-          // Si el backend falla, pasa al motor autónomo
+          clearTimeout(t);
         }
       }
 
-      // 2. Si no hay respuesta del servidor, usar el motor de IA embebido (100% garantizado)
+      // Si el backend falla, no sustituimos la respuesta por afirmaciones comerciales hardcodeadas.
       if (!replyText) {
-        replyText = generarRespuestaVarino(text);
+        replyText = respuestaSinConexion();
       }
 
       pending.remove();
@@ -355,46 +324,74 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
 
     leadForm.addEventListener("submit", async function (ev) {
       ev.preventDefault();
+      if (sendingLead) return;
       var f = leadForm;
       function val(n) { var el = f.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ""; }
-      var consent = f.querySelector('[name="consentimiento"]').checked;
+      var privacyAcknowledged = f.querySelector('[name="privacy_acknowledged"]').checked;
       var nombre = val("nombre"), email = val("email"), whatsapp = val("whatsapp");
       var last = msgs[msgs.length - 1] ? msgs[msgs.length - 1].content : "";
-      if (!consent || !nombre) return;
+      if (!privacyAcknowledged || !nombre) return;
       if (!email && !whatsapp) {
         leadStatus.textContent = "Indica al menos un email o un WhatsApp para poder contactarte.";
         return;
       }
-      leadStatus.textContent = "Guardando tu solicitud…";
-
-      // Guardado local seguro para no perder nunca un lead
-      try {
-        var guardados = JSON.parse(localStorage.getItem("varino_leads_chat") || "[]");
-        guardados.push({ nombre: nombre, email: email, whatsapp: whatsapp, mensaje: last, fecha: new Date().toISOString() });
-        localStorage.setItem("varino_leads_chat", JSON.stringify(guardados));
-      } catch (e) {}
-
-      // Intentar envío por backend
-      if (LEAD) {
-        try {
-          var cLead = new AbortController();
-          var tLead = setTimeout(function () { cLead.abort(); }, 3000);
-          await fetch(LEAD, {
-            method: "POST",
-            signal: cLead.signal,
-            headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-            body: JSON.stringify({
-              nombre: nombre, email: email, whatsapp: whatsapp, empresa: "", interes: "chat",
-              fuente: "chat_widget", pagina: location.pathname, consentimiento: true,
-              mensaje: "Chat: " + (last || "").slice(0, 600), conversationId: convId
-            })
-          });
-          clearTimeout(tLead);
-        } catch (e2) {}
+      function mostrarCanales(texto) {
+        leadStatus.replaceChildren(document.createTextNode(texto + " "));
+        var wa = document.createElement("a");
+        wa.href = "https://wa.me/34623204319";
+        wa.target = "_blank";
+        wa.rel = "noopener";
+        wa.textContent = "WhatsApp";
+        leadStatus.appendChild(wa);
+        leadStatus.appendChild(document.createTextNode(" · "));
+        var mail = document.createElement("a");
+        mail.href = "mailto:varinoagency@gmail.com";
+        mail.textContent = "correo";
+        leadStatus.appendChild(mail);
       }
-
-      leadStatus.innerHTML = "¡Recibido! Joan Pimas y el equipo de VARINO te escribirán pronto. ¿Prefieres respuesta inmediata? <a href='https://wa.me/34623204319?text=Hola%20Joan,%20acabo%20de%20escribirte%20por%20el%20asistente%20de%20la%20web' target='_blank' style='color:#0071e3;font-weight:600;text-decoration:underline;'>Abre WhatsApp aquí →</a>";
-      leadForm.reset();
+      if (!LEAD) {
+        mostrarCanales("El formulario no está conectado; no hemos recibido ni guardado tus datos. Escríbenos por");
+        return;
+      }
+      sendingLead = true;
+      var submitButton = leadForm.querySelector('button[type="submit"]');
+      if (submitButton) submitButton.disabled = true;
+      var leadPayload = {
+        nombre: nombre, email: email, whatsapp: whatsapp, empresa: "", interes: "chat",
+        fuente: "chat_widget", pagina: location.pathname, privacy_acknowledged: true, marketing_consent: false,
+        mensaje: "Chat: " + (last || "").slice(0, 600), conversationId: convId,
+        website: f.querySelector('[name="website"]').value
+      };
+      var submissionId = await getLeadSubmissionId("chat", leadPayload);
+      if (!submissionId) {
+        sendingLead = false;
+        if (submitButton) submitButton.disabled = false;
+        leadStatus.textContent = "No se pudo preparar un identificador seguro para el envío. No se han guardado tus datos; inténtalo desde otro navegador o escríbenos por correo.";
+        return;
+      }
+      leadStatus.textContent = "Enviando la solicitud al equipo…";
+      var cLead = new AbortController();
+      var tLead = setTimeout(function () { cLead.abort(); }, 15000);
+      try {
+        var leadResponse = await fetch(LEAD, {
+          method: "POST",
+          signal: cLead.signal,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(Object.assign({ submissionId: submissionId }, leadPayload))
+        });
+        if (!leadResponse.ok) throw new Error("lead_request_failed");
+        var leadResult = await leadResponse.json();
+        if (!leadResult || leadResult.ok !== true) throw new Error("lead_not_saved");
+        clearLeadSubmissionId("chat");
+        leadStatus.textContent = "Solicitud recibida y registrada. El equipo revisará tu mensaje.";
+        leadForm.reset();
+      } catch (e2) {
+        mostrarCanales("No se pudo confirmar el envío y no hemos guardado una copia en este navegador. Vuelve a intentarlo o contáctanos por");
+      } finally {
+        clearTimeout(tLead);
+        sendingLead = false;
+        if (submitButton) submitButton.disabled = false;
+      }
     });
 
     // Enviar con Enter (Shift+Enter = salto de línea)
@@ -404,7 +401,5 @@ import { BACKEND, BACKEND_CHAT, BACKEND_LEAD, SITE } from "../config";
     function auto() { input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, 120) + "px"; }
     input.addEventListener("input", auto);
 
-    // Abrir si ya estaba abierto en esta visita
-    if (load(OPEN, false)) openPanel();
   })();
 </script>

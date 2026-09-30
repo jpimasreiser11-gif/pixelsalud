@@ -3,6 +3,7 @@ import { join } from "node:path";
 
 const root = process.cwd();
 const config = readFileSync(join(root, "src/config.ts"), "utf8");
+const launchConfig = readFileSync(join(root, "src/lib/launch-config.mjs"), "utf8");
 const source = [
   "src/config.ts",
   "src/pages/index.astro",
@@ -11,6 +12,7 @@ const source = [
 ].map((file) => readFileSync(join(root, file), "utf8")).join("\n");
 
 const failures = [];
+const launchReady = /launchReady\s*=\s*true/.test(launchConfig);
 const required = [
   ["legalOwner", /legalOwner:\s*"([^"]+)"/],
   ["legalNif", /legalNif:\s*"([^"]+)"/],
@@ -19,7 +21,7 @@ const required = [
   ["url", /url:\s*"([^"]+)"/],
 ];
 
-if (!/launchReady:\s*true/.test(config)) {
+if (!launchReady) {
   failures.push("launchReady sigue en false");
 }
 
@@ -34,6 +36,13 @@ if (!/trademarkReviewed:\s*true/.test(config)) {
 for (const [name, pattern] of required) {
   const value = config.match(pattern)?.[1]?.trim();
   if (!value) failures.push(`${name} no está configurado`);
+}
+
+const legalIdentityValues = ["legalOwner", "legalNif", "legalAddress"].map(
+  (name) => config.match(new RegExp(`${name}:\\s*"([^"]*)"`))?.[1]?.trim() || ""
+);
+if (!launchReady && legalIdentityValues.some(Boolean)) {
+  failures.push("no incluyas identificadores personales del titular en el repositorio público antes de aprobar y lanzar el sitio");
 }
 
 const emailValue = config.match(/email:\s*"([^"]*)"/)?.[1]?.trim();
@@ -101,8 +110,18 @@ if (!config.match(/calendly:\s*"([^"]+)"/)) {
 }
 
 const robots = readFileSync(join(root, "public/robots.txt"), "utf8");
-if (/launchReady:\s*true/.test(config) && /Disallow:\s*\//.test(robots)) {
+const blocksCrawling = /^\s*Disallow:\s*\/\s*(?:#.*)?$/mi.test(robots);
+if (!launchReady && blocksCrawling) {
+  failures.push("robots.txt debe permitir rastreo para que los buscadores lean la etiqueta noindex");
+}
+if (!launchReady && /^\s*Sitemap:/mi.test(robots)) {
+  failures.push("robots.txt no debe anunciar un sitemap antes del lanzamiento");
+}
+if (launchReady && blocksCrawling) {
   failures.push("robots.txt sigue bloqueando toda indexación");
+}
+if (launchReady && !/^\s*Sitemap:/mi.test(robots)) {
+  failures.push("robots.txt debe anunciar el sitemap al habilitar el lanzamiento");
 }
 
 const disallowedClaims = [
@@ -121,7 +140,7 @@ for (const claim of disallowedClaims) {
 if (failures.length) {
   console.error("\nLa web aún no está lista para publicar:\n");
   for (const failure of failures) console.error(`- ${failure}`);
-  console.error("\nPasos para arreglarlo: ops/PASOS-DEL-TITULAR.md\n");
+  console.error("\nPasos para arreglarlo: docs/PRELAUNCH-CHECKLIST.md\n");
   process.exit(1);
 }
 

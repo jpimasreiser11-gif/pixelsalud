@@ -1,0 +1,119 @@
+---
+import Base from "../layouts/Base.astro";
+import { BASE, SERVICES, SITE } from "../config";
+
+const sprint = SERVICES.find((service) => service.id === "automation-sprint");
+if (!sprint) throw new Error("Falta la ficha de Automation Sprint en la oferta.");
+
+const contactHref = SITE.email
+  ? `mailto:${SITE.email}?subject=${encodeURIComponent("Quiero revisar un proceso para Automation Sprint")}`
+  : `${BASE}/servicios/automation-sprint/`;
+---
+
+<Base
+  title={`Automation Sprint: proceso claro — ${SITE.name}`}
+  description="Una automatización acotada, con alcance, pruebas, recuperación y transferencia definidos antes de construir."
+  includeVisitorTools={false}
+>
+  <section class="mx-auto grid max-w-7xl gap-12 px-6 pb-20 pt-20 sm:pb-28 sm:pt-28 lg:grid-cols-[1.08fr_.92fr] lg:items-center">
+    <div>
+      <p class="eyebrow">VARINO · AUTOMATION SPRINT</p>
+      <h1 class="mt-5 max-w-3xl text-5xl font-semibold leading-[1.02] tracking-[-0.065em] sm:text-7xl">
+        Menos copiar y pegar.<br /><span class="text-[#0071e3]">Más control del proceso.</span>
+      </h1>
+      <p class="mt-7 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
+        Elegimos una tarea repetitiva, acordamos sus límites y construimos un flujo que el equipo pueda revisar,
+        recuperar y mantener. Sin automatizar por automatizar.
+      </p>
+      <div class="mt-9 flex flex-wrap items-center gap-4">
+        <a class="button-primary" href={contactHref}>Cuéntanos qué proceso se repite <span aria-hidden="true">→</span></a>
+        <a class="button-secondary" href="#alcance">Ver alcance y precio</a>
+      </div>
+      <p class="mt-5 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+        El enlace abre un borrador en tu correo; no se envía nada automáticamente ni se guarda información en esta página.
+      </p>
+    </div>
+
+    <figure class="relative overflow-hidden rounded-[2rem] border border-black/8 bg-[#f5f5f7] p-5 dark:border-white/10 dark:bg-[#101116] sm:p-8">
+      <div aria-hidden="true" class="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#0071e3]/10 blur-3xl"></div>
+      <figcaption class="relative flex items-center justify-between gap-4 border-b border-black/8 pb-5 text-xs dark:border-white/10">
+        <span class="font-semibold tracking-wide">UN FLUJO, PASO A PASO</span>
+        <span class="rounded-full border border-black/10 bg-white/80 px-3 py-1 text-[#6e6e73] dark:border-white/10 dark:bg-white/5 dark:text-[#a1a1a6]">Esquema ilustrativo</span>
+      </figcaption>
+      <div class="relative mt-5 space-y-3" aria-label="Ejemplo conceptual: entrada, validación, revisión humana y registro">
+        <div class="flex items-center gap-4 rounded-2xl border border-black/8 bg-white p-4 dark:border-white/10 dark:bg-white/[.04]">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#e8f2ff] text-lg text-[#005bb5] dark:bg-[#0071e3]/15">01</span>
+          <div><p class="font-semibold">Llega una solicitud</p><p class="mt-1 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Correo o formulario acordado</p></div>
+        </div>
+        <div aria-hidden="true" class="ml-9 h-4 border-l border-dashed border-[#0071e3]/50"></div>
+        <div class="flex items-center gap-4 rounded-2xl border border-black/8 bg-white p-4 dark:border-white/10 dark:bg-white/[.04]">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#e8f2ff] text-lg text-[#005bb5] dark:bg-[#0071e3]/15">02</span>
+          <div><p class="font-semibold">Se validan los datos</p><p class="mt-1 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Reglas explícitas y excepciones visibles</p></div>
+        </div>
+        <div aria-hidden="true" class="ml-9 h-4 border-l border-dashed border-[#0071e3]/50"></div>
+        <div class="flex items-center gap-4 rounded-2xl border border-[#0071e3]/25 bg-[#0071e3]/[.04] p-4 dark:bg-[#0071e3]/[.08]">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#0071e3] text-lg text-white">03</span>
+          <div><p class="font-semibold">Una persona revisa lo dudoso</p><p class="mt-1 text-xs text-[#5d5d63] dark:text-[#b1b1b6]">El control humano se define en el alcance</p></div>
+        </div>
+        <div aria-hidden="true" class="ml-9 h-4 border-l border-dashed border-[#0071e3]/50"></div>
+        <div class="flex items-center gap-4 rounded-2xl border border-black/8 bg-white p-4 dark:border-white/10 dark:bg-white/[.04]">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#e8f2ff] text-lg text-[#005bb5] dark:bg-[#0071e3]/15">04</span>
+          <div><p class="font-semibold">Queda un registro claro</p><p class="mt-1 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Con documentación y vía de recuperación</p></div>
+        </div>
+      </div>
+      <p class="relative mt-5 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Representación conceptual; no es un flujo instalado ni un caso de cliente.</p>
+    </figure>
+  </section>
+
+  <section id="alcance" class="border-y border-black/6 bg-[#f7f7f5] dark:border-white/10 dark:bg-[#0a0d14]">
+    <div class="mx-auto grid max-w-7xl gap-10 px-6 py-20 lg:grid-cols-[.8fr_1.2fr] lg:py-24">
+      <div>
+        <p class="eyebrow">ALCANCE ACOTADO</p>
+        <h2 class="mt-3 text-4xl font-semibold tracking-[-0.055em]">Empieza con una pieza que puedas medir.</h2>
+        <p class="mt-5 max-w-xl text-sm leading-7 text-[#6e6e73] dark:text-[#a1a1a6]">Si el proceso tiene demasiadas excepciones, dependencias o datos sensibles, primero lo señalamos y redefinimos el alcance. No se añade trabajo sin acordarlo.</p>
+        <a class="mt-7 inline-flex font-semibold text-[#005bb5] dark:text-[#2997ff]" href={`${BASE}/servicios/automation-sprint/`}>Revisar la ficha completa del servicio <span class="ml-2" aria-hidden="true">↗</span></a>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <article class="rounded-3xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]">
+          <p class="text-xs font-bold tracking-wide text-[#0071e3]">INVERSIÓN ORIENTATIVA</p>
+          <p class="mt-3 text-3xl font-semibold tracking-[-0.05em]">{sprint.range}</p>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">Rango orientativo, no presupuesto cerrado. No incluye licencias externas.</p>
+        </article>
+        <article class="rounded-3xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]">
+          <p class="text-xs font-bold tracking-wide text-[#0071e3]">UNIDAD DE TRABAJO</p>
+          <p class="mt-3 text-xl font-semibold">{sprint.scope}</p>
+        </article>
+        <article class="rounded-3xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318] sm:col-span-2">
+          <p class="text-xs font-bold tracking-wide text-[#0071e3]">ENTREGA</p>
+          <ul class="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+            {sprint.deliverables.map((item) => <li class="flex gap-3"><span class="text-[#0071e3]" aria-hidden="true">✓</span><span>{item}</span></li>)}
+          </ul>
+          <p class="mt-5 border-t border-black/8 pt-4 text-xs leading-5 text-[#6e6e73] dark:border-white/10 dark:text-[#a1a1a6]">No incluye licencias de terceros ni cambios fuera del proceso acordado. Cualquier ampliación se presupuesta y aprueba antes de ejecutarse.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-6 py-20 sm:py-24">
+    <p class="eyebrow">EL MÉTODO</p>
+    <h2 class="mt-3 max-w-3xl text-4xl font-semibold tracking-[-0.055em]">Primero entendemos. Después conectamos.</h2>
+    <div class="mt-10 grid gap-4 md:grid-cols-3">
+      {[
+        ["01", "Mapear", "Definimos inicio, resultado, reglas, excepciones, responsables y datos necesarios."],
+        ["02", "Construir y probar", "Probamos con ejemplos acordados, revisamos fallos y dejamos claro qué requiere aprobación humana."],
+        ["03", "Transferir", "Entregamos documentación, criterios de aceptación y una vía de recuperación manual."],
+      ].map(([number, title, detail]) => (
+        <article class="rounded-3xl border border-black/8 p-6 dark:border-white/10">
+          <p class="text-sm font-semibold text-[#0071e3]">{number}</p>
+          <h3 class="mt-8 text-2xl font-semibold tracking-[-0.04em]">{title}</h3>
+          <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{detail}</p>
+        </article>
+      ))}
+    </div>
+    <div class="mt-8 flex flex-col gap-5 rounded-3xl bg-[#101116] p-7 text-white sm:flex-row sm:items-center sm:justify-between sm:p-9">
+      <div><p class="text-sm font-semibold">¿Tienes un proceso concreto en mente?</p><p class="mt-2 text-sm text-white/65">Descríbelo con tus palabras. Revisaremos si encaja antes de proponerte una implementación.</p></div>
+      <a class="inline-flex shrink-0 rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#101116] transition hover:bg-white/85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white" href={contactHref}>Escribir a VARINO <span class="ml-2" aria-hidden="true">→</span></a>
+    </div>
+    <p class="mt-4 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Al pulsar, se abre tu aplicación de correo con un asunto preparado. Tú decides si envías el mensaje. Consulta también <a class="underline underline-offset-4" href={`${BASE}/privacidad/`}>privacidad</a> e <a class="underline underline-offset-4" href={`${BASE}/aviso-legal/`}>información legal</a>.</p>
+  </section>
+</Base>

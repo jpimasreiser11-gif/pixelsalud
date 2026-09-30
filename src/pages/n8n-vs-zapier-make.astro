@@ -1,27 +1,190 @@
 ---
 import Base from "../layouts/Base.astro";
-import Cta from "../components/Cta.astro";
-import { SITE } from "../config";
+import { BASE, SITE } from "../config";
+
 const filas = [
-  { c: "Coste por uso", n8n: "Autoalojado: coste plano de servidor", z: "Pago por tarea (sube con el volumen)", m: "Pago por operación (sube con el volumen)" },
-  { c: "Datos", n8n: "En tu servidor si lo autoalojas", z: "En la nube del proveedor", m: "En la nube del proveedor" },
-  { c: "Lógica compleja", n8n: "Código, bucles, sub-flujos, IA", z: "Limitada en planes bajos", m: "Limitada en planes bajos" },
-  { c: "Lock-in", n8n: "Flujos exportables (open source)", z: "Atado a la plataforma", m: "Atado a la plataforma" },
-  { c: "IA y modelos", n8n: "Locales o en la nube, tú decides", z: "Proveedor", m: "Proveedor" },
+  {
+    criterio: "Despliegue",
+    n8n: "Cloud o Community Edition autoalojada. En autoalojado, alguien debe operar el servidor, las copias, las actualizaciones y los accesos.",
+    make: "Servicio alojado por Make; se configura desde su plataforma.",
+    zapier: "Servicio alojado por Zapier; se configura desde su plataforma.",
+  },
+  {
+    criterio: "Cómo se mide el uso",
+    n8n: "En Cloud, por ejecuciones completas del workflow; el número de pasos no cambia esa unidad. La edición autoalojada añade costes de infraestructura y operación.",
+    make: "Por créditos. Normalmente una acción de módulo consume un crédito, aunque ciertas funciones de IA pueden variar según el uso.",
+    zapier: "Por tareas: cuentan las acciones que se completan correctamente. Algunas funciones, como IA, tienen reglas de consumo propias.",
+  },
+  {
+    criterio: "Coste total que conviene estimar",
+    n8n: "Plan Cloud o servidor + copias/monitorización + modelo de IA/API + horas de mantenimiento.",
+    make: "Plan y créditos + posibles costes del proveedor de IA + límites de ejecución y operación.",
+    zapier: "Plan y tareas + consumo específico de IA u otras funciones + costes de operación.",
+  },
+  {
+    criterio: "Quién controla la infraestructura",
+    n8n: "Con autoalojamiento puedes elegir dónde instalarlo; la responsabilidad operativa pasa a quien administra esa instancia.",
+    make: "Make opera la plataforma alojada. Hay que revisar sus condiciones, ubicación de datos y controles vigentes.",
+    zapier: "Zapier opera la plataforma alojada. Hay que revisar sus condiciones, ubicación de datos y controles vigentes.",
+  },
+];
+
+const fuentes = [
+  { nombre: "n8n: planes, ejecuciones y Community Edition", href: "https://n8n.io/pricing/" },
+  { nombre: "n8n: opciones de licencia para cada uso", href: "https://support.n8n.io/article/can-i-use-your-license-for-my-use-case" },
+  { nombre: "n8n Docs: descripción de la licencia fair-code", href: "https://docs.n8n.io/" },
+  { nombre: "Make: créditos y consumo de funciones de IA", href: "https://help.make.com/credits" },
+  { nombre: "Make: planes y precios", href: "https://www.make.com/en/pricing" },
+  { nombre: "Zapier: cómo se mide el uso de tareas", href: "https://help.zapier.com/hc/en-us/articles/8496196837261-How-is-task-usage-measured-in-Zapier" },
+  { nombre: "Zapier: planes y precios", href: "https://zapier.com/pricing/" },
 ];
 ---
-<Base title={`n8n vs Zapier vs Make — ${SITE.name}`} description="Comparativa honesta entre n8n, Zapier y Make para automatizar procesos de empresa.">
-  <section data-reveal class="mx-auto max-w-5xl px-6 pb-10 pt-24 sm:pt-32">
-    <p class="eyebrow">Comparativa</p>
-    <h1 class="display-title mt-4 max-w-4xl">n8n, Zapier o Make.</h1>
-    <p class="mt-6 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">No hay una herramienta mejor para todo. Esto es lo que cambia de verdad, con supuestos claros y sin promesas de ahorro inventadas.</p>
-  </section>
-  <section class="mx-auto max-w-6xl overflow-x-auto px-6 pb-16">
-    <table class="w-full min-w-[720px] border-collapse text-sm">
-      <thead><tr class="border-b border-black/10 text-left dark:border-white/10"><th class="py-3 pr-4">Criterio</th><th class="px-3 py-3">n8n</th><th class="px-3 py-3">Zapier</th><th class="px-3 py-3">Make</th></tr></thead>
-      <tbody>{filas.map((f) => (<tr class="border-b border-black/5 dark:border-white/5"><td class="py-3 pr-4 text-[#6e6e73] dark:text-[#a1a1a6]">{f.c}</td><td class="px-3 py-3">{f.n8n}</td><td class="px-3 py-3">{f.z}</td><td class="px-3 py-3">{f.m}</td></tr>))}</tbody>
-    </table>
-    <p class="mt-4 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Supuestos: precios y límites de terceros cambian; lo revisamos en cada proyecto. Elegimos n8n cuando hay volumen, datos sensibles o lógica compleja, y lo decimos si otra herramienta encaja mejor.</p>
-  </section>
-  <Cta titulo="¿No sabes cuál te conviene?" texto="En 30 minutos vemos tu caso y te decimos qué herramienta usaría yo, aunque no sea la nuestra." />
+
+<Base
+  title={`n8n vs Make vs Zapier: cómo elegir — ${SITE.name}`}
+  description="Comparativa práctica de n8n, Make y Zapier: consumo, alojamiento, costes operativos, datos y licencia antes de automatizar un proceso."
+>
+  <article class="mx-auto max-w-5xl px-6 pb-24 pt-20 sm:pt-28">
+    <p class="eyebrow">Comparativa · revisión 27 septiembre 2026</p>
+    <h1 class="mt-3 max-w-4xl text-4xl font-semibold tracking-[-0.045em] text-[#1d1d1f] dark:text-white sm:text-6xl">
+      n8n, Make o Zapier: elige por proceso, no por moda.
+    </h1>
+    <p class="mt-6 max-w-3xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">
+      Ninguna plataforma es la mejor para todos los negocios. La diferencia importante está en cómo se cobra el uso,
+      quién opera el sistema, qué ocurre cuando falla y quién se hace responsable de los datos.
+      Esta guía resume lo que publican los propios proveedores; no es una prueba comparativa de rendimiento.
+    </p>
+
+    <section class="mt-12" aria-labelledby="comparativa-titulo">
+      <h2 id="comparativa-titulo" class="text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Comparación rápida</h2>
+      <div class="mt-5 overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10" tabindex="0" aria-label="Tabla desplazable de comparación de plataformas">
+        <table class="w-full min-w-[900px] border-collapse text-left text-sm leading-6">
+          <thead>
+            <tr class="bg-black/[.03] dark:bg-white/[.04]">
+              <th scope="col" class="w-44 px-4 py-4 font-semibold">Criterio</th>
+              <th scope="col" class="px-4 py-4 font-semibold">n8n</th>
+              <th scope="col" class="px-4 py-4 font-semibold">Make</th>
+              <th scope="col" class="px-4 py-4 font-semibold">Zapier</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filas.map((fila) => (
+              <tr class="border-t border-black/8 align-top dark:border-white/10">
+                <th scope="row" class="px-4 py-4 font-semibold text-[#6e6e73] dark:text-[#a1a1a6]">{fila.criterio}</th>
+                <td class="px-4 py-4">{fila.n8n}</td>
+                <td class="px-4 py-4">{fila.make}</td>
+                <td class="px-4 py-4">{fila.zapier}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-3 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+        Los planes, límites y nombres de unidades cambian. Antes de contratar, revisa el plan concreto y calcula el coste
+        con el flujo, volumen y modelo de IA reales.
+      </p>
+    </section>
+
+    <div class="mt-12 space-y-8 text-[15px] leading-8 text-[#3a3a3c] dark:text-[#d2d2d7]">
+      <section aria-labelledby="unidades-titulo">
+        <h2 id="unidades-titulo" class="text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">No compares “una automatización” con “una automatización”</h2>
+        <p class="mt-4">
+          Las plataformas no cuentan el trabajo de la misma manera. En n8n Cloud, una unidad es una ejecución del workflow
+          completo, aunque tenga varios pasos. Make mide créditos por acciones de módulos; muchas acciones habituales
+          consumen uno, pero algunas funciones de IA dependen también de tokens u otros factores. En Zapier, una tarea
+          suele corresponder a una acción completada correctamente y ciertas funciones tienen reglas de consumo distintas.
+        </p>
+        <p class="mt-4">
+          Por eso una estimación basada solo en el número de flujos puede quedarse corta. Cuenta activaciones, acciones,
+          ramas, repeticiones por error, búsquedas, datos procesados y llamadas a modelos. Para comparar propuestas,
+          simula un mes representativo y anota qué unidad consume cada etapa; no extrapoles una cifra de marketing sin
+          validarla en el plan actual.
+        </p>
+      </section>
+
+      <section aria-labelledby="coste-titulo">
+        <h2 id="coste-titulo" class="text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Calcula el coste total, no solo la suscripción</h2>
+        <p class="mt-4">Una comparación útil incluye:</p>
+        <ul class="list-disc space-y-2 pl-6">
+          <li>plan, ejecuciones, tareas o créditos que requiere el volumen previsto;</li>
+          <li>servidor, almacenamiento, copias de seguridad y monitorización si se autoaloja;</li>
+          <li>modelo de IA, tokens, APIs, mensajería y demás licencias externas;</li>
+          <li>horas para pruebas, revisión humana, mantenimiento y recuperación de errores;</li>
+          <li>coste y tiempo de una alternativa manual cuando un servicio no está disponible.</li>
+        </ul>
+        <p class="mt-4">
+          El “plan gratuito” de un proveedor no incluye automáticamente el coste del servidor, el soporte ni el tiempo de
+          una persona. Tampoco una cuota superior garantiza menos mantenimiento. Estima primero el proceso y sus riesgos;
+          después compara el coste recurrente bajo el mismo volumen.
+        </p>
+      </section>
+
+      <section aria-labelledby="datos-titulo">
+        <h2 id="datos-titulo" class="text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Alojamiento propio no significa privacidad automática</h2>
+        <p class="mt-4">
+          Autoalojar n8n puede dar más control sobre dónde se instala la instancia, pero ese control también implica
+          protegerla, actualizarla, gestionar permisos, copias, registros y credenciales. Que una herramienta se ejecute
+          en un servidor propio no demuestra por sí solo cumplimiento legal ni evita que el workflow envíe datos a APIs
+          externas.
+        </p>
+        <p class="mt-4">
+          En cualquier opción, documenta qué datos entran y salen, qué proveedor los procesa, qué permisos tiene cada
+          conexión, cuánto tiempo se guardan los registros, quién puede consultarlos y qué procedimiento manual se usa
+          si falla el flujo. No elijas “local” o “nube” como sustituto de una evaluación del proceso y de los proveedores.
+        </p>
+      </section>
+
+      <section aria-labelledby="licencia-titulo" class="rounded-3xl border border-[#0071e3]/20 bg-[#0071e3]/5 p-6 sm:p-8">
+        <h2 id="licencia-titulo" class="text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Importante si una agencia ofrece n8n como servicio gestionado</h2>
+        <p class="mt-4">
+          n8n describe su licencia como <em>fair-code</em>; no conviene anunciarlo simplemente como “open source”. Según la
+          guía publicada por n8n, alojar y gestionar workflows y credenciales de clientes dentro de una instancia propia
+          requiere una licencia Enterprise. Si el consultor ayuda a instalar n8n en una instancia interna que controla
+          el cliente, n8n indica que el consultor no necesita una licencia comercial por prestar esa consultoría; los
+          requisitos del cliente dependen de su uso. Incrustar n8n en un producto puede requerir una licencia Embed.
+        </p>
+        <p class="mt-4">
+          Antes de vender alojamiento compartido, acceso de clientes o una solución integrada, confirma por escrito el
+          caso concreto con n8n y refleja la licencia correspondiente en el presupuesto. No presupuestes una instancia
+          compartida de VARINO como si el software y su operación fueran siempre gratuitos.
+        </p>
+      </section>
+
+      <section aria-labelledby="decision-titulo">
+        <h2 id="decision-titulo" class="text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Una regla práctica para decidir</h2>
+        <ul class="list-disc space-y-3 pl-6">
+          <li><strong>Considera n8n</strong> cuando el diseño requiera flexibilidad o una instancia autoalojada y exista una persona responsable de operarla, con licencia y costes resueltos.</li>
+          <li><strong>Considera Make</strong> cuando encaje su entorno visual y sus integraciones; estima créditos con las acciones concretas y revisa aparte el uso de IA.</li>
+          <li><strong>Considera Zapier</strong> cuando su catálogo y forma de construir encajen con el equipo; simula cuántas acciones correctas y pasos de IA consumirá el caso.</li>
+        </ul>
+        <p class="mt-4">
+          Para cualquier plataforma, prototipa una ruta normal, una excepción y una caída de servicio con datos sintéticos.
+          La elección final debe incluir criterios de aceptación, responsable técnico, límites de coste y procedimiento de
+          recuperación; no una promesa genérica de ahorro.
+        </p>
+      </section>
+
+      <section aria-labelledby="fuentes-titulo">
+        <h2 id="fuentes-titulo" class="text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Fuentes oficiales</h2>
+        <p class="mt-3">Consultadas el 27 de septiembre de 2026. La facturación y las condiciones pueden cambiar:</p>
+        <ul class="list-disc space-y-2 pl-6">
+          {fuentes.map((fuente) => (
+            <li><a class="text-[#0071e3] underline underline-offset-4 dark:text-[#2997ff]" href={fuente.href} target="_blank" rel="noopener noreferrer">{fuente.nombre}</a></li>
+          ))}
+        </ul>
+      </section>
+    </div>
+
+    <aside class="mt-12 rounded-3xl border border-black/10 p-7 dark:border-white/10">
+      <p class="text-xs font-bold text-[#0071e3] dark:text-[#2997ff]">SIGUIENTE PASO</p>
+      <h2 class="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Compara el alcance antes de decidir</h2>
+      <p class="mt-3 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">
+        Consulta los paquetes publicados por VARINO, sus límites, costes externos y condiciones. La plataforma se elige
+        después de entender el proceso, no al revés.
+      </p>
+      <a class="mt-5 inline-flex rounded-full bg-[#0071e3] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0077ed]" href={`${BASE}/precios/`}>
+        Ver precios y alcance
+      </a>
+    </aside>
+  </article>
 </Base>

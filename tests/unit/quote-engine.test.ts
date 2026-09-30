@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateEstimate, QUOTE_POLICY, recommendHardware } from "../../src/lib/quote-engine.mjs";
+import { calculateEstimate, QUOTE_POLICY, recommendHardware, SERVICE_QUOTE_LIMITS } from "../../src/lib/quote-engine.mjs";
 
 describe("motor de presupuesto", () => {
   it("añade un margen visible y no incluye IVA", () => {
@@ -14,41 +14,72 @@ describe("motor de presupuesto", () => {
     // Los rangos de config.ts son el compromiso comercial público
     // (ops/PLAN-0-A-10K.md). Si el motor se descalibra y vuelve a presupuestar
     // 22.000 € a una clínica de tres personas, esta prueba lo detiene.
-    const sprint = calculateEstimate({ integrations: 2, workflows: 1, users: 2, complexity: "standard", sensitivity: "medium", localAi: false });
+    const sprint = calculateEstimate({ integrations: 2, workflows: 1, users: 2, complexity: "standard", sensitivity: "medium", localAi: false, service: "automation-sprint" });
     expect(sprint.range.min).toBeGreaterThanOrEqual(900);
     expect(sprint.range.max).toBeLessThanOrEqual(2400);
+    expect(sprint.minimumOnly).toBe(false);
 
-    const crecimiento = calculateEstimate({ integrations: 3, workflows: 2, users: 4, complexity: "standard", sensitivity: "high", localAi: false });
+    const crecimiento = calculateEstimate({ integrations: 3, workflows: 2, users: 4, complexity: "standard", sensitivity: "high", localAi: false, service: "sistema-crecimiento" });
     expect(crecimiento.range.min).toBeGreaterThanOrEqual(2500);
     expect(crecimiento.range.max).toBeLessThanOrEqual(4500);
 
-    const iaPrivada = calculateEstimate({ integrations: 5, workflows: 3, users: 3, complexity: "advanced", sensitivity: "high", localAi: true });
-    expect(iaPrivada.range.min).toBeGreaterThanOrEqual(4500);
+    const iaPrivada = calculateEstimate({ integrations: 5, workflows: 3, users: 3, complexity: "advanced", sensitivity: "high", localAi: true, service: "ia-privada" });
+    expect(iaPrivada.range.min).toBeGreaterThanOrEqual(5500);
     expect(iaPrivada.range.max).toBeLessThanOrEqual(12000);
+  });
+
+  it("never estimates below the published minimum and flags out-of-package scope", () => {
+    const smallPrivateAi = calculateEstimate({
+      integrations: 1, workflows: 1, users: 3, complexity: "simple",
+      sensitivity: "medium", localAi: true, service: "ia-privada",
+    });
+    expect(smallPrivateAi.range.min).toBeGreaterThanOrEqual(SERVICE_QUOTE_LIMITS["ia-privada"].floor);
+    expect(smallPrivateAi.minimumOnly).toBe(true);
+    expect(smallPrivateAi.range.max).toBe(smallPrivateAi.range.min);
+
+    const oneFlowSprint = calculateEstimate({
+      integrations: 1, workflows: 1, users: 2, complexity: "simple",
+      sensitivity: "low", localAi: false, service: "automation-sprint",
+    });
+    expect(oneFlowSprint.exceedsPackage).toBe(false);
+
+    const oversizedSprint = calculateEstimate({
+      integrations: 2, workflows: 2, users: 2, complexity: "standard",
+      sensitivity: "medium", localAi: false, service: "automation-sprint",
+    });
+    expect(oversizedSprint.exceedsPackage).toBe(true);
   });
 
   it("incrementa horas cuando aumenta el alcance", () => {
     const small = calculateEstimate({ integrations: 1, workflows: 1, complexity: "simple", localAi: false });
     const advanced = calculateEstimate({ integrations: 7, workflows: 9, complexity: "advanced", localAi: true, customUi: true, dataMigration: true });
     expect(advanced.quotedHours).toBeGreaterThan(small.quotedHours);
-    expect(advanced.maintenanceMonthly).toBeGreaterThan(small.maintenanceMonthly);
+    expect(advanced.maintenanceHours).toBeGreaterThan(small.maintenanceHours);
   });
 
   it("nombra un modelo local que existe y dimensiona con margen", () => {
     const hardware = recommendHardware({ modelSize: "large", users: 20, concurrency: 3, sensitivity: "high" });
     expect(hardware.model).toBe("qwen3:14b");
-    expect(hardware.unifiedMemoryGb).toBeGreaterThanOrEqual(32);
+    expect(hardware.unifiedMemoryGb).toBeGreaterThanOrEqual(48);
     expect(hardware.unifiedMemoryGb).toBeGreaterThan(hardware.modelWeightsGb);
     expect(hardware.backupStorageGb).toBeGreaterThanOrEqual(hardware.freeStorageGb * 2);
     expect(hardware.headroom).toContain("30%");
     expect(hardware.profile).not.toContain("27B");
   });
 
+  it("usa el Qwen 3.6 27B instalado y reserva memoria para el sistema y el contexto", () => {
+    const hardware = recommendHardware({ modelSize: "27b", users: 3, concurrency: 1, sensitivity: "high" });
+    expect(hardware.model).toBe("qwen3.6:27b");
+    expect(hardware.modelWeightsGb).toBe(17.8);
+    expect(hardware.unifiedMemoryGb).toBe(64);
+    expect(hardware.profile).toContain("Qwen 3.6 · 27B Q4_K_M");
+  });
+
   it("sube de nivel cuando la carga lo exige y nunca baja del pedido", () => {
     const piloto = recommendHardware({ modelSize: "small", users: 1, concurrency: 1 });
     const cargado = recommendHardware({ modelSize: "small", users: 80, concurrency: 8 });
     expect(piloto.modelSize).toBe("small");
-    expect(cargado.modelSize).toBe("xlarge");
+    expect(cargado.modelSize).toBe("xxlarge");
     expect(cargado.unifiedMemoryGb).toBeGreaterThan(piloto.unifiedMemoryGb);
   });
 });

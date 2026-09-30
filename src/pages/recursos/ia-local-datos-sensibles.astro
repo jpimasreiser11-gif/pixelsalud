@@ -4,7 +4,7 @@ import { BASE, SITE } from "../../config";
 ---
 
 <Base
-  title={`IA local para datos sensibles: qué es y cuándo compensa`}
+  title="IA local para datos sensibles: cuándo compensa"
   description="Qué significa ejecutar un modelo de IA en tu propio equipo, cuándo tiene sentido para clínicas y despachos, y qué hardware pide de verdad."
 >
   <article class="mx-auto max-w-3xl px-6 pb-24 pt-20 sm:pt-28">
@@ -29,37 +29,40 @@ import { BASE, SITE } from "../../config";
       <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Qué es realmente la IA local</h2>
       <p>
         Un modelo de lenguaje abierto (por ejemplo, la familia Qwen) descargado y ejecutándose en
-        un equipo tuyo con <a class="text-[#0071e3] dark:text-[#2997ff] underline underline-offset-4" href="https://ollama.com" rel="noopener noreferrer" target="_blank">Ollama</a> o similar. Los datos que entran por el prompt no viajan a ningún servidor
-        externo: se procesan en tu máquina. Eso reduce mucho la superficie, aunque no elimina todas
-        las obligaciones: sigues siendo responsable de accesos, copias de seguridad, registros y de
-        que el modelo no vea más datos de los que necesita.
+        un equipo tuyo con <a class="text-[#0071e3] dark:text-[#2997ff] underline underline-offset-4" href="https://ollama.com" rel="noopener noreferrer" target="_blank">Ollama</a> o similar. Si el modelo y la aplicación procesan la inferencia en ese equipo y no la envían a una API externa, el prompt se procesa localmente. La web que lo envuelve aún podría transmitir metadatos u otros datos; hay que verificar telemetría, registros, herramientas, copias e integraciones. Sigues siendo responsable de accesos, copias de seguridad y de que el modelo no vea más datos de los necesarios.
       </p>
 
       <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Qué hardware pide, con números</h2>
       <p>
-        El tamaño del modelo determina la memoria. Modelos que existen hoy, con pesos reales
-        verificados, y la memoria unificada razonable para ejecutarlos con contexto:
+        El nombre comercial no basta para calcular RAM: cuentan la generación exacta, el formato y
+        cuantización, el contexto, el runtime y los usuarios simultáneos. Por ejemplo, el modelo
+        oficial <a class="text-[#0071e3] dark:text-[#2997ff] underline underline-offset-4" href="https://huggingface.co/Qwen/Qwen3.8-27B" rel="noopener noreferrer" target="_blank">Qwen3.8-27B</a>
+        publica archivos de pesos que suman 55,6 GB sin cuantizar. Eso describe los archivos de
+        pesos, no la RAM total que necesitará el servicio; una versión cuantizada puede ocupar
+        menos, a cambio de otros compromisos.
       </p>
       <ul class="list-none space-y-3">
-        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Piloto (Qwen3 4B):</strong> 2,6 GB de pesos; funciona bien en equipos con 16 GB.</li>
-        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Equipo pequeño (Qwen3 8B):</strong> 5,2 GB; cómodo con 24 GB.</li>
-        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Producción (Qwen3 14B):</strong> 9,3 GB; pide 32 GB para contexto y margen.</li>
-        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Alta exigencia (Qwen3 32B):</strong> 20,2 GB; a partir de 64 GB.</li>
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Antes de elegir hardware:</strong> registra el ID completo del modelo, formato y cuantización, contexto máximo, carga prevista y si el equipo servirá a más de una persona.</li>
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Calcula memoria de trabajo:</strong> pesos cargados + caché KV/contexto + runtime + sistema operativo; añade margen para la concurrencia y la carga real.</li>
+        <li class="rounded-2xl border border-black/8 p-4 dark:border-white/10"><strong>Valida antes de comprar:</strong> mide latencia, memoria y estabilidad con prompts y documentos representativos en el equipo objetivo.</li>
       </ul>
       <p>
-        A eso se suma almacenamiento para el corpus documental (si el sistema consulta documentos) y
-        su copia de seguridad, y conviene dejar un margen del orden del 30 % de memoria y disco tras
-        una prueba de carga real antes de dar el equipo por válido. Si alguien te presupuesta
-        «Qwen 27B», desconfía: ese modelo no existe en el registro público.
+        Añade almacenamiento para el corpus documental, registros y copias de seguridad. No compres
+        hardware basándote solo en el número de parámetros o en el tamaño del archivo: el margen
+        adecuado depende de la cuantización, el contexto, el runtime y la concurrencia que mida la
+        prueba de carga.
       </p>
 
-      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Qué compra y qué no compra</h2>
+      <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Qué aporta y qué no garantiza</h2>
       <p>
-        La IA local compra: control del dato, funcionamiento sin depender de la factura de un
-        proveedor de tokens, y la posibilidad de auditar qué se ejecuta. No compra: calidad
-        gratuita — un modelo de 4 B no razona como uno de 32 B —, inmunidad regulatoria, ni que las
-        respuestas sean correctas por estar en local. Un sistema serio añade permisos por fuente,
-        respuestas citadas y abstención verificable cuando no hay evidencia suficiente.
+        La IA local puede dar más control sobre dónde se procesa la inferencia y reducir la
+        dependencia del consumo de tokens de un proveedor. No elimina los costes de hardware,
+        electricidad, operación y mantenimiento, ni garantiza por sí sola que todo el sistema sea
+        privado, que se cumpla la normativa aplicable ni que las respuestas sean correctas. La
+        calidad depende del modelo concreto y de cómo se configure, pruebe y mantenga; ejecutar un
+        modelo en local no sustituye esa evaluación ni la supervisión humana. Un sistema serio añade
+        permisos por fuente, respuestas citadas y abstención verificable cuando no hay evidencia
+        suficiente.
       </p>
 
       <h2 class="pt-4 text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f] dark:text-white">Cuándo compensa</h2>

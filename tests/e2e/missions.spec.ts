@@ -1,29 +1,104 @@
 import { expect, test } from "@playwright/test";
 
-// Respuesta del servidor local en desarrollo. La forma es la que devuelve
-// guide-engine, con un modelo que existe de verdad en Ollama.
+// Respuesta simulada del servidor local: declara si la redacción vino realmente
+// del modelo, no solo que el modelo está instalado.
 const guideResponse = {
+  model: "qwen3.6:27b",
+  modelInvoked: true,
+  replySource: "model",
   reply: "Entiendo: quieres ordenar un proceso sensible sin perder el control.",
   nextQuestion: "¿Quién debe aprobar el resultado antes de enviarlo?",
   stage: "architecture",
   profile: { business: "Clínica", sector: "salud", problem: "Ordenar documentos sensibles", channels: "Formulario web", approvals: "Dirección", goal: "Reducir tiempos", integrations: 2, workflows: 2, users: 8, complexity: "standard", sensitivity: "high", customUi: true, dataMigration: false, localAi: true },
-  estimate: { quotedHours: 50.5, range: { min: 3600, max: 4550 }, maintenanceMonthly: 650 },
-  hardware: { profile: "Producción (Qwen3 14B)", model: "qwen3:14b", unifiedMemoryGb: 32, freeStorageGb: 180, headroom: "30% libre tras las pruebas" },
+  estimate: { quotedHours: 50.5, range: { min: 3600, max: 4550 }, maintenanceHours: 6 },
+  hardware: { profile: "IA exigente (Qwen 3.6 · 27B Q4_K_M)", model: "qwen3.6:27b", unifiedMemoryGb: 64, freeStorageGb: 300, headroom: "30% libre tras las pruebas" },
   service: { name: "IA privada", slug: "ia-privada" },
 };
 
 test("la guía responde y convierte la conversación en arquitectura", async ({ page }) => {
   await page.route("**/api/guide", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(guideResponse) }));
   await page.goto("/experiencia/");
-  const answer = page.getByLabel("Escribe tu mensaje");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
   await answer.fill("Somos una clínica y queremos ordenar documentos sensibles");
   await answer.press("Enter");
   await expect(page.getByText(/quieres ordenar un proceso sensible/i)).toBeVisible();
   await expect(page.getByText(/quién debe aprobar/i)).toBeVisible();
-  await expect(page.locator("[data-service]")).toHaveText("IA privada");
-  await expect(page.getByText("50.5")).toBeVisible();
-  await expect(page.getByText(/32 GB de memoria unificada/i)).toBeVisible();
-  await expect(page.getByRole("link", { name: /Ver IA privada/i })).toHaveAttribute("href", "/servicios/ia-privada/");
+  await expect(guide.locator("[data-service]")).toHaveText("IA privada");
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Respuesta asistida");
+  await expect(guide.locator("[data-guide-status]")).not.toContainText(/modelo local|qwen|ollama/i);
+  await expect(guide.getByText("50.5")).toBeVisible();
+  await expect(guide.locator("[data-maintenance-hours]")).toHaveText("6 h/mes");
+  await expect(guide.locator("[data-budget-monthly]")).toHaveCount(0);
+  await expect(guide.locator("[data-budget-note]")).toContainText(/mantenimiento es opcional/i);
+  await expect(guide.getByRole("link", { name: /Consultar planes mensuales/i })).toHaveAttribute("href", "/planes/");
+  await expect(guide.getByText(/64 GB de memoria unificada/i)).toBeVisible();
+  await expect(guide.getByRole("link", { name: /Ver IA privada/i })).toHaveAttribute("href", "/servicios/ia-privada/");
+});
+
+test("la guía avisa cuando el cálculo rebasa el paquete publicado", async ({ page }) => {
+  const oversized = {
+    ...guideResponse,
+    estimate: { ...guideResponse.estimate, exceedsPackage: true },
+  };
+  await page.route("**/api/guide", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(oversized) }));
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  await guide.getByLabel("Escribe tu mensaje").fill("Somos una clínica y queremos ordenar documentos sensibles");
+  await guide.getByLabel("Escribe tu mensaje").press("Enter");
+  await expect(guide.locator("[data-budget-note]")).toContainText(/supera los límites del paquete publicado/i);
+});
+
+test("la guía presenta el suelo comercial como mínimo, no como rango cerrado", async ({ page }) => {
+  const minimum = {
+    ...guideResponse,
+    estimate: { ...guideResponse.estimate, range: { min: 5500, max: 5500 }, minimumOnly: true },
+  };
+  await page.route("**/api/guide", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(minimum) }));
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  await guide.getByLabel("Escribe tu mensaje").fill("Caso de prueba: necesito IA privada para revisar documentos");
+  await guide.getByLabel("Escribe tu mensaje").press("Enter");
+  await expect(guide.locator("[data-budget-range]")).toHaveText("Desde 5.500 €");
+  await expect(guide.locator("[data-budget-range-label]")).toHaveText("mínimo publicado · sin IVA");
+  await expect(guide.locator("[data-budget-note]")).toContainText(/no un precio cerrado/i);
+});
+
+test("la guía no afirma que Ollama funciona si el endpoint responde sin modelo", async ({ page }) => {
+  await page.route("**/api/guide", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ ...guideResponse, model: null, modelInvoked: false, replySource: "rules" }),
+  }));
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
+
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía lista");
+  await answer.fill("Somos una clínica y queremos ordenar documentos sensibles");
+  await answer.press("Enter");
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Orientación inicial");
+  await expect(guide.locator(".ai-message--assistant").last()).toContainText(/Entiendo:/i);
+});
+
+test("un saludo no etiqueta como inferencia un modelo que estaba disponible pero no se llamó", async ({ page }) => {
+  const greeting = {
+    ...guideResponse,
+    stage: "welcome",
+    replySource: "rules",
+    modelInvoked: false,
+    reply: "¡Hola! Claro, estoy aquí.",
+  };
+  await page.route("**/api/guide", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(greeting) }));
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
+
+  await answer.fill("Hola");
+  await answer.press("Enter");
+  await expect(guide.locator(".ai-message--assistant").last()).toContainText("¡Hola!");
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Respuesta inmediata");
+  await expect(guide.locator("[data-guide-status]")).not.toContainText(/qwen|modelo local|ollama/i);
 });
 
 // La web publicada es estática: no existe /api/guide. Esta prueba simula esa
@@ -32,12 +107,14 @@ test("la guía responde y convierte la conversación en arquitectura", async ({ 
 test("la guía sigue funcionando sin servidor, como en la web publicada", async ({ page }) => {
   await page.route("**/api/guide", (route) => route.abort());
   await page.goto("/experiencia/");
-  const answer = page.getByLabel("Escribe tu mensaje");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
 
   await answer.fill("Tenemos una clínica dental y perdemos citas");
   await answer.press("Enter");
-  await expect(page.locator("[data-service]")).toHaveText("IA privada");
-  await expect(page.locator("[data-guide-status]")).toContainText(/navegador/i);
+  await expect(guide.locator("[data-service]")).toHaveText("IA privada");
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía de respaldo");
+  await expect(guide.locator("[data-guide-status]")).not.toContainText(/modelo local|ollama|conexión local/i);
 
   await answer.fill("Se nos pierden las solicitudes que llegan por WhatsApp");
   await answer.press("Enter");
@@ -45,18 +122,152 @@ test("la guía sigue funcionando sin servidor, como en la web publicada", async 
   await answer.press("Enter");
   // Con negocio, problema y proceso ya hay horas y precio calculados en local:
   // sin ese mínimo no se presupuesta, para no inventar alcance.
-  await expect(page.locator("[data-budget]")).toBeVisible();
-  await expect(page.locator("[data-budget-hours]")).not.toHaveText("—");
-  await expect(page.locator("[data-hardware]")).toContainText(/GB de memoria unificada/i);
+  await expect(guide.locator("[data-budget]")).toBeVisible();
+  await expect(guide.locator("[data-budget-hours]")).not.toHaveText("—");
+  await expect(guide.locator("[data-hardware]")).toContainText(/GB de memoria unificada/i);
+});
+
+test("un primer mensaje libre reconoce el sector y el problema sin pedirlos otra vez", async ({ page }) => {
+  await page.route("**/api/guide", (route) => route.abort());
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
+
+  await answer.fill("Hola, tengo una clínica pequeña y perdemos tiempo confirmando citas por teléfono.");
+  await answer.press("Enter");
+
+  await expect(guide.locator(".ai-message--assistant").last()).toContainText(/confirmando citas por teléfono/i);
+  await expect(guide.locator(".ai-message--assistant").last()).toContainText(/cómo realizáis ahora ese proceso/i);
+  await expect(guide.locator(".ai-message--assistant").last()).not.toContainText(/a qué se dedica tu empresa|qué sector/i);
+  await expect(guide.locator("[data-service]")).toHaveText("IA privada");
+  await expect(guide.locator("[data-guide-status]")).toHaveText("Guía de respaldo");
+});
+
+test("un primer mensaje que ya incluye la tarea y el proceso avanza a la siguiente pregunta", async ({ page }) => {
+  await page.route("**/api/guide", (route) => route.abort());
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
+
+  await answer.fill("Caso ficticio: una tienda de bicicletas recibe consultas de stock por email. Una persona copia cada solicitud a una hoja y comprueba existencias antes de responder. Queremos clasificar las consultas y preparar respuestas para revisión humana, sin envío automático.");
+  await answer.press("Enter");
+
+  const response = guide.locator(".ai-message--assistant").last();
+  await expect(response).toContainText(/qu[eé] herramientas o programas intervienen actualmente/i);
+  await expect(response).not.toContainText(/qu[eé] tarea, problema o cuello de botella quieres mejorar primero/i);
+  await expect(guide.locator("[data-preview-kicker]")).toContainText(/comercio y ecommerce/i);
+  await expect(guide.locator("[data-preview-title]")).toContainText(/clasificar las consultas/i);
+});
+
+test("el saludo no repite la pregunta inicial y el mensaje siguiente conserva negocio y problema", async ({ page }) => {
+  await page.route("**/api/guide", (route) => route.abort());
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
+  const assistantMessages = guide.locator(".ai-message--assistant");
+
+  await answer.fill("hola");
+  await answer.press("Enter");
+  await expect(assistantMessages.last()).toContainText(/hola/i);
+  await expect(assistantMessages.last()).not.toContainText("¿");
+
+  await answer.fill("Tengo una clínica dental y perdemos tiempo confirmando citas por teléfono.");
+  await answer.press("Enter");
+  await expect(assistantMessages.last()).toContainText(/cómo realizáis ahora ese proceso/i);
+  await expect(assistantMessages.last()).not.toContainText(/a qué se dedica tu empresa/i);
+  await expect(guide.locator("[data-preview-kicker]")).toContainText(/clínicas dentales/i);
+  await expect(guide.locator("[data-preview-title]")).toContainText(/confirmando citas/i);
+});
+
+test("conserva el contexto durante todo el diagnóstico y no repite preguntas", async ({ page }) => {
+  await page.route("**/api/guide", (route) => route.abort());
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
+  const assistantMessages = guide.locator(".ai-message--assistant");
+
+  const send = async (message: string) => {
+    const before = await assistantMessages.count();
+    await answer.fill(message);
+    await answer.press("Enter");
+    await expect(assistantMessages).toHaveCount(before + 1);
+    await expect(guide.locator(".ai-message--pending")).toHaveCount(0);
+    await expect(answer).toBeEnabled();
+  };
+
+  await send("hola");
+  await expect(assistantMessages.last()).not.toContainText("¿");
+  for (const message of [
+    "Somos una clínica dental pequeña",
+    "Se nos pierden citas entre llamadas y WhatsApp",
+    "Recepción apunta solicitudes en una hoja y confirma a mano",
+    "Usamos Google Sheets y el calendario",
+    "Entra por teléfono, WhatsApp y formulario web",
+    "Unas 30 solicitudes por semana",
+    "Una persona debe aprobar los mensajes al paciente",
+    "Queremos reducir el tiempo de respuesta y evitar duplicados",
+  ]) {
+    await send(message);
+  }
+
+  const turns = await assistantMessages.allInnerTexts();
+  const questions = turns.flatMap((turn) => turn.match(/¿[^?]+\?/g) || []);
+  expect(questions.length).toBe(8);
+  expect(new Set(questions).size).toBe(questions.length);
+  await expect(guide.locator("[data-guide-stage]")).toHaveText("ESTIMACIÓN");
+  await expect(guide.locator("[data-service]")).toHaveText("IA privada");
+  await expect(guide.locator("[data-budget]")).toBeVisible();
+  await expect(guide.locator("[data-node=\"control\"]")).toContainText("Una persona debe aprobar");
 });
 
 test("la conversación no persiste en el navegador y puede reiniciarse", async ({ page }) => {
   await page.route("**/api/guide", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(guideResponse) }));
   await page.goto("/experiencia/");
-  const answer = page.getByLabel("Escribe tu mensaje");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
   await answer.fill("Quiero mejorar mi proceso");
   await answer.press("Enter");
-  await page.getByRole("button", { name: "Nueva conversación" }).click();
-  await expect(page.getByText(/Empezamos de nuevo/i)).toBeVisible();
+  await guide.getByRole("button", { name: "Nueva conversación" }).click();
+  await expect(guide.getByText(/Empezamos de nuevo/i)).toBeVisible();
   expect(await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length }))).toEqual({ local: 0, session: 0 });
+});
+
+test("bloquea datos personales antes de llamar al modelo y limpia el diagnóstico", async ({ page }) => {
+  let requests = 0;
+  await page.route("**/api/guide", (route) => {
+    requests += 1;
+    return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(guideResponse) });
+  });
+  await page.goto("/experiencia/");
+  const guide = page.locator("[data-ai-guide]");
+  const answer = guide.getByLabel("Escribe tu mensaje");
+
+  await answer.fill("Somos una clínica dental");
+  await answer.press("Enter");
+  await expect.poll(() => requests).toBe(1);
+  await answer.fill("Mi correo es cliente@example.com");
+  await answer.press("Enter");
+
+  await expect(guide.getByText(/no he enviado esa información al modelo/i)).toBeVisible();
+  await expect(guide.locator(".ai-message--user")).toHaveCount(0);
+  expect(requests).toBe(1);
+  await expect(guide.locator("[data-preview-title]")).toHaveText("Tu necesidad, convertida en una arquitectura clara.");
+});
+
+test("el estudio de la guía conserva una lectura cómoda en tablet y pantallas estrechas", async ({ page }) => {
+  await page.setViewportSize({ width: 800, height: 900 });
+  await page.goto("/");
+  const columnCount = (selector: string) => page.locator(selector).evaluate((element) =>
+    getComputedStyle(element).gridTemplateColumns.trim().split(/\s+/).length,
+  );
+
+  expect(await columnCount(".ai-studio")).toBe(1);
+  expect(await columnCount(".ai-blueprint")).toBe(2);
+
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await expect.poll(() => columnCount(".ai-studio")).toBe(2);
+  expect(await columnCount(".ai-blueprint")).toBe(2);
+
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await expect.poll(() => columnCount(".ai-blueprint")).toBe(4);
 });

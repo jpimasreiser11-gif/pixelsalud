@@ -13,10 +13,14 @@
     "test:e2e:update": "playwright test --update-snapshots",
     "cf:local": "wrangler pages dev dist --local",
     "security:headers": "node scripts/check-security-headers.mjs",
+    "security:origin": "node scripts/check-origin-security-headers.mjs",
     "csp:check": "node scripts/check-csp-compatibility.mjs",
+    "deploy-gate:check": "node scripts/check-deploy-gate.mjs",
     "claims:check": "node scripts/check-claims.mjs",
     "launch:check": "node scripts/check-launch-readiness.mjs",
-    "readiness": "npm run build && npm run scripts:syntax && npm run links:check && npm run csp:check"
+    "seo:check": "node scripts/check-seo.mjs",
+    "production:smoke": "node scripts/check-production-smoke.mjs",
+    "readiness": "npm run build && npm run seo:check && npm run scripts:syntax && npm run links:check && npm run csp:check && npm run deploy-gate:check"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
@@ -35,5 +39,11 @@
     "jsdom": "30.0.1",
     "vitest": "4.1.11",
     "wrangler": "4.131.0"
+  },
+  "overrides": {
+    "undici": "8.10.2",
+    "miniflare": {
+      "undici": "7.29.1"
+    }
   }
 }

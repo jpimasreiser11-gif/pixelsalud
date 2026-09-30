@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { BASE, SITE, hasContactChannel } from "../config";
+import { BACKEND_CHAT, BASE, SITE, hasContactChannel } from "../config";
 import Logo from "../components/Logo.astro";
 import AiChat from "../components/AiChat.astro";
 import Analytics from "../components/Analytics.astro";
@@ -10,11 +10,27 @@ interface Props {
   title: string;
   description?: string;
   noindex?: boolean;
+  /** Hide the global chat and analytics on pages that should not collect or route visitor data. */
+  includeVisitorTools?: boolean;
 }
 
-const { title, description = SITE.description, noindex = false } = Astro.props;
+const { title, description = SITE.description, noindex = false, includeVisitorTools = true } = Astro.props;
 const shouldNoindex = noindex || !SITE.launchReady;
 const canonical = SITE.url ? new URL(Astro.url.pathname, SITE.url).href : "";
+const socialImage = SITE.url ? new URL(`${BASE}/og/varino-social.png`, SITE.url).href : "";
+const titleWithoutBrandSuffix = title.replace(new RegExp(`\\s*[—-]\\s*${SITE.name}\\s*$`, "i"), "").trim();
+const documentTitle = titleWithoutBrandSuffix.toLowerCase().includes(SITE.name.toLowerCase())
+  ? titleWithoutBrandSuffix
+  : `${titleWithoutBrandSuffix} — ${SITE.name}`;
+const isSectorPage = Astro.url.pathname.replace(/\/+$/, "").startsWith(`${BASE}/sectores`);
+const currentPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
+
+function currentNavState(href: string, label: string): "page" | "location" | undefined {
+  const itemPath = new URL(href, Astro.url).pathname.replace(/\/+$/, "") || "/";
+  if (currentPath === itemPath) return "page";
+  if (label === "Servicios" && currentPath.startsWith(`${itemPath}/`)) return "location";
+  return undefined;
+}
 
 const nav = [
   { href: `${BASE}/`, label: "Inicio" },
@@ -26,7 +42,7 @@ const nav = [
   { href: `${BASE}/planes/`, label: "Planes" },
 ];
 
-const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
+const schema = SITE.launchReady && SITE.url && SITE.legalOwner ? JSON.stringify({
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
   name: SITE.name,
@@ -42,7 +58,7 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="google-site-verification" content="5onylzsGfUA6FygHZFqyqdIvbozHxRSKBcnyi56YlFE" />
-    <title>{title} — {SITE.name}</title>
+    <title>{documentTitle}</title>
     <meta name="description" content={description} />
     {canonical && <link rel="canonical" href={canonical} />}
     {shouldNoindex && <meta name="robots" content="noindex,follow" />}
@@ -50,11 +66,21 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
     <link rel="shortcut icon" href={`${BASE}/favicon.ico`} />
     <link rel="apple-touch-icon" href={`${BASE}/apple-touch-icon.png`} />
     {SITE.url && SITE.launchReady && <link rel="sitemap" href={`${BASE}/sitemap-index.xml`} />}
-    <meta property="og:title" content={`${title} — ${SITE.name}`} />
+    <meta property="og:title" content={documentTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     {canonical && <meta property="og:url" content={canonical} />}
     <meta property="og:locale" content="es_ES" />
+    {socialImage && <meta property="og:image" content={socialImage} />}
+    {socialImage && <meta property="og:image:type" content="image/png" />}
+    {socialImage && <meta property="og:image:width" content="1200" />}
+    {socialImage && <meta property="og:image:height" content="630" />}
+    {socialImage && <meta property="og:image:alt" content="VARINO — automatización e IA alrededor de procesos reales" />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={documentTitle} />
+    <meta name="twitter:description" content={description} />
+    {socialImage && <meta name="twitter:image" content={socialImage} />}
+    {socialImage && <meta name="twitter:image:alt" content="VARINO — automatización e IA alrededor de procesos reales" />}
     {schema && <script type="application/ld+json" set:html={schema} />}
     <script>
       (function () {
@@ -77,7 +103,7 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
     <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:text-sm focus:text-black focus:shadow-xl">
       Saltar al contenido
     </a>
-    <!-- Apple-style Global Frosted Glass Header -->
+    <!-- Shared navigation with a restrained translucent surface. -->
     <header
       class="sticky top-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-black/5 dark:border-[#424245]/30 transition-colors"
     >
@@ -90,12 +116,16 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
         </a>
 
         <!-- Desktop Navigation -->
-        <nav aria-label="Navegación principal" class="hidden items-center gap-7 text-xs font-normal text-[#6e6e73] dark:text-[#86868b] md:flex">
+        <nav aria-label="Navegación principal" class="hidden items-center gap-4 text-sm font-normal text-[#6e6e73] dark:text-[#86868b] lg:flex xl:gap-5">
           {
             nav.map((item) => (
               <a
                 href={item.href}
-                class="transition hover:text-[#1d1d1f] dark:hover:text-[#f5f5f7]"
+                aria-current={currentNavState(item.href, item.label)}
+                class:list={[
+                  "flex min-h-11 items-center transition-colors hover:text-[#1d1d1f] dark:hover:text-[#f5f5f7]",
+                  currentNavState(item.href, item.label) && "font-semibold text-[#1d1d1f] dark:text-[#f5f5f7]",
+                ]}
               >
                 {item.label}
               </a>
@@ -109,26 +139,50 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
           <button
             id="theme-toggle-btn"
             type="button"
-            aria-label="Cambiar tema claro u oscuro"
+            aria-label="Cambiar a tema oscuro"
             aria-pressed="false"
-            title="Cambiar tema claro u oscuro"
-            class="h-8 w-8 rounded-full border border-black/10 dark:border-white/15 flex items-center justify-center text-xs text-[#6e6e73] dark:text-[#86868b] hover:text-[#1d1d1f] dark:hover:text-white transition bg-black/5 dark:bg-white/5"
+            title="Cambiar a tema oscuro"
+            class="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-black/5 text-[#6e6e73] transition-colors hover:bg-black/10 hover:text-[#1d1d1f] dark:border-white/15 dark:bg-white/5 dark:text-[#a1a1a6] dark:hover:bg-white/10 dark:hover:text-white"
           >
-            <span class="dark:hidden">🌙</span>
-            <span class="hidden dark:inline">☀️</span>
+            <svg class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20.1 15.3A8.4 8.4 0 0 1 8.7 3.9 8.4 8.4 0 1 0 20.1 15.3Z" />
+            </svg>
+            <svg class="hidden h-5 w-5 dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" />
+            </svg>
           </button>
 
           <a
             href={`${BASE}/contacto/`}
-            class="hidden rounded-full bg-[#0071e3] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#0077ed] shadow-md shadow-[#0071e3]/20 active:scale-95 sm:inline-flex"
+            class="hidden min-h-11 items-center rounded-full bg-[#0071e3] px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-[#0071e3]/20 transition-colors hover:bg-[#0077ed] sm:inline-flex"
           >
             Plantear un proyecto
           </a>
-          <div class="flex items-center md:hidden">
+          <div class="flex items-center gap-2 lg:hidden">
+            {BACKEND_CHAT ? (
+              <button
+                type="button"
+                data-open-chat
+                aria-controls="aichat-panel"
+                aria-expanded="false"
+                class="flex min-h-11 items-center rounded-full border border-black/10 px-3 text-sm font-semibold text-[#0058b6] transition-colors hover:bg-black/5 dark:border-white/15 dark:text-[#8cc3ff] dark:hover:bg-white/10"
+              >
+                Guía
+              </button>
+            ) : (
+              <a
+                href={`${BASE}/#guia-varino`}
+                aria-label="Abrir guía interactiva"
+                class="flex min-h-11 items-center rounded-full border border-black/10 px-3 text-sm font-semibold text-[#0058b6] transition-colors hover:bg-black/5 dark:border-white/15 dark:text-[#8cc3ff] dark:hover:bg-white/10"
+              >
+                Guía
+              </a>
+            )}
             <button
               id="menu-btn"
               type="button"
-              class="rounded-lg border border-black/10 dark:border-[#424245] px-2.5 py-1 text-xs text-[#6e6e73] dark:text-[#a1a1a6]"
+              class="flex min-h-11 items-center rounded-full border border-black/10 px-3 text-sm text-[#424245] transition-colors hover:bg-black/5 dark:border-white/15 dark:text-[#d1d1d6] dark:hover:bg-white/10"
               aria-expanded="false"
               aria-controls="menu-movil"
             >
@@ -142,20 +196,27 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
       <nav
         id="menu-movil"
         aria-label="Navegación móvil"
-        class="hidden border-t border-black/5 dark:border-[#424245]/40 bg-white/95 dark:bg-[#000000]/95 px-6 py-4 md:hidden backdrop-blur-2xl"
+        class="hidden border-t border-black/5 bg-white/95 px-4 py-3 backdrop-blur-2xl dark:border-white/10 dark:bg-black/95 lg:hidden"
       >
-        <ul class="flex flex-col gap-4 text-sm font-normal text-[#86868b]">
+        <ul class="mx-auto flex max-w-6xl flex-col gap-1 text-sm font-normal text-[#424245] dark:text-[#d1d1d6]">
           {
             nav.map((item) => (
               <li>
-                <a href={item.href} class="block py-1 hover:text-white">
+                <a
+                  href={item.href}
+                  aria-current={currentNavState(item.href, item.label)}
+                  class:list={[
+                    "flex min-h-11 items-center rounded-xl px-3 transition-colors hover:bg-black/5 hover:text-[#1d1d1f] dark:hover:bg-white/10 dark:hover:text-white",
+                    currentNavState(item.href, item.label) && "bg-black/5 font-semibold text-[#1d1d1f] dark:bg-white/10 dark:text-white",
+                  ]}
+                >
                   {item.label}
                 </a>
               </li>
             ))
           }
           <li>
-            <a href={`${BASE}/contacto/`} class="block py-1 text-[#0071e3] dark:text-[#2997ff] font-semibold">
+            <a href={`${BASE}/contacto/`} class="flex min-h-11 items-center rounded-xl px-3 font-semibold text-[#0058b6] transition-colors hover:bg-black/5 dark:text-[#8cc3ff] dark:hover:bg-white/10">
               Plantear un proyecto →
             </a>
           </li>
@@ -164,12 +225,20 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
     </header>
 
     <main id="contenido">
+      {isSectorPage && (
+        <aside role="note" class="mx-auto mt-4 max-w-6xl px-6">
+          <div class="rounded-2xl border border-black/10 bg-[#f5f5f7] px-5 py-4 text-sm leading-6 text-[#3a3a3c] dark:border-white/10 dark:bg-[#16181f] dark:text-[#d1d1d6]">
+            <strong class="text-[#1d1d1f] dark:text-white">Ejemplo de diseño, no un sistema implantado.</strong>
+            Las funciones, tiempos e integraciones de esta página son hipótesis para evaluar; no son resultados de clientes ni promesas. La viabilidad y los controles se definen antes de construir. No compartas datos personales o sensibles en esta demo.
+          </div>
+        </aside>
+      )}
       <slot />
     </main>
 
-    <!-- Apple-style Pro Footer -->
+    <!-- Shared footer and trust links. -->
     <footer
-      class="mt-32 border-t border-black/5 dark:border-[#424245]/30 bg-[#f5f5f7] dark:bg-[#161617] text-[#6e6e73] dark:text-[#a1a1a6] text-[11px] leading-relaxed transition-colors"
+      class="site-footer mt-32 border-t border-black/5 dark:border-[#424245]/30 bg-[#f5f5f7] dark:bg-[#161617] text-[#6e6e73] dark:text-[#a1a1a6] text-[11px] leading-relaxed"
     >
       <div class="mx-auto max-w-6xl px-6 py-12">
         <div class="grid gap-8 sm:grid-cols-2 md:grid-cols-4 pb-8 border-b border-black/5 dark:border-[#424245]/30">
@@ -219,7 +288,7 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
           </div>
         </div>
 
-        <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[#6e6e73]">
+        <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[#6e6e73] dark:text-[#a1a1a6]">
           <div>
             © 2026 {SITE.name}. Todos los derechos reservados.
           </div>
@@ -232,8 +301,8 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
       </div>
     </footer>
 
-    <AiChat />
-    <Analytics />
+    {includeVisitorTools && <AiChat />}
+    {includeVisitorTools && <Analytics />}
     <Reveal />
 
     <script>
@@ -241,16 +310,34 @@ const schema = SITE.url && SITE.legalOwner ? JSON.stringify({
         var btn = document.getElementById("menu-btn");
         var menu = document.getElementById("menu-movil");
         if (btn && menu) {
+          function closeMenu() {
+            menu.classList.add("hidden");
+            btn.setAttribute("aria-expanded", "false");
+          }
           btn.addEventListener("click", function () {
             var open = menu.classList.toggle("hidden") === false;
             btn.setAttribute("aria-expanded", open ? "true" : "false");
+          });
+          menu.querySelectorAll("a").forEach(function (link) {
+            link.addEventListener("click", closeMenu);
+          });
+          document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape" && btn.getAttribute("aria-expanded") === "true") {
+              closeMenu();
+              btn.focus();
+            }
           });
         }
 
         var themeBtn = document.getElementById("theme-toggle-btn");
         function setTheme(dark, persist) {
           document.documentElement.classList.toggle("dark", dark);
-          if (themeBtn) themeBtn.setAttribute("aria-pressed", String(dark));
+          if (themeBtn) {
+            var label = dark ? "Cambiar a tema claro" : "Cambiar a tema oscuro";
+            themeBtn.setAttribute("aria-label", label);
+            themeBtn.setAttribute("title", label);
+            themeBtn.setAttribute("aria-pressed", String(dark));
+          }
           if (persist) {
             try {
               localStorage.setItem("varino_theme", dark ? "dark" : "light");

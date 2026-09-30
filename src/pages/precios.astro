@@ -7,14 +7,14 @@ import { BASE, MAINTENANCE_PLANS, SERVICES, SITE } from "../config";
   <section class="mx-auto max-w-6xl px-6 py-24 sm:py-32"><p class="eyebrow">Precios transparentes</p><h1 class="display-title max-w-5xl">Un rango para orientarte.<br /><span>Un alcance para decidir.</span></h1><p class="mt-8 max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">No calculamos un retorno automático ni prometemos ahorro antes de observar el proceso. Cada propuesta detalla entregables, exclusiones, impuestos, costes externos y criterios de aceptación.</p></section>
   <section class="mx-auto max-w-6xl px-6 pb-10">
     <article class="grid gap-6 rounded-3xl border border-[#0071e3]/20 bg-[#0071e3]/5 p-7 sm:grid-cols-[1fr_auto] sm:items-center">
-      <div><p class="text-xs font-bold text-[#0071e3]">PUNTO DE ENTRADA</p><h2 class="mt-3 text-3xl font-semibold tracking-[-0.04em]">Diagnóstico CAIO</h2><p class="mt-3 max-w-2xl text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">Mapa del proceso, prioridades, riesgos, arquitectura inicial y presupuesto trazable. Los 290 € se descuentan si contratas la implementación propuesta.</p></div>
+      <div><p class="text-xs font-bold text-[#0071e3]">PUNTO DE ENTRADA</p><h2 class="mt-3 text-3xl font-semibold tracking-[-0.04em]">Diagnóstico CAIO</h2><p class="mt-3 max-w-2xl text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">Mapa del proceso, prioridades, riesgos, arquitectura inicial y presupuesto trazable. Si contratas la implementación propuesta, descontamos los 290 € de base imponible; el IVA se calcula y muestra por separado.</p></div>
       <div class="sm:text-right"><strong class="block text-2xl">290 € + IVA</strong><a class="button-primary mt-4" href={`${BASE}/auditoria/`}>Ver diagnóstico</a></div>
     </article>
   </section>
-  <section data-reveal class="mx-auto grid max-w-6xl gap-5 px-6 pb-24 lg:grid-cols-3">{SERVICES.map((service) => <article class="rounded-3xl border border-black/8 p-7 dark:border-white/10"><p class="text-xs font-bold text-[#655cff]">{service.tag}</p><h2 class="mt-7 text-3xl font-semibold tracking-[-0.04em]">{service.name}</h2><strong class="mt-3 block text-xl">{service.range}</strong><p class="mt-4 min-h-24 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{service.summary}</p><ul class="mt-6 space-y-3 text-sm">{service.deliverables.map((item) => <li class="border-t border-black/8 pt-3 dark:border-white/10">{item}</li>)}</ul><p class="mt-6 text-xs leading-5 text-[#6e6e73]">Rango indicativo, no oferta contractual.</p></article>)}</section>
+  <section data-reveal class="mx-auto grid max-w-6xl gap-5 px-6 pb-24 lg:grid-cols-3">{SERVICES.map((service) => <article class="rounded-3xl border border-black/8 p-7 dark:border-white/10"><p class="text-xs font-bold text-[#655cff]">{service.tag}</p><h2 class="mt-7 text-3xl font-semibold tracking-[-0.04em]">{service.name}</h2><strong class="mt-3 block text-xl">{service.range}</strong><p class="mt-4 min-h-24 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{service.summary}</p><p class="mt-5 rounded-xl bg-[#f7f7f5] p-4 text-xs leading-5 text-[#505056] dark:bg-[#111318] dark:text-[#c4c4cc]"><strong>Alcance incluido:</strong> {service.scope}</p><p class="mt-6 text-xs leading-5 text-[#6e6e73]">Rango orientativo, no oferta contractual. Si el caso supera estos límites, se presupuesta por separado.</p></article>)}</section>
   <section class="mx-auto max-w-6xl px-6 pb-6">
     <div class="rounded-2xl border border-black/8 bg-[#f7f7f5] p-5 text-sm leading-6 text-[#6e6e73] dark:border-white/10 dark:bg-[#111318] dark:text-[#a1a1a6]">
-      <strong class="text-[#1d1d1f] dark:text-[#f5f5f7]">Cómo se paga.</strong> Sin IVA oculto: los rangos no incluyen IVA ni licencias de terceros. Antes de construir firmamos un presupuesto cerrado con alcance y exclusiones; si el alcance cambia, lo acordamos por escrito antes de seguir. El Diagnóstico CAIO (290 €) se descuenta si contratas la implementación propuesta.
+      <strong class="text-[#1d1d1f] dark:text-[#f5f5f7]">Impuestos y costes externos.</strong> Todos los importes publicados se muestran sin IVA; el IVA aplicable y el total se desglosan en la propuesta antes de aceptar. Las licencias y consumos de terceros también se detallan. El Diagnóstico CAIO (290 € + IVA) descuenta su base imponible si contratas la implementación propuesta.
     </div>
   </section>
   <section class="mx-auto max-w-6xl px-6 pb-16">
@@ -23,7 +23,7 @@ import { BASE, MAINTENANCE_PLANS, SERVICES, SITE } from "../config";
       {SERVICES.map((service) => (
         <article class="rounded-3xl border border-black/8 p-6 dark:border-white/10">
           <h3 class="text-xl font-semibold">{service.name}</h3>
-          <p class="mt-3 text-xs font-bold text-[#0071e3]">Incluye</p>
+          <p class="mt-3 text-xs font-bold text-[#0071e3]">Entregables</p>
           <ul class="mt-2 space-y-2 text-sm">{service.deliverables.map((i) => <li>· {i}</li>)}</ul>
           <p class="mt-5 text-xs font-bold text-[#6e6e73] dark:text-[#a1a1a6]">No incluye</p>
           <ul class="mt-2 space-y-2 text-sm text-[#6e6e73] dark:text-[#a1a1a6]">{service.exclusions.map((i) => <li>— {i}</li>)}</ul>
@@ -37,9 +37,9 @@ import { BASE, MAINTENANCE_PLANS, SERVICES, SITE } from "../config";
     <div class="mt-8 space-y-3">
       {[["¿Por qué un rango y no un precio fijo?","Porque hasta ver el proceso real no conocemos sus excepciones. El rango te orienta; el presupuesto cerrado llega tras el diagnóstico o el mapa."],
         ["¿El presupuesto puede subir luego?","Solo si cambia el alcance, y entonces lo acordamos por escrito antes de seguir. Las exclusiones están publicadas en cada servicio."],
-        ["¿Qué incluyen los rangos?","Horas de análisis, diseño, construcción, pruebas, seguridad, despliegue, documentación y formación. No incluyen IVA ni licencias de terceros."],
+        ["¿Qué incluyen los rangos?","Horas de análisis, diseño, construcción, pruebas, seguridad, despliegue, documentación y formación. Los importes son sin IVA; el IVA aplicable y las licencias o consumos de terceros se desglosan aparte."],
         ["¿Necesito el mantenimiento?","No. Recibes la documentación del proyecto sí o sí. El mantenimiento es opcional para supervisión, incidencias y mejoras."],
-        ["¿El Diagnóstico CAIO se descuenta?","Sí, los 290 € se descuentan íntegramente si contratas la implementación propuesta."]].map(([q,a]) => (
+        ["¿El Diagnóstico CAIO se descuenta?","Sí, la base de 290 € se descuenta íntegramente si contratas la implementación propuesta; el IVA se calcula y detalla por separado."]].map(([q,a]) => (
         <details class="group rounded-2xl border border-black/8 p-5 dark:border-white/10">
           <summary class="cursor-pointer font-semibold list-none">{q}</summary>
           <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">{a}</p>
@@ -49,5 +49,5 @@ import { BASE, MAINTENANCE_PLANS, SERVICES, SITE } from "../config";
   <section class="border-y border-black/6 bg-[#f7f7f5] dark:border-white/10 dark:bg-[#0a0d14]"><div class="mx-auto max-w-6xl px-6 py-24"><div class="section-heading"><div><p class="eyebrow">Mantenimiento opcional</p><h2>Ingresos recurrentes con trabajo recurrente real.</h2></div><p>Supervisión, incidencias, cambios y mejora se contratan con límites claros. Ningún plan es obligatorio para recibir la documentación del proyecto.</p></div><div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{MAINTENANCE_PLANS.map((plan) => <article class="rounded-2xl border border-black/8 bg-white p-6 dark:border-white/10 dark:bg-[#111318]"><h3 class="text-xl font-semibold">{plan.name}</h3><strong class="mt-2 block text-[#655cff]">{plan.monthly}</strong><ul class="mt-5 space-y-3 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">{plan.includes.map((item) => <li>{item}</li>)}</ul></article>)}</div>
     <a href={`${BASE}/planes/`} class="button-secondary mt-8 inline-flex">Ver planes mensuales en detalle</a>
   </div></section>
-  <Cta titulo="Primero entendemos el caso." texto="Haz la auditoría gratuita con VARINO AI o comparte un resumen. Una persona revisará el alcance antes de cualquier compromiso." />
+  <Cta titulo="Primero entendemos el caso." texto="Reserva una llamada de encaje gratuita de 30 minutos, sin informe ni entregable. El Diagnóstico CAIO completo cuesta 290 € + IVA y se descuenta si contratas la implementación propuesta." />
 </Base>

@@ -9,7 +9,7 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
     <p class="eyebrow">Diagnóstico CAIO</p>
     <h1 class="display-title max-w-5xl">Antes de automatizar,<br /><span>decidimos qué merece existir.</span></h1>
     <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_.55fr]">
-      <p class="max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">VARINO AI ordena una primera conversación en el chat (abajo a la derecha). El diagnóstico profesional valida el proceso, prioriza oportunidades y deja por escrito alcance, riesgos y siguiente inversión.</p>
+      <p class="max-w-2xl text-lg leading-8 text-[#6e6e73] dark:text-[#a1a1a6]">La guía interactiva de la web ayuda a perfilar el caso. El diagnóstico profesional valida el proceso, prioriza oportunidades y deja por escrito alcance, riesgos y siguiente inversión.</p>
       <div class="border-l border-black/10 pl-6 dark:border-white/10"><span class="text-xs text-[#6e6e73]">Precio cerrado</span><strong class="mt-1 block text-3xl">290 € + IVA</strong><p class="mt-2 text-xs leading-5 text-[#6e6e73]">Se descuenta íntegramente si contratas la implementación propuesta.</p></div>
     </div>
   </section>
@@ -23,24 +23,26 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
 
   <section class="mx-auto max-w-3xl px-6 pb-6">
     <div class="rounded-3xl border border-black/10 bg-[#f7f7f5] p-7 dark:border-white/10 dark:bg-[#111318] sm:p-9">
-      <p class="eyebrow">Diagnóstico gratuito</p>
-      <h2 class="mt-2 text-2xl font-semibold sm:text-3xl">¿Prefieres que el equipo de {SITE.name} te escriba?</h2>
-      <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">Te contactamos para una primera conversación sin compromiso y preparamos un mapa de tu proceso.</p>
+      <p class="eyebrow">Primera llamada gratuita · 30 min</p>
+      <h2 class="mt-2 text-2xl font-semibold sm:text-3xl">Hablemos del proceso que quieres mejorar.</h2>
+      <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">La llamada de encaje no tiene coste y no incluye informe ni entregable. No es una reserva automática: revisaremos tu solicitud y te escribiremos para coordinarla. Si después quieres el análisis con mapa, prioridades, riesgos y presupuesto, el Diagnóstico CAIO cuesta 290 € + IVA y se descuenta si contratas la implementación propuesta.</p>
 
-      <form id="form-auditoria" data-lead={BACKEND_LEAD} class="mt-6 space-y-3">
+      {!BACKEND_LEAD && <p class="mt-4 rounded-xl border border-black/8 bg-white p-3 text-xs leading-5 text-[#6e6e73] dark:border-white/10 dark:bg-black/20 dark:text-[#a1a1a6]">El envío automático está desconectado. Esta página no transmite ni guarda el contenido del formulario: puedes preparar un borrador de correo o copiarlo y decidir tú si lo envías.</p>}
+
+      <form id="form-auditoria" data-lead={BACKEND_LEAD} data-email={SITE.email} class="mt-6 space-y-3">
         <input type="hidden" name="website" value="" aria-hidden="true" tabindex="-1" autocomplete="off" />
         <div class="grid gap-3 sm:grid-cols-2">
           <div>
             <label for="aud-nombre" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Nombre</label>
-            <input id="aud-nombre" name="nombre" type="text" required placeholder="Tu nombre" class="contact-field" />
+            <input id="aud-nombre" name="nombre" type="text" maxlength="120" required placeholder="Tu nombre" class="contact-field" />
           </div>
           <div>
             <label for="aud-email" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Email</label>
-            <input id="aud-email" name="email" type="email" placeholder="tu@email.com" class="contact-field" />
+            <input id="aud-email" name="email" type="email" maxlength="254" placeholder="tu@email.com" class="contact-field" />
           </div>
           <div>
             <label for="aud-whatsapp" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">WhatsApp</label>
-            <input id="aud-whatsapp" name="whatsapp" type="tel" placeholder="+34 600 000 000" class="contact-field" />
+            <input id="aud-whatsapp" name="whatsapp" type="tel" maxlength="40" placeholder="+34 600 000 000" class="contact-field" />
           </div>
           <div>
             <label for="aud-interes" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">¿Qué te interesa?</label>
@@ -51,48 +53,133 @@ import { BASE, SITE, BACKEND_LEAD } from "../config";
               <option value="private-ai">IA privada o asistente</option>
             </select>
           </div>
+          <div>
+            <label for="aud-sector" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Sector (opcional)</label>
+            <input id="aud-sector" name="sector" type="text" maxlength="80" placeholder="Por ejemplo, inmobiliaria" class="contact-field" />
+          </div>
         </div>
-        <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
-          <input type="checkbox" name="consentimiento" value="true" required class="mt-0.5 shrink-0" />
-          <span>Acepto que VARINO guarde estos datos para contactarme, según su <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">política de privacidad</a>.</span>
-        </label>
+        <div>
+          <label for="aud-empresa" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Empresa (opcional)</label>
+          <input id="aud-empresa" name="empresa" type="text" maxlength="120" placeholder="Nombre de la empresa" class="contact-field" />
+        </div>
+        <div>
+          <label for="aud-proceso" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">¿Qué proceso te gustaría mejorar? (opcional)</label>
+          <textarea id="aud-proceso" name="proceso" maxlength="500" rows="3" placeholder="Qué tarea se repite, quién la realiza y qué herramientas intervienen. No incluyas datos sensibles." class="contact-field"></textarea>
+        </div>
+        {BACKEND_LEAD && <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+          <input type="checkbox" name="privacy_acknowledged" value="true" required class="mt-0.5 shrink-0" />
+          <span>He leído la <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">información de privacidad</a>. Usaremos estos datos para tramitar esta solicitud; no es una suscripción comercial.</span>
+        </label>}
+        {BACKEND_LEAD && <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+          <input type="checkbox" name="marketing_consent" value="true" class="mt-0.5 shrink-0" />
+          <span>Opcional: quiero recibir consejos y novedades de VARINO por email. Puedo darme de baja cuando quiera; no es necesario para responder a esta solicitud.</span>
+        </label>}
         <button type="submit" class="w-full rounded-full bg-[#0071e3] px-6 py-3 font-semibold text-white transition hover:bg-[#0077ed] text-xs shadow-lg shadow-[#0071e3]/20 sm:w-auto">
-          Quiero que me contacten →
+          {BACKEND_LEAD ? "Solicitar llamada gratuita →" : "Preparar correo →"}
         </button>
+        {SITE.email && <a id="auditoria-mailto" href="#" hidden class="block w-full rounded-full border border-[#0071e3]/30 px-6 py-3 text-center text-xs font-semibold text-[#0071e3] hover:bg-[#0071e3]/5 sm:w-auto">Abrir borrador en tu correo →</a>}
+        <button type="button" data-copy-briefing class="w-full rounded-full border border-black/10 px-6 py-3 text-xs font-semibold text-[#1d1d1f] hover:bg-black/5 dark:border-white/15 dark:text-[#f5f5f7] dark:hover:bg-white/5 sm:w-auto">Copiar resumen</button>
+        {!BACKEND_LEAD && <>
+          <p class="text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Consulta la <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">política de privacidad</a>. Solo recibiremos el contenido si decides enviar el correo desde tu aplicación.</p>
+        </>}
         <p class="text-[11px] text-[#6e6e73] dark:text-[#a1a1a6]" aria-live="polite" data-form-status></p>
       </form>
     </div>
   </section>
 
   <script>
+    import { clearLeadSubmissionId, getLeadSubmissionId } from "../lib/lead-idempotency.mjs";
+
     (function () {
       var form = document.getElementById("form-auditoria");
       if (!form) return;
       var statusEl = form.querySelector("[data-form-status]");
+      var sendingLead = false;
       function val(n) { var el = form.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ""; }
-      form.addEventListener("submit", function (ev) {
+      var params = new URLSearchParams(location.search);
+      var sectorParam = params.get("sector");
+      var interestParam = params.get("interes");
+      if (sectorParam && sectorParam.length <= 80) form.querySelector('[name="sector"]').value = sectorParam;
+      if (["otro", "automation-sprint", "growth-system", "private-ai"].indexOf(interestParam) >= 0) form.querySelector('[name="interes"]').value = interestParam;
+      function resumen() {
+        return [
+          "Nombre: " + val("nombre"),
+          "Email: " + val("email"),
+          "WhatsApp: " + val("whatsapp"),
+          "Empresa: " + val("empresa"),
+          "Sector: " + val("sector"),
+          "Interés: " + val("interes"),
+          "Proceso: " + val("proceso"),
+        ].join("\n");
+      }
+      function prepararCorreo() {
+        var destinatario = form.getAttribute("data-email") || "";
+        var link = form.querySelector("#auditoria-mailto");
+        if (!destinatario || !link) return false;
+        var asunto = "Llamada de encaje VARINO: " + (val("empresa") || val("sector") || "nuevo proyecto");
+        link.href = "mailto:" + destinatario + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(resumen());
+        link.hidden = false;
+        return true;
+      }
+      form.addEventListener("submit", async function (ev) {
         ev.preventDefault();
+        if (sendingLead) return;
         var nombre = val("nombre"), email = val("email"), whatsapp = val("whatsapp");
-        var consent = form.querySelector('[name="consentimiento"]').checked;
-        if (!consent) { if (statusEl) statusEl.textContent = "Necesitamos tu consentimiento para contactarte."; return; }
         if (!email && !whatsapp) { if (statusEl) statusEl.textContent = "Indica un email o un WhatsApp para poder contactarte."; return; }
         var lead = form.getAttribute("data-lead");
-        if (!lead) { if (statusEl) statusEl.textContent = "El envío aún no está disponible. Escríbenos a varinoagency@gmail.com."; return; }
+        if (!lead) {
+          if (prepararCorreo()) {
+            if (statusEl) statusEl.textContent = "Borrador preparado en este dispositivo. No se ha enviado ni guardado; revísalo antes de enviarlo.";
+          } else if (statusEl) statusEl.textContent = "No hay un correo configurado. Copia el resumen y consérvalo en tu dispositivo.";
+          return;
+        }
+        var privacyEl = form.querySelector('[name="privacy_acknowledged"]');
+        if (!privacyEl || !privacyEl.checked) { if (statusEl) statusEl.textContent = "Confirma que has leído la información de privacidad para continuar."; return; }
+        sendingLead = true;
+        var submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton) submitButton.disabled = true;
+        var payload = {
+          nombre: nombre, email: email, whatsapp: whatsapp, empresa: val("empresa"),
+          interes: val("interes") || "otro", fuente: "form-auditoria",
+          pagina: location.pathname, privacy_acknowledged: true,
+          marketing_consent: form.querySelector('[name="marketing_consent"]')?.checked === true,
+          mensaje: ["Ha solicitado una llamada de encaje gratuita desde /auditoria.", "Sector: " + val("sector"), "Proceso: " + val("proceso")].join("\n")
+        };
+        var submissionId = await getLeadSubmissionId("auditoria", payload);
+        if (!submissionId) {
+          sendingLead = false;
+          if (submitButton) submitButton.disabled = false;
+          if (statusEl) statusEl.textContent = "No se pudo preparar un identificador seguro para el envío. No se han guardado tus datos; prueba en otro navegador o utiliza el correo.";
+          return;
+        }
         if (statusEl) statusEl.textContent = "Enviando…";
         fetch(lead, {
           method: "POST",
-          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-          body: JSON.stringify({
-            nombre: nombre, email: email, whatsapp: whatsapp, empresa: "",
-            interes: val("interes") || "otro", fuente: "form-auditoria",
-            pagina: location.pathname, consentimiento: true,
-            mensaje: "Ha completado el formulario del diagnóstico CAIO en /auditoria."
-          })
-        }).then(function (r) { return r.json(); }).then(function (d) {
-          if (d && d.ok) { if (statusEl) statusEl.textContent = "✓ Recibido. El equipo de VARINO te escribirá en breve."; form.reset(); }
-          else if (statusEl) statusEl.textContent = "No se pudo enviar. Escríbenos a varinoagency@gmail.com.";
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(Object.assign({ submissionId: submissionId }, payload))
+        }).then(function (r) {
+          if (!r.ok) throw new Error("lead_request_failed");
+          return r.json();
+        }).then(function (d) {
+          if (d && d.ok) { clearLeadSubmissionId("auditoria"); if (statusEl) statusEl.textContent = "✓ Solicitud recibida. El equipo revisará la información."; form.reset(); }
+          else {
+            var hasDraft = prepararCorreo();
+            if (statusEl) statusEl.textContent = hasDraft ? "No se pudo confirmar la recepción. Revisa el borrador; no se ha enviado desde esta página." : "No se pudo confirmar la recepción. Copia el resumen y escríbenos por correo.";
+          }
         }).catch(function () {
-          if (statusEl) statusEl.textContent = "Sin conexión. Escríbenos a varinoagency@gmail.com.";
+          var hasDraft = prepararCorreo();
+          if (statusEl) statusEl.textContent = hasDraft ? "Sin conexión. Revisa el borrador; no se ha enviado desde esta página." : "Sin conexión. Copia el resumen y escríbenos por correo.";
+        }).finally(function () {
+          sendingLead = false;
+          if (submitButton) submitButton.disabled = false;
+        });
+      });
+      var copyButton = form.querySelector("[data-copy-briefing]");
+      if (copyButton) copyButton.addEventListener("click", function () {
+        navigator.clipboard.writeText(resumen()).then(function () {
+          if (statusEl) statusEl.textContent = "Resumen copiado en este dispositivo; no se ha enviado.";
+        }).catch(function () {
+          if (statusEl) statusEl.textContent = "No se pudo copiar. Usa el borrador de correo para continuar.";
         });
       });
     })();
