@@ -238,3 +238,21 @@ test("bloquea datos personales antes de llamar al modelo y limpia el diagnóstic
   expect(requests).toBe(1);
   await expect(guide.locator("[data-preview-title]")).toHaveText("Tu necesidad, convertida en una arquitectura clara.");
 });
+
+test("el estudio de la guía conserva una lectura cómoda en tablet y pantallas estrechas", async ({ page }) => {
+  await page.setViewportSize({ width: 800, height: 900 });
+  await page.goto("/");
+  const columnCount = (selector: string) => page.locator(selector).evaluate((element) =>
+    getComputedStyle(element).gridTemplateColumns.trim().split(/\s+/).length,
+  );
+
+  expect(await columnCount(".ai-studio")).toBe(1);
+  expect(await columnCount(".ai-blueprint")).toBe(2);
+
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await expect.poll(() => columnCount(".ai-studio")).toBe(2);
+  expect(await columnCount(".ai-blueprint")).toBe(2);
+
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await expect.poll(() => columnCount(".ai-blueprint")).toBe(4);
+});
