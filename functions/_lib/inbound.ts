@@ -11,6 +11,7 @@ export interface InboundEnvironment extends AuthEnvironment {
   INBOUND_REVIEWED_NOTICE_VERSION?: string;
   INBOUND_RATE_SECRET?: string;
   TURNSTILE_SECRET?: string;
+  TURNSTILE_SITE_KEY?: string;
 }
 export function localInboundTest(env: InboundEnvironment): boolean {
   const base = configuredBaseUrl(env);
@@ -27,6 +28,8 @@ export function captureConfigured(env: InboundEnvironment): boolean {
   // A runtime flag cannot override the repository's reviewed public-launch gate.
   return launchReady && env.INBOUND_MODE === 'production' && configuredBaseUrl(env)?.protocol === 'https:'
     && env.INBOUND_REVIEWED_NOTICE_VERSION === CONTACT_NOTICE_VERSION
+    && /^[a-zA-Z0-9_-]{20,200}$/.test(env.TURNSTILE_SITE_KEY ?? '')
+    && !/^[123]x0000/.test(env.TURNSTILE_SITE_KEY ?? '')
     && /^[a-zA-Z0-9_-]{30,200}$/.test(env.TURNSTILE_SECRET ?? '')
     && !/^[123]x0000/.test(env.TURNSTILE_SECRET ?? '');
 }

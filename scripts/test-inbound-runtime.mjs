@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { spawn, spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, existsSync, chmodSync } from 'node:fs';
+import { mkdtempSync, rmSync, existsSync, chmodSync, readdirSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { resolve, join } from 'node:path';
@@ -71,9 +71,17 @@ try {
     INSERT INTO workspaces(id,name,slug,status,created_at,updated_at) VALUES('${workspace}','Agency fixture','agency-fixture','active',${now},${now}),('${otherWorkspace}','Other fixture','other-fixture','active',${now},${now});
     INSERT INTO workspace_members(workspace_id,user_id,role,status,created_at,updated_at) VALUES('${workspace}','${user}','OWNER','active',${now},${now}),('${otherWorkspace}','${other}','OWNER','active',${now},${now});`);
   await start(false);
+  assert.deepEqual(await (await fetch(`${base}/api/briefings/config`)).json(), { enabled: false });
   assert.equal((await submit(fixture())).status, 503);
   assert.equal(sql('SELECT count(*) AS n FROM inbound_requests')[0].n, 0);
   await stop(); await start();
+  const publicConfig = await (await fetch(`${base}/api/briefings/config`)).json();
+  assert.deepEqual(publicConfig, { enabled: true, mode: 'local-test', noticeVersion: CONTACT_NOTICE_VERSION });
+  assert.equal((await fetch(`${base}/api/briefings/config`, { headers: { 'sec-fetch-site': 'cross-site' } })).status, 403);
+  assert.equal((await fetch(`${base}/api/briefings/config`, { method: 'POST' })).status, 405);
+  sql(`UPDATE workspaces SET status='suspended' WHERE id='${workspace}'`);
+  assert.deepEqual(await (await fetch(`${base}/api/briefings/config`)).json(), { enabled: false });
+  sql(`UPDATE workspaces SET status='active' WHERE id='${workspace}'`);
   assert.equal((await submit(fixture(), { 'content-type': 'application/json' })).status, 403);
   assert.equal((await submit(fixture(), { ...headers, origin: 'https://attacker.test' })).status, 403);
   assert.equal((await submit(fixture({ marketing_consent: 'true' }))).status, 400);
@@ -195,6 +203,89 @@ try {
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   await context.close();
   console.log('PASS: real Chromium owner dashboard; no PII in list/audit/errors; different workspace denied; keyed temporary abuse limit.');
+  clearLimit();
+  const contactContext = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
+  const contactPage = await contactContext.newPage(); const submissions = []; let savedReceipt;
+  const schemaFiles = readdirSync(resolve(root, 'dist/_astro')).filter((name) => /^inbound-contract\..*\.js$/.test(name));
+  assert.ok(schemaFiles.length > 0, 'Contact validation must remain a separate lazy asset.');
+  const schemaRequests = [];
+  const external = [];
+  contactPage.on('request', (request) => {
+    if (!request.url().startsWith(base + '/')) external.push(request.url());
+    if (schemaFiles.some((name) => new URL(request.url()).pathname === '/_astro/' + name)) schemaRequests.push(request.url());
+  });
+  await contactPage.route(`${base}/api/briefings`, async (route) => {
+    submissions.push(route.request().postDataJSON());
+    // Real request/real commit. Simulate only loss of the response AFTER storage.
+    const response = await route.fetch();
+    if (submissions.length === 1) {
+      assert.equal(response.status(), 202); savedReceipt = await response.json();
+      await route.fulfill({ status: 503, contentType: 'application/json', body: '{"error":"service_unavailable"}' });
+    } else await route.fulfill({ response });
+  });
+  await contactPage.goto(`${base}/contacto/`);
+  const form = contactPage.locator('#form-contacto');
+  await form.getByRole('button', { name: 'Enviar solicitud →' }).waitFor();
+  assert.equal(schemaRequests.length, 0, 'Do not load the schema library on a contact page visit.');
+  assert.ok((await form.locator('[data-contact-live]').innerText()).includes('Ensayo local'));
+  await form.getByLabel('Nombre completo').fill('Equipo ficticio UI');
+  await form.getByLabel('Empresa / organización').fill('Empresa ficticia');
+  await form.getByLabel('Email', { exact: true }).fill('form@example.test');
+  await form.getByLabel('Sitio web o software').fill('Herramienta ficticia');
+  await form.getByLabel('Detalles del proyecto').fill('Caso ficticio: organizar solicitudes para revisión humana.');
+  await form.getByLabel('Servicio de interés').selectOption({ label: 'Automatización de procesos' });
+  await form.getByRole('button', { name: 'Enviar solicitud →' }).click();
+  assert.equal(submissions.length, 0, 'Unchecked privacy must prevent submission.');
+  assert.equal(schemaRequests.length, 0, 'Do not load validation before a valid explicit submit.');
+  await form.locator('[name="privacy_acknowledged"]').check();
+  await form.locator('[name="marketing_consent"]').check();
+  const beforeForm = sql('SELECT count(*) AS n FROM inbound_requests')[0].n;
+  await form.getByRole('button', { name: 'Enviar solicitud →' }).click();
+  await form.getByRole('button', { name: 'Confirmar el mismo envío' }).waitFor();
+  assert.ok(schemaRequests.length > 0, 'Validation must load before sending a live request.');
+  const privateStorage = await contactPage.evaluate(() => [...Array(sessionStorage.length)].map((_, i) => {
+    const key = sessionStorage.key(i); return [key, sessionStorage.getItem(key)];
+  }).filter(([key]) => key.startsWith('varino:lead:')));
+  assert.equal(privateStorage.length, 1);
+  assert.deepEqual(privateStorage[0], ['varino:lead:contacto-buffer-v1:v1', privateStorage[0][1]]);
+  assert.match(privateStorage[0][1], /^[a-f0-9]{32}$/i, 'Session storage must contain only an opaque nonce, not form data.');
+  assert.equal(await form.getByLabel('Nombre completo').isDisabled(), true);
+  assert.equal(await form.getByLabel('Email', { exact: true }).inputValue(), 'form@example.test');
+  assert.ok((await form.locator('[data-form-status]').innerText()).includes('No se pudo confirmar'));
+  assert.equal(await form.locator('#contacto-mailto').isVisible(), false);
+  await form.getByRole('button', { name: 'Confirmar el mismo envío' }).click();
+  await form.locator('[data-contact-receipt]').waitFor({ state: 'visible' });
+  assert.equal(submissions.length, 2); assert.equal(submissions[0].submissionId, submissions[1].submissionId);
+  assert.ok(submissions[0].mensaje.includes('Herramienta ficticia'));
+  assert.equal(await form.locator('[data-contact-reference]').innerText(), savedReceipt.receiptId);
+  assert.equal(sql('SELECT count(*) AS n FROM inbound_requests')[0].n, beforeForm + 1);
+  assert.ok((await form.locator('[data-form-status]').innerText()).includes('sin crear otro'));
+  assert.equal(await form.locator('button[type="submit"]').isDisabled(), true);
+  assert.equal(await contactPage.evaluate(() => document.activeElement?.hasAttribute('data-contact-receipt')), true);
+  ambiguous = false;
+  assert.equal((await runInboundWorkerOnce(realN8n ? config : stubConfig)).status, 'crm_confirmed');
+  assert.equal(sql(`SELECT payload_json FROM inbound_requests WHERE id='${savedReceipt.receiptId}'`)[0].payload_json, null);
+  await contactPage.setViewportSize({ width: 375, height: 812 });
+  await contactPage.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
+  if (!await contactPage.locator('html').evaluate((element) => element.classList.contains('dark'))) {
+    await contactPage.getByRole('button', { name: 'Cambiar a tema oscuro' }).click();
+  }
+  assert.ok(await contactPage.locator('html').evaluate((element) => element.classList.contains('dark')));
+  assert.ok(await contactPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+  if (process.env.VARINO_TEST_CONTACT_SCREENSHOT) {
+    await form.locator('[data-contact-receipt]').scrollIntoViewIfNeeded();
+    await contactPage.screenshot({ path: process.env.VARINO_TEST_CONTACT_SCREENSHOT });
+    chmodSync(process.env.VARINO_TEST_CONTACT_SCREENSHOT, 0o600);
+  }
+  await form.getByRole('button', { name: 'Preparar otra solicitud' }).click();
+  assert.equal(await form.getByLabel('Email', { exact: true }).inputValue(), '');
+  assert.equal(await form.locator('[name="privacy_acknowledged"]').isChecked(), false);
+  assert.equal(await form.locator('[name="marketing_consent"]').isChecked(), false);
+  assert.equal(await form.getByLabel('Nombre completo').isDisabled(), false);
+  assert.deepEqual(external, [], 'Synthetic form must not call third parties or private webhooks.');
+  await contactContext.close();
+  console.log(realN8n ? 'PASS: real Chromium contact form → persistent receipt (lost first response) → same receipt without duplicate → real isolated n8n; Sheets/Telegram transports remain synthetic.' : 'PASS: real Chromium contact form → real D1 receipt; lost response recovered without duplicate; actual worker uses synthetic n8n transport.');
+  console.log('PASS: form retains fields, requires privacy, does not open mail on ambiguity, resets only explicitly, no external requests, mobile reduced-motion layout.');
   clearLimit();
   const existing = sql('SELECT count(*) AS n FROM inbound_requests')[0].n;
   const quotaRows = Array.from({ length: 100 - existing }, () => {

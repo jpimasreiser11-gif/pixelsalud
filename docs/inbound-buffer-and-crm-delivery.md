@@ -1,10 +1,10 @@
 # Recepción persistente y entrega al CRM
 
-Estado: implementado y probado en un entorno local con datos ficticios. No está desplegado en la web pública ni conectado a Google/Telegram reales. El formulario público sigue preparando un correo; aún no llama a esta API. **Este bloque no completa la conexión pública del formulario, el nurturing ni el ciclo de compra.**
+Estado: implementado y probado en un entorno local con datos ficticios, incluido el formulario en Chromium contra la API real. No está desplegado en la web pública ni conectado a Google/Telegram reales. El código de contacto consulta capacidades del mismo origen y solo envía si el servidor lo habilita; por defecto sigue preparando un correo local. **Este bloque no completa la activación pública del formulario, el nurturing ni el ciclo de compra.**
 
 ## Recorrido y significado de cada estado
 
-`POST /api/briefings` → buffer D1 → worker saliente del Mac → webhook privado `lead` de n8n → Google Sheets → confirmación del buffer.
+Formulario de contacto → `POST /api/briefings` → buffer D1 → worker saliente del Mac → webhook privado `lead` de n8n → Google Sheets → confirmación del buffer.
 
 Google Sheets sigue siendo el CRM y fuente de verdad. D1 solo retiene temporalmente las solicitudes por entregar y sus recibos técnicos. El worker no decide si alguien puede recibir publicidad, no envía correos y no ejecuta sistemas de clientes.
 
@@ -28,12 +28,14 @@ La casilla tampoco verifica quién controla esa dirección. El worker conserva s
 
 HTTP 202 confirma **solo recepción en el buffer**. No incluir nombre/email en la respuesta o atribuir ese 202 a Google Sheets, Telegram o Gmail. No hay endpoint público de consulta de solicitudes.
 
+`GET /api/briefings/config` devuelve exclusivamente capacidades públicas: `{enabled:false}` o modo, versión de aviso y, en producción, clave pública del widget. No incluye URL de n8n, workspace, secretos ni datos de contacto. No modifica el CRM. El navegador usa destinos fijos del mismo origen y exige un recibo 202 con referencia UUID; un `{ok:true}` genérico no confirma nada. Si se pierde la respuesta después de guardar, bloquea los campos y reintenta la misma solicitud con su identificador estable, no crea otro lead ni envía correo silenciosamente. [Estados, privacidad y activación del formulario](./contact-form-and-receipts.md).
+
 ## Activación: cerrada por defecto
 
 El endpoint requiere `VARINO_DB`, `APP_BASE_URL`, `AGENCY_WORKSPACE_ID`, `LEAD_WORKER_TOKEN_HASH`, `INBOUND_RATE_SECRET` e `INBOUND_CAPTURE_ENABLED=1`. El workspace debe estar activo. Los secretos se generan/inyectan desde gestores de credenciales, nunca se pegan en el repo, este documento, el navegador o el historial del terminal.
 
 - Pruebas: `INBOUND_MODE=local-test`, **origen HTTP loopback explícito**, emails acabados en `.test`, teléfono vacío, token ficticio `XXXX.DUMMY.TOKEN.XXXX`. No llama al servicio Turnstile; las pruebas aportan solo datos ficticios. El filtro de dirección/teléfono no garantiza detectar datos reales incluidos en texto libre. Este bypass nunca funciona para HTTPS/hosts remotos.
-- Futuro público: `INBOUND_MODE=production`, `launchReady=true` tras revisión real, HTTPS, aviso revisado coincidente y `TURNSTILE_SECRET` real (rechaza claves de prueba). Verifica Siteverify, hostname, acción `contact` y antigüedad del token. No adjunta IP a Siteverify. **Falta conectar y probar el widget del formulario, y revisar proveedor/aviso; no activar solo porque el backend existe.**
+- Futuro público: `INBOUND_MODE=production`, `launchReady=true` tras revisión real, HTTPS, aviso revisado coincidente, `TURNSTILE_SITE_KEY` pública y `TURNSTILE_SECRET` real (rechaza claves de prueba). Verifica Siteverify, hostname, acción `contact` y antigüedad del token. No adjunta IP a Siteverify. El adaptador de widget se carga solo al enviar una solicitud válida; está probado con proveedor simulado. **Falta configurar y probar Turnstile real y revisar proveedor/aviso; no activar solo porque el código existe.**
 - Mismo origen requerido; no CORS; JSON/no-store/nosniff/DENY. Límite de 10 intentos por ventana de 15 minutos con HMAC temporal de la dirección que Cloudflare aporta; no guarda dirección cruda. Máximo 100 recibos nuevos por 24 horas. Si D1/límite no responde, falla cerrado.
 
 ## Worker local y reinicios
@@ -62,7 +64,7 @@ Responder a una solicitud no autoriza promociones: [artículo 21 LSSI](https://w
 ## Pruebas reproducibles y límites
 
 1. `npm run build && npm run test:unit -- inbound && npm run functions:typecheck`.
-2. `npm run test:inbound`: Pages Functions/D1/Chromium reales y transporte n8n simulado; prueba esquema/origen/límites, opt-in, deduplicación concurrente, una reclamación concurrente, recibo idempotente, reinicio, errores ambiguos, vencimiento, retención y aislamiento del panel.
+2. `npm run test:inbound`: Pages Functions/D1/Chromium reales y transporte n8n simulado; prueba esquema/origen/límites, opt-in, deduplicación concurrente, una reclamación concurrente, recibo idempotente, reinicio, errores ambiguos, vencimiento, retención y aislamiento del panel. Incluye formulario real, pérdida de respuesta después de guardar, recuperación del mismo recibo, casillas separadas, carga diferida de validación, nonce sin datos personales en sessionStorage y layout oscuro de 375 px con movimiento reducido.
 3. Opcional, con n8n oficial ya instalado y el export privado revisado: `python3 scripts/test-inbound-n8n.py --workflow /ruta/absoluta/1-lead-ingest.json`. Solo acepta el SHA fijado tras lectura de su builder. Crea un perfil temporal privado, Header Auth efímera y adapta **solo transportes Google/Telegram** a fixtures en loopback. Ejecuta el flujo n8n real, preservando validación/mapas/ramas/respuestas; comprueba deduplicación, esquema/lectura fallidos, append ambiguo y fallo de aviso.
 
-El tercer ensayo **no prueba OAuth de Google, una hoja real, un bot Telegram, el formulario público ni credenciales persistentes**. No importa/activa nada en el perfil operativo. No se enviaron emails ni mensajes reales. CI ejecuta 1–2, no el ensayo opcional con n8n local.
+El tercer ensayo también incluye formulario Chromium → D1 → worker → flujo n8n real; **no prueba OAuth de Google, una hoja real, un bot Telegram, el dominio público ni credenciales persistentes**. No importa/activa nada en el perfil operativo. No se enviaron emails ni mensajes reales. CI ejecuta 1–2, no el ensayo opcional con n8n local.

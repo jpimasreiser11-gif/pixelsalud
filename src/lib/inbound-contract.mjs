@@ -1,7 +1,7 @@
 import { z } from 'zod';
+import { CONTACT_NOTICE_VERSION } from './contact-notice.mjs';
+export { CONTACT_NOTICE_VERSION, CONTACT_MARKETING_SOURCE } from './contact-notice.mjs';
 
-export const CONTACT_NOTICE_VERSION = 'contact-request-v1';
-export const CONTACT_MARKETING_SOURCE = 'contacto-marketing-checkbox-v1';
 const plain = (max) => z.string().trim().max(max).refine((value) => !/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/u.test(value));
 export const ContactSubmission = z.strictObject({
   submissionId: z.string().regex(/^[a-f0-9]{64}$/),

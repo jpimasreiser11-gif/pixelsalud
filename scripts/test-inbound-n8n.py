@@ -176,23 +176,26 @@ def main():
                         drill_env = {"PATH": env["PATH"], "HOME": os.environ.get("HOME", ""), "VARINO_TEST_N8N_PORT": str(listen_port), "VARINO_TEST_N8N_TOKEN": token}
                         if os.environ.get("VARINO_TEST_SCREENSHOT"):
                             drill_env["VARINO_TEST_SCREENSHOT"] = os.environ["VARINO_TEST_SCREENSHOT"]
+                        if os.environ.get("VARINO_TEST_CONTACT_SCREENSHOT"):
+                            drill_env["VARINO_TEST_CONTACT_SCREENSHOT"] = os.environ["VARINO_TEST_CONTACT_SCREENSHOT"]
                         drilled = subprocess.run([node_runtime, str(ROOT / "scripts/test-inbound-runtime.mjs")], cwd=ROOT, env=drill_env, timeout=240)
                         if drilled.returncode != 0:
                             raise RuntimeError("Inbound runtime drill failed; no production claim")
-                        assert len(state["rows"]) == 1
+                        assert len(state["rows"]) == 2  # HTTP fixture and real browser form.
+                        assert all(row[17] == "no" and row[19] == "" and row[18] == "" for row in state["rows"])
                         row = state["rows"][0]
                         assert row[17] == "no" and row[19] == "" and row[18] == ""
                         duplicate = {"nombre": row[1], "email": row[2], "empresa": row[4], "whatsapp": "", "interes": row[5],
                             "fuente": row[6], "pagina": row[7], "privacy_acknowledged": True, "marketing_consent": True, "mensaje": row[9], "submissionId": row[14][2:]}
                         status, result = post(url, duplicate, token)
-                        assert status == 200 and result["duplicate"] is True and len(state["rows"]) == 1
+                        assert status == 200 and result["duplicate"] is True and len(state["rows"]) == 2
                         new = {**duplicate, "submissionId": secrets.token_hex(32)}
                         state["bad_headers"] = True; assert post(url, new, token)[0] == 503; state["bad_headers"] = False
                         state["bad_lookup"] = True; assert post(url, new, token)[0] == 503; state["bad_lookup"] = False
-                        assert len(state["rows"]) == 1
-                        state["ambiguous"] = True; assert post(url, new, token)[0] == 503; state["ambiguous"] = False
                         assert len(state["rows"]) == 2
-                        assert post(url, new, token)[1]["duplicate"] is True and len(state["rows"]) == 2
+                        state["ambiguous"] = True; assert post(url, new, token)[0] == 503; state["ambiguous"] = False
+                        assert len(state["rows"]) == 3
+                        assert post(url, new, token)[1]["duplicate"] is True and len(state["rows"]) == 3
                         print("PASS: real n8n auth, mapping, unverified opt-in NOT enrolled, duplicate branch, header/lookup fail-closed, ambiguous append reconciliation and notification failure isolation.", flush=True)
                     finally:
                         if service.poll() is None:

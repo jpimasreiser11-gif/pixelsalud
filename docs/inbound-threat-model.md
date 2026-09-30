@@ -12,13 +12,15 @@ La cuenta humana OWNER consulta recibos mínimos, no payloads. El token del tall
 
 | Riesgo | Control | Evidencia local |
 | --- | --- | --- |
-| Alta abusiva o de terceros | Mismo origen, JSON estricto, 8 KiB, límites HMAC/global, challenge público verificado | HTTP 403/400/413/429; cap de 100; unidad Siteverify host/acción/edad/error. El servicio real Turnstile aún no se ha integrado al formulario |
+| Alta abusiva o de terceros | Mismo origen, JSON estricto, 8 KiB, límites HMAC/global, adaptador challenge y validación del token | HTTP 403/400/413/429; cap de 100; unidad Siteverify host/acción/edad/error y widget simulado. Turnstile real todavía no está configurado ni probado |
 | Convertir una solicitud en publicidad | Lectura de privacidad separada, checkbox false por defecto; elección no verificada no se transmite como consentimiento al nurturing | Unidad worker + n8n real con Sheets fixture: columna comercial `no` pese a checkbox solicitado |
 | Robo de contactos entre espacios | Sesión activa + OWNER activo + workspace de la agencia | HTTP 401/403 del API real; listado sin nombre/email/teléfono/texto |
 | Token en navegador o redirección | Secretos diferentes y cabeceras solo servidor-servidor; `redirect:error`; rechazo de Origin en worker | Unidades destinos/credenciales; HTTP token erróneo/documental/Origin rechazados |
 | Duplicado por reintento/concurrencia | Clave única + hash de contenido + batch + UPDATE RETURNING + índice de un lease activo | 6 POST concurrentes → 1 recibo/1 audit; 2 claims → 1 job; resultados idénticos sin audit duplicado |
+| Respuesta perdida al visitante después de guardar | Campos bloqueados, reintento con el mismo ID, recibo 202 estricto, sin fallback automático a email | Formulario Chromium → POST/commit reales → respuesta 503 simulada → reintento → un solo recibo/fila; nuevo envío exige acción explícita |
+| Capacidades manipuladas o filtración al cliente | GET acotado del mismo origen; sin secretos/destinos; schema cliente diferido y fallo cerrado | Host externo/clave de test/campos extra rechazados; carga fallida sin POST; sessionStorage solo nonce opaco; ninguna petición de terceros en el ensayo |
 | CRM escrito sin acuse | No reenvío automático tras timeout/error; lease vencido va a revisión humana | Worker transport failure; n8n fixture escribe y devuelve 503; reconciliación directa encuentra el ID sin append adicional |
-| Falsa confirmación | 202 solo acredita buffer; CRM necesita ID exacto de una respuesta n8n `ok` | Salida de otro ID rechazada; estados distintos visibles en Chromium |
+| Falsa confirmación | 202 solo acredita buffer; CRM necesita ID exacto de una respuesta n8n `ok` | Un `{ok:true}` genérico no confirma el formulario; salida de otro ID rechazada; estados distintos visibles en Chromium |
 | Fallo del aviso | Sheets es crítico; aviso posterior no crítico | n8n real con transporte de aviso 503 sigue confirmando el registro. No acredita Telegram real |
 | SQL/HTML/SSRF/prompt injection | SQL parametrizado, sin ejecución de URLs/texto ni modelo en esta ruta; render con textContent | Revisión del código. No se interpreta contenido del lead en el panel; no hay herramientas agentes en la ruta |
 | Pérdida al reiniciar | Buffer en D1; proceso local solo consulta saliente | Pages reiniciado conservando estado; worker procesa el recibo pendiente |

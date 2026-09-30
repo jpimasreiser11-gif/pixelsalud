@@ -3,13 +3,14 @@
 // llega al navegador del visitante es el <meta http-equiv> que Astro escribe en
 // cada página. Este gate comprueba tres cosas que en desarrollo no se ven:
 //   1. Que cada página del build lleva su <meta> de CSP.
-//   2. Que el <meta> y public/_headers no divergen en las directivas comunes.
+//   2. Que el <meta> y dist/_headers no divergen en las directivas comunes.
 //   3. Que nada del HTML quedaría bloqueado por la CSP más estricta de las dos:
 //      scripts o estilos incrustados, atributos de evento, orígenes externos.
 // El síntoma cuando esto se rompe es una web muda: sin tema, sin menú móvil y
 // sin formulario, pero verde en `astro dev`.
 import { readFile, readdir } from "node:fs/promises";
 import { join, relative } from "node:path";
+import { siteCspHeader } from '../src/lib/content-security-policy.mjs';
 
 const root = new URL("..", import.meta.url).pathname;
 const distDir = join(root, "dist");
@@ -17,11 +18,12 @@ const distDir = join(root, "dist");
 const fallos = [];
 const nota = (mensaje) => fallos.push(mensaje);
 
-const headers = await readFile(join(root, "public", "_headers"), "utf8").catch(() => "");
-if (!headers) nota("falta public/_headers");
+const headers = await readFile(join(root, "dist", "_headers"), "utf8").catch(() => "");
+if (!headers) nota("falta dist/_headers: ejecuta npm run build");
 
 const cspHeader = headers.match(/Content-Security-Policy:\s*([^\n]+)/i)?.[1]?.trim() ?? "";
-if (!cspHeader) nota("public/_headers no declara Content-Security-Policy");
+if (!cspHeader) nota("dist/_headers no declara Content-Security-Policy");
+if (cspHeader !== siteCspHeader()) nota('dist/_headers difiere de la política CSP compartida');
 
 function directivas(csp) {
   const mapa = new Map();
@@ -36,11 +38,11 @@ function directivas(csp) {
 
 const headerDirs = directivas(cspHeader);
 for (const obligatoria of ["default-src", "base-uri", "object-src", "frame-ancestors", "script-src", "style-src", "connect-src"]) {
-  if (!headerDirs.has(obligatoria)) nota(`public/_headers no declara ${obligatoria}`);
+  if (!headerDirs.has(obligatoria)) nota(`dist/_headers no declara ${obligatoria}`);
 }
 for (const [nombre, valor] of headerDirs) {
-  if (/'unsafe-inline'|'unsafe-eval'/.test(valor)) nota(`public/_headers relaja ${nombre} con ${valor.match(/'unsafe-[a-z]+'/)[0]}`);
-  if (/(^|\s)\*(\s|$)/.test(valor)) nota(`public/_headers usa comodín en ${nombre}`);
+  if (/'unsafe-inline'|'unsafe-eval'/.test(valor)) nota(`dist/_headers relaja ${nombre} con ${valor.match(/'unsafe-[a-z]+'/)[0]}`);
+  if (/(^|\s)\*(\s|$)/.test(valor)) nota(`dist/_headers usa comodín en ${nombre}`);
 }
 
 async function paginasHtml(dir) {

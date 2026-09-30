@@ -45,62 +45,106 @@ test("contacto no afirma recibir datos si el backend está desconectado", async 
   expect(webhookRequests).toBe(0);
 });
 
-test("el formulario conserva la clave en un reintento y la rota tras una recepción confirmada", async ({ page }) => {
-  const submissionIds: string[] = [];
-  const payloads: Array<Record<string, unknown>> = [];
-  await page.addInitScript(() => {
-    const original = Element.prototype.getAttribute;
-    Element.prototype.getAttribute = function (name: string) {
-      if (name === "data-lead" && this.id === "form-contacto") return `${location.origin}/__test/lead`;
-      return original.call(this, name);
-    };
-  });
-  await page.route("**/__test/lead", async (route) => {
-    const request = route.request().postDataJSON() as { submissionId: string } & Record<string, unknown>;
-    payloads.push(request);
-    submissionIds.push(request.submissionId);
-    if (submissionIds.length === 1) {
-      await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ ok: false }) });
-      return;
-    }
-    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, duplicate: true }) });
-  });
-
+const contactConfig = { enabled: true, mode: "local-test", noticeVersion: "contact-request-v1" };
+const acceptedReceipt = { ok: true, receiptId: "04bf0ebe-fd8c-4253-a4a6-ec2eed6ebfb2", duplicate: true, status: "received", crmConfirmed: false };
+async function enableSyntheticContact(page) {
+  await page.route("**/api/briefings/config", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify(contactConfig) }));
   await page.goto("/contacto/");
+  await expect(page.getByRole("button", { name: "Enviar solicitud →" })).toBeVisible();
+}
+async function fillSyntheticContact(page, email = "prueba@example.test") {
   const form = page.locator("#form-contacto");
-  await form.evaluate((element) => {
-    const label = document.createElement("label");
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.name = "privacy_acknowledged";
-    checkbox.required = true;
-    label.append(checkbox, document.createTextNode(" He leído la información de privacidad"));
-    element.append(label);
+  await form.getByLabel("Nombre completo").fill("Equipo ficticio");
+  await form.getByLabel("Empresa / organización").fill("Empresa ficticia");
+  await form.getByLabel("Email", { exact: true }).fill(email);
+  return form;
+}
+
+test("el formulario conserva la clave y campos tras un fallo; nueva solicitud solo con acción explícita", async ({ page }) => {
+  const payloads: Array<Record<string, unknown>> = [];
+  await page.route("**/api/briefings", async (route) => {
+    payloads.push(route.request().postDataJSON());
+    await route.fulfill({ status: payloads.length === 1 ? 503 : 202, contentType: "application/json",
+      body: JSON.stringify(payloads.length === 1 ? { error: "service_unavailable" } : acceptedReceipt) });
   });
-  const fillContact = async (email: string) => {
-    await form.getByLabel("Nombre completo").fill("Cliente de prueba");
-    await form.getByLabel("Empresa / organización").fill("Clínica Norte");
-    await form.getByLabel("Email", { exact: true }).fill(email);
-  };
-  await fillContact("prueba@example.com");
+  await enableSyntheticContact(page);
+  const form = await fillSyntheticContact(page);
   await form.locator('button[type="submit"]').click();
-  expect(submissionIds).toHaveLength(0);
+  expect(payloads).toHaveLength(0);
   await form.locator('[name="privacy_acknowledged"]').check();
   await form.locator('button[type="submit"]').click();
-  await expect(page.locator("[data-form-status]")).toContainText(/no se pudo confirmar la recepción/i);
-
-  await form.locator('button[type="submit"]').click();
-  await expect(page.locator("[data-form-status]")).toContainText(/solicitud recibida/i);
-  expect(submissionIds).toHaveLength(2);
-  expect(submissionIds[0]).toMatch(/^[0-9a-f]{64}$/i);
-  expect(submissionIds[1]).toBe(submissionIds[0]);
-  expect(payloads.every((payload) => payload.privacy_acknowledged === true && !("consentimiento" in payload))).toBe(true);
-
-  await fillContact("otra@example.com");
+  await expect(form.locator("[data-form-status]")).toContainText(/no se pudo confirmar la recepción/i);
+  await expect(form.getByLabel("Email", { exact: true })).toHaveValue("prueba@example.test");
+  await expect(form.getByLabel("Nombre completo")).toBeDisabled();
+  await expect(form.locator("#contacto-mailto")).toBeHidden();
+  await form.getByRole("button", { name: "Confirmar el mismo envío" }).click();
+  await expect(form.locator("[data-contact-receipt]")).toBeVisible();
+  await expect(form.locator("[data-contact-reference]")).toHaveText(acceptedReceipt.receiptId);
+  await expect(form.locator("[data-contact-result]")).toContainText(/solicitud ficticia/i);
+  expect(payloads).toHaveLength(2);
+  expect(payloads[0].submissionId).toMatch(/^[0-9a-f]{64}$/);
+  expect(payloads[1].submissionId).toBe(payloads[0].submissionId);
+  expect(payloads.every((payload) => payload.privacy_acknowledged === true && payload.marketing_consent === false && payload.noticeVersion === "contact-request-v1")).toBe(true);
+  await expect(form.locator('button[type="submit"]')).toBeDisabled();
+  await form.getByRole("button", { name: "Preparar otra solicitud" }).click();
+  await expect(form.getByLabel("Email", { exact: true })).toHaveValue("");
+  await expect(form.locator('[name="privacy_acknowledged"]')).not.toBeChecked();
+  await expect(form.locator('[name="marketing_consent"]')).not.toBeChecked();
+  await fillSyntheticContact(page);
   await form.locator('[name="privacy_acknowledged"]').check();
   await form.locator('button[type="submit"]').click();
-  await expect.poll(() => submissionIds.length).toBe(3);
-  expect(submissionIds[2]).not.toBe(submissionIds[0]);
+  await expect.poll(() => payloads.length).toBe(3);
+  expect(payloads[2].submissionId).not.toBe(payloads[0].submissionId);
+});
+
+test("un ok genérico no se presenta como solicitud registrada", async ({ page }) => {
+  await page.route("**/api/briefings", (route) => route.fulfill({ status: 200, contentType: "application/json", body: '{"ok":true}' }));
+  await enableSyntheticContact(page);
+  const form = await fillSyntheticContact(page);
+  await form.locator('[name="privacy_acknowledged"]').check();
+  await form.locator('button[type="submit"]').click();
+  await expect(form.locator("[data-form-status]")).toContainText(/no se pudo confirmar/i);
+  await expect(form.locator("[data-contact-receipt]")).toBeHidden();
+  await expect(form.getByRole("button", { name: "Confirmar el mismo envío" })).toBeEnabled();
+});
+
+test("si no carga la validación, conserva los campos editables y no envía", async ({ page }) => {
+  let posts = 0;
+  await page.route("**/src/lib/inbound-contract.mjs", (route) => route.abort("failed"));
+  page.on("request", (request) => { if (request.method() === "POST" && request.url().endsWith("/api/briefings")) posts += 1; });
+  await enableSyntheticContact(page);
+  const form = await fillSyntheticContact(page);
+  await form.locator('[name="privacy_acknowledged"]').check();
+  await form.locator('button[type="submit"]').click();
+  await expect(form.locator("[data-form-status]")).toContainText(/no se pudo preparar el envío seguro/i);
+  await expect(form.getByLabel("Nombre completo")).toBeEnabled();
+  await expect(form.getByLabel("Email", { exact: true })).toHaveValue("prueba@example.test");
+  await expect(form.locator('button[type="submit"]')).toBeEnabled();
+  await expect(form.locator("[data-contact-receipt]")).toBeHidden();
+  expect(posts).toBe(0);
+});
+
+test("la capacidad de ensayo rechaza contactos no ficticios antes de enviar", async ({ page }) => {
+  let posts = 0;
+  page.on("request", (request) => { if (request.method() === "POST" && request.url().endsWith("/api/briefings")) posts += 1; });
+  await enableSyntheticContact(page);
+  const form = await fillSyntheticContact(page, "prueba@example.com");
+  await form.locator('[name="privacy_acknowledged"]').check();
+  await form.locator('button[type="submit"]').click();
+  await expect(form.locator("[data-form-status]")).toContainText(/solo admite emails acabados en .test/i);
+  await expect(form.getByLabel("Email", { exact: true })).toBeEnabled();
+  expect(posts).toBe(0);
+});
+
+test("una configuración con destino arbitrario no habilita ni envía el formulario", async ({ page }) => {
+  const unsafe: string[] = [];
+  await page.route("**/api/briefings/config", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ ...contactConfig, endpoint: "https://attacker.test/lead" }) }));
+  page.on("request", (request) => { if (/attacker\.test|challenges\.cloudflare\.com|\/webhook\//.test(request.url())) unsafe.push(request.url()); });
+  await page.goto("/contacto/");
+  await expect(page.locator('#form-contacto')).toHaveAttribute('data-contact-state', 'offline');
+  await expect(page.getByRole("button", { name: /preparar correo/i })).toBeVisible();
+  await expect(page.locator("[data-contact-privacy]")).toBeHidden();
+  expect(unsafe).toEqual([]);
 });
 
 test("la reserva se presenta como no disponible si no hay agenda conectada", async ({ page }) => {

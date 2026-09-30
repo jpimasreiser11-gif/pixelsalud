@@ -29,7 +29,7 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: `ASTRO_DEV_BACKGROUND=false npx astro dev --host ${DEV_HOST} --port ${DEV_PORT} --strictPort --ignore-lock`,
+      command: `VARINO_E2E=1 ASTRO_DEV_BACKGROUND=false npx astro dev --host ${DEV_HOST} --port ${DEV_PORT} --strictPort --ignore-lock`,
       // Comprobar la URL real, no solo el puerto, antes de ejecutar pruebas.
       url: `${DEV_URL}/`,
       // No reutilizar servidores de otro checkout: pueden servir una build

@@ -4,6 +4,7 @@ import { createLocalGuidePlugin } from "./src/lib/local-guide-plugin.mjs";
 import { createLocalAutopilotPlugin } from "./src/lib/autopilot/local-planner-plugin.mjs";
 import sitemap from "@astrojs/sitemap";
 import { launchReady } from "./src/lib/launch-config.mjs";
+import { siteCspDirectives, siteCspHeader } from "./src/lib/content-security-policy.mjs";
 
 // Una sola fuente para la política de contenido. Se usa en tres sitios:
 //  1. Las cabeceras de los servidores de desarrollo y de preview (abajo).
@@ -13,24 +14,11 @@ import { launchReady } from "./src/lib/launch-config.mjs";
 //     cabeceras (Cloudflare Pages, Netlify). GitHub Pages las ignora, así que
 //     hoy el <meta> es la única CSP que llega al navegador del visitante.
 // El gate `npm run csp:check` comprueba que las tres versiones no divergan.
-export const CSP_DIRECTIVES = [
-  "default-src 'self'",
-  "base-uri 'self'",
-  "object-src 'none'",
-  "form-action 'self' mailto:",
-  "img-src 'self' data:",
-  "font-src 'self'",
-  "connect-src 'self'",
-];
+export const CSP_DIRECTIVES = siteCspDirectives();
 
 // frame-ancestors no existe en <meta>: solo funciona como cabecera. Se queda
 // fuera de CSP_DIRECTIVES para que Astro no la emita y la avise por consola.
-const CSP_HEADER = [
-  ...CSP_DIRECTIVES,
-  "frame-ancestors 'none'",
-  "style-src 'self'",
-  "script-src 'self'",
-].join("; ");
+const CSP_HEADER = siteCspHeader();
 
 const securityHeaders = {
   "X-Content-Type-Options": "nosniff",
@@ -54,6 +42,11 @@ export default defineConfig({
   security: { csp: { directives: CSP_DIRECTIVES } },
   vite: {
     plugins: [tailwindcss(), createLocalGuidePlugin(), createLocalAutopilotPlugin()],
+    // Contact validation is a browser dependency. Prebundle before serving it,
+    // instead of discovering it midway through a user's interactive session.
+    optimizeDeps: { include: ['zod'] },
+    // The concurrent static build must not invalidate the E2E dev optimizer.
+    cacheDir: process.env.VARINO_E2E === '1' ? 'node_modules/.vite-varino-e2e' : undefined,
     // Sin esto, Astro incrusta los scripts pequeños dentro del HTML. La CSP no
     // admite scripts en línea, así que el tema, el menú móvil y el formulario
     // de contacto quedaban muertos en la web publicada aunque funcionaran en
