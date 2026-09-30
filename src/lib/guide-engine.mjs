@@ -482,9 +482,14 @@ function processRecap(profile) {
   return facts.length ? `El mapa ya incluye ${facts.join("; ")}.` : "";
 }
 
+const MODEL_INPUT_REQUEST = /\b(?:cu[eé]ntame|cuenta\s+(?:c[oó]mo|qu[eé])|d[ií]me|descr[ií]beme|expl[ií]came|ind[ií]came|facil[ií]tame|comp[aá]rteme|proporci[oó]name|necesito que me|necesito\s+(?:saber|conocer|entender)|me gustar[ií]a\s+(?:saber|conocer|entender)|quisiera\s+(?:saber|conocer|entender)|podr[ií]as decirme|me puedes decir|te agradecer[ií]a que me)\b/i;
+
 // Una respuesta del modelo sirve si aporta algo. Si es genérica, se descarta:
 // más vale una frase concreta escrita por el motor que un halago vacío.
 function isWeak(reply, service, allowRecommendation = true) {
+  // Qwen puede ignorar la instrucción de no preguntar y repetir, sin signos
+  // de interrogación, la pregunta que el motor añadirá a continuación.
+  if (/[¿?]/.test(reply) || MODEL_INPUT_REQUEST.test(reply)) return true;
   if (reply.length < 72) return true;
   if (/^(gracias|entiendo|perfecto|claro|genial|estupendo)\b/i.test(reply)) return true;
   if (/varino (puede|podría|te puede|os puede)/i.test(reply)) return true;

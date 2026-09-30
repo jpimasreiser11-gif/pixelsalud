@@ -17,6 +17,23 @@ describe("motor de VARINO Guide", () => {
     expect(cleanReply("Entendido. ¿Qué herramienta utilizáis?")).toBe("Entendido.");
   });
 
+  it.each([
+    "Entendido, para diseñar el flujo exacto necesito que me describas paso a paso cómo gestionáis las citas actualmente, desde que llega la solicitud hasta que se confirma.",
+    "Entendido, para diseñar la solución ajustada a vuestro flujo actual necesito saber cómo gestionáis el proceso paso a paso hoy en día.",
+  ])("descarta una petición indirecta del modelo que duplicaría la siguiente pregunta", (modelReply) => {
+    const result = advise({
+      messages: [{
+        role: "user",
+        content: "Somos una clínica veterinaria pequeña. Queremos automatizar la solicitud y confirmación de citas desde un formulario y una hoja de cálculo; una persona debe aprobar cada cita.",
+      }],
+      modelReply,
+    });
+
+    expect(result.replySource).toBe("rules");
+    expect(result.reply).not.toMatch(/necesito que me|necesito saber|describas paso a paso|cómo gestionáis el proceso/i);
+    expect(result.nextQuestion).toBe("¿Cómo realizáis ahora ese proceso, desde que empieza hasta que termina?");
+  });
+
   it("descarta una respuesta genérica del modelo y reconoce el dato concreto", () => {
     const profile = normalizeProfile({
       business: "clínica dental",
