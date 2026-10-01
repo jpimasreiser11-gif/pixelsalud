@@ -104,14 +104,20 @@ import { BASE, SITE, BACKEND } from "../config";
     .res-field { width: 100%; border-radius: .75rem; border: 1px solid rgb(0 0 0 / .12); background: white; padding: .7rem 1rem; font-size: .875rem; color: #1d1d1f; outline: none; transition: border-color .2s, box-shadow .2s; }
     .res-field:focus { border-color: #0071e3; box-shadow: 0 0 0 3px rgb(0 113 227 / .12); }
     :global(.dark) .res-field { border-color: rgb(255 255 255 / .14); background: #050506; color: #f5f5f7; }
-    .slot-btn { width: 100%; text-align: left; border: 1px solid rgb(0 0 0 / .1); border-radius: .8rem; background: white; padding: .65rem .85rem; cursor: pointer; transition: all .15s ease; }
-    .slot-btn:hover { border-color: #0071e3; background: #f0f7ff; color: #0071e3; }
-    .slot-btn.is-selected { background: #0071e3 !important; color: white !important; border-color: #0071e3 !important; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 113, 227, 0.25); }
-    .slot-btn:disabled { opacity: .45; cursor: not-allowed; }
-    :global(.dark) .slot-btn { background: #050506; border-color: rgb(255 255 255 / .12); }
-    :global(.dark) .slot-btn:hover { background: #162032; border-color: #2997ff; color: #2997ff; }
-    :global(.dark) .slot-btn.is-selected { background: #2997ff !important; color: white !important; border-color: #2997ff !important; }
-    .slot-day { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: #6e6e73; font-weight: 600; }
+    :global(.slot-btn) { width: 100%; text-align: left; border: 1px solid rgb(0 0 0 / .1); border-radius: .8rem; background: white; padding: .65rem .85rem; cursor: pointer; transition: border-color .15s ease, background-color .15s ease, color .15s ease, box-shadow .15s ease; }
+    :global(.slot-btn:focus-visible) { outline: 2px solid #0071e3; outline-offset: 2px; }
+    @media (hover: hover) and (pointer: fine) {
+      :global(.slot-btn:hover) { border-color: #0071e3; background: #f0f7ff; color: #0071e3; }
+    }
+    :global(.slot-btn.is-selected) { background: #0071e3 !important; color: white !important; border-color: #0071e3 !important; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 113, 227, 0.25); }
+    :global(.slot-btn:disabled) { opacity: .45; cursor: not-allowed; }
+    :global(.dark .slot-btn) { background: #050506; border-color: rgb(255 255 255 / .12); }
+    @media (hover: hover) and (pointer: fine) {
+      :global(.dark .slot-btn:hover) { background: #162032; border-color: #2997ff; color: #2997ff; }
+    }
+    :global(.dark .slot-btn:focus-visible) { outline-color: #2997ff; }
+    :global(.dark .slot-btn.is-selected) { background: #2997ff !important; color: white !important; border-color: #2997ff !important; }
+    :global(.slot-day) { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: #6e6e73; font-weight: 600; }
   </style>
 
   <script>

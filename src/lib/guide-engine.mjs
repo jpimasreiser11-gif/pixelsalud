@@ -105,6 +105,7 @@ const TOOL_MENTIONS = [
   [/\bsalesforce\b/i, "Salesforce"],
   [/\bpipedrive\b/i, "Pipedrive"],
   [/\bodoo\b/i, "Odoo"],
+  [/\bdoctoralia\b/i, "Doctoralia"],
   [/\bsage\b/i, "Sage"],
   [/\bnotion\b/i, "Notion"],
   [/\bairtable\b/i, "Airtable"],
@@ -155,17 +156,31 @@ function explicitProblem(answer) {
   return match ? clampText(match[0], 300) : "";
 }
 
+function explicitClauses(answer) {
+  return answer.split(/(?<=[.!?;])\s+|,\s*(?:y|pero|aunque)\s+|(?=\bno\s+(?:(?:se|debe|debemos|queremos|podemos)\s+)?(?:guard|almacen|registr|compart|volc)\w*)/i);
+}
+
 function explicitApproval(answer) {
-  const sentences = answer.split(/(?<=[.!?;])\s+/);
+  const sentences = explicitClauses(answer);
   return clampText(sentences.find((sentence) =>
     /\b(?:aprobaci[oó]n|aprob(?:ar|aci[oó]n)|autoriza(?:ci[oó]n|r)|revisi[oó]n humana|supervisi[oó]n humana)\b/i.test(sentence)
-    || /\b(?:responsable|encargad[oa]|gerencia|direcci[oó]n|persona|alguien)\b[^.!?;]{0,100}\b(?:debe|tiene que|ha de|revisa|revisar|valida|validar|aprueba|aprobar|autoriza|autorizar|supervisa|supervisar)\b/i.test(sentence)
+    || /\b(?:responsable|encargad[oa]|gerencia|direcci[oó]n|persona|alguien|recepci[oó]n|recepcionista)\b[^.!?;]{0,100}\b(?:debe|tiene que|ha de|revisa|revisar|valida|validar|aprueba|aprobar|autoriza|autorizar|supervisa|supervisar)\b/i.test(sentence)
     || /\b(?:solo|[uú]nicamente)\b[^.!?;]*(?:nunca|no debe|no puede|no enviar|no env[ií]e)\b/i.test(sentence),
   ) || "", 250);
 }
 
+function explicitDataHandling(answer) {
+  const sentence = explicitClauses(answer).find((part) =>
+    /\b(?:datos?|informaci[oó]n|historial|expediente|documentos?)\b/i.test(part)
+    && /\bno\s+(?:(?:se|debe|debemos|queremos|podemos)\s+)?(?:guard|almacen|registr|compart|envi|sub|volc)\w*/i.test(part),
+  );
+  return clampText(sentence || "", 250);
+}
+
 function explicitProcess(answer) {
   const sentence = answer.split(/(?<=[.!?;])\s+/).find((part) =>
+    /\b(?:copiamos|copian|copia|trasladamos|trasladan|traslada|pasamos|pasan|pasa|registramos|registran|registra|guardamos|guardan|guarda)\b[^.!?;]*\b(?:doctoralia|google sheets|excel|hubspot|salesforce|pipedrive|odoo|airtable|notion)\b/i.test(part)
+    ||
     /\b(?:entra|entran|llega|llegan|recibimos|reciben)\b[^.!?;]*\b(?:registramos|registran|anotamos|apuntamos|copiamos|guardamos)\b[^.!?;]*\b(?:respondemos|responden|revisamos|revisan|enviamos|env[ií]an)\b/i.test(part)
     || /\b(?:entra|entran|llega|llegan|recibimos|reciben)\b[^.!?;]*\b(?:registramos|registran|anotamos|apuntamos|copiamos|guardamos|apunta|anota|copia|registra)\b/i.test(part)
     || /\b(?:copia|copian|copiamos|traslada|pasa|apunta|anota|registra|guarda)\b[^.!?;]*\b(?:excel|hoja|crm|sistema|registro|agenda)\b[^.!?;]*\b(?:comprueba|comprueban|compruebo|comprobar|verifica|verifican|verificar|valida|validan|validar|confirma|responde|revisa|env[ií]a|contacta|actualiza)\b/i.test(part)
@@ -194,6 +209,7 @@ function addExplicitFacts(profile, answer) {
   profile.channels = mergeExplicitMentions(profile.channels, explicitChannels(answer));
   if (!profile.volume) profile.volume = explicitVolume(answer);
   if (!profile.approvals) profile.approvals = explicitApproval(answer);
+  if (!profile.dataHandling) profile.dataHandling = explicitDataHandling(answer);
   if (!profile.goal) profile.goal = explicitGoal(answer);
   if (!profile.problem) profile.problem = explicitProblem(answer);
   if (!profile.process) profile.process = explicitProcess(answer);
@@ -207,6 +223,7 @@ function explicitFacts(answer) {
     channels: explicitChannels(answer).length > 0,
     volume: Boolean(explicitVolume(answer)),
     approvals: Boolean(explicitApproval(answer)),
+    dataHandling: Boolean(explicitDataHandling(answer)),
     goal: Boolean(explicitGoal(answer)),
   };
 }
@@ -232,6 +249,7 @@ export function normalizeProfile(candidate = {}) {
     volume: clampText(source.volume, 160),
     channels: clampText(source.channels, 200),
     approvals: clampText(source.approvals, 250),
+    dataHandling: clampText(source.dataHandling, 250),
     goal: clampText(source.goal, 250),
     integrations: clampNumber(source.integrations, 1, 12, 1),
     workflows: clampNumber(source.workflows, 1, 20, 1),
@@ -486,6 +504,7 @@ function processRecap(profile) {
     profile.channels && `entrada: ${recapValue(profile.channels, 35)}`,
     profile.volume && `volumen: ${recapValue(profile.volume, 30)}`,
     profile.approvals && `control humano: ${recapValue(profile.approvals, 65)}`,
+    profile.dataHandling && `restricción de datos: ${recapValue(profile.dataHandling, 65)}`,
     profile.goal && `objetivo: ${recapValue(profile.goal, 45)}`,
   ].filter(Boolean);
   return facts.length ? `El mapa ya incluye ${facts.join("; ")}.` : "";
@@ -495,7 +514,28 @@ const MODEL_INPUT_REQUEST = /\b(?:cu[eé]ntame|cuenta\s+(?:c[oó]mo|qu[eé])|d[i
 
 // Una respuesta del modelo sirve si aporta algo. Si es genérica, se descarta:
 // más vale una frase concreta escrita por el motor que un halago vacío.
-function isWeak(reply, service, allowRecommendation = true) {
+function volumeSignature(value) {
+  const extracted = explicitVolume(value);
+  const match = extracted.match(/\b(\d[\d.,]*)\s*([a-záéíóúñ-]+)?\s*(al\s+d[ií]a|por\s+d[ií]a|diari[oa]s?|a\s+la\s+semana|por\s+semana|semanal(?:es)?|al\s+mes|por\s+mes|mensuales?)\b/i);
+  if (!match) return null;
+  const period = /d[ií]a|diari/i.test(match[3]) ? "day" : /semana/i.test(match[3]) ? "week" : "month";
+  return {
+    amount: match[1].replace(/[.,]/g, ""),
+    unit: (match[2] || "").toLowerCase().replace(/s$/, ""),
+    period,
+  };
+}
+
+function contradictsKnownVolume(reply, profile) {
+  const known = volumeSignature(profile.volume);
+  const claimed = volumeSignature(reply);
+  if (!known || !claimed) return false;
+  return known.amount !== claimed.amount
+    || known.period !== claimed.period
+    || Boolean(known.unit && claimed.unit && known.unit !== claimed.unit);
+}
+
+function isWeak(reply, service, allowRecommendation = true, profile = {}) {
   // Qwen puede ignorar la instrucción de no preguntar y repetir, sin signos
   // de interrogación, la pregunta que el motor añadirá a continuación.
   if (/[¿?]/.test(reply) || MODEL_INPUT_REQUEST.test(reply)) return true;
@@ -507,6 +547,8 @@ function isWeak(reply, service, allowRecommendation = true) {
   // resultado cuantitativo: el alcance solo se diseña después de validar el
   // proceso, y los ahorros nunca se presuponen.
   if (/\b(?:recordatorios?|notificaciones?|seguimiento autom[aá]tico|liberar\w*|ahorrar\w*|reducir\w*|aumentar\w*|incrementar\w*|garantizar\w*)\b/i.test(reply)) return true;
+  if (/\b(?:vamos a|podemos|podremos|te permitir[aá]|os permitir[aá])\s+optimizar\b/i.test(reply)) return true;
+  if (contradictsKnownVolume(reply, profile)) return true;
   if (/\bel sistema calcula autom[aá]ticamente\b|\bpresupuesto autom[aá]tico adaptado a tu caso\b/i.test(reply)) return true;
   if (!allowRecommendation && /automation sprint|sistema de crecimiento|ia privada|opci[oó]n m[aá]s coherente|te recomiendo|recomiendo|te propongo|presupuesto estimado/i.test(reply)) return true;
   // El modelo pequeño a veces recomienda un servicio distinto al calculado.
@@ -517,7 +559,7 @@ function isWeak(reply, service, allowRecommendation = true) {
 function consultativeResponse({ profile, filledField, modelReply, service }) {
   const cleaned = cleanReply(modelReply);
   const recommendationReady = Boolean(profile.business && profile.problem && profile.process);
-  if (cleaned && !isWeak(cleaned, service, recommendationReady)) {
+  if (cleaned && !isWeak(cleaned, service, recommendationReady, profile)) {
     return { reply: cleaned, source: "model" };
   }
   const value = filledField ? clampText(profile[filledField], 180).replace(/[.!?;,\s]+$/, "") : "";
@@ -532,6 +574,26 @@ function consultativeResponse({ profile, filledField, modelReply, service }) {
     reply: `${acknowledgement} ${recap} ${RATIONALE[service.slug]}`.replace(/\s+/g, " ").trim(),
     source: "rules",
   };
+}
+
+function serviceCatalogReply(profile) {
+  const requirements = [
+    /doctoralia/i.test(`${profile.tools} ${profile.process}`) && "Anoto como requisito mantener Doctoralia; primero hay que verificar qué integración permite vuestro plan.",
+    profile.approvals && `Anoto este control humano: ${profile.approvals}`,
+    profile.dataHandling && `Anoto esta restricción de datos: ${profile.dataHandling}`,
+  ].filter(Boolean);
+  const nextStep = "El siguiente paso sería mapear el flujo y comprobar las integraciones disponibles antes de cerrar alcance y propuesta.";
+  return [SERVICE_CATALOG_REPLY, ...requirements, nextStep].join(" ");
+}
+
+function serviceCatalogNextQuestion(profile, assistantQuestion) {
+  const context = `${profile.tools} ${profile.process}`;
+  if (!profile.problem && /doctoralia/i.test(context)) {
+    return "Para orientar el alcance sin cambiar Doctoralia, ¿qué quieres priorizar: el traspaso de solicitudes web, la revisión de recepción o el seguimiento posterior?";
+  }
+  const next = nextUsefulQuestion(profile, fieldFromQuestion(assistantQuestion), assistantQuestion);
+  if (next === assistantQuestion) return "Para ajustar el alcance, ¿qué resultado quieres priorizar en este proceso?";
+  return next;
 }
 
 export function consultativeReply(options) {
@@ -595,8 +657,11 @@ export function advise({ messages = [], profile: previousProfile = {}, modelRepl
   // sustituya una respuesta verificable por una frase genérica.
   if (isServiceCatalogQuestion(latestUserMessage)) {
     const profile = known;
+    // Una pregunta de precio no debe reemplazar el negocio o el problema por
+    // toda la frase, pero sí puede aportar controles, herramientas y volumen.
+    addExplicitFacts(profile, latestUserMessage);
     profile.sector = deriveSector(profile);
-    if (SENSITIVE.test(profile.sector)) profile.sensitivity = "high";
+    if (SENSITIVE.test(`${profile.sector} ${profile.dataHandling}`)) profile.sensitivity = "high";
     Object.assign(profile, deriveScope(profile));
     const hasProjectContext = Boolean(profile.business || profile.problem || profile.process);
     const service = hasProjectContext ? recommendService(profile) : null;
@@ -604,10 +669,10 @@ export function advise({ messages = [], profile: previousProfile = {}, modelRepl
     const quoteReady = Boolean(profile.problem && (profile.business || profile.sector) && profile.process);
     const assistantQuestion = lastOf(messages, "assistant");
     return {
-      reply: SERVICE_CATALOG_REPLY,
+      reply: serviceCatalogReply(profile),
       replySource: "rules",
       nextQuestion: hasProjectContext
-        ? nextUsefulQuestion(profile, fieldFromQuestion(assistantQuestion), assistantQuestion)
+        ? serviceCatalogNextQuestion(profile, assistantQuestion)
         : SERVICE_CATALOG_FOLLOW_UP,
       stage: stageFor(profile),
       profile,
