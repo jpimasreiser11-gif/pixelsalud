@@ -10,6 +10,8 @@
     "links:check": "node scripts/check-links.mjs",
     "test:unit": "vitest run",
     "test:n8n-backup": "python3 -m unittest discover -s tests/backups -p test_n8n_snapshot.py -v",
+    "test:unsubscribe-workflow": "python3 -m unittest discover -s tests/backups -p test_unsubscribe_workflow.py -v",
+    "test:unsubscribe-native": "python3 scripts/test-unsubscribe-n8n.py",
     "test:d1": "node scripts/test-autopilot-d1.mjs",
     "test:auth-runtime": "node scripts/test-autopilot-auth-runtime.mjs",
     "test:oauth-rate-limit": "node scripts/test-google-login-rate-limit.mjs",

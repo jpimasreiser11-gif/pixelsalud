@@ -1,0 +1,572 @@
+{
+  "id": "6d8bd8e6-3a2d-4f97-8ac9-2a2c5c3fbb01",
+  "name": "VARINO · 3 baja autenticada y supresión confirmada",
+  "active": false,
+  "description": "Motor interno de baja: Header Auth → validar evento → leer Supresion → deduplicar o append RAW → releer efecto → responder. Sin correo ni endpoint GET público. Pendientes antes de marketing: tokens opacos, confirmación pública segura y cola durable. Credenciales en n8n; referencias placeholder; no activar todavía.",
+  "nodes": [
+    {
+      "id": "bc3d5a5c49d45f1fb04dfeeaa998937b",
+      "name": "Recibir baja autenticada",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "unsub-sync",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://varinoai.me"
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "notes": "Solo worker/gateway autorizado mediante Header Auth. No usar como enlace público, no GET ni email/token en URL. Una petición contiene un solo evento.",
+      "notesInFlow": false,
+      "webhookId": "varino-unsub-sync",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "placehold_httpHeaderAuth_unsub",
+          "name": "VARINO Webhook Auth · unsub-sync"
+        }
+      }
+    },
+    {
+      "id": "e437244006a75b48a8d76aa69b7a0578",
+      "name": "Validar evento de baja",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "\nconst input = $input.first().json.body;\nconst fail = () => [{json:{valid:false,error:'invalid_request'}}];\nif (!input || Array.isArray(input) || typeof input !== 'object'\n    || Object.keys(input).sort().join(',') !== 'email,eventId,requestedAt') return fail();\nconst {email,eventId,requestedAt} = input;\nif (typeof email !== 'string' || email.length > 254 || email !== email.trim()\n    || !/^[^\\s@\"\\\\<>\\u0000-\\u001f\\u007f]+@[^\\s@\"\\\\<>\\u0000-\\u001f\\u007f]+\\.[^\\s@\"\\\\<>\\u0000-\\u001f\\u007f]+$/.test(email)\n    || typeof eventId !== 'string' || !/^[a-f0-9]{64}$/.test(eventId)\n    || typeof requestedAt !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z$/.test(requestedAt)) return fail();\nconst requested = Date.parse(requestedAt);\nif (!Number.isFinite(requested) || requested > Date.now()+60000) return fail();\nconst canonicalDate = new Date(requested).toISOString();\nif (canonicalDate !== (requestedAt.includes('.') ? requestedAt : requestedAt.replace('Z','.000Z'))) return fail();\nreturn [{json:{valid:true,email:email.toLowerCase(),eventId,requestedAt:canonicalDate}}];\n"
+      },
+      "position": [
+        240,
+        0
+      ],
+      "notes": "Valida exactamente email, eventId opaco y fecha UTC. Rechaza campos extra, inyección de cabeceras y fechas inválidas. No prueba consentimiento ni habilita marketing.",
+      "notesInFlow": false
+    },
+    {
+      "id": "965c885cb7685a75b8f3cb34037d8899",
+      "name": "¿Evento válido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "valid",
+              "leftValue": "={{ $json.valid }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        480,
+        0
+      ],
+      "notes": "Solo el evento validado llega a Sheets; errores devuelven 400 sin leer ni escribir CRM.",
+      "notesInFlow": false
+    },
+    {
+      "id": "01446c45ab8651c08c790cdfc978ee50",
+      "name": "Rechazar evento",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"ok\":false,\"error\":\"invalid_request\"}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "position": [
+        720,
+        240
+      ],
+      "notes": "400 sin contacto, credenciales ni detalles de validación.",
+      "notesInFlow": false
+    },
+    {
+      "id": "cef4747304845a84bef384fecfbc6717",
+      "name": "Leer supresión actual",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "GET",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/REPLACE_WITH_CRM_SHEET_ID/values/Supresion?majorDimension=ROWS&valueRenderOption=UNFORMATTED_VALUE",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "position": [
+        720,
+        0
+      ],
+      "notes": "Lectura fresca autenticada del registro central Supresion. Sin reintentos ni registro del contenido; fallo impide escribir o confirmar baja.",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "placehold_googleSheetsOAuth2Api",
+          "name": "Sheets VARINO"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "ab928b58f1505aa09472422cfbbf387c",
+      "name": "Preparar supresión",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "\nconst H = [\"email_normalizado\", \"canal\", \"motivo\", \"fecha\", \"fuente\", \"evento_ref\"];\nconst values = $json.values;\nconst validEmail = value => typeof value === 'string' && value.length <= 254\n  && value === value.trim() && /^[^\\s@\"\\\\<>\\u0000-\\u001f\\u007f]+@[^\\s@\"\\\\<>\\u0000-\\u001f\\u007f]+\\.[^\\s@\"\\\\<>\\u0000-\\u001f\\u007f]+$/.test(value);\nconst compatible = !$json.error && Array.isArray(values) && values.length <= 50000\n  && Array.isArray(values[0]) && values[0].length === H.length\n  && H.every((header,index)=>values[0][index] === header)\n  && values.slice(1).every(row=>Array.isArray(row) && row.length<=H.length\n    && validEmail(row[0]) && row[1] === 'email');\nconst ctx = $('Validar evento de baja').first().json;\nconst suppressed = compatible && values.slice(1).some(row=>row[0].toLowerCase() === ctx.email);\n\nif (!compatible) return [{json:{available:false,error:'suppression_unavailable'}}];\nreturn [{json:{...ctx,available:true,suppressed,\n  row:[ctx.email,'email','baja',ctx.requestedAt,'baja-confirmada-v1',ctx.eventId]}}];\n"
+      },
+      "position": [
+        960,
+        0
+      ],
+      "notes": "Comprueba cabeceras exactas, filas y canal. Reutiliza bajas previas de la misma dirección, incluso otro evento. Formato RAW evita interpretación de fórmulas.",
+      "notesInFlow": false
+    },
+    {
+      "id": "5e449601aef0543d9d0ff8a3ae4ff653",
+      "name": "¿Registro compatible?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "available",
+              "leftValue": "={{ $json.available }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1200,
+        0
+      ],
+      "notes": "Un esquema incompatible devuelve 503 y requiere reparación; nunca se interpreta como lista vacía.",
+      "notesInFlow": false
+    },
+    {
+      "id": "3d7a982bf00458dfa8addcfd2b99fa48",
+      "name": "¿Baja ya registrada?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "suppressed",
+              "leftValue": "={{ $json.suppressed }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1440,
+        0
+      ],
+      "notes": "Si ya existe una baja para este email, confirma sin duplicar ni cambiar el historial. La baja sigue vigente aunque Leads tenga un checkbox antiguo.",
+      "notesInFlow": false
+    },
+    {
+      "id": "bd59a51361b35170bb97da023d6f649a",
+      "name": "Confirmar baja existente",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok:true,eventId:$json.eventId,suppressed:true,duplicate:true}) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "position": [
+        1680,
+        -240
+      ],
+      "notes": "Confirma únicamente tras lectura fresca válida; devuelve eventId, no el email.",
+      "notesInFlow": false
+    },
+    {
+      "id": "10b171a928ec5227af79f9d663f5a689",
+      "name": "Guardar supresión",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/REPLACE_WITH_CRM_SHEET_ID/values/Supresion!A:F:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({values:[$json.row]}) }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "position": [
+        1680,
+        0
+      ],
+      "notes": "Una única escritura RAW de seis campos mínimos. No reintenta un append ambiguo. Tanto éxito como error pasan a reconciliar mediante lectura fresca.",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "placehold_googleSheetsOAuth2Api",
+          "name": "Sheets VARINO"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "e2af25301ab15007ba2d264d82726727",
+      "name": "Releer supresión guardada",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "GET",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/REPLACE_WITH_CRM_SHEET_ID/values/Supresion?majorDimension=ROWS&valueRenderOption=UNFORMATTED_VALUE",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "position": [
+        1920,
+        0
+      ],
+      "notes": "Confirma el efecto real, no solo HTTP 200. Si se perdió la respuesta del append pero la baja está guardada, se confirma sin volver a añadirla.",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "placehold_googleSheetsOAuth2Api",
+          "name": "Sheets VARINO"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "468f238b767652d3b40bb5ccef288b56",
+      "name": "Confirmar efecto de baja",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "\nconst H = [\"email_normalizado\", \"canal\", \"motivo\", \"fecha\", \"fuente\", \"evento_ref\"];\nconst values = $json.values;\nconst validEmail = value => typeof value === 'string' && value.length <= 254\n  && value === value.trim() && /^[^\\s@\"\\\\<>\\u0000-\\u001f\\u007f]+@[^\\s@\"\\\\<>\\u0000-\\u001f\\u007f]+\\.[^\\s@\"\\\\<>\\u0000-\\u001f\\u007f]+$/.test(value);\nconst compatible = !$json.error && Array.isArray(values) && values.length <= 50000\n  && Array.isArray(values[0]) && values[0].length === H.length\n  && H.every((header,index)=>values[0][index] === header)\n  && values.slice(1).every(row=>Array.isArray(row) && row.length<=H.length\n    && validEmail(row[0]) && row[1] === 'email');\nconst ctx = $('Validar evento de baja').first().json;\nconst suppressed = compatible && values.slice(1).some(row=>row[0].toLowerCase() === ctx.email);\n\n// A 200 append acknowledgement is insufficient. Equally, a lost acknowledgement\n// is not proof of failure: reconcile the actual suppression table before reply.\nreturn [{json:{ok:compatible && suppressed,eventId:ctx.eventId,\n  error:compatible && suppressed ? null : 'suppression_unconfirmed'}}];\n"
+      },
+      "position": [
+        2160,
+        0
+      ],
+      "notes": "Comprueba registro y dirección tras la escritura. Fallo/tabla alterada/ausencia de baja devuelve 503; no se miente sobre éxito.",
+      "notesInFlow": false
+    },
+    {
+      "id": "4a11402b15705509adae09531335e198",
+      "name": "¿Baja confirmada?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ok",
+              "leftValue": "={{ $json.ok }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        2400,
+        0
+      ],
+      "notes": "Solo una supresión comprobada permite respuesta de éxito al worker. No ejecuta Gmail, Telegram ni cambios en otras filas.",
+      "notesInFlow": false
+    },
+    {
+      "id": "795cbd26ae3b5b74b2e11fe6fe6614d2",
+      "name": "Confirmar baja nueva",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok:true,eventId:$json.eventId,suppressed:true,duplicate:false}) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "position": [
+        2640,
+        0
+      ],
+      "notes": "200 con efecto persistido y eventId del evento solicitado; sin PII en la respuesta.",
+      "notesInFlow": false
+    },
+    {
+      "id": "d7a1749b0aa35773a15110b456f9c963",
+      "name": "No confirmar baja",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"ok\":false,\"error\":\"suppression_unconfirmed\"}",
+        "options": {
+          "responseCode": 503,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "position": [
+        2640,
+        240
+      ],
+      "notes": "503 mantiene el evento pendiente en el futuro outbox. No puede anunciarse una baja completada ni continuar con marketing.",
+      "notesInFlow": false
+    }
+  ],
+  "connections": {
+    "Recibir baja autenticada": {
+      "main": [
+        [
+          {
+            "node": "Validar evento de baja",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar evento de baja": {
+      "main": [
+        [
+          {
+            "node": "¿Evento válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Evento válido?": {
+      "main": [
+        [
+          {
+            "node": "Leer supresión actual",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rechazar evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer supresión actual": {
+      "main": [
+        [
+          {
+            "node": "Preparar supresión",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar supresión": {
+      "main": [
+        [
+          {
+            "node": "¿Registro compatible?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Registro compatible?": {
+      "main": [
+        [
+          {
+            "node": "¿Baja ya registrada?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No confirmar baja",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Baja ya registrada?": {
+      "main": [
+        [
+          {
+            "node": "Confirmar baja existente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Guardar supresión",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar supresión": {
+      "main": [
+        [
+          {
+            "node": "Releer supresión guardada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Releer supresión guardada": {
+      "main": [
+        [
+          {
+            "node": "Confirmar efecto de baja",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirmar efecto de baja": {
+      "main": [
+        [
+          {
+            "node": "¿Baja confirmada?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Baja confirmada?": {
+      "main": [
+        [
+          {
+            "node": "Confirmar baja nueva",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No confirmar baja",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "executionTimeout": 60,
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false,
+    "timezone": "Europe/Madrid"
+  }
+}
