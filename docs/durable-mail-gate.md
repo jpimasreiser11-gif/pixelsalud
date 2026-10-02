@@ -21,7 +21,9 @@ campaña real o una protección instalada basándose solo en estos ensayos.
 1. El gate comercial previo debe haber autorizado el mensaje y su reserva.
 2. Validar destinatario durable compara el único To RFC822 con la dirección de
    la fila reservada. Rechaza manuales, caducados, base64 inválido, destinatario
-   distinto, Cc/Bcc, Resent y encabezados duplicados o plegados. Los casos de
+   distinto, Cc/Bcc, Resent, listas/grupos/comentarios en direcciones y encabezados
+   duplicados o plegados. La sintaxis admitida coincide con Recipient del ledger,
+   sin direcciones de presentación o locales entre comillas. Los casos de
    entrada inválida detienen el flujo sin llamar al ledger; requieren revisar
    la reserva y el error, no un reenvío automático.
 3. Comprobar baja durable hace un único POST autenticado al origen HTTPS exacto
@@ -112,3 +114,9 @@ con oposición no llegó al sender; el reinicio no generó
 ningún efecto adicional. Las tres pruebas offline del runner rechazan helpers
 cambiados/incompletos y comprueban que la extracción no ejecuta el acceso a
 configuración privada ni importa el helper de chat.
+
+La segunda pasada del mismo día añadió listas, grupos, comentarios y puntos
+inválidos: treinta y cuatro casos nativos del guard pasaron con cero payloads
+retenidos al terminar, y el ensayo completo con reinicio volvió a pasar.
+Plus-addressing, apóstrofos y locales con puntos válidos se conservan; la
+validación offline contrasta estas direcciones con Zod del ledger.

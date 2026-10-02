@@ -77,6 +77,16 @@ const ctx={raw:raw(),A1:table+'!A2',[rowKey]:['','', 'QA@example.test'],dispatch
 const prepared=prep(ctx,execution,Buffer).json;
 assert.equal(prepared.durableRecipient,'qa@example.test');
 assert.equal(prepared.raw,ctx.raw);
+const {z}=require('zod');
+for(const email of ['qa+web@example.test',"o'reilly@example.test",'first.last@business.example.test']) {
+  assert.equal(z.string().max(200).email().safeParse(email).success,true);
+  assert.equal(prep({...ctx,[rowKey]:['','',email],raw:raw(email)},execution,Buffer).json.durableRecipient,email);
+}
+for(const email of ['a,b@example.test','group:a;@example.test','a(comment)@example.test','a@exa,mple.test',
+  '.a@example.test','a..b@example.test','"a"@example.test','a@company.test:25']) {
+  assert.equal(z.string().max(200).email().safeParse(email).success,false);
+  assert.throws(()=>prep({...ctx,[rowKey]:['','',email],raw:raw(email)},execution,Buffer));
+}
 for(const bad of [{...ctx,raw:raw('other@example.test')},{...ctx,raw:raw('qa@example.test','Bcc: other@example.test\r\n')},
   {...ctx,raw:raw('qa@example.test','Cc: other@example.test\r\n')},{...ctx,raw:raw('qa@example.test','To: qa@example.test\r\n')},
   {...ctx,raw:raw('qa@example.test','Resent-To: other@example.test\r\n')},{...ctx,raw:ctx.raw+'='},

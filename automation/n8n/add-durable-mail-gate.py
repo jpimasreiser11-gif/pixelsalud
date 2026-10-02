@@ -30,7 +30,9 @@ const ctx = $json;
 const deny = () => { throw new Error('Recipient/current authorization invalid; manual review required'); };
 const row = ctx.__ROW__;
 const email = Array.isArray(row) ? String(row[2] ?? '').trim().toLowerCase() : '';
-const validEmail = /^[^@\s"\\<>\x00-\x1f\x7f]+@[^@\s"\\<>\x00-\x1f\x7f]+\.[^@\s"\\<>\x00-\x1f\x7f]+$/;
+// Same supported address syntax as the ledger Recipient contract (Zod email).
+// Lists, groups, comments and quoted/display-name syntax must not pass as one To.
+const validEmail = /^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/;
 if ($execution.mode !== 'production' || ctx.dispatchAuthorized !== true
     || !Number.isFinite(ctx.dispatchDeadline) || Date.now() >= ctx.dispatchDeadline
     || !validEmail.test(email) || email.length > 200

@@ -158,10 +158,12 @@ def main():
                             assert len(state["checks"])==len(items),"Native item linkage/check count differs"
                             assert state["redirects"]==0,"Native HTTP followed a credential-bearing redirect"
                             assert state["alerts"]==(0 if scenario=="clear" else 1),"Blocked check was not routed for review"
-                        for invalid in [context(kind,expired=True),context(kind,raw_to="other@example.test"),context(kind,extra="Bcc: other@example.test\r\n")]:
+                        invalid_envelopes=[context(kind,expired=True),context(kind,raw_to="other@example.test"),context(kind,extra="Bcc: other@example.test\r\n")]
+                        invalid_envelopes.extend(context(kind,email=email) for email in ["a,b@example.test","group:a;@example.test","a(comment)@example.test","a@exa,mple.test",".a@example.test","a..b@example.test"])
+                        for invalid in invalid_envelopes:
                             state.update(scenario="clear",checks=[],sends=[],alerts=0,redirects=0)
                             call(kind,[invalid]); assert not state["checks"] and not state["sends"],"Invalid envelope reached private API/sender"
-                    print("PASS: both native guard variants; clear only, current opposition, 503, malformed/extra response, 302 without redirect, timeout, mixed-item pairing, stale permission and hidden/wrong recipients. Fictitious sender only.",flush=True)
+                    print("PASS: both native guard variants; clear only, current opposition, 503, malformed/extra response, 302 without redirect, timeout, mixed-item pairing, stale permission, hidden/wrong recipients, address lists/groups/comments and invalid dot syntax. Fictitious sender only.",flush=True)
                     database=folder/".n8n/database.sqlite"
                     count=None
                     for _ in range(100):
