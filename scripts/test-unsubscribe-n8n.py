@@ -44,7 +44,13 @@ def post(url,payload,token=None):
     request=urllib.request.Request(url,data=json.dumps(payload).encode(),headers=headers)
     try:
         with urllib.request.urlopen(request,timeout=30) as response:
-            return response.status,json.load(response)
+            try:
+                payload=json.load(response)
+            except (ValueError,UnicodeError):
+                # Startup may serve an empty/non-JSON response before webhook
+                # registration. Its status alone never satisfies a test receipt.
+                payload={}
+            return response.status,payload
     except urllib.error.HTTPError as error:
         try:
             result=json.load(error)
@@ -225,6 +231,18 @@ def main():
                         assert error.code==404
                     assert len(state["rows"])==3
                     print("PASS: native Header Auth/POST validation, confirmed suppression, case-insensitive repeat, bad-header/read/write fail-closed, lost-append reconciliation, lost-confirmation replay, no GET mutation.",flush=True)
+                    if os.environ.get("VARINO_TEST_UNSUBSCRIBE_E2E") == "1":
+                        before_writes=state["writes"]
+                        e2e_env={**os.environ,"VARINO_TEST_N8N_PORT":str(port),"VARINO_TEST_N8N_TOKEN":token,
+                                 "WRANGLER_SEND_METRICS":"false"}
+                        # Secrets travel only in this disposable child environment, never argv/output.
+                        result=subprocess.run(["node",str(ROOT/"scripts/test-suppression-runtime.mjs")],
+                                              cwd=ROOT,env=e2e_env,capture_output=True,text=True,timeout=180)
+                        if result.returncode:
+                            raise RuntimeError("Durable opt-out end-to-end drill failed; private child output withheld")
+                        assert state["writes"]==before_writes+1
+                        assert sum(row[0]=="endtoend@example.test" for row in state["rows"])==1
+                        print("PASS: real Chromium/Pages/D1/worker/native n8n chain; exactly one synthetic CRM suppression appended, persistent profile untouched.",flush=True)
                     database=profile/".n8n/database.sqlite"
                     # RespondToWebhook completes HTTP before n8n finishes its
                     # execution lifecycle and removes the in-flight payload.

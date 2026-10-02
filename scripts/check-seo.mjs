@@ -69,7 +69,8 @@ for (const file of htmlFiles) {
   if (h1Count !== 1) errors.push(`${route}: se esperaba un único H1, encontrados ${h1Count}`);
   if (ogImage !== "https://varinoai.me/og/varino-social.png") errors.push(`${route}: falta la imagen social Open Graph`);
   if (twitterCard !== "summary_large_image") errors.push(`${route}: falta Twitter Card grande`);
-  if (route !== "/404.html" && launchReady && robots.includes("noindex")) errors.push(`${route}: launchReady está activo pero la página sigue en noindex`);
+  if (!["/404.html", "/baja/"].includes(route) && launchReady && robots.includes("noindex")) errors.push(`${route}: launchReady está activo pero la página sigue en noindex`);
+  if (route === "/baja/" && !robots.includes("noindex")) errors.push(`${route}: las preferencias personales deben ser noindex`);
   if (route !== "/404.html" && !launchReady && !robots.includes("noindex")) errors.push(`${route}: falta noindex mientras launchReady está desactivado`);
 }
 

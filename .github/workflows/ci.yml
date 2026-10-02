@@ -57,6 +57,8 @@ jobs:
         run: npm run test:document-jobs
       - name: Inbound buffer and serialized delivery (local D1 and HTTP stub only)
         run: npm run test:inbound
+      - name: Durable opt-out and restart safety (local D1, browser and HTTP stub only)
+        run: npm run test:suppression
       - name: Claims audit
         run: npm run claims:check
       - name: Security headers audit

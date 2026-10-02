@@ -1,10 +1,11 @@
-# Baja: motor n8n verificado, enlace público todavía pendiente
+# Baja: motor n8n verificado, backend público preparado sin desplegar
 
 ## Alcance real del bloque
 
 El flujo 3 deja de ser un no-op y pasa a ser un **motor interno de supresión**.
 Está preparado para que una cola autenticada registre una baja ya confirmada en
-el CRM. No es aún el enlace público que aparece en los emails. No activar
+el CRM. La página y outbox se describen en [baja durable](durable-unsubscribe.md);
+no están desplegadas ni son aún el enlace que aparece en los emails. No activar
 marketing hasta completar los requisitos del apartado final.
 
 Fuente versionada: `automation/n8n/build-unsubscribe.py`; plantilla sin IDs de
@@ -94,6 +95,10 @@ El contrato offline forma parte de CI. El ensayo n8n nativo es local y explícit
 no confundir ambos ni interpretar una CI verde como integración OAuth real.
 
 ## Pendientes para la baja pública y marketing
+
+Los puntos 1–3 y el transporte local del punto 4 están implementados y probados
+en el bloque [baja durable](durable-unsubscribe.md), no desplegados. Esta lista
+es el checklist de producción; no describe trabajo que ya esté publicado.
 
 1. Emitir tokens aleatorios/firmados con alta entropía y guardar solo su hash;
    nunca codificar reversiblemente el email en una URL.
