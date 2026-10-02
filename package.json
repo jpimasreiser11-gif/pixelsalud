@@ -18,6 +18,8 @@
     "test:document-jobs": "node scripts/test-document-jobs-runtime.mjs",
     "test:inbound": "node scripts/test-inbound-runtime.mjs",
     "test:suppression": "node scripts/test-suppression-runtime.mjs",
+    "test:mail-durable-contract": "python3 -m unittest discover -s tests/backups -p test_durable_mail_gate.py -v",
+    "test:mail-durable-native": "python3 scripts/test-durable-mail-n8n.py",
     "worker:documents": "node scripts/local-document-worker.mjs",
     "worker:inbound": "node scripts/local-inbound-worker.mjs",
     "worker:suppression": "node scripts/local-suppression-worker.mjs",
