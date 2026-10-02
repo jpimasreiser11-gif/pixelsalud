@@ -67,6 +67,7 @@ otra vez este gate y validar el resultado; no importar el builder anterior solo.
 
     npm run test:mail-durable-contract
     npm run test:mail-durable-native
+    npm run test:mail-durable-complete -- --ops-dir DIRECTORIO_PRIVADO_DE_OPERACIONES
 
 Contrato offline para las dos variantes: preservación, ausencia de bypass,
 restricción de destino/credencial, no sobrescritura, vinculación RFC822 y
@@ -87,3 +88,27 @@ correctamente. Se confirmó cero retención en el perfil temporal y su limpieza.
 Se prepararon copias privadas de los sources reales de los flujos 5/11,
 con active:false; no se importaron. El éxito nativo descrito es del guard,
 no una afirmación de entrega real o del workflow comercial completo.
+
+El ensayo `test:mail-durable-complete` acepta exclusivamente los SHA-256
+revisados de ambos sources y sus helpers privados. Si cambia un fichero, exige
+auditarlo otra vez; no actualiza pins automáticamente. Extrae las cabeceras
+literales por AST, sin abrir la configuración privada del CRM ni importar su
+módulo. Mantiene los Code/IF y el guard nuevos, sustituyendo solo transportes,
+autenticación de fixture y la identidad ficticia del operador.
+
+Ejercita los recorridos completos con Schedule Triggers reales en un perfil
+desechable: cinco reservas/consultas, cuatro envíos/confirmaciones ficticios y
+una oposición durable bloqueada por variante. Repite las programaciones tras
+reiniciar el mismo perfil/CRM ficticio y exige cero efectos adicionales.
+Comprueba la cola de producción a uno y el testigo de metadatos nativo. Las
+historias sintéticas se eliminan con el perfil; esto no acredita no-retención
+del perfil persistente. Es una verificación opcional local, no ejecutada por
+CI ni prueba de permisos, consentimiento, proveedores o campaña reales.
+
+Verificación local del 2 de octubre de 2026: el ensayo completo terminó con
+cuatro ejecuciones nativas de trigger (dos flujos, antes/después del reinicio),
+cinco consultas y cuatro envíos ficticios por variante. El contacto marcado
+con oposición no llegó al sender; el reinicio no generó
+ningún efecto adicional. Las tres pruebas offline del runner rechazan helpers
+cambiados/incompletos y comprueban que la extracción no ejecuta el acceso a
+configuración privada ni importa el helper de chat.
