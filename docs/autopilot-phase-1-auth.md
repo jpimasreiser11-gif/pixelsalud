@@ -89,3 +89,13 @@ una política operativa con fecha límite antes de admitir usuarios externos.
 - E2E: pantalla `/app/`, `noindex` y estado de proveedor no configurado.
 - La prueba real de consentimiento y callback necesita un cliente OAuth de
   Google de desarrollo; no se afirma que haya sido ejecutada sin él.
+
+`npm run test:oauth-rate-limit` utiliza D1/Pages locales y credenciales ficticias;
+no llama a Google. El reloj del limitador se fija únicamente en una copia
+temporal de Functions, sin introducir una opción de reloj en producción.
+Comprueba cinco inicios, bloqueo tras reinicio un segundo antes de caducar,
+`Retry-After: 1`, aislamiento por visitante y fallo cerrado. Otro reinicio en
+el instante exacto de caducidad debe permitir el nuevo intento y borrar los
+buckets vencidos. El original se compara al terminar para verificar que no se
+modificó. Esto evita que cruzar una ventana real durante CI oculte la prueba
+de persistencia o produzca un fallo falso; no acredita OAuth de cuentas reales.

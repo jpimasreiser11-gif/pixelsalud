@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn, spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
@@ -12,6 +12,15 @@ assert.ok(existsSync(wrangler), "Instala las dependencias con npm ci antes de pr
 assert.ok(existsSync(resolve(projectRoot, "dist/app/index.html")), "Ejecuta npm run build antes de probar Pages Functions.");
 
 const persistence = mkdtempSync(join(tmpdir(), "varino-google-login-limit-"));
+const fixtureRoot = join(persistence, "fixture");
+const initialTime = 1_800_000_010;
+const windowEnd = 1_800_000_900;
+const limiterSource = readFileSync(resolve(projectRoot, "functions/_lib/http.ts"), "utf8");
+const clockAnchor = `export async function consumeGoogleLoginStartLimit(
+  request: Request,
+  env: AuthEnvironment,
+  now = Math.floor(Date.now() / 1000),
+): Promise<GoogleLoginStartLimitDecision> {`;
 const environment = { ...process.env, WRANGLER_SEND_METRICS: "false", NO_COLOR: "1" };
 delete environment.CLOUDFLARE_API_TOKEN;
 delete environment.CF_API_TOKEN;
@@ -37,10 +46,27 @@ async function unusedPort() {
   return address.port;
 }
 
-function startServer(baseUrl) {
+function prepareFixture() {
+  assert.equal(limiterSource.split(clockAnchor).length, 2, "revisar el fixture si cambia la firma del limitador");
+  cpSync(resolve(projectRoot, "functions"), join(fixtureRoot, "functions"), { recursive: true });
+  cpSync(resolve(projectRoot, "wrangler.jsonc"), join(fixtureRoot, "wrangler.jsonc"));
+  for (const directory of ["src", "dist", "migrations", "node_modules"]) {
+    symlinkSync(resolve(projectRoot, directory), join(fixtureRoot, directory), "dir");
+  }
+}
+
+function startServer(baseUrl, fixtureTime) {
+  // Only this disposable copy receives a fixed default clock. No production
+  // binding, header, route, quota or SQL is changed. Fixing time across restarts
+  // avoids mistaking a legitimate 15-minute rollover for lost D1 persistence.
+  assert.ok(Number.isSafeInteger(fixtureTime) && fixtureTime > 0);
+  writeFileSync(join(fixtureRoot, "functions/_lib/http.ts"), limiterSource.replace(
+    clockAnchor,
+    clockAnchor.replace("Math.floor(Date.now() / 1000)", String(fixtureTime)),
+  ));
   const server = spawn(process.execPath, [
     wrangler,
-    "pages", "dev", "dist", "--local", "--port", new URL(baseUrl).port, "--persist-to", persistence,
+    "pages", "dev", "dist", "--local", "--ip", "127.0.0.1", "--port", new URL(baseUrl).port, "--persist-to", persistence,
     "--compatibility-date", "2026-09-28",
     "--binding", `APP_BASE_URL=${baseUrl}`,
     "--binding", "GOOGLE_CLIENT_ID=local-rate-limit-test.apps.googleusercontent.com",
@@ -48,7 +74,7 @@ function startServer(baseUrl) {
     "--binding", "OAUTH_STATE_SECRET=local-test-secret-with-at-least-32-bytes",
     "--show-interactive-dev-session", "false",
     "--log-level", "error",
-  ], { cwd: projectRoot, env: environment, stdio: ["ignore", "pipe", "pipe"] });
+  ], { cwd: fixtureRoot, env: environment, stdio: ["ignore", "pipe", "pipe"] });
   server.output = "";
   const keepTail = (chunk) => { server.output = `${server.output}${chunk}`.slice(-4000); };
   server.stdout.setEncoding("utf8").on("data", keepTail);
@@ -83,6 +109,7 @@ async function stopServer(server) {
 
 let server;
 try {
+  prepareFixture();
   const localOnly = ["--local", "--persist-to", persistence];
   runWrangler(["d1", "migrations", "apply", "VARINO_DB", ...localOnly]);
 
@@ -95,7 +122,7 @@ try {
     signal: AbortSignal.timeout(5000),
   });
 
-  server = startServer(baseUrl);
+  server = startServer(baseUrl, initialTime);
   await waitForServer(server, `${baseUrl}/api/auth/session`);
 
   const localLoopback = await fetch(startUrl, {
@@ -118,14 +145,14 @@ try {
 
   await stopServer(server);
   server = undefined;
-  server = startServer(baseUrl);
+  server = startServer(baseUrl, windowEnd - 1);
   await waitForServer(server, `${baseUrl}/api/auth/session`);
 
   const persistedLimit = await startLogin("203.0.113.10");
   assert.equal(persistedLimit.status, 429, "el límite debe persistir al reiniciar Pages Functions");
   assert.equal((await persistedLimit.json()).error, "rate_limited");
   const retryAfter = Number(persistedLimit.headers.get("retry-after"));
-  assert.ok(Number.isInteger(retryAfter) && retryAfter >= 1 && retryAfter <= 900);
+  assert.equal(retryAfter, 1, "el último segundo de la ventana sigue bloqueado, incluso tras reiniciar");
 
   const anotherClient = await startLogin("203.0.113.11");
   assert.equal(anotherClient.status, 200, "el límite de un visitante no debe bloquear a otro IP");
@@ -142,8 +169,28 @@ try {
   assert.deepEqual(rows.map((row) => row.request_count).sort((a, b) => a - b), [1, 1, 5]);
   assert.ok(rows.every((row) => /^[a-f0-9]{64}$/.test(row.bucket_hash)));
   assert.ok(rows.every((row) => !JSON.stringify(row).includes("203.0.113.")));
+  assert.ok(rows.every((row) => row.expires_at === windowEnd));
 
-  process.stdout.write("Google login local: 5/15 min por IP, 429 + Retry-After, aislamiento por visitante, fallo cerrado y persistencia tras reinicio OK; IP sin guardar; sin llamadas a Google.\n");
+  await stopServer(server);
+  server = undefined;
+  server = startServer(baseUrl, windowEnd);
+  await waitForServer(server, `${baseUrl}/api/auth/session`);
+
+  const nextWindow = await startLogin("203.0.113.10");
+  assert.equal(nextWindow.status, 200, "al caducar la ventana debe permitir un nuevo inicio, no mantener el bloqueo anterior");
+  const resetOutput = runWrangler([
+    "d1", "execute", "VARINO_DB", ...localOnly, "--json", "--command",
+    "SELECT bucket_hash, request_count, expires_at FROM google_login_start_rate_limits;",
+  ]);
+  const resetRows = JSON.parse(resetOutput.trim())[0].results;
+  assert.equal(resetRows.length, 1, "las tres ventanas vencidas se eliminan antes de contar el nuevo intento");
+  assert.equal(resetRows[0].request_count, 1);
+  assert.equal(resetRows[0].expires_at, windowEnd + 900);
+  assert.match(resetRows[0].bucket_hash, /^[a-f0-9]{64}$/);
+  assert.ok(rows.every((row) => row.bucket_hash !== resetRows[0].bucket_hash));
+  assert.equal(readFileSync(resolve(projectRoot, "functions/_lib/http.ts"), "utf8"), limiterSource, "el código de producción no debe modificarse por el ensayo");
+
+  process.stdout.write("Google login local: 5/15 min por IP, persistencia al reiniciar hasta el último segundo, 429 + Retry-After=1 y reset exacto al caducar OK; D1 real con reloj solo en copia temporal, IP sin guardar; sin llamadas a Google.\n");
 } finally {
   if (server) await stopServer(server);
   rmSync(persistence, { recursive: true, force: true });
