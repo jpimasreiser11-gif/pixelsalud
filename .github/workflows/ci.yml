@@ -41,6 +41,8 @@ jobs:
         run: npm run test:unit
       - name: n8n backup failure and WAL tests (synthetic data only)
         run: npm run test:n8n-backup
+      - name: n8n pruning fixture safety (offline synthetic data only)
+        run: npm run test:n8n-pruning-contract
       - name: Unsubscribe workflow contract (offline synthetic data only)
         run: npm run test:unsubscribe-workflow
       - name: Current mail opposition gate (offline synthetic data only)
