@@ -14,10 +14,15 @@ const hostSecurityIndex = workflow.indexOf(
 const readinessIndex = workflow.indexOf("run: npm run readiness");
 const stampIndex = workflow.indexOf("- name: Stamp deployed commit");
 const artifactIndex = workflow.indexOf("- name: Upload Pages artifact");
+const deployActionIndex = workflow.indexOf("- name: Deploy to GitHub Pages");
+const smokeIndex = workflow.indexOf(
+  "- name: Verify deployed website from the public edge"
+);
 const deployIndex = workflow.indexOf("  deploy:");
 const environmentIndex = workflow.indexOf("    environment:", deployIndex);
 const deployHeader = workflow.slice(deployIndex, environmentIndex);
 const gateBlock = workflow.slice(gateIndex, stampIndex);
+const smokeBlock = workflow.slice(smokeIndex);
 
 const valid =
   readinessIndex >= 0 &&
@@ -28,13 +33,19 @@ const valid =
   /if:\s*github\.ref == ['"]refs\/heads\/main['"]/.test(gateBlock) &&
   /run:\s*npm run launch:check/.test(gateBlock) &&
   /run:\s*npm run security:origin/.test(gateBlock) &&
-  /if:\s*github\.ref == ['"]refs\/heads\/main['"]/.test(deployHeader);
+  /if:\s*github\.ref == ['"]refs\/heads\/main['"]/.test(deployHeader) &&
+  deployActionIndex > deployIndex &&
+  smokeIndex > deployActionIndex &&
+  /VARINO_EXPECTED_VERSION:\s*\$\{\{\s*github\.sha\s*\}\}/.test(smokeBlock) &&
+  /run:\s*npm run production:smoke/.test(smokeBlock);
 
 if (!valid) {
   console.error(
-    "Pages debe aprobar el lanzamiento y verificar las cabeceras HTTP del origen en main antes de preparar el artefacto; solo despliega desde main."
+    "Pages debe verificar aprobación y cabeceras antes del artefacto, desplegar solo desde main y comprobar desde el borde público la versión esperada después del deploy."
   );
   process.exit(1);
 }
 
-console.log("✓ deploy:check en verde (aprobación y cabeceras antes de Pages)");
+console.log(
+  "✓ deploy:check en verde (gates previos y smoke público posterior al deploy)"
+);

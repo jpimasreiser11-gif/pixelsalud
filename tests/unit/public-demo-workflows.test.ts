@@ -49,4 +49,18 @@ describe("demos publicas de n8n", () => {
       expect(workflow.nodes.at(-1)?.name, file).toMatch(/^PARAR -/);
     }
   });
+
+  it("documenta los doce nodos y entrega las demos con retención deshabilitada", () => {
+    for (const { file, workflow } of workflows) {
+      expect(workflow.description, file).toContain("datos ficticios");
+      for (const node of workflow.nodes) {
+        expect(node.notes, `${file}: ${node.name}`).toBeTruthy();
+        expect(node.notesInFlow, `${file}: ${node.name}`).toBe(true);
+      }
+      expect(workflow.settings.saveManualExecutions, file).toBe(false);
+      expect(workflow.settings.saveDataSuccessExecution, file).toBe("none");
+      expect(workflow.settings.saveDataErrorExecution, file).toBe("none");
+      expect(workflow.settings.saveExecutionProgress, file).toBe(false);
+    }
+  });
 });

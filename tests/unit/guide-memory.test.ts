@@ -86,6 +86,46 @@ describe("motor de VARINO Guide", () => {
     expect(result.catalog).toBe(true);
   });
 
+  it("recuerda herramientas, proceso, volumen y límites humanos al pedir precio", () => {
+    const firstMessage = "Llevo una clínica dental y recibo unas 60 solicitudes semanales. Copiamos las solicitudes web a Doctoralia y queremos conservar ese software.";
+    const priceMessage = "No queremos cambiar de herramienta. Una recepcionista revisa y aprueba cada caso, y no guardaríamos datos clínicos en una hoja genérica. Dime un precio orientativo y el siguiente paso.";
+    const first = advise({
+      messages: [
+        { role: "user", content: "hola" },
+        { role: "assistant", content: "¡Hola! Claro, estoy aquí." },
+        { role: "user", content: firstMessage },
+      ],
+    });
+    const result = advise({
+      profile: first.profile,
+      messages: [
+        { role: "user", content: "hola" },
+        { role: "assistant", content: "¡Hola! Claro, estoy aquí." },
+        { role: "user", content: firstMessage },
+        { role: "assistant", content: first.nextQuestion },
+        { role: "user", content: priceMessage },
+      ],
+      modelReply: "Entendido, vamos a optimizar la gestión de esas 60 citas semanales manteniendo Doctoralia.",
+    });
+
+    expect(result.catalog).toBe(true);
+    expect(result.profile.business).toMatch(/clínica dental/i);
+    expect(result.profile.process).toMatch(/solicitudes web a Doctoralia/i);
+    expect(result.profile.tools).toContain("Doctoralia");
+    expect(result.profile.volume).toMatch(/60 solicitudes semanales/i);
+    expect(result.profile.approvals).toBe("Una recepcionista revisa y aprueba cada caso");
+    expect(result.profile.dataHandling).toMatch(/^no guardaríamos datos clínicos en una hoja genérica/i);
+    expect(result.profile.dataHandling).not.toMatch(/recepcionista/i);
+    expect(result.reply).toContain("950–1.900 € + IVA");
+    expect(result.reply).toMatch(/mantener Doctoralia/i);
+    expect(result.reply).toMatch(/control humano: Una recepcionista revisa y aprueba cada caso/i);
+    expect(result.reply).toMatch(/restricción de datos: no guardaríamos datos clínicos en una hoja genérica/i);
+    expect(result.reply).toMatch(/siguiente paso sería mapear el flujo/i);
+    expect(result.nextQuestion).toMatch(/sin cambiar Doctoralia/i);
+    expect(result.nextQuestion).not.toBe(first.nextQuestion);
+    expect(result.estimate).toBeNull();
+  });
+
   it("descarta la respuesta local genérica que promete un presupuesto automático", () => {
     const result = advise({
       messages: [{ role: "user", content: "Somos una tienda y queremos mejorar las consultas de stock." }],
@@ -392,5 +432,37 @@ describe("motor de VARINO Guide", () => {
     expect(reply).toContain("120 citas al mes");
     expect(reply).not.toContain("..");
     expect(reply).not.toMatch(/recordatorios|liberarán|reducirán/i);
+  });
+
+  it("rechaza promesas y unidades de volumen que contradicen lo dicho", () => {
+    const profile = {
+      business: "clínica dental",
+      problem: "confirmar solicitudes",
+      process: "Copiamos solicitudes web a Doctoralia.",
+    };
+    const result = advise({
+      profile,
+      messages: [
+        { role: "assistant", content: "¿Qué volumen aproximado gestionáis al día o al mes?" },
+        { role: "user", content: "Son 60 solicitudes semanales." },
+      ],
+      modelReply: "Entendido, vamos a optimizar la gestión de esas 60 citas semanales manteniendo Doctoralia.",
+    });
+
+    expect(result.profile.volume).toMatch(/60 solicitudes semanales/i);
+    expect(result.replySource).toBe("rules");
+    expect(result.reply).toContain("60 solicitudes semanales");
+    expect(result.reply).not.toMatch(/optimizar|60 citas/i);
+
+    const promiseOnly = advise({
+      profile,
+      messages: [
+        { role: "assistant", content: "¿Qué volumen aproximado gestionáis al día o al mes?" },
+        { role: "user", content: "Son 60 solicitudes semanales." },
+      ],
+      modelReply: "Entendido: manteniendo el mismo volumen de 60 solicitudes semanales, vamos a optimizar la gestión sin cambiar Doctoralia; el alcance aún debe validarse.",
+    });
+    expect(promiseOnly.replySource).toBe("rules");
+    expect(promiseOnly.reply).not.toMatch(/vamos a optimizar/i);
   });
 });

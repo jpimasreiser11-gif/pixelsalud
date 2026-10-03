@@ -13,6 +13,7 @@ function getPort(name: string, fallback: number): number {
 const DEV_PORT = getPort("VARINO_E2E_PORT", 4321);
 const PUBLISHED_PORT = getPort("VARINO_E2E_PUBLISHED_PORT", 4456);
 const DEV_URL = `http://localhost:${DEV_PORT}`;
+const DEV_HOST = new URL(DEV_URL).hostname;
 // Puerto propio para el build estático: no puede compartirlo con el servidor de
 // desarrollo porque las dos pruebas corren a la vez. Los puertos se pueden
 // aislar por proceso para no reutilizar accidentalmente otra preview local.
@@ -28,11 +29,11 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: `npm run dev -- --port ${DEV_PORT} --strictPort`,
+      command: `ASTRO_DEV_BACKGROUND=false npx astro dev --host ${DEV_HOST} --port ${DEV_PORT} --strictPort --ignore-lock`,
       // Comprobar la URL real, no solo el puerto: así detecta el servidor
       // existente exactamente por donde luego navegan las pruebas.
       url: `${DEV_URL}/`,
-      reuseExistingServer: true,
+      reuseExistingServer: process.env.PLAYWRIGHT_REUSE_EXISTING_SERVER === "true",
       timeout: 60_000,
     },
     {
@@ -41,7 +42,7 @@ export default defineConfig({
       // que en producción la única CSP es el <meta> del HTML.
       command: `GITHUB_ACTIONS=true npm run build && node scripts/serve-dist.mjs --port ${PUBLISHED_PORT}`,
       url: PUBLISHED_URL,
-      reuseExistingServer: true,
+      reuseExistingServer: process.env.PLAYWRIGHT_REUSE_EXISTING_SERVER === "true",
       timeout: 120_000,
     },
   ],
