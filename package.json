@@ -9,6 +9,7 @@
     "scripts:syntax": "node scripts/check-inline-script-syntax.mjs",
     "links:check": "node scripts/check-links.mjs",
     "test:unit": "vitest run",
+    "test:public-demos-native": "python3 scripts/test-public-demos-n8n.py",
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
     "cf:local": "wrangler pages dev dist --local",
