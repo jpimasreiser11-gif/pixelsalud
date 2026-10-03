@@ -67,12 +67,12 @@ describe("motor de presupuesto", () => {
     expect(hardware.profile).not.toContain("27B");
   });
 
-  it("usa el Qwen 3.6 27B instalado y reserva memoria para el sistema y el contexto", () => {
+  it("usa el Qwen 3.6 27,3B instalado y reserva margen para sistema y contexto", () => {
     const hardware = recommendHardware({ modelSize: "27b", users: 3, concurrency: 1, sensitivity: "high" });
     expect(hardware.model).toBe("qwen3.6:27b");
-    expect(hardware.modelWeightsGb).toBe(17.8);
+    expect(hardware.modelWeightsGb).toBe(17.77);
     expect(hardware.unifiedMemoryGb).toBe(64);
-    expect(hardware.profile).toContain("Qwen 3.6 · 27B Q4_K_M");
+    expect(hardware.profile).toContain("Qwen 3.6 · 27,3B Q4_K_M");
   });
 
   it("sube de nivel cuando la carga lo exige y nunca baja del pedido", () => {

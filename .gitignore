@@ -1,11 +1,14 @@
 node_modules/
 dist/
 .astro/
+.wrangler/
 .DS_Store
 work/
 test-results/
 playwright-report/
 coverage/
+__pycache__/
+*.py[cod]
 
 # Operación comercial y expedientes locales. El repositorio de la web es público.
 ops/
@@ -15,3 +18,5 @@ tests/unit/delivery-system.test.ts
 
 # Secretos locales (no publicar)
 .env
+.dev.vars
+/_worker.bundle

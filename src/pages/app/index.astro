@@ -1,0 +1,470 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+
+<Base title="Varino Autopilot · Espacio de trabajo" description="Acceso seguro al espacio de trabajo de Varino Autopilot." noindex includeVisitorTools={false}>
+  <section id="contenido" class="mx-auto min-h-[70vh] max-w-5xl px-6 pb-24 pt-20 sm:pt-28">
+    <div class="mb-10 flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
+      <div class="min-w-0">
+        <p class="eyebrow">VARINO AI · AUTOPILOT</p>
+        <h1 class="mt-3 text-4xl font-semibold tracking-[-0.05em] sm:text-6xl">Tu espacio de trabajo.</h1>
+      </div>
+      <a class="button-secondary shrink-0" href="/">Volver a Varino</a>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[1fr_.85fr]">
+      <section class="rounded-[2rem] border border-black/10 bg-[#f7f7f5] p-7 dark:border-white/10 dark:bg-[#111318] sm:p-9" aria-labelledby="access-title">
+        <div id="access-status" class="mb-6 rounded-xl border border-[#0071e3]/20 bg-[#0071e3]/5 px-4 py-3 text-sm text-[#1d1d1f] dark:text-[#f5f5f7]" role="status" aria-live="polite" hidden></div>
+        <div id="guest-view">
+          <p class="eyebrow">Acceso a la plataforma</p>
+          <h2 id="access-title" class="mt-3 text-3xl font-semibold tracking-[-0.04em]">Empieza con una identidad verificada.</h2>
+          <p class="mt-4 max-w-xl text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">En esta primera fase, el acceso usa Google solo para confirmar quién eres. No pedimos acceso a Gmail, Drive ni a otras aplicaciones de tu empresa.</p>
+          <button id="google-sign-in" type="button" class="mt-7 inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-[#0071e3] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0077ed] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0071e3]">
+            <span aria-hidden="true" class="text-lg leading-none">G</span>
+            Continuar con Google
+          </button>
+          <p class="mt-4 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Tu sesión se guarda en una cookie protegida y puede cerrarse desde este espacio.</p>
+        </div>
+
+        <div id="account-view" hidden>
+          <p class="eyebrow">Sesión segura</p>
+          <h2 class="mt-3 text-3xl font-semibold tracking-[-0.04em]">Bienvenido a Autopilot.</h2>
+          <p id="account-email" class="mt-3 text-sm text-[#6e6e73] dark:text-[#a1a1a6]"></p>
+          <div id="workspace-list-view" class="mt-8" hidden>
+            <h3 class="text-lg font-semibold">Tus espacios</h3>
+            <ul id="workspace-list" class="mt-3 grid gap-2"></ul>
+            <p class="mt-4 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Puedes guardar borradores revisables. Aún no hay ejecuciones, estadísticas ni integraciones conectadas.</p>
+          </div>
+          <section id="automation-panel" class="mt-8 border-t border-black/10 pt-7 dark:border-white/10" aria-labelledby="automation-title" hidden>
+            <h3 id="automation-title" class="text-lg font-semibold">Prepara un borrador seguro</h3>
+            <p class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">En esta fase solo guardamos una propuesta manual de resumen. No lee tus cuentas, no envía mensajes y no ejecuta cambios.</p>
+            <form id="automation-form" class="mt-5 grid gap-4">
+              <div>
+                <label for="automation-name" class="block text-sm font-semibold">Nombre del borrador</label>
+                <input id="automation-name" name="name" required minlength="3" maxlength="80" autocomplete="off" class="mt-2 min-h-12 w-full rounded-xl border border-black/15 bg-white px-4 text-sm outline-none focus:border-[#0071e3] focus:ring-2 focus:ring-[#0071e3]/20 dark:border-white/15 dark:bg-black" />
+              </div>
+              <div>
+                <label for="automation-objective" class="block text-sm font-semibold">¿Qué quieres resumir manualmente?</label>
+                <textarea id="automation-objective" name="objective" required minlength="8" maxlength="400" rows="3" class="mt-2 w-full rounded-xl border border-black/15 bg-white px-4 py-3 text-sm outline-none focus:border-[#0071e3] focus:ring-2 focus:ring-[#0071e3]/20 dark:border-white/15 dark:bg-black"></textarea>
+                <p class="mt-2 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">No incluyas datos personales, contraseñas, claves ni información de clientes. El borrador se guardará en este espacio.</p>
+              </div>
+              <div id="automation-status" class="rounded-xl border border-black/10 px-4 py-3 text-sm dark:border-white/10" role="status" aria-live="polite" hidden></div>
+              <button id="save-automation" type="submit" class="button-primary justify-self-start">Guardar borrador</button>
+            </form>
+            <div id="automation-list-view" class="mt-7" hidden>
+              <h4 class="text-sm font-semibold">Borradores guardados</h4>
+              <ul id="automation-list" class="mt-3 grid gap-2"></ul>
+            </div>
+          </section>
+          <form id="workspace-form" class="mt-8" hidden>
+            <label for="workspace-name" class="block text-sm font-semibold">¿Cómo se llama tu empresa o equipo?</label>
+            <p class="mt-1 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Este será tu primer espacio. Puedes cambiar el nombre más adelante.</p>
+            <input id="workspace-name" name="name" required minlength="2" maxlength="80" autocomplete="organization" class="mt-4 min-h-12 w-full rounded-xl border border-black/15 bg-white px-4 text-sm outline-none focus:border-[#0071e3] focus:ring-2 focus:ring-[#0071e3]/20 dark:border-white/15 dark:bg-black" />
+            <button id="create-workspace" type="submit" class="button-primary mt-4">Crear espacio</button>
+          </form>
+          <button id="sign-out" type="button" class="button-secondary mt-8">Cerrar sesión</button>
+        </div>
+      </section>
+
+      <aside class="rounded-[2rem] border border-black/10 p-7 dark:border-white/10 sm:p-9">
+        <p class="eyebrow">Construido por fases</p>
+        <h2 class="mt-3 text-2xl font-semibold tracking-[-0.04em]">Primero, una base que protege tu espacio.</h2>
+        <ol class="mt-7 grid gap-5">
+          <li class="flex gap-4"><span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0071e3]/10 text-xs font-bold text-[#0071e3]">1</span><div><h3 class="text-sm font-semibold">Identidad verificada</h3><p class="mt-1 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Google confirma la cuenta; Varino guarda un identificador y el correo verificado.</p></div></li>
+          <li class="flex gap-4"><span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0071e3]/10 text-xs font-bold text-[#0071e3]">2</span><div><h3 class="text-sm font-semibold">Espacio propio</h3><p class="mt-1 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Tu primer workspace se crea en el servidor y quedas como propietario.</p></div></li>
+          <li class="flex gap-4"><span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0071e3]/10 text-xs font-bold text-[#0071e3]">3</span><div><h3 class="text-sm font-semibold">Borrador revisable</h3><p class="mt-1 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Un plan validado queda guardado como borrador; no se ejecuta ni conecta servicios.</p></div></li>
+        </ol>
+      </aside>
+    </div>
+    <section id="document-jobs-panel" class="mt-8 rounded-[2rem] border border-black/10 bg-[#f7f7f5] p-7 dark:border-white/10 dark:bg-[#111318] sm:p-9" aria-labelledby="document-jobs-title" hidden>
+      <h2 id="document-jobs-title" class="text-2xl font-semibold tracking-[-0.04em]">Taller documental de la agencia</h2>
+      <p class="mt-3 max-w-3xl text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">CAIO, mapa del bucle, PRD, implementación, adopción y recurrencia. La solicitud queda en cola hasta que el taller pueda procesarla. Los documentos requieren revisión; no son contratos ni implementaciones.</p>
+      <button id="refresh-document-jobs" type="button" class="button-secondary mt-4">Actualizar estado</button>
+      <div id="document-jobs-status" class="mt-4 text-sm" role="status" aria-live="polite" hidden></div>
+      <ul id="document-jobs-list" class="mt-6 grid gap-4"></ul>
+    </section>
+    <section id="inbound-panel" class="mt-8 rounded-[2rem] border border-black/10 bg-[#f7f7f5] p-7 dark:border-white/10 dark:bg-[#111318] sm:p-9" aria-labelledby="inbound-title" hidden>
+      <p class="eyebrow">Recepción de la agencia</p>
+      <h2 id="inbound-title" class="mt-3 text-2xl font-semibold tracking-[-0.04em]">Solicitudes, con estado comprobable.</h2>
+      <p class="mt-3 max-w-3xl text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">La recepción queda guardada aunque el taller esté apagado. «CRM confirmado» significa que el flujo confirmó el registro; no acredita un correo enviado, una reserva ni una venta. Las fichas personales se consultan en el CRM, no en este panel.</p>
+      <button id="refresh-inbound" type="button" class="button-secondary mt-4">Actualizar solicitudes</button>
+      <p id="inbound-status" class="mt-4 text-sm" role="status" aria-live="polite"></p>
+      <ul id="inbound-list" class="mt-6 grid gap-3"></ul>
+    </section>
+  </section>
+
+  <script>
+    const statusBox = document.querySelector("#access-status");
+    const guestView = document.querySelector("#guest-view");
+    const accountView = document.querySelector("#account-view");
+    const accountEmail = document.querySelector("#account-email");
+    const workspaceListView = document.querySelector("#workspace-list-view");
+    const workspaceList = document.querySelector("#workspace-list");
+    const workspaceForm = document.querySelector("#workspace-form");
+    const workspaceName = document.querySelector("#workspace-name");
+    const createWorkspace = document.querySelector("#create-workspace");
+    const automationPanel = document.querySelector("#automation-panel");
+    const automationForm = document.querySelector("#automation-form");
+    const automationName = document.querySelector("#automation-name");
+    const automationObjective = document.querySelector("#automation-objective");
+    const saveAutomation = document.querySelector("#save-automation");
+    const automationStatus = document.querySelector("#automation-status");
+    const automationListView = document.querySelector("#automation-list-view");
+    const automationList = document.querySelector("#automation-list");
+    const signInButton = document.querySelector("#google-sign-in");
+    const signOutButton = document.querySelector("#sign-out");
+    const jobsPanel = document.querySelector("#document-jobs-panel");
+    const jobsList = document.querySelector("#document-jobs-list");
+    const jobsStatus = document.querySelector("#document-jobs-status");
+    const refreshJobs = document.querySelector("#refresh-document-jobs");
+    const inboundPanel = document.querySelector("#inbound-panel");
+    const inboundStatus = document.querySelector("#inbound-status");
+    const inboundList = document.querySelector("#inbound-list");
+    const refreshInbound = document.querySelector("#refresh-inbound");
+    let documentJobsAvailable = false;
+    let savedAutomations = [];
+    let refreshTimer;
+    let pendingDraftSubmission = null;
+
+    const messages = {
+      success: "Has iniciado sesión. A continuación puedes crear tu espacio de trabajo.",
+      failed: "No se pudo completar el acceso. Comprueba la cuenta e inténtalo de nuevo.",
+      unavailable: "El acceso aún no está configurado en este entorno.",
+    };
+
+    function announce(message) {
+      if (!statusBox) return;
+      statusBox.textContent = message;
+      statusBox.hidden = false;
+    }
+
+    function announceAutomation(message) {
+      if (!automationStatus) return;
+      automationStatus.textContent = message;
+      automationStatus.hidden = false;
+    }
+
+    function renderAutomations(items) {
+      savedAutomations = items;
+      if (!automationList || !automationListView) return;
+      automationList.replaceChildren(...items.map((automation) => {
+        const item = document.createElement("li");
+        item.className = "rounded-xl border border-black/10 bg-white px-4 py-3 dark:border-white/10 dark:bg-black";
+        const title = document.createElement("strong");
+        title.className = "block text-sm";
+        title.textContent = automation.name;
+        const summary = document.createElement("span");
+        summary.className = "mt-1 block text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]";
+        summary.textContent = `Borrador · versión ${automation.version} · ${automation.riskLevel} · no ejecutable`;
+        item.append(title, summary);
+        if (documentJobsAvailable) {
+          const prepare = document.createElement("button");
+          prepare.type = "button";
+          prepare.className = "button-secondary mt-3";
+          prepare.textContent = "Preparar seis documentos";
+          prepare.addEventListener("click", async () => {
+            prepare.disabled = true;
+            try {
+              const response = await fetch("/api/document-jobs", {
+                method: "POST", credentials: "same-origin", cache: "no-store",
+                headers: { "content-type": "application/json" }, body: JSON.stringify({ automationId: automation.id }),
+              });
+              if (!response.ok) throw new Error("queue unavailable");
+              const result = await response.json();
+              if (!result.job?.id) throw new Error("invalid queue response");
+              announceAutomation(result.created ? "Solicitud documental guardada en la cola." : "La solicitud ya estaba guardada; no se creó otra copia.");
+              await loadDocumentJobs();
+            } catch { announceAutomation("No se pudo confirmar la solicitud. Puedes reintentar sin crear otra copia de esta versión."); }
+            finally { prepare.disabled = false; }
+          });
+          item.append(prepare);
+        }
+        return item;
+      }));
+      automationListView.hidden = items.length === 0;
+    }
+
+    async function loadDocumentJobs() {
+      clearTimeout(refreshTimer);
+      try {
+        const response = await fetch("/api/document-jobs", { credentials: "same-origin", cache: "no-store" });
+        if (!response.ok) {
+          if ([403, 503].includes(response.status) && !documentJobsAvailable) return;
+          throw new Error("job list unavailable");
+        }
+        const result = await response.json();
+        if (!Array.isArray(result.jobs) || result.agencyInternalOnly !== true) throw new Error("invalid job list");
+        documentJobsAvailable = true;
+        if (jobsPanel) jobsPanel.hidden = false;
+        if (jobsStatus) jobsStatus.hidden = true;
+        const labels = { pending: "En cola · esperando al taller", claimed: "Preparando documentos", completed: "Listos para revisión humana", manual_review: "Necesita revisión del equipo · reintentos detenidos" };
+        const titles = { diagnostico_caio: "Diagnóstico CAIO", mapa_del_bucle: "Mapa del Bucle", prd: "PRD", implementacion: "Plan de Implementación", adopcion: "Plan de Adopción", recurrencia: "Plan de Recurrencia" };
+        jobsList?.replaceChildren(...result.jobs.map((job) => {
+          const item = document.createElement("li");
+          item.className = "rounded-xl border border-black/10 p-4 dark:border-white/10";
+          const title = document.createElement("strong");
+          title.textContent = savedAutomations.find((automation) => automation.id === job.automationId)?.name || "Paquete documental";
+          const state = document.createElement("p");
+          state.className = "mt-2 text-sm";
+          state.textContent = labels[job.status] || "Estado por comprobar";
+          item.append(title, state);
+          for (const [key, label] of Object.entries(titles)) {
+            if (typeof job.documents?.[key] !== "string") continue;
+            const detail = document.createElement("details");
+            detail.className = "mt-3";
+            const summary = document.createElement("summary");
+            summary.className = "cursor-pointer text-sm font-semibold";
+            summary.textContent = label;
+            const text = document.createElement("pre");
+            text.className = "mt-3 whitespace-pre-wrap break-words text-xs leading-6";
+            text.textContent = job.documents[key];
+            detail.append(summary, text);
+            item.append(detail);
+          }
+          if (job.questions?.length) {
+            const questions = document.createElement("p");
+            questions.className = "mt-4 whitespace-pre-wrap text-sm leading-6";
+            questions.textContent = `Por confirmar:\n${job.questions.join("\n")}`;
+            item.append(questions);
+          }
+          return item;
+        }));
+        renderAutomations(savedAutomations);
+        if (result.jobs.some((job) => ["pending", "claimed"].includes(job.status)) && !document.hidden) refreshTimer = setTimeout(loadDocumentJobs, 15000);
+      } catch {
+        if (jobsStatus) { jobsStatus.textContent = "No se pudo actualizar el estado. Los datos anteriores pueden estar desactualizados."; jobsStatus.hidden = false; }
+      }
+    }
+    refreshJobs?.addEventListener("click", () => void loadDocumentJobs());
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) clearTimeout(refreshTimer);
+      else if (documentJobsAvailable) void loadDocumentJobs();
+    });
+    window.addEventListener("pagehide", () => clearTimeout(refreshTimer));
+
+    async function loadInbound() {
+      if (refreshInbound) refreshInbound.disabled = true;
+      try {
+        const response = await fetch("/api/inbound", { credentials: "same-origin", cache: "no-store" });
+        if (!response.ok) {
+          if (inboundPanel?.hidden && [401, 403, 503].includes(response.status)) return;
+          throw new Error("inbound unavailable");
+        }
+        const result = await response.json();
+        if (result.agencyInternalOnly !== true || !Array.isArray(result.requests)) throw new Error("invalid inbound response");
+        if (inboundPanel) inboundPanel.hidden = false;
+        if (inboundStatus) inboundStatus.textContent = (result.synthetic === true ? "Prueba técnica · datos ficticios. " : "")
+          + (result.requests.length ? "Últimas solicitudes recibidas · máximo 50" : "Todavía no hay solicitudes recibidas. No hay datos comerciales que mostrar.");
+        const labels = { pending: "Recibida · pendiente del taller", claimed: "Comprobando registro en el CRM", crm_confirmed: "CRM confirmado", manual_review: "Revisión necesaria · registro sin confirmar", expired: "Entrega caducada · revisar con el equipo" };
+        const services = { "automation-sprint": "Automatización de procesos", "growth-system": "Sistema comercial", "private-ai": "IA privada", otro: "Otra consulta" };
+        inboundList?.replaceChildren(...result.requests.map((request) => {
+          const item = document.createElement("li");
+          item.className = "rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-black";
+          const title = document.createElement("strong");
+          title.className = "block text-sm";
+          title.textContent = services[request.service] || "Solicitud";
+          const state = document.createElement("p");
+          state.className = "mt-2 text-sm";
+          state.textContent = labels[request.status] || "Estado por comprobar";
+          const info = document.createElement("p");
+          info.className = "mt-2 [overflow-wrap:anywhere] text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]";
+          info.textContent = `Referencia: ${request.id} · ${new Date(request.receivedAt * 1000).toLocaleString("es-ES")} · Novedades solicitadas: ${request.marketingConsent === 1 ? "sí · correo aún sin verificar" : "no"}`;
+          item.append(title, state, info);
+          const detail = document.createElement("details");
+          detail.className = "mt-3 text-xs";
+          const summary = document.createElement("summary");
+          summary.className = "cursor-pointer font-semibold";
+          summary.textContent = "Referencia para comprobar en el CRM";
+          const crm = document.createElement("p");
+          crm.className = "mt-2 [overflow-wrap:anywhere] leading-5";
+          crm.textContent = `Busca este ID en la columna lead_id: ${request.crmLeadId}`;
+          detail.append(summary, crm);
+          item.append(detail);
+          return item;
+        }));
+      } catch {
+        if (inboundStatus) inboundStatus.textContent = "No se pudo actualizar. El estado anterior puede estar desactualizado; no se ha confirmado ninguna entrega nueva.";
+      } finally { if (refreshInbound) refreshInbound.disabled = false; }
+    }
+    refreshInbound?.addEventListener("click", () => void loadInbound());
+
+    async function loadAutomations() {
+      if (!automationPanel) return;
+      automationPanel.hidden = false;
+      try {
+        const response = await fetch("/api/automations?limit=50", { credentials: "same-origin", cache: "no-store" });
+        if (!response.ok) throw new Error("draft list unavailable");
+        const result = await response.json();
+        if (!Array.isArray(result.automations)) throw new Error("invalid draft list");
+        renderAutomations(result.automations);
+      } catch {
+        announceAutomation("El almacenamiento de borradores no está disponible en este entorno. No se ha confirmado ningún guardado.");
+      }
+    }
+
+    async function loadSession() {
+      try {
+        const response = await fetch("/api/auth/session", { credentials: "same-origin", cache: "no-store" });
+        if (response.status === 401) return;
+        if (!response.ok) throw new Error("service unavailable");
+        const session = await response.json();
+        if (session.authenticated !== true || !session.user || !Array.isArray(session.workspaces)) throw new Error("invalid response");
+        if (guestView) guestView.hidden = true;
+        if (accountView) accountView.hidden = false;
+        if (accountEmail) accountEmail.textContent = session.user.email;
+        if (session.workspaces.length) {
+          if (workspaceListView) workspaceListView.hidden = false;
+          if (workspaceForm) workspaceForm.hidden = true;
+          if (workspaceList) {
+            workspaceList.replaceChildren(...session.workspaces.map((workspace) => {
+              const item = document.createElement("li");
+              item.className = "rounded-xl border border-black/10 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-black";
+              const name = document.createElement("strong");
+              name.textContent = workspace.name;
+              const role = document.createElement("span");
+              role.className = "ml-2 text-xs text-[#6e6e73] dark:text-[#a1a1a6]";
+              role.textContent = workspace.role;
+              item.append(name, role);
+              return item;
+            }));
+          }
+          await loadAutomations();
+          await loadDocumentJobs();
+          await loadInbound();
+        } else if (workspaceForm) {
+          if (automationPanel) automationPanel.hidden = true;
+          workspaceForm.hidden = false;
+          if (workspaceListView) workspaceListView.hidden = true;
+        }
+      } catch {
+        announce("La aplicación aún no está disponible en este entorno. No se ha creado ni guardado ningún dato.");
+        if (signInButton) signInButton.disabled = true;
+      }
+    }
+
+    const authResult = new URLSearchParams(window.location.search).get("auth");
+    if (authResult && messages[authResult]) announce(messages[authResult]);
+    if (authResult) history.replaceState(null, "", window.location.pathname);
+
+    signInButton?.addEventListener("click", async () => {
+      signInButton.disabled = true;
+      signInButton.textContent = "Conectando con Google…";
+      try {
+        const response = await fetch("/api/auth/google/start", {
+          method: "POST",
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        const result = await response.json();
+        if (!response.ok || typeof result.authorizationUrl !== "string") {
+          announce(messages.unavailable);
+          return;
+        }
+        const target = new URL(result.authorizationUrl);
+        if (target.origin !== "https://accounts.google.com" || target.pathname !== "/o/oauth2/v2/auth") {
+          announce("No se pudo iniciar el acceso seguro.");
+          return;
+        }
+        window.location.assign(target.toString());
+      } catch {
+        announce("No se pudo iniciar el acceso. Inténtalo de nuevo más tarde.");
+      } finally {
+        signInButton.disabled = false;
+        signInButton.textContent = "Continuar con Google";
+      }
+    });
+
+    workspaceForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!workspaceName || !createWorkspace) return;
+      createWorkspace.disabled = true;
+      try {
+        const response = await fetch("/api/workspaces", {
+          method: "POST",
+          credentials: "same-origin",
+          cache: "no-store",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ name: workspaceName.value }),
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error("workspace creation failed");
+        announce(result.created ? "Tu espacio de trabajo está creado." : "Tu espacio de trabajo ya estaba creado.");
+        await loadSession();
+      } catch {
+        announce("No se pudo crear el espacio. Revisa el nombre e inténtalo de nuevo.");
+      } finally {
+        createWorkspace.disabled = false;
+      }
+    });
+
+    automationForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!automationName || !automationObjective || !saveAutomation) return;
+      const plan = {
+        schemaVersion: 1,
+        name: automationName.value.trim(),
+        objective: automationObjective.value.trim(),
+        trigger: { kind: "manual" },
+        requiredIntegrations: [],
+        steps: [{
+          id: "resumen-manual",
+          kind: "summarize",
+          instruction: "Resume únicamente el texto que una persona aporte manualmente; no consultes cuentas, no envíes mensajes y no modifiques datos.",
+        }],
+      };
+      const body = JSON.stringify({ plan });
+      if (!pendingDraftSubmission || pendingDraftSubmission.body !== body) {
+        pendingDraftSubmission = { body, key: crypto.randomUUID() };
+      }
+      saveAutomation.disabled = true;
+      try {
+        const response = await fetch("/api/automations", {
+          method: "POST",
+          credentials: "same-origin",
+          cache: "no-store",
+          headers: { "content-type": "application/json", "idempotency-key": pendingDraftSubmission.key },
+          body,
+        });
+        const result = await response.json();
+        if (response.status === 400 && result.error === "private_data_blocked") {
+          announceAutomation("Quita del texto cualquier dato personal o secreto y vuelve a intentarlo.");
+          return;
+        }
+        if (response.status === 429) {
+          announceAutomation("Has alcanzado el límite temporal de borradores. Espera un minuto antes de volver a intentarlo.");
+          return;
+        }
+        if (!response.ok || !result.automation) throw new Error("draft save failed");
+        pendingDraftSubmission = null;
+        announceAutomation(result.created === false
+          ? "El borrador ya estaba guardado; el reintento no creó una copia. No se ha ejecutado."
+          : "Borrador guardado correctamente. No se ha ejecutado ni conectado a ningún servicio.");
+        await loadAutomations();
+      } catch {
+        announceAutomation("No se pudo confirmar el guardado. Puedes reintentar; el mismo envío no creará una copia.");
+      } finally {
+        saveAutomation.disabled = false;
+      }
+    });
+
+    signOutButton?.addEventListener("click", async () => {
+      signOutButton.disabled = true;
+      try {
+        const response = await fetch("/api/auth/logout", {
+          method: "POST",
+          credentials: "same-origin",
+          cache: "no-store",
+          headers: { "content-type": "application/json" },
+          body: "{}",
+        });
+        if (!response.ok) throw new Error("logout failed");
+        window.location.replace("/app/");
+      } catch {
+        announce("No se pudo cerrar la sesión. Inténtalo de nuevo.");
+        signOutButton.disabled = false;
+      }
+    });
+
+    void loadSession();
+  </script>
+</Base>

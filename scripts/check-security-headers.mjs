@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { siteCspHeader } from '../src/lib/content-security-policy.mjs';
 
 const file = new URL("../public/_headers", import.meta.url);
 const source = await readFile(file, "utf8");
@@ -20,6 +21,9 @@ const failures = required.filter(([, pattern]) => !pattern.test(source)).map(([n
 if (/script-src[^;\n]*'unsafe-inline'/i.test(source)) failures.push("CSP permits inline executable scripts");
 const csp = source.match(/Content-Security-Policy:\s*([^\n]+)/i)?.[1] || "";
 if (/(^|\s)\*(\s|;|$)/.test(csp)) failures.push("Wildcard found in CSP");
+if (csp !== siteCspHeader(false)) failures.push('Source CSP template diverges from prelaunch policy');
+const built = await readFile(new URL('../dist/_headers', import.meta.url), 'utf8').catch(() => '');
+if (!built || built.match(/Content-Security-Policy:\s*([^\n]+)/i)?.[1] !== siteCspHeader()) failures.push('Build CSP missing or diverges from shared policy');
 if (failures.length) {
   console.error(`Security header check failed: ${failures.join(", ")}`);
   process.exit(1);

@@ -4,12 +4,33 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/build-security-headers.mjs",
     "preview": "astro preview",
     "scripts:syntax": "node scripts/check-inline-script-syntax.mjs",
     "links:check": "node scripts/check-links.mjs",
     "test:unit": "vitest run",
+    "test:n8n-backup": "python3 -m unittest discover -s tests/backups -p test_n8n_snapshot.py -v",
+    "test:n8n-pruning-contract": "python3 -m unittest discover -s tests/backups -p test_n8n_pruning.py -v",
+    "test:n8n-pruning-native": "python3 scripts/test-n8n-pruning.py",
+    "test:unsubscribe-workflow": "python3 -m unittest discover -s tests/backups -p test_unsubscribe_workflow.py -v",
+    "test:unsubscribe-native": "python3 scripts/test-unsubscribe-n8n.py",
+    "test:d1": "node scripts/test-autopilot-d1.mjs",
+    "test:auth-runtime": "node scripts/test-autopilot-auth-runtime.mjs",
+    "test:oauth-rate-limit": "node scripts/test-google-login-rate-limit.mjs",
+    "test:document-jobs": "node scripts/test-document-jobs-runtime.mjs",
+    "test:inbound": "node scripts/test-inbound-runtime.mjs",
+    "test:suppression": "node scripts/test-suppression-runtime.mjs",
+    "test:mail-durable-contract": "python3 -m unittest discover -s tests/backups -p 'test_durable_mail*.py' -v",
+    "test:mail-durable-native": "python3 scripts/test-durable-mail-n8n.py",
+    "test:mail-durable-complete": "python3 scripts/test-durable-complete-mail-n8n.py",
+    "test:mail-durable-regeneration": "python3 scripts/test-durable-mail-regeneration.py",
+    "worker:documents": "node scripts/local-document-worker.mjs",
+    "worker:inbound": "node scripts/local-inbound-worker.mjs",
+    "worker:suppression": "node scripts/local-suppression-worker.mjs",
     "test:e2e": "playwright test",
+    "functions:typecheck": "tsc --noEmit -p functions/tsconfig.json",
+    "functions:build": "wrangler pages functions build",
+    "test:pages-runtime": "node scripts/test-pages-runtime.mjs",
     "test:e2e:update": "playwright test --update-snapshots",
     "cf:local": "wrangler pages dev dist --local",
     "security:headers": "node scripts/check-security-headers.mjs",
@@ -24,7 +45,6 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
-    "@fontsource-variable/dm-sans": "5.3.0",
     "@tailwindcss/vite": "4.3.3",
     "astro": "7.2.10",
     "jose": "6.2.10",
@@ -34,16 +54,26 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
-    "@cloudflare/workers-types": "5.20260911.1",
+    "@cloudflare/workers-types": "5.20260929.1",
     "@playwright/test": "1.62.1",
     "jsdom": "30.0.1",
     "vitest": "4.1.11",
-    "wrangler": "4.131.0"
+    "wrangler": "4.143.0"
   },
   "overrides": {
     "undici": "8.10.2",
+    "jsdom": {
+      "undici": "8.10.2"
+    },
     "miniflare": {
       "undici": "7.29.1"
+    },
+    "unifont": {
+      "undici": "8.10.2"
     }
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "workerd@1.20260926.1": true
   }
 }

@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "varino-autopilot",
+  "compatibility_date": "2026-09-28",
+  "pages_build_output_dir": "./dist",
+  "d1_databases": [
+    {
+      "binding": "VARINO_DB",
+      "database_name": "varino-autopilot",
+      "database_id": "00000000000000000000000000000001",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

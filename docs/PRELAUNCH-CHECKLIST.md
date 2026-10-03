@@ -86,3 +86,21 @@ Después actualiza `public/robots.txt` para anunciar el sitemap, ejecuta
 `npm run readiness`, `npm run launch:check` y las pruebas de navegador, y publica
 mediante el proceso de revisión acordado. No publiques el sitio ni actives el
 backend solo porque compile.
+
+## Revalidación de rama — 29 septiembre 2026
+
+- La rama candidata `feat/autopilot-foundation` (`e54510a`) se mantiene limpia;
+  PR #14 sigue abierto y no se publicó desde esta revalidación.
+- `npm run readiness`: PASS; 39 rutas generadas, SEO, enlaces internos,
+  sintaxis, CSP y gate local de despliegue.
+- `npm run test:unit`: PASS, 58/58. `npm run test:e2e`: PASS, 233/234; una
+  prueba figura como omitida. La suite recorrió navegador de escritorio y
+  móvil, HTML estático y desarrollo; Axe no encontró fallos en las páginas
+  cubiertas. Se usaron puertos aislados, sin reutilizar el servidor del usuario.
+- `npm run claims:check`: PASS en 40 archivos fuente. `npm run security:headers`
+  valida la configuración local de `public/_headers`, pero no acredita que
+  GitHub Pages entregue cabeceras HTTP.
+- Repetición contra `https://varinoai.me`: continúa sirviendo
+  `d824d2cc8afb1d3711c943b94daa66230053567d` y mantiene 54 hallazgos en 11
+  páginas. `npm run launch:check` sigue bloqueado por marca, identidad legal y
+  aprobaciones no disponibles; no se deben inventar ni omitir.

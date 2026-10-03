@@ -1,0 +1,6 @@
+# Copy to .dev.vars for local Cloudflare Pages Functions development.
+# Keep actual credentials only in the ignored .dev.vars file or a secret manager.
+APP_BASE_URL=http://localhost:8788
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+OAUTH_STATE_SECRET=

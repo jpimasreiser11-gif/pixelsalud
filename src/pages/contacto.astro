@@ -1,319 +1,116 @@
 ---
-import Base from "../layouts/Base.astro";
-import { BASE, SITE, hasContactChannel, BACKEND_LEAD } from "../config";
-
+import Base from '../layouts/Base.astro';
+import { BASE, SITE, hasContactChannel } from '../config';
 ---
 
-<Base
-  title={`Contacto & Agendamiento — ${SITE.name} AI Studio`}
-  description="Cuéntanos qué proceso quieres mejorar. Revisaremos el contexto, las herramientas y el resultado que buscas antes de proponer un alcance."
->
+<Base title={`Contacto & Agendamiento — ${SITE.name} AI Studio`}
+  description="Cuéntanos qué proceso quieres mejorar. Revisaremos el contexto, las herramientas y el resultado que buscas antes de proponer un alcance.">
   <section class="mx-auto max-w-6xl px-6 pb-20 pt-20 sm:pt-28">
-    <div class="grid gap-12 lg:grid-cols-2 items-start">
+    <div class="grid items-start gap-12 lg:grid-cols-2">
       <div>
         <p class="eyebrow">Plantear un proyecto</p>
-        <h1 class="mt-4 text-4xl sm:text-6xl font-semibold tracking-[-0.05em] leading-[1.02]">
-          Empecemos por el proceso, no por la herramienta.
-        </h1>
-        <p class="mt-4 text-[#86868b] leading-relaxed">
-          Cuéntanos qué proceso quieres mejorar, quién lo realiza y con qué herramientas. Esa información permite preparar una primera conversación útil.
-        </p>
-
+        <h1 class="mt-4 text-4xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-6xl">Empecemos por el proceso, no por la herramienta.</h1>
+        <p class="mt-4 leading-relaxed text-[#86868b]">Cuéntanos qué proceso quieres mejorar, quién lo realiza y con qué herramientas. Esa información permite preparar una primera conversación útil.</p>
         <div class="mt-8 space-y-3 text-sm">
-          <div class="flex items-center gap-2.5">
-            <span class="text-[#2997ff] font-bold">✓</span>
-            <span>Primera conversación centrada en un proceso real</span>
-          </div>
-          <div class="flex items-center gap-2.5">
-            <span class="text-[#2997ff] font-bold">✓</span>
-            <span>Revisión de viabilidad, dependencias y forma de medir</span>
-          </div>
-          <div class="flex items-center gap-2.5">
-            <span class="text-[#2997ff] font-bold">✓</span>
-            <span>Alcance y presupuesto por escrito antes de construir</span>
-          </div>
+          <div class="flex items-start gap-2.5"><span class="font-bold text-[#2997ff]" aria-hidden="true">✓</span><span>Primera conversación centrada en un proceso real</span></div>
+          <div class="flex items-start gap-2.5"><span class="font-bold text-[#2997ff]" aria-hidden="true">✓</span><span>Revisión de viabilidad, dependencias y forma de medir</span></div>
+          <div class="flex items-start gap-2.5"><span class="font-bold text-[#2997ff]" aria-hidden="true">✓</span><span>Alcance y presupuesto por escrito antes de construir</span></div>
         </div>
-
-        <div class="mt-10 pt-8 border-t border-[#424245]/30">
-          <p class="text-xs text-[#86868b] mb-2">Canal de contacto:</p>
-          {SITE.email ? (
-            <a href={`mailto:${SITE.email}`} class="text-sm font-semibold text-[#2997ff] hover:underline">{SITE.email}</a>
-          ) : (
-            <p class="text-sm text-[#6e6e73] dark:text-[#a1a1a6]">Estamos terminando la apertura pública. Mientras tanto puedes preparar y copiar el briefing sin que salga de tu dispositivo.</p>
-          )}
+        <div class="mt-10 border-t border-[#424245]/30 pt-8">
+          <p class="mb-2 text-xs text-[#86868b]">Canal de contacto:</p>
+          {SITE.email ? <a href={`mailto:${SITE.email}`} class="break-all text-sm font-semibold text-[#2997ff] hover:underline">{SITE.email}</a>
+            : <p class="text-sm text-[#6e6e73] dark:text-[#a1a1a6]">Estamos terminando la apertura pública. Mientras tanto puedes preparar y copiar el briefing sin que salga de tu dispositivo.</p>}
         </div>
       </div>
 
-      <!-- Contact Form -->
-      <form
-        id="form-contacto"
-        data-email={SITE.email}
-        data-lead={BACKEND_LEAD}
-        class="rounded-3xl border border-black/10 bg-[#f7f7f5] p-6 shadow-sm space-y-4 dark:border-white/10 dark:bg-[#111318] sm:p-8"
-      >
-        {!BACKEND_LEAD && (
-          <p class="rounded-xl border border-black/8 bg-white p-3 text-xs leading-5 text-[#6e6e73] dark:border-white/10 dark:bg-black/20 dark:text-[#a1a1a6]">
-            El envío automático está desconectado mientras verificamos el servidor. Este formulario solo prepara o copia un correo; nada se envía ni se guarda en los servidores de VARINO hasta que tú lo envíes desde tu correo.
-          </p>
-        )}
-        {!hasContactChannel && (
-          <p class="rounded-xl border border-black/8 bg-white p-3 text-xs text-[#6e6e73] dark:border-white/10 dark:bg-black/20 dark:text-[#a1a1a6]">
-            Modo privado: prepara el briefing y cópialo. Nada se envía ni se almacena.
-          </p>
-        )}
-        <p class="font-semibold text-lg">Briefing inicial</p>
+      <form id="form-contacto" data-email={SITE.email} aria-busy="false"
+        class="min-w-0 space-y-5 rounded-3xl border border-black/10 bg-[#f7f7f5] p-6 shadow-sm dark:border-white/10 dark:bg-[#111318] sm:p-8">
+        <div>
+          <h2 class="text-lg font-semibold">Briefing inicial</h2>
+          <p class="mt-1 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]">Un proceso. Un objetivo. Empecemos por ahí.</p>
+        </div>
+        <p data-contact-offline class="rounded-xl border border-black/8 bg-white p-3 text-xs leading-5 text-[#6e6e73] dark:border-white/10 dark:bg-black/20 dark:text-[#a1a1a6]">
+          El envío automático está desconectado mientras verificamos el servidor. Este formulario solo prepara o copia un correo; nada se envía ni se guarda en los servidores de VARINO hasta que tú lo envíes desde tu correo.
+        </p>
+        <p data-contact-live hidden class="rounded-xl border border-[#0071e3]/20 bg-[#0071e3]/5 p-3 text-xs leading-5 text-[#1d1d1f] dark:text-[#f5f5f7]"></p>
+        {!hasContactChannel && <p class="text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Modo privado: prepara el briefing y cópialo. Nada se envía ni se almacena.</p>}
 
-        <div class="space-y-4">
+        <fieldset data-contact-fields class="min-w-0 space-y-4">
+          <legend class="sr-only">Datos de la solicitud</legend>
           <div>
-            <label for="contacto-nombre" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Nombre completo</label>
-            <input
-              id="contacto-nombre"
-              type="text"
-              name="nombre"
-              required
-              placeholder="Tu nombre"
-              class="contact-field"
-            />
+            <label for="contacto-nombre" class="contact-label">Nombre completo</label>
+            <input id="contacto-nombre" name="nombre" required minlength="2" maxlength="120" autocomplete="name" placeholder="Tu nombre" class="contact-field" />
           </div>
-
           <div>
-            <label for="contacto-negocio" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Empresa / organización</label>
-            <input
-              id="contacto-negocio"
-              type="text"
-              name="negocio"
-              required
-              placeholder="Nombre de tu empresa"
-              class="contact-field"
-            />
+            <label for="contacto-negocio" class="contact-label">Empresa / organización</label>
+            <input id="contacto-negocio" name="negocio" required minlength="2" maxlength="160" autocomplete="organization" placeholder="Nombre de tu empresa" class="contact-field" />
           </div>
-
           <div>
-            <label for="contacto-web" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Sitio web o software</label>
-            <input
-              id="contacto-web"
-              type="text"
-              name="web"
-              placeholder="https://empresa.com"
-              class="contact-field"
-            />
+            <label for="contacto-web" class="contact-label">Sitio web o software</label>
+            <input id="contacto-web" name="web" maxlength="300" placeholder="https://empresa.com o la herramienta que usas" aria-describedby="contacto-detalles-ayuda" class="contact-field" />
           </div>
-
           <div>
-            <label for="contacto-servicio" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Servicio de interés</label>
-            <select
-              id="contacto-servicio"
-              name="servicio"
-              class="contact-field"
-            >
-              <option>Diagnóstico inicial</option>
-              <option>Automatización de procesos</option>
-              <option>Producto o asistente con IA</option>
-              <option>Sistema comercial</option>
-              <option>Otro caso</option>
+            <label for="contacto-servicio" class="contact-label">Servicio de interés</label>
+            <select id="contacto-servicio" name="servicio" class="contact-field">
+              <option>Diagnóstico inicial</option><option>Automatización de procesos</option><option>Producto o asistente con IA</option><option>Sistema comercial</option><option>Otro caso</option>
             </select>
           </div>
-
           <div>
-            <label for="contacto-mensaje" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Detalles del proyecto</label>
-            <textarea
-              id="contacto-mensaje"
-              name="mensaje"
-              rows="3"
-              placeholder="Cuéntanos brevemente qué te gustaría automatizar o desarrollar..."
-              class="contact-field"
-            ></textarea>
+            <label for="contacto-mensaje" class="contact-label">Detalles del proyecto</label>
+            <textarea id="contacto-mensaje" name="mensaje" rows="4" maxlength="2000" aria-describedby="contacto-detalles-ayuda" placeholder="¿Qué ocurre ahora y qué te gustaría mejorar?" class="contact-field"></textarea>
+            <p id="contacto-detalles-ayuda" class="mt-1 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Descripción y web, juntas: hasta 2.000 caracteres. No incluyas contraseñas, datos sensibles ni información personal de terceros.</p>
           </div>
-
           <div>
-            <label for="contacto-email" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">Email</label>
-            <input id="contacto-email" type="email" name="email" required placeholder="tu@email.com" class="contact-field" />
+            <label for="contacto-email" class="contact-label">Email</label>
+            <input id="contacto-email" type="email" name="email" required maxlength="200" autocomplete="email" placeholder="tu@email.com" class="contact-field" />
           </div>
-
           <div>
-            <label for="contacto-whatsapp" class="block text-xs font-medium text-[#6e6e73] dark:text-[#a1a1a6] mb-1">WhatsApp (opcional)</label>
-            <input id="contacto-whatsapp" type="tel" name="whatsapp" placeholder="+34 600 000 000" class="contact-field" />
+            <label for="contacto-whatsapp" class="contact-label">WhatsApp (opcional)</label>
+            <input id="contacto-whatsapp" type="tel" name="whatsapp" maxlength="30" autocomplete="tel" placeholder="+34 600 000 000" class="contact-field" />
           </div>
-
-          <button
-            type="submit"
-            class="w-full rounded-full bg-[#0071e3] px-6 py-3 font-semibold text-white transition hover:bg-[#0077ed] text-xs shadow-lg shadow-[#0071e3]/20"
-          >
-            {BACKEND_LEAD ? "Enviar solicitud →" : SITE.email ? "Preparar correo →" : "Copiar briefing →"}
-          </button>
-
-          {SITE.email && (
-            <a
-              id="contacto-mailto"
-              href="#"
-              hidden
-              class="block w-full rounded-full border border-[#0071e3]/30 px-6 py-3 text-center text-xs font-semibold text-[#0071e3] hover:bg-[#0071e3]/5"
-            >
-              Abrir borrador en tu correo →
-            </a>
-          )}
-
-          {!BACKEND_LEAD && (
-            <button
-              type="button"
-              data-copy-briefing
-              class="w-full rounded-full border border-black/10 px-6 py-3 text-xs font-semibold text-[#1d1d1f] hover:bg-black/5 dark:border-white/15 dark:text-[#f5f5f7] dark:hover:bg-white/5"
-            >
-              Copiar briefing
-            </button>
-          )}
-
-          {BACKEND_LEAD ? (
-            <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
-              <input type="checkbox" name="privacy_acknowledged" required class="mt-0.5 shrink-0" />
-              <span>He leído la <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">información de privacidad</a>. Usaremos estos datos para responder a esta solicitud; no es una suscripción comercial.</span>
+          <div hidden aria-hidden="true"><label for="contacto-honey">Deja este campo vacío</label><input id="contacto-honey" name="website" tabindex="-1" autocomplete="off" /></div>
+          <fieldset data-contact-privacy hidden disabled class="space-y-3">
+            <legend class="sr-only">Información y preferencias de privacidad</legend>
+            <label class="flex items-start gap-3 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+              <input type="checkbox" name="privacy_acknowledged" required class="mt-1 shrink-0" />
+              <span>He leído la <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">información de privacidad</a>. Estos datos se usan para responder a esta solicitud, no para suscribirme a publicidad.</span>
             </label>
-          ) : (
-            <p class="text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
-              Al copiar o preparar el correo, tus datos permanecen en este dispositivo hasta que decidas compartirlos. Consulta la <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">información de privacidad</a>.
-            </p>
-          )}
-
-          {BACKEND_LEAD && (
-            <label class="flex items-start gap-2 text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
-              <input type="checkbox" name="marketing_consent" value="true" class="mt-0.5 shrink-0" />
-              <span>Opcional: quiero recibir por email novedades, consejos y ofertas de VARINO. Puedo darme de baja cuando quiera. No es necesario para responder a esta solicitud.</span>
+            <label class="flex items-start gap-3 text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">
+              <input type="checkbox" name="marketing_consent" class="mt-1 shrink-0" />
+              <span>Opcional: me interesan novedades y consejos de VARINO. Esta elección no activa envíos; antes habrá que verificar mi email. No es necesario para atender esta solicitud.</span>
             </label>
-          )}
-
-          <p class="text-[11px] text-[#6e6e73] dark:text-[#a1a1a6] text-center" aria-live="polite" data-form-status>
-            No incluyas información confidencial o datos personales de terceros.
-          </p>
+          </fieldset>
+        </fieldset>
+        <p class="text-[11px] leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">Copiar un briefing no lo envía. Consulta la <a href={`${BASE}/privacidad/`} class="underline hover:text-[#0071e3]">información de privacidad</a>.</p>
+        <div data-contact-challenge hidden class="min-w-0"></div>
+        <button type="submit" class="contact-submit w-full rounded-full bg-[#0071e3] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#0077ed] disabled:cursor-default disabled:opacity-60">
+          {SITE.email ? 'Preparar correo →' : 'Copiar briefing →'}
+        </button>
+        <p data-form-status role="status" aria-live="polite" aria-atomic="true" class="text-xs leading-5 text-[#6e6e73] dark:text-[#a1a1a6]">No incluyas información confidencial o datos personales de terceros.</p>
+        <div data-contact-receipt hidden tabindex="-1" aria-labelledby="contacto-recibo-titulo" class="rounded-2xl border border-[#0071e3]/20 bg-white p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0071e3] dark:bg-black/20">
+          <h3 id="contacto-recibo-titulo" class="font-semibold">Solicitud recibida</h3>
+          <p data-contact-result class="mt-2 text-sm leading-6 text-[#6e6e73] dark:text-[#a1a1a6]"></p>
+          <p class="mt-3 text-xs text-[#6e6e73] dark:text-[#a1a1a6]">Referencia:</p><code data-contact-reference class="mt-1 block break-all text-xs"></code>
         </div>
+        <button type="button" data-contact-new hidden class="w-full rounded-full border border-[#0071e3]/30 px-6 py-3 text-sm font-semibold text-[#0071e3] hover:bg-[#0071e3]/5">Preparar otra solicitud</button>
+        {SITE.email && <a id="contacto-mailto" href="#" hidden class="block w-full rounded-full border border-[#0071e3]/30 px-6 py-3 text-center text-xs font-semibold text-[#0071e3] hover:bg-[#0071e3]/5">Abrir borrador en tu correo →</a>}
+        <button type="button" data-copy-briefing class="w-full rounded-full border border-black/10 px-6 py-3 text-xs font-semibold text-[#1d1d1f] hover:bg-black/5 dark:border-white/15 dark:text-[#f5f5f7] dark:hover:bg-white/5">Copiar briefing</button>
+        <noscript><p class="text-xs leading-5">El formulario requiere JavaScript. Puedes escribirnos por el enlace de correo; ningún dato se enviará automáticamente.</p></noscript>
       </form>
     </div>
   </section>
-
   <script>
-    import { clearLeadSubmissionId, getLeadSubmissionId } from "../lib/lead-idempotency.mjs";
-
-    (function () {
-      var form = document.getElementById("form-contacto");
-      if (!form) return;
-      var lead = form.getAttribute("data-lead") || "";
-      var statusEl = form.querySelector("[data-form-status]");
-      var sendingLead = false;
-      function val(name) {
-        var el = form.querySelector('[name="' + name + '"]');
-        return el ? el.value.trim() : "";
-      }
-      function servicioAI(nombre) {
-        var map = {
-          "Automatización de procesos": "automation-sprint",
-          "Sistema comercial": "growth-system",
-          "Producto o asistente con IA": "private-ai",
-        };
-        return map[nombre] || "otro";
-      }
-      function prepararMailto() {
-        var destinatario = form.getAttribute("data-email") || "";
-        if (!destinatario) return false;
-        var asunto = "Consulta de Proyecto: " + val("negocio");
-        var cuerpo =
-          "Nombre: " + val("nombre") + "\n" +
-          "Email: " + val("email") + "\n" +
-          "Empresa: " + val("negocio") + "\n" +
-          "Web o software: " + val("web") + "\n" +
-          "WhatsApp: " + val("whatsapp") + "\n" +
-          "Servicio: " + val("servicio") + "\n\n" +
-          "Mensaje: " + val("mensaje");
-        var draftLink = form.querySelector("#contacto-mailto");
-        if (!draftLink) return false;
-        draftLink.href = "mailto:" + destinatario + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(cuerpo);
-        draftLink.hidden = false;
-        return true;
-      }
-      form.addEventListener("submit", async function (ev) {
-        ev.preventDefault();
-        if (sendingLead) return;
-        var nombre = val("nombre");
-        var email = val("email");
-        var whatsapp = val("whatsapp");
-        var privacyEl = form.querySelector('[name="privacy_acknowledged"]');
-        if (lead && (!privacyEl || !privacyEl.checked)) { if (statusEl) statusEl.textContent = "Confirma que has leído la información de privacidad para continuar."; return; }
-        if (lead) {
-          sendingLead = true;
-          var submitButton = form.querySelector('button[type="submit"]');
-          if (submitButton) submitButton.disabled = true;
-          var payload = {
-            nombre: nombre,
-            email: email,
-            whatsapp: whatsapp,
-            empresa: val("negocio"),
-            interes: servicioAI(val("servicio")),
-            fuente: "form-contacto",
-            pagina: location.pathname,
-            privacy_acknowledged: privacyEl ? privacyEl.checked : false,
-            marketing_consent: form.querySelector('[name="marketing_consent"]')?.checked === true,
-            mensaje: val("mensaje"),
-          };
-          var submissionId = await getLeadSubmissionId("contacto", payload);
-          if (!submissionId) {
-            sendingLead = false;
-            if (submitButton) submitButton.disabled = false;
-            if (statusEl) statusEl.textContent = "No se pudo preparar un identificador seguro para el envío. No se han guardado tus datos; prueba en otro navegador o utiliza el correo.";
-            return;
-          }
-          if (statusEl) statusEl.textContent = "Enviando…";
-          payload.submissionId = submissionId;
-          fetch(lead, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }).then(function (r) {
-            if (!r.ok) throw new Error("lead_request_failed");
-            return r.json();
-          }).then(function (d) {
-            if (d && d.ok) {
-              clearLeadSubmissionId("contacto");
-              if (statusEl) statusEl.textContent = "✓ Solicitud recibida. El equipo revisará la información.";
-              form.reset();
-            } else {
-              prepararMailto();
-              if (statusEl) statusEl.textContent = "No se pudo confirmar la recepción. Si decides continuar, revisa el borrador de correo; no se ha enviado desde esta página.";
-            }
-          }).catch(function () {
-            prepararMailto();
-            if (statusEl) statusEl.textContent = "No se pudo confirmar la recepción. Si decides continuar, revisa el borrador de correo; no se ha enviado desde esta página.";
-          }).finally(function () {
-            sendingLead = false;
-            if (submitButton) submitButton.disabled = false;
-          });
-        } else {
-          // Sin backend: el usuario revisa el borrador en su aplicación antes de enviarlo.
-          if (prepararMailto()) {
-            if (statusEl) statusEl.textContent = "Borrador preparado en este dispositivo. No se ha enviado ni guardado; abre el enlace y revísalo antes de enviarlo.";
-          } else if (statusEl) {
-            statusEl.textContent = "No hay un correo configurado. Puedes copiar el briefing y guardarlo en tu dispositivo.";
-          }
-        }
-      });
-
-      var copyButton = form.querySelector("[data-copy-briefing]");
-      if (copyButton) copyButton.addEventListener("click", function () {
-        var briefing =
-          "Nombre: " + val("nombre") + "\n" +
-          "Email: " + val("email") + "\n" +
-          "Empresa: " + val("negocio") + "\n" +
-          "Web o software: " + val("web") + "\n" +
-          "WhatsApp: " + val("whatsapp") + "\n" +
-          "Servicio: " + val("servicio") + "\n\n" +
-          "Mensaje: " + val("mensaje");
-        navigator.clipboard.writeText(briefing)
-          .then(function () { if (statusEl) statusEl.textContent = "Briefing copiado en este dispositivo; no se ha enviado."; })
-          .catch(function () { if (statusEl) statusEl.textContent = "No se pudo copiar. Prepara el correo para continuar."; });
-      });
-    })();
+    import { mountContactForm } from '../lib/contact-form.mjs';
+    const form = document.querySelector('#form-contacto');
+    if (form) mountContactForm(form);
   </script>
-
   <style>
-    .contact-field { width: 100%; border-radius: .75rem; border: 1px solid rgb(0 0 0 / .12); background: white; padding: .7rem 1rem; font-size: .875rem; color: #1d1d1f; outline: none; transition: border-color .2s, box-shadow .2s; }
-    .contact-field:focus { border-color: #0071e3; box-shadow: 0 0 0 3px rgb(0 113 227 / .12); }
+    .contact-label { display: block; margin-bottom: .25rem; font-size: .75rem; font-weight: 500; color: #6e6e73; }
+    .contact-field { width: 100%; min-width: 0; border-radius: .75rem; border: 1px solid rgb(0 0 0 / .12); background: white; padding: .7rem 1rem; font-size: .875rem; color: #1d1d1f; outline: none; transition: border-color .15s, box-shadow .15s; }
+    .contact-field:focus-visible { border-color: #0071e3; box-shadow: 0 0 0 3px rgb(0 113 227 / .12); }
+    .contact-submit:active:not(:disabled) { transform: scale(.98); }
     :global(.dark) .contact-field { border-color: rgb(255 255 255 / .14); background: #050506; color: #f5f5f7; }
+    :global(.dark) .contact-label { color: #a1a1a6; }
+    @media (prefers-reduced-motion: reduce) { .contact-field { transition: none; } .contact-submit:active:not(:disabled) { transform: none; } }
   </style>
 </Base>
