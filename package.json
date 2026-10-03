@@ -23,6 +23,7 @@
     "test:mail-durable-contract": "python3 -m unittest discover -s tests/backups -p 'test_durable_mail*.py' -v",
     "test:mail-durable-native": "python3 scripts/test-durable-mail-n8n.py",
     "test:mail-durable-complete": "python3 scripts/test-durable-complete-mail-n8n.py",
+    "test:mail-durable-regeneration": "python3 scripts/test-durable-mail-regeneration.py",
     "worker:documents": "node scripts/local-document-worker.mjs",
     "worker:inbound": "node scripts/local-inbound-worker.mjs",
     "worker:suppression": "node scripts/local-suppression-worker.mjs",

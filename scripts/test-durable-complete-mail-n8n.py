@@ -27,8 +27,8 @@ PINNED = {
     "workflows/test_mail_scheduled_n8n_e2e.py": "e8cc890920c1993ad311524ebb843cc64a8828ec043079b1e3289b2e4fac6528",
     "workflows/test_mail_batch_n8n_e2e.py": "0c45e8a58228b5969b0283a1252f13045e1c79de379e1356b8fff6eaf0a3086d",
     "workflows/varcrm.py": "9a675abcf2879036d98602b8d6e87e17c30818acda71ee7d781d9a26e743746a",
-    "workflows/5-nurture-emails.json": "dcd9e112c4967d329b3ed2cf2d5457445f6b6cbf1f2b8326b99d046f8fb83466",
-    "workflows/11-followup-prospectos.json": "1371326ad0dd61791ae08b217335757290949e64bf47ae4a4def5b38ad81a799",
+    "workflows/5-nurture-emails.json": "6ff81a5ab5ff602e5dd41e0b7ac92f110bcb5148dbecaa1b279155c65921ee0d",
+    "workflows/11-followup-prospectos.json": "d2ca8d3c53a93efb9cadb30b5d025abeec8581da575f04064ce943a9b4a79643",
 }
 
 
@@ -89,7 +89,8 @@ def main():
     schemas["inspect_execution"] = guard.inspect_execution
     batch = reviewed_fixture_module(args.ops_dir / "workflows/test_mail_batch_n8n_e2e.py", schemas)
     scheduled = load_module("reviewed_native_schedule", args.ops_dir / "workflows/test_mail_scheduled_n8n_e2e.py")
-    builder = load_module("reviewed_durable_gate", ROOT / "automation/n8n/add-durable-mail-gate.py")
+    regenerator = load_module("reviewed_durable_regenerator", ROOT / "automation/n8n/durable_mail_builder.py")
+    builder = regenerator.gate
     old_fixture = batch.fixture_graph
     old_post = scheduled.NativeHandler.do_POST
     checked_runs = []
@@ -97,11 +98,19 @@ def main():
 
     def complete_fixture(original, config, server, **kwargs):
         kind = "nurture" if config[0] == "Leads" else "followup"
-        patched = builder.patch_workflow(original, kind)
+        # Test the gate ALREADY in the canonical source, not a copy with an
+        # optional guard injected by this harness. A changed/missing gate fails.
+        regenerator.validate_guarded_workflow(original, kind)
+        patched = original
         # First sanitize ALL baseline transports; then add the unchanged new
         # guard and its stricter sender expression. Only ledger transport/auth
         # is fictional here; Header Auth has a separate isolated native test.
-        graph = old_fixture(original, config, server, **kwargs)
+        baseline = copy.deepcopy(original)
+        baseline["nodes"] = [n for n in baseline["nodes"] if n["name"] not in builder.NAMES]
+        for name in builder.NAMES:
+            baseline["connections"].pop(name, None)
+        baseline["connections"][builder.UPSTREAM]["main"][0] = [{"node": config[4], "type": "main", "index": 0}]
+        graph = old_fixture(baseline, config, server, **kwargs)
         new_nodes = {n["name"]: copy.deepcopy(n) for n in patched["nodes"] if n["name"] in builder.NAMES}
         check = new_nodes[builder.CHECK]
         check.pop("credentials", None)

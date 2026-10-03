@@ -13,8 +13,10 @@ Una consulta sin bajas nunca sustituye consentimiento, identidad del operador
 ni los demás controles comerciales. Las plantillas conservan baja por respuesta;
 la emisión e inclusión del enlace público es un bloque separado pendiente.
 
-Los exports persistentes NO se han sustituido ni activado. No acreditar una
-campaña real o una protección instalada basándose solo en estos ensayos.
+El 3 de octubre de 2026 se sustituyeron los dos exports canónicos y sus grafos
+en el perfil persistente, siempre inactivos. La consulta durable sigue con una
+referencia de credencial pendiente y el backend no está desplegado. No acreditar
+una campaña ni una conexión real basándose en estos ensayos.
 
 ## Recorrido y decisiones
 
@@ -62,8 +64,9 @@ deben bloquear, no permitir enviar con Supresion como único fallback.
 Antes de importar: verificar snapshot/rollback, permisos Google, retención del
 perfil real, API del dominio y destinatario propio autorizado. Importar la
 copia inactiva y comprobar el grafo persistido. Activación manual en n8n solo
-después de pruebas reales y gates comerciales. Regenerar un export exige aplicar
-otra vez este gate y validar el resultado; no importar el builder anterior solo.
+después de pruebas reales y gates comerciales. Los generadores canónicos ya
+aplican este gate obligatoriamente; véase [regeneración y controles](durable-mail-regeneration.md).
+No usar una copia anterior del builder ni importar sin verificar el resultado.
 
 ## Pruebas y alcance exacto
 
@@ -120,3 +123,9 @@ inválidos: treinta y cuatro casos nativos del guard pasaron con cero payloads
 retenidos al terminar, y el ensayo completo con reinicio volvió a pasar.
 Plus-addressing, apóstrofos y locales con puntos válidos se conservan; la
 validación offline contrasta estas direcciones con Zod del ledger.
+
+El 3 de octubre el ensayo completo volvió a pasar usando el gate ya presente
+en los exports canónicos, no un gate opcional agregado por el runner. Cuatro
+ejecuciones trigger, antes/después del reinicio; misma exclusión de oposición
+y cero efectos adicionales. El ensayo aislado del guard volvió a pasar con
+cero payloads retenidos. Google/Gmail/Telegram reales permanecen sin probar.

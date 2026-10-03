@@ -19,6 +19,13 @@ CHECK = "Comprobar baja durable"
 AUTHORIZE = "Autorizar baja durable"
 GATE = "¿Baja durable comprobada?"
 NAMES = (PREPARE, CHECK, AUTHORIZE, GATE)
+NODE_NOTES = {
+    PREPARE: "Conserva el permiso previo y su caducidad. Compara el To RFC822 con la fila CRM ya reservada; rechaza destinatarios ocultos, manuales y mensajes cambiados.",
+    CHECK: "Consulta el ledger primario justo antes de Gmail. Solo email; credencial dedicada en el gestor. Sin redirects ni retry. Ausencia de baja NO acredita consentimiento.",
+    AUTHORIZE: "Solo HTTP 200 con objeto exacto suppressed:false permite continuar. Timeout/error/baja/datos ambiguos bloquean. No renueva el permiso anterior; resultado válido cinco segundos como máximo.",
+    GATE: "Solo true alcanza Gmail; el resto conserva la reserva para revisión. No se reenvían efectos ambiguos.",
+}
+SENDER_NOTE = "Requiere además permiso durable vigente y el mismo RFC822 que se comprobó. No añadir nodos ni esperas entre este gate y Gmail."
 UPSTREAM = "¿Envío autorizado ahora?"
 SPECS = {
     "nurture": ("Enviar Gmail", "Aviso revisión nurture", "reservationRow", "Leads"),
@@ -130,20 +137,20 @@ def patch_workflow(original, kind, origin="https://varinoai.me", credential_id="
         return {"id":str(uuid.uuid5(namespace,name)),"name":name,"type":ntype,"parameters":parameters,
                 "typeVersion":version,"position":position,"notes":notes,"notesInFlow":False}
     prep = node(PREPARE,"n8n-nodes-base.code",{"mode":"runOnceForEachItem","jsCode":PREPARE_JS.replace("__ROW__",row_key).replace("__TABLE__",table)},2,[3200,-700],
-                "Conserva el permiso previo y su caducidad. Compara el To RFC822 con la fila CRM ya reservada; rechaza destinatarios ocultos, manuales y mensajes cambiados.")
+                NODE_NOTES[PREPARE])
     check = node(CHECK,"n8n-nodes-base.httpRequest",{
         "method":"POST","url":origin+"/api/unsubscribe/check","authentication":"genericCredentialType","genericAuthType":"httpHeaderAuth",
         "sendBody":True,"specifyBody":"json","jsonBody":"={{ JSON.stringify({email:$json.durableRecipient}) }}",
         "options":{"timeout":8000,"redirect":{"redirect":{"followRedirects":False}},"sendCredentialsOnCrossOriginRedirect":False,
                     "response":{"response":{"fullResponse":True,"neverError":True,"responseFormat":"json"}}}},4.2,[3440,-700],
-        "Consulta el ledger primario justo antes de Gmail. Solo email; credencial dedicada en el gestor. Sin redirects ni retry. Ausencia de baja NO acredita consentimiento.")
+        NODE_NOTES[CHECK])
     check.update(credentials={"httpHeaderAuth":{"id":credential_id,"name":"VARINO · consulta de oposición"}},onError="continueRegularOutput",retryOnFail=False)
     authorize = node(AUTHORIZE,"n8n-nodes-base.code",{"mode":"runOnceForEachItem","jsCode":AUTHORIZE_JS},2,[3680,-700],
-                     "Solo HTTP 200 con objeto exacto suppressed:false permite continuar. Timeout/error/baja/datos ambiguos bloquean. No renueva el permiso anterior; resultado válido cinco segundos como máximo.")
+                     NODE_NOTES[AUTHORIZE])
     gate = node(GATE,"n8n-nodes-base.if",{"conditions":{"options":{"caseSensitive":True,"typeValidation":"strict","version":2},
         "conditions":[{"id":"durable-clear","leftValue":"={{ $json.durableSuppressionChecked === true }}","rightValue":True,
                        "operator":{"type":"boolean","operation":"true","singleValue":True}}],"combinator":"and"},"options":{}},2.2,[3920,-700],
-                "Solo true alcanza Gmail; el resto conserva la reserva para revisión. No se reenvían efectos ambiguos.")
+                NODE_NOTES[GATE])
     graph["nodes"].extend([prep,check,authorize,gate])
     graph["connections"][UPSTREAM]["main"][0] = [{"node":PREPARE,"type":"main","index":0}]
     def link(source,*targets):
@@ -151,7 +158,7 @@ def patch_workflow(original, kind, origin="https://varinoai.me", credential_id="
     link(PREPARE,CHECK); link(CHECK,AUTHORIZE); link(AUTHORIZE,GATE); link(GATE,send,alert)
     nodes[send]["parameters"]["jsonBody"] = SEND_BODY
     nodes[send]["retryOnFail"] = False
-    nodes[send]["notes"] = nodes[send].get("notes","") + "\nRequiere además permiso durable vigente y el mismo RFC822 que se comprobó. No añadir nodos ni esperas entre este gate y Gmail."
+    nodes[send]["notes"] = nodes[send].get("notes","") + "\n" + SENDER_NOTE
     assert [(source,index) for source,index,target in edges(graph) if target==send] == [(GATE,0)]
     assert all(node.get("notes") for node in (prep,check,authorize,gate))
     return graph
